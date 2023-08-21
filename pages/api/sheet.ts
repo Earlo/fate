@@ -1,12 +1,6 @@
 import { CharacterSheetT, CharacterSheet } from '@/schemas/sheet';
-import mongoose from 'mongoose';
-
-if (!process.env.MONGO_URL) {
-  throw new Error(
-    'Please define the MONGO_URL environment variable inside .env.local',
-  );
-}
-mongoose.connect(process.env.MONGO_URL);
+import connect from '@/lib/mongo';
+connect();
 
 export async function createCharacterSheet(sheet: CharacterSheetT) {
   return await CharacterSheet.create(sheet);

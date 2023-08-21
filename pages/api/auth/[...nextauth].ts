@@ -1,16 +1,9 @@
 import { UserModel } from '@/schemas/user';
+import connect from '@/lib/mongo';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcrypt';
-import mongoose from 'mongoose';
-
-if (!process.env.MONGO_URL) {
-  throw new Error(
-    'Please define the MONGO_URL environment variable inside .env.local',
-  );
-}
-mongoose.connect(process.env.MONGO_URL);
-
+connect();
 export default NextAuth({
   providers: [
     CredentialsProvider({

@@ -1,14 +1,8 @@
 import { UserModel } from '@/schemas/user';
+import connect from '@/lib/mongo';
 import { hash } from 'bcrypt';
-import mongoose from 'mongoose';
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-if (!process.env.MONGO_URL) {
-  throw new Error(
-    'Please define the MONGO_URL environment variable inside .env.local',
-  );
-}
-mongoose.connect(process.env.MONGO_URL);
+connect();
 
 interface RegistrationInput {
   username: string;
