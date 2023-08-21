@@ -37,4 +37,9 @@ async function fetchCharacterSheets(userId: string) {
   return characterSheets.find({ visibleTo: userId }).toArray();
 }
 
-export { createCharacterSheet, updateCharacterSheet, fetchCharacterSheets };
+export {
+  client,
+  createCharacterSheet,
+  updateCharacterSheet,
+  fetchCharacterSheets,
+};
