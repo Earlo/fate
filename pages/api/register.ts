@@ -1,6 +1,14 @@
-import { client } from '@/utils/mongo';
+import { UserModel } from '@/schemas/user';
 import { hash } from 'bcrypt';
+import mongoose from 'mongoose';
 import type { NextApiRequest, NextApiResponse } from 'next';
+
+if (!process.env.MONGO_URL) {
+  throw new Error(
+    'Please define the MONGO_URL environment variable inside .env.local',
+  );
+}
+mongoose.connect(process.env.MONGO_URL);
 
 interface RegistrationInput {
   username: string;
@@ -18,16 +26,15 @@ export default async function register(
   const { username, password }: RegistrationInput = req.body;
   const hashedPassword = await hash(password, 10);
 
-  await client.connect();
-  const db = client.db('fate');
-  const usersCollection = db.collection('users');
-
-  const existingUser = await usersCollection.findOne({ username });
+  // Check for existing user by username
+  const existingUser = await UserModel.findOne({ username });
 
   if (existingUser) {
     return res.status(400).json({ error: 'Username already exists' });
   }
 
-  await usersCollection.insertOne({ username, password: hashedPassword });
+  // Create new user
+  await UserModel.create({ username, password: hashedPassword });
+
   return res.status(201).end();
 }

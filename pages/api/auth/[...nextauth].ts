@@ -1,14 +1,15 @@
-import { client } from '@/utils/mongo';
+import { UserModel } from '@/schemas/user';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { ObjectId } from 'mongodb';
 import { compare } from 'bcrypt';
+import mongoose from 'mongoose';
 
-interface User {
-  _id: ObjectId;
-  username: string;
-  password: string;
+if (!process.env.MONGO_URL) {
+  throw new Error(
+    'Please define the MONGO_URL environment variable inside .env.local',
+  );
 }
+mongoose.connect(process.env.MONGO_URL);
 
 export default NextAuth({
   providers: [
@@ -20,14 +21,12 @@ export default NextAuth({
       },
       async authorize(credentials, req) {
         if (credentials && credentials.username && credentials.password) {
-          await client.connect();
-          const db = client.db('fate');
-          const usersCollection = db.collection<User>('users');
-
-          const user = await usersCollection.findOne({
+          // Find user by username
+          const user = await UserModel.findOne({
             username: credentials.username,
           });
 
+          // Check if user exists and password is correct
           if (user && (await compare(credentials.password, user.password))) {
             return {
               id: user._id.toString(),
