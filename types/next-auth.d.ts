@@ -1,10 +1,9 @@
+import { UserModelT } from '@/schemas/user';
 export type ISODateString = string;
 
 declare module 'next-auth' {
   interface Session {
-    user: {
-      username: string;
-    };
+    user: Omit<UserModelT, 'password'>;
   }
 
   interface User {

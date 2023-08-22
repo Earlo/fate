@@ -2,10 +2,11 @@ import AuthForm from '../components/authForm';
 import { useSession, signOut } from 'next-auth/react';
 
 export default function Dashboard() {
-  const { data: session } = useSession();
-
+  const { data: session, status } = useSession();
+  if (status === 'loading') {
+    return <p>Loading...</p>;
+  }
   if (session) {
-    console.log('ses', session);
     return (
       <div className="p-4 text-xl font-bold">
         Welcome, {session.user.username}!

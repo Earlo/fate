@@ -1,8 +1,22 @@
+import Input from './input';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 
 export default function AuthForm() {
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [usernameExists, setUsernameExists] = useState(false);
+
+  const handleUsernameChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const username = e.target.value;
+    const response = await fetch('/api/check-username', {
+      method: 'POST',
+      body: JSON.stringify({ username }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const exists = await response.json();
+    setUsernameExists(exists);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -11,20 +25,18 @@ export default function AuthForm() {
       .value;
     const password = (form.elements.namedItem('password') as HTMLInputElement)
       .value;
-
-    if (mode === 'login') {
+    if (usernameExists) {
       signIn('credentials', { username, password });
     } else {
-      // Registration logic
       const response = await fetch('/api/register', {
         method: 'POST',
         body: JSON.stringify({ username, password, action: 'register' }),
         headers: { 'Content-Type': 'application/json' },
       });
       if (response.ok) {
-        // Redirect or show success message
+        signIn('credentials', { username, password });
       } else {
-        // Show error message
+        throw new Error(await response.text());
       }
     }
   };
@@ -35,47 +47,20 @@ export default function AuthForm() {
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="username"
-          >
-            Username:
-          </label>
-          <input
-            type="text"
-            name="username"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="password"
-          >
-            Password:
-          </label>
-          <input
-            type="password"
-            name="password"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
+        <Input
+          label="Username:"
+          name="username"
+          type="text"
+          required
+          onChange={handleUsernameChange}
+        />
+        <Input label="Password:" name="password" type="password" required />
         <div className="flex items-center justify-between">
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
-            {mode === 'login' ? 'Login' : 'Register'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-            className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-          >
-            {mode === 'login' ? 'Register' : 'Login'}
+            {usernameExists ? 'Login' : 'Register'}
           </button>
         </div>
       </form>

@@ -1,4 +1,4 @@
-import { UserModel } from '@/schemas/user';
+import { UserModel, UserModelT } from '@/schemas/user';
 import connect from '@/lib/mongo';
 import { hash } from 'bcrypt';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -16,19 +16,17 @@ export default async function register(
   if (req.method !== 'POST') {
     return res.status(405).end();
   }
-
   const { username, password }: RegistrationInput = req.body;
   const hashedPassword = await hash(password, 10);
 
-  // Check for existing user by username
-  const existingUser = await UserModel.findOne({ username });
-
+  const existingUser = await UserModel.findOne<UserModelT>({ username });
   if (existingUser) {
     return res.status(400).json({ error: 'Username already exists' });
   }
 
-  // Create new user
-  await UserModel.create({ username, password: hashedPassword });
-
-  return res.status(201).end();
+  const newUser = await UserModel.create<UserModelT>({
+    username,
+    password: hashedPassword,
+  });
+  return res.status(201).json({ id: newUser._id });
 }
