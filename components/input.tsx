@@ -1,7 +1,8 @@
 interface InputProps {
-  label: string;
+  label?: string;
   name: string;
   type: string;
+  value?: string;
   required?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -10,6 +11,7 @@ const Input: React.FC<InputProps> = ({
   label,
   name,
   type,
+  value,
   required,
   onChange,
 }) => (
@@ -19,11 +21,12 @@ const Input: React.FC<InputProps> = ({
       style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: '22px' }}
       htmlFor={name}
     >
-      {label}
+      {label ? label : name}
     </label>
     <input
       type={type}
       name={name}
+      value={value}
       className="form-control w-full h-10 p-2 text-base text-gray-700 bg-white border border-gray-300 rounded"
       style={{
         height: 'calc(1.5em + 0.75rem + 2px)',

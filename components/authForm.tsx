@@ -47,13 +47,12 @@ export default function AuthForm() {
     <div className="w-full max-w-xs mx-auto mt-8">
       <FormContainer onSubmit={handleSubmit}>
         <Input
-          label="Username:"
           name="username"
           type="text"
           required
           onChange={handleUsernameChange}
         />
-        <Input label="Password:" name="password" type="password" required />
+        <Input name="password" type="password" required />
         <div className="flex items-center justify-between">
           <Button label={usernameExists ? 'Login' : 'Register'} type="submit" />
         </div>

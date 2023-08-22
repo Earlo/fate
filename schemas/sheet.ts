@@ -2,8 +2,11 @@ import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const characterSheetSchema = new Schema({
   name: String,
-  stats: Object,
-  visibleTo: [String],
+  description: String,
+  aspects: [String],
+  skills: [{ name: String, level: Number }],
+  stunts: [{ name: String, description: String }],
+  visibleToPlayers: Boolean,
   controlledBy: String,
 });
 export const CharacterSheet =
