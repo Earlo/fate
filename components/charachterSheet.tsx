@@ -1,6 +1,8 @@
 import Button from './button';
 import Input from './input';
 import FormContainer from './formContainer';
+import SkillGrid from './skillGrid';
+import { Skill } from '@/types/fate';
 import React, { FormEvent, useState } from 'react';
 
 interface CharacterSheetProps {
@@ -11,9 +13,16 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [aspects, setAspects] = useState(['']);
-  const [skills, setSkills] = useState([{ name: '', level: '' }]);
+  const [skills, setSkills] = useState<{ [level: number]: Skill[] }>({}); // Updated skills type
   const [stunts, setStunts] = useState([{ name: '', description: '' }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSkillChange = (level: number, slotIndex: number, name: Skill) => {
+    const updatedSkills = { ...skills };
+    updatedSkills[level] = updatedSkills[level] || [];
+    updatedSkills[level][slotIndex] = name;
+    setSkills(updatedSkills);
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,10 +31,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
       name,
       description,
       aspects,
-      skills: skills.map((skill) => ({
-        name: skill.name,
-        level: Number(skill.level),
-      })),
+      skills,
       stunts,
     };
     await fetch('/api/sheet', {
@@ -68,43 +74,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
         />
       ))}
       <Button label="Add Aspect" onClick={() => setAspects([...aspects, ''])} />
-      {/* Skill pyramid/grid - modify as needed */}
-      <div className="skills">
-        {skills.map((skill, index) => (
-          <div key={index}>
-            <Input
-              label={`Skill ${index + 1} Name:`}
-              name={`skill-${index}-name`}
-              type="text"
-              value={skill.name}
-              onChange={(e) =>
-                setSkills([
-                  ...skills.slice(0, index),
-                  { name: e.target.value, level: skill.level },
-                  ...skills.slice(index + 1),
-                ])
-              }
-            />
-            <Input
-              label={`Skill ${index + 1} Level:`}
-              name={`skill-${index}-level`}
-              type="text"
-              value={skill.level}
-              onChange={(e) =>
-                setSkills([
-                  ...skills.slice(0, index),
-                  { name: skill.name, level: e.target.value },
-                  ...skills.slice(index + 1),
-                ])
-              }
-            />
-          </div>
-        ))}
-        <Button
-          label="Add Skill"
-          onClick={() => setSkills([...skills, { name: '', level: '' }])}
-        />
-      </div>
+      <SkillGrid skills={skills} onChange={handleSkillChange} />
       {stunts.map((stunt, index) => (
         <div key={index}>
           <Input

@@ -1,10 +1,11 @@
+import { Skill } from '@/types/fate';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const characterSheetSchema = new Schema({
   name: String,
   description: String,
   aspects: [String],
-  skills: [{ name: String, level: Number }],
+  skills: { level: [String] },
   stunts: [{ name: String, description: String }],
   visibleToPlayers: Boolean,
   controlledBy: String,
