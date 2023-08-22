@@ -1,5 +1,5 @@
-import Label from './label';
-import SoloInput from './soloInput';
+import Label from '../generic/label';
+import SoloInput from '../generic/soloInput';
 import React from 'react';
 
 interface AspectInputProps {

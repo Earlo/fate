@@ -1,9 +1,9 @@
-import Button from './button';
-import Input from './input';
+import Button from './generic/button';
+import Input from './generic/input';
 import FormContainer from './formContainer';
-import AspectInput from './aspectInput';
-import StuntInput from './stuntInput';
-import SkillGrid from './skillGrid';
+import AspectInput from './sheet/aspectInput';
+import StuntInput from './sheet/stuntInput';
+import SkillGrid from './sheet/skillGrid';
 import { Skill } from '@/types/fate';
 import React, { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';

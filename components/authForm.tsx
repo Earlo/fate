@@ -1,6 +1,6 @@
 import FormContainer from './formContainer';
-import Input from './input';
-import Button from './button';
+import Input from './generic/input';
+import Button from './generic/button';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 

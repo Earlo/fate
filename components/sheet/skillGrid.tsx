@@ -1,5 +1,5 @@
 import SkillInput from './skillInput';
-import Label from './label';
+import Label from '../generic/label';
 import { Skill } from '@/types/fate';
 import React from 'react';
 /*
