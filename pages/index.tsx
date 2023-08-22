@@ -1,12 +1,22 @@
-'use client';
 import AuthForm from '../components/authForm';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Dashboard() {
   const { data: session } = useSession();
 
   if (session) {
-    return <div>Welcome, {session.user.username}!</div>; // Placeholder
+    console.log('ses', session);
+    return (
+      <div className="p-4 text-xl font-bold">
+        Welcome, {session.user.username}!
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          onClick={() => signOut()}
+        >
+          log out
+        </button>
+      </div>
+    );
   }
 
   return <AuthForm />;

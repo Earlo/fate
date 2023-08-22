@@ -1,14 +1,8 @@
-'use client';
 import { useState } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 
 export default function AuthForm() {
-  const { data: session } = useSession();
   const [mode, setMode] = useState<'login' | 'register'>('login');
-
-  if (session) {
-    return <div>Placeholder for logged-in user</div>;
-  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,22 +30,55 @@ export default function AuthForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Username:
-        <input type="text" name="username" required />
-      </label>
-      <label>
-        Password:
-        <input type="password" name="password" required />
-      </label>
-      <button type="submit">{mode === 'login' ? 'Login' : 'Register'}</button>
-      <button
-        type="button"
-        onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+    <div className="w-full max-w-xs mx-auto mt-8">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
-        {mode === 'login' ? 'Register' : 'Login'}
-      </button>
-    </form>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="username"
+          >
+            Username:
+          </label>
+          <input
+            type="text"
+            name="username"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="password"
+          >
+            Password:
+          </label>
+          <input
+            type="password"
+            name="password"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            {mode === 'login' ? 'Login' : 'Register'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+            className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+          >
+            {mode === 'login' ? 'Register' : 'Login'}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
