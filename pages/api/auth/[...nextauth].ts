@@ -3,7 +3,6 @@ import connect from '@/lib/mongo';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcrypt';
-
 connect();
 
 export default NextAuth({
@@ -32,14 +31,16 @@ export default NextAuth({
   ],
   callbacks: {
     async session({ session, token, user }) {
-      const found = await UserModel.findOne<UserModelT>({ _id: token.sub });
+      const found = await UserModel.findOne<UserModelT & { _id: string }>({
+        _id: token.sub,
+      });
       if (!found) {
         throw new Error('User not found');
       }
       session.user = {
         username: found.username,
         admin: found.admin,
-        _id: found._id.toString(),
+        id: found._id.toString(),
       };
       return session; // The return type will match the one returned in `useSession()`
     },

@@ -1,5 +1,6 @@
 import AuthForm from '../components/authForm';
 import CharacterSheetForm from '../components/charachterSheet';
+import Button from '@/components/generic/button';
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 
@@ -15,18 +16,12 @@ export default function Dashboard() {
     return (
       <div className="p-4 text-xl font-bold">
         Welcome, {session.user.username}!
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline m-4"
-          onClick={() => signOut()}
-        >
-          log out
-        </button>
-        <button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline m-4"
+        <Button label="log out" onClick={() => signOut()} />
+        <Button
+          className="bg-green-500 hover:bg-green-700 "
+          label="Create New Character Sheet"
           onClick={() => setShowSheetForm(true)}
-        >
-          Create New Character Sheet
-        </button>
+        />
         {showSheetForm && (
           <CharacterSheetForm onClose={() => setShowSheetForm(false)} />
         )}

@@ -31,7 +31,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
       skills,
       stunts,
       visibleToPlayers: session?.user.admin ? false : true,
-      controlledBy: session?.user._id,
+      controlledBy: session?.user.id,
     };
     await fetch('/api/sheet', {
       method: 'POST',
