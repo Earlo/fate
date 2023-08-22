@@ -33,12 +33,12 @@ export default NextAuth({
   callbacks: {
     async session({ session, token, user }) {
       const found = await UserModel.findOne<UserModelT>({ _id: token.sub });
-      if (found) {
-        session.user = {
-          username: found.username,
-        };
+      if (!found) {
+        throw new Error('User not found');
       }
-      console.log('session', session);
+      session.user = {
+        username: found.username,
+      };
       return session; // The return type will match the one returned in `useSession()`
     },
   },
