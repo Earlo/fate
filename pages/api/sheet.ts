@@ -1,22 +1,64 @@
-import { CharacterSheetT, CharacterSheet } from '@/schemas/sheet';
+import {
+  CharacterSheetT,
+  createCharacterSheet,
+  getCharacterSheet,
+  updateCharacterSheet,
+  deleteCharacterSheet,
+} from '@/schemas/sheet';
 import connect from '@/lib/mongo';
+import { NextApiRequest, NextApiResponse } from 'next';
 connect();
 
-export async function createCharacterSheet(sheet: CharacterSheetT) {
-  return await CharacterSheet.create(sheet);
-}
-
-export async function getCharacterSheet(id: string) {
-  return await CharacterSheet.findById(id);
-}
-
-export async function updateCharacterSheet(
-  id: string,
-  updates: Partial<CharacterSheetT>,
+// POST request to create a character sheet
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
 ) {
-  return await CharacterSheet.findByIdAndUpdate(id, updates);
-}
+  switch (req.method) {
+    case 'POST':
+      try {
+        const sheet: CharacterSheetT = req.body;
+        const newSheet = await createCharacterSheet(sheet);
+        res.status(201).json(newSheet);
+      } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: 'Failed to create character sheet' });
+      }
+      break;
 
-export async function deleteCharacterSheet(id: string) {
-  return await CharacterSheet.findByIdAndDelete(id);
+    case 'GET':
+      try {
+        const sheet = await getCharacterSheet(req.query.id as string);
+        res.status(200).json(sheet);
+      } catch (error) {
+        res.status(404).json({ error: 'Character sheet not found' });
+      }
+      break;
+
+    case 'PUT':
+      try {
+        const updates: Partial<CharacterSheetT> = JSON.parse(req.body);
+        const updatedSheet = await updateCharacterSheet(
+          req.query.id as string,
+          updates,
+        );
+        res.status(200).json(updatedSheet);
+      } catch (error) {
+        res.status(400).json({ error: 'Failed to update character sheet' });
+      }
+      break;
+
+    case 'DELETE':
+      try {
+        await deleteCharacterSheet(req.query.id as string);
+        res.status(204).end();
+      } catch (error) {
+        res.status(400).json({ error: 'Failed to delete character sheet' });
+      }
+      break;
+
+    default:
+      res.status(405).end(); // Method Not Allowed
+      break;
+  }
 }
