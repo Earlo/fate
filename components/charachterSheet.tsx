@@ -13,7 +13,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [aspects, setAspects] = useState(['']);
-  const [skills, setSkills] = useState<{ [level: number]: Skill[] }>({}); // Updated skills type
+  const [skills, setSkills] = useState<{ [level: number]: Skill[] }>({});
   const [stunts, setStunts] = useState([{ name: '', description: '' }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -45,16 +45,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
 
   return (
     <FormContainer onSubmit={handleSubmit}>
+      <Input name="name" required onChange={(e) => setName(e.target.value)} />
       <Input
-        label="Name:"
-        name="name"
-        type="text"
+        name="Description"
+        multiline
         required
-        onChange={(e) => setName(e.target.value)}
-      />
-      <label>Description:</label>
-      <textarea
-        name="description"
         onChange={(e) => setDescription(e.target.value)}
       />
       {aspects.map((aspect, index) => (
@@ -62,7 +57,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
           key={aspect}
           label={`Aspect ${index + 1}:`}
           name={`aspect-${index}`}
-          type="text"
           value={aspect}
           onChange={(e) =>
             setAspects([
@@ -80,7 +74,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
           <Input
             label={`Stunt ${index + 1} Name:`}
             name={`stunt-${index}-name`}
-            type="text"
             value={stunt.name}
             onChange={(e) =>
               setStunts([
@@ -93,7 +86,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
           <Input
             label={`Stunt ${index + 1} Description:`}
             name={`stunt-${index}-description`}
-            type="text"
             value={stunt.description}
             onChange={(e) =>
               setStunts([

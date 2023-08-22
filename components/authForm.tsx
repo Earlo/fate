@@ -8,7 +8,7 @@ export default function AuthForm() {
   const [usernameExists, setUsernameExists] = useState(false);
 
   const handleUsernameChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const username = e.target.value;
     const response = await fetch('/api/check-username', {
@@ -46,12 +46,7 @@ export default function AuthForm() {
   return (
     <div className="w-full max-w-xs mx-auto mt-8">
       <FormContainer onSubmit={handleSubmit}>
-        <Input
-          name="username"
-          type="text"
-          required
-          onChange={handleUsernameChange}
-        />
+        <Input name="username" required onChange={handleUsernameChange} />
         <Input name="password" type="password" required />
         <div className="flex items-center justify-between">
           <Button label={usernameExists ? 'Login' : 'Register'} type="submit" />

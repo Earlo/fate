@@ -1,4 +1,3 @@
-import { Skill } from '@/types/fate';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const characterSheetSchema = new Schema({
