@@ -27,10 +27,18 @@ export const tiers = [
 
 interface SkillGridProps {
   skills: { [level: number]: Skill[] };
-  onChange: (level: number, slotIndex: number, name: Skill) => void;
+  setSkills: React.Dispatch<React.SetStateAction<{ [level: number]: Skill[] }>>;
 }
 
-const SkillGrid: React.FC<SkillGridProps> = ({ skills, onChange }) => {
+const SkillGrid: React.FC<SkillGridProps> = ({ skills, setSkills }) => {
+  const handleSkillChange = (level: number, slotIndex: number, name: Skill) => {
+    const updatedSkills = { ...skills };
+    updatedSkills[level] = updatedSkills[level] || [];
+    updatedSkills[level][slotIndex] = name;
+    console.log(updatedSkills);
+    setSkills(updatedSkills);
+  };
+
   return (
     <div className="w-4/6">
       <Label name="Skills" />
@@ -51,7 +59,9 @@ const SkillGrid: React.FC<SkillGridProps> = ({ skills, onChange }) => {
                       !(skills[tier.level] || [])[slotIndex - 1] &&
                       !(skills[tier.level] || [])[slotIndex]
                     }
-                    onChange={(name) => onChange(tier.level, slotIndex, name)}
+                    onChange={(name) =>
+                      handleSkillChange(tier.level, slotIndex, name)
+                    }
                   />
                 </td>
               ))}

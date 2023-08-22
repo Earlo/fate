@@ -42,22 +42,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
     setIsSubmitting(false);
   };
 
-  const handleSkillChange = (level: number, slotIndex: number, name: Skill) => {
-    const updatedSkills = { ...skills };
-    updatedSkills[level] = updatedSkills[level] || [];
-    updatedSkills[level][slotIndex] = name;
-    console.log(updatedSkills);
-    setSkills(updatedSkills);
-  };
-
-  const handleAspectChange = (index: number, value: string) => {
-    setAspects([
-      ...aspects.slice(0, index),
-      value,
-      ...aspects.slice(index + 1),
-    ]);
-  };
-
   return (
     <FormContainer onSubmit={handleSubmit}>
       <Input name="name" required onChange={(e) => setName(e.target.value)} />
@@ -68,8 +52,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
         onChange={(e) => setDescription(e.target.value)}
       />
       <div className="flex justify-between">
-        <AspectInput aspects={aspects} onChange={handleAspectChange} />
-        <SkillGrid skills={skills} onChange={handleSkillChange} />
+        <AspectInput aspects={aspects} setAspects={setAspects} />
+        <SkillGrid skills={skills} setSkills={setSkills} />
       </div>
       <StuntInput stunts={stunts} setStunts={setStunts} />
       <Button

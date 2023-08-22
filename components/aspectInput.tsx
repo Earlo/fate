@@ -4,12 +4,20 @@ import React from 'react';
 
 interface AspectInputProps {
   aspects: string[];
-  onChange: (index: number, value: string) => void;
+  setAspects: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const hints = ['High Concept', 'Trouble'];
 
-const AspectInput: React.FC<AspectInputProps> = ({ aspects, onChange }) => {
+const AspectInput: React.FC<AspectInputProps> = ({ aspects, setAspects }) => {
+  const handleAspectChange = (index: number, value: string) => {
+    setAspects([
+      ...aspects.slice(0, index),
+      value,
+      ...aspects.slice(index + 1),
+    ]);
+  };
+
   return (
     <div className="w-3/10">
       <Label name="Aspects" />
@@ -21,7 +29,7 @@ const AspectInput: React.FC<AspectInputProps> = ({ aspects, onChange }) => {
             index < hints.length ? hints[index] : 'Additional Aspect'
           }
           value={aspects[index] || ''}
-          onChange={(e) => onChange(index, e.target.value)}
+          onChange={(e) => handleAspectChange(index, e.target.value)}
         />
       ))}
     </div>
