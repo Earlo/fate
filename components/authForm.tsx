@@ -1,4 +1,6 @@
+import FormContainer from './formContainer';
 import Input from './input';
+import Button from './button';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 
@@ -43,10 +45,7 @@ export default function AuthForm() {
 
   return (
     <div className="w-full max-w-xs mx-auto mt-8">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-      >
+      <FormContainer onSubmit={handleSubmit}>
         <Input
           label="Username:"
           name="username"
@@ -56,14 +55,9 @@ export default function AuthForm() {
         />
         <Input label="Password:" name="password" type="password" required />
         <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            {usernameExists ? 'Login' : 'Register'}
-          </button>
+          <Button label={usernameExists ? 'Login' : 'Register'} type="submit" />
         </div>
-      </form>
+      </FormContainer>
     </div>
   );
 }

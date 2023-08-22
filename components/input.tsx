@@ -15,7 +15,8 @@ const Input: React.FC<InputProps> = ({
 }) => (
   <div className="mb-4">
     <label
-      className="block text-gray-700 text-sm font-bold mb-2"
+      className="block font-black uppercase bg-black text-white p-1 mt-1 text-xl"
+      style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: '22px' }}
       htmlFor={name}
     >
       {label}
@@ -23,7 +24,12 @@ const Input: React.FC<InputProps> = ({
     <input
       type={type}
       name={name}
-      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      className="form-control w-full h-10 p-2 text-base text-gray-700 bg-white border border-gray-300 rounded"
+      style={{
+        height: 'calc(1.5em + 0.75rem + 2px)',
+        transition:
+          'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
+      }}
       required={required}
       onChange={onChange}
     />
