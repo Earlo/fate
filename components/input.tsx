@@ -1,46 +1,38 @@
 import Label from './label';
+import SoloInput from './soloInput';
 import { HTMLInputTypeAttribute } from 'react';
 interface InputProps {
-  label?: string;
   name: string;
   type?: HTMLInputTypeAttribute;
   value?: string;
   required?: boolean;
   multiline?: boolean;
+  placeholder?: string;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
 }
 
 const Input: React.FC<InputProps> = ({
-  label,
   name,
   type = 'text',
   value,
   required,
   multiline = false,
+  placeholder,
   onChange,
 }) => (
   <div className="mb-4">
     <Label name={name} />
-    {multiline ? (
-      <textarea
-        name={name}
-        value={value}
-        className="form-control w-full h-32 p-2 text-base text-gray-700 bg-white border border-gray-300 rounded"
-        required={required}
-        onChange={onChange}
-      />
-    ) : (
-      <input
-        type={type}
-        name={name}
-        value={value}
-        className="form-control w-full h-10 p-2 text-base text-gray-700 bg-white border border-gray-300 rounded"
-        required={required}
-        onChange={onChange}
-      />
-    )}
+    <SoloInput
+      name={name}
+      type={type}
+      value={value}
+      required={required}
+      multiline={multiline}
+      placeholder={placeholder}
+      onChange={onChange}
+    />
   </div>
 );
 

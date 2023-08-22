@@ -1,6 +1,7 @@
 import Button from './button';
 import Input from './input';
 import FormContainer from './formContainer';
+import AspectInput from './aspectInput';
 import SkillGrid from './skillGrid';
 import { Skill } from '@/types/fate';
 import React, { FormEvent, useState } from 'react';
@@ -12,7 +13,7 @@ interface CharacterSheetProps {
 const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [aspects, setAspects] = useState(['']);
+  const [aspects, setAspects] = useState(['', '', '', '', '']);
   const [skills, setSkills] = useState<{ [level: number]: Skill[] }>({});
   const [stunts, setStunts] = useState([{ name: '', description: '' }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,6 +44,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
     setIsSubmitting(false);
   };
 
+  const handleAspectChange = (index: number, value: string) => {
+    setAspects([
+      ...aspects.slice(0, index),
+      value,
+      ...aspects.slice(index + 1),
+    ]);
+  };
+
   return (
     <FormContainer onSubmit={handleSubmit}>
       <Input name="name" required onChange={(e) => setName(e.target.value)} />
@@ -52,27 +61,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
         required
         onChange={(e) => setDescription(e.target.value)}
       />
-      {aspects.map((aspect, index) => (
-        <Input
-          key={aspect}
-          label={`Aspect ${index + 1}:`}
-          name={`aspect-${index}`}
-          value={aspect}
-          onChange={(e) =>
-            setAspects([
-              ...aspects.slice(0, index),
-              e.target.value,
-              ...aspects.slice(index + 1),
-            ])
-          }
-        />
-      ))}
-      <Button label="Add Aspect" onClick={() => setAspects([...aspects, ''])} />
+      <AspectInput aspects={aspects} onChange={handleAspectChange} />
       <SkillGrid skills={skills} onChange={handleSkillChange} />
       {stunts.map((stunt, index) => (
         <div key={index}>
           <Input
-            label={`Stunt ${index + 1} Name:`}
             name={`stunt-${index}-name`}
             value={stunt.name}
             onChange={(e) =>
@@ -84,7 +77,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
             }
           />
           <Input
-            label={`Stunt ${index + 1} Description:`}
             name={`stunt-${index}-description`}
             value={stunt.description}
             onChange={(e) =>
