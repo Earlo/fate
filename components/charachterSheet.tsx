@@ -62,7 +62,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
         required
         onChange={(e) => setDescription(e.target.value)}
       />
-      <div className="flex">
+      <div className="flex justify-between">
         <AspectInput aspects={aspects} onChange={handleAspectChange} />
         <SkillGrid skills={skills} onChange={handleSkillChange} />
       </div>

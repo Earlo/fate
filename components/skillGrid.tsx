@@ -32,7 +32,7 @@ interface SkillGridProps {
 
 const SkillGrid: React.FC<SkillGridProps> = ({ skills, onChange }) => {
   return (
-    <div>
+    <div className="w-4/6">
       <Label name="Skills" />
       <table>
         <tbody>

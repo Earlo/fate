@@ -11,7 +11,7 @@ const hints = ['High Concept', 'Trouble'];
 
 const AspectInput: React.FC<AspectInputProps> = ({ aspects, onChange }) => {
   return (
-    <div>
+    <div className="w-1/5">
       <Label name="Aspects" />
       <table>
         <tbody>
