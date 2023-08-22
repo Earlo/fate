@@ -6,25 +6,20 @@ import StuntInput from './stuntInput';
 import SkillGrid from './skillGrid';
 import { Skill } from '@/types/fate';
 import React, { FormEvent, useState } from 'react';
+import { useSession } from 'next-auth/react';
 
 interface CharacterSheetProps {
   onClose: () => void;
 }
 
 const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
+  const { data: session } = useSession();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [aspects, setAspects] = useState(['', '', '', '', '']);
   const [skills, setSkills] = useState<{ [level: number]: Skill[] }>({});
   const [stunts, setStunts] = useState([{ name: '', description: '' }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSkillChange = (level: number, slotIndex: number, name: Skill) => {
-    const updatedSkills = { ...skills };
-    updatedSkills[level] = updatedSkills[level] || [];
-    updatedSkills[level][slotIndex] = name;
-    setSkills(updatedSkills);
-  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,6 +30,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
       aspects,
       skills,
       stunts,
+      visibleToPlayers: session?.user.admin ? false : true,
+      controlledBy: session?.user._id,
     };
     await fetch('/api/sheet', {
       method: 'POST',
@@ -43,6 +40,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
     });
     onClose();
     setIsSubmitting(false);
+  };
+
+  const handleSkillChange = (level: number, slotIndex: number, name: Skill) => {
+    const updatedSkills = { ...skills };
+    updatedSkills[level] = updatedSkills[level] || [];
+    updatedSkills[level][slotIndex] = name;
+    console.log(updatedSkills);
+    setSkills(updatedSkills);
   };
 
   const handleAspectChange = (index: number, value: string) => {

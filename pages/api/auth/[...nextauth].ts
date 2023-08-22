@@ -39,6 +39,7 @@ export default NextAuth({
       session.user = {
         username: found.username,
         admin: found.admin,
+        _id: found._id.toString(),
       };
       return session; // The return type will match the one returned in `useSession()`
     },

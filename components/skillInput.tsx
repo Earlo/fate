@@ -5,6 +5,7 @@ interface SkillInputProps {
   level: number;
   onChange: (value: Skill) => void;
   value: Skill;
+  disabled?: boolean;
 }
 
 const skillOptions: Skill[] = [
@@ -28,12 +29,21 @@ const skillOptions: Skill[] = [
   'Will',
 ];
 
-const SkillInput: React.FC<SkillInputProps> = ({ onChange, value }) => {
+const SkillInput: React.FC<SkillInputProps> = ({
+  onChange,
+  value,
+  disabled,
+}) => {
   return (
     <select
-      className="form-control h-10 p-2 text-base text-gray-700 bg-white border border-gray-300 rounded"
+      className={`h-10 p-2 text-base ${
+        disabled
+          ? 'text-gray-400 bg-gray-200'
+          : `bg-white  ${!value ? 'text-gray-400' : 'text-gray-700'}`
+      } border border-gray-300 rounded`}
       value={value}
       onChange={(e) => onChange(e.target.value as Skill)}
+      disabled={disabled}
     >
       <option value="">Select Skill</option>
       {skillOptions.map((skill: Skill) => (

@@ -4,7 +4,7 @@ export const characterSheetSchema = new Schema({
   name: String,
   description: String,
   aspects: [String],
-  skills: { level: [String] },
+  skills: { type: Map, of: [String] },
   stunts: [{ name: String, description: String }],
   visibleToPlayers: Boolean,
   controlledBy: String,

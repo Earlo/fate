@@ -25,7 +25,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
       name={name}
       value={value}
       placeholder={placeholder}
-      className="form-control w-full h-32 p-2 text-base text-gray-700 bg-white border border-gray-300 rounded placeholder-gray-400"
+      className="h-32 p-2 text-base w-full text-gray-700 bg-white border border-gray-300 rounded placeholder-gray-400"
       required={required}
       onChange={onChange}
     />
@@ -35,7 +35,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
       name={name}
       value={value}
       placeholder={placeholder}
-      className="form-control w-full h-10 p-2 text-base text-gray-700 bg-white border border-gray-300 rounded placeholder-gray-400"
+      className="h-10 p-2 text-base w-full text-gray-700 bg-white border border-gray-300 rounded placeholder-gray-400"
       required={required}
       onChange={onChange}
     />

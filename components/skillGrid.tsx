@@ -38,7 +38,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({ skills, onChange }) => {
         <tbody>
           {tiers.map((tier, index) => (
             <tr key={index}>
-              <td className="block font-black uppercase text-black p-1 mt-1 text-xl">
+              <td className="block font-black uppercase text-black p-1 mt-1 text-xl whitespace-nowrap">
                 {`${tier.label} +${tier.level}`}
               </td>
               {Array.from({ length: 5 }).map((_, slotIndex) => (
@@ -46,6 +46,11 @@ const SkillGrid: React.FC<SkillGridProps> = ({ skills, onChange }) => {
                   <SkillInput
                     level={tier.level}
                     value={(skills[tier.level] || [])[slotIndex] || ''}
+                    disabled={
+                      slotIndex != 0 &&
+                      !(skills[tier.level] || [])[slotIndex - 1] &&
+                      !(skills[tier.level] || [])[slotIndex]
+                    }
                     onChange={(name) => onChange(tier.level, slotIndex, name)}
                   />
                 </td>
