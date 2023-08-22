@@ -2,6 +2,7 @@ import Button from './button';
 import Input from './input';
 import FormContainer from './formContainer';
 import AspectInput from './aspectInput';
+import StuntInput from './stuntInput';
 import SkillGrid from './skillGrid';
 import { Skill } from '@/types/fate';
 import React, { FormEvent, useState } from 'react';
@@ -61,34 +62,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
         required
         onChange={(e) => setDescription(e.target.value)}
       />
-      <AspectInput aspects={aspects} onChange={handleAspectChange} />
-      <SkillGrid skills={skills} onChange={handleSkillChange} />
-      {stunts.map((stunt, index) => (
-        <div key={index}>
-          <Input
-            name={`stunt-${index}-name`}
-            value={stunt.name}
-            onChange={(e) =>
-              setStunts([
-                ...stunts.slice(0, index),
-                { name: e.target.value, description: stunt.description },
-                ...stunts.slice(index + 1),
-              ])
-            }
-          />
-          <Input
-            name={`stunt-${index}-description`}
-            value={stunt.description}
-            onChange={(e) =>
-              setStunts([
-                ...stunts.slice(0, index),
-                { name: stunt.name, description: e.target.value },
-                ...stunts.slice(index + 1),
-              ])
-            }
-          />
-        </div>
-      ))}
+      <div className="flex">
+        <AspectInput aspects={aspects} onChange={handleAspectChange} />
+        <SkillGrid skills={skills} onChange={handleSkillChange} />
+      </div>
+      <StuntInput stunts={stunts} setStunts={setStunts} />
       <Button
         label="Add Stunt"
         onClick={() => setStunts([...stunts, { name: '', description: '' }])}
