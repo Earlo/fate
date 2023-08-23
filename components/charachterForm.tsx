@@ -5,20 +5,35 @@ import AspectInput from './sheet/aspectInput';
 import StuntInput from './sheet/stuntInput';
 import SkillGrid from './sheet/skillGrid';
 import { Skill } from '@/types/fate';
+import { CharacterSheetT } from '@/schemas/sheet';
 import React, { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
-interface CharacterSheetProps {
-  onClose: () => void;
+interface CharacterFormProps {
+  onClose?: () => void;
+  initialSheet?: CharacterSheetT;
+  disabled?: boolean;
 }
 
-const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
+const CharacterForm: React.FC<CharacterFormProps> = ({
+  onClose,
+  initialSheet,
+  disabled,
+}) => {
   const { data: session } = useSession();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [aspects, setAspects] = useState(['', '', '', '', '']);
-  const [skills, setSkills] = useState<{ [level: number]: Skill[] }>({});
-  const [stunts, setStunts] = useState([{ name: '', description: '' }]);
+  const [name, setName] = useState(initialSheet?.name || '');
+  const [description, setDescription] = useState(
+    initialSheet?.description || '',
+  );
+  const [aspects, setAspects] = useState(
+    initialSheet?.aspects || ['', '', '', '', ''],
+  );
+  const [skills, setSkills] = useState<{ [level: number]: Skill[] }>(
+    initialSheet?.skills || {},
+  );
+  const [stunts, setStunts] = useState<{ name: string; description: string }[]>(
+    initialSheet?.stunts || [{ name: '', description: '' }],
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -38,7 +53,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(sheet),
     });
-    onClose();
+    if (onClose) onClose();
     setIsSubmitting(false);
   };
 
@@ -66,4 +81,4 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ onClose }) => {
   );
 };
 
-export default CharacterSheet;
+export default CharacterForm;

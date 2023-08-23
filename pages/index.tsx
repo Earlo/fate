@@ -1,19 +1,27 @@
 import AuthForm from '../components/authForm';
-import CharacterSheetForm from '../components/charachterSheet';
+import CharacterForm from '../components/charachterForm';
 import Button from '@/components/generic/button';
 import { CharacterSheetT } from '@/schemas/sheet';
+import CharacterButton from '@/components/dashboard/charachterButton';
+import CharachterSheet from '@/components/dashboard/charachterSheet';
 import React, { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const [showSheetForm, setShowSheetForm] = useState(false);
-  const [characterSheets, setCharacterSheets] = useState<CharacterSheetT[]>([]);
+  const [CharacterForms, setCharacterForms] = useState<CharacterSheetT[]>([]);
+  const [selectedCharacter, setSelectedCharacter] =
+    useState<CharacterSheetT | null>(null);
+
+  const handleCharacterClick = (character: CharacterSheetT) => {
+    setSelectedCharacter(character);
+  };
   useEffect(() => {
     if (session) {
       fetch(`/api/sheets?id=${session.user.id}`)
         .then((response) => response.json())
-        .then((data) => setCharacterSheets(data));
+        .then((data) => setCharacterForms(data));
     }
   }, [session]);
 
@@ -33,12 +41,20 @@ export default function Dashboard() {
         />
         <div>
           <h2>Your Character Sheets:</h2>
-          {characterSheets.map((sheet) => (
-            <div key={sheet.name}>{sheet.name}</div>
+          {CharacterForms.map((sheet) => (
+            <CharacterButton
+              key={sheet.name}
+              name={sheet.name}
+              highConcept={sheet.aspects[0]}
+              onClick={() => handleCharacterClick(sheet)}
+            />
           ))}
         </div>
+        {selectedCharacter && (
+          <CharachterSheet character={selectedCharacter} editable={false} />
+        )}
         {showSheetForm && (
-          <CharacterSheetForm onClose={() => setShowSheetForm(false)} />
+          <CharacterForm onClose={() => setShowSheetForm(false)} />
         )}
       </div>
     );
