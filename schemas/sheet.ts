@@ -32,3 +32,7 @@ export async function updateCharacterSheet(
 export async function deleteCharacterSheet(id: string) {
   return await CharacterSheet.findByIdAndDelete(id);
 }
+
+export async function getCharacterSheets(id: string) {
+  return await CharacterSheet.find({ controlledBy: id });
+}
