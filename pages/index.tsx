@@ -14,8 +14,10 @@ export default function Dashboard() {
   const [selectedCharacter, setSelectedCharacter] =
     useState<CharacterSheetT | null>(null);
 
-  const handleCharacterClick = (character: CharacterSheetT) => {
-    setSelectedCharacter(character);
+  const toggleSelectedCharachter = (character: CharacterSheetT) => {
+    setSelectedCharacter((currentChar) =>
+      currentChar?.name === character.name ? null : character,
+    );
   };
   useEffect(() => {
     if (session) {
@@ -46,7 +48,7 @@ export default function Dashboard() {
               key={sheet.name}
               name={sheet.name}
               highConcept={sheet.aspects[0]}
-              onClick={() => handleCharacterClick(sheet)}
+              onClick={() => toggleSelectedCharachter(sheet)}
             />
           ))}
         </div>
