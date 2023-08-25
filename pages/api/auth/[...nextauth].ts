@@ -42,7 +42,7 @@ export default NextAuth({
         admin: found.admin,
         id: found._id.toString(),
       };
-      return session; // The return type will match the one returned in `useSession()`
+      return session;
     },
   },
 });
