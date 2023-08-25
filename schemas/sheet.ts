@@ -3,6 +3,7 @@ import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const characterSheetSchema = new Schema({
   name: { type: String, required: true },
+  icon: String,
   description: String,
   aspects: [String],
   skills: { type: Map, of: [String], keyType: Number },

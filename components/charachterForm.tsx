@@ -1,5 +1,6 @@
 import Button from './generic/button';
 import Input from './generic/input';
+import ImageUploader from './generic/imageUploader';
 import FormContainer from './formContainer';
 import AspectInput from './sheet/aspectInput';
 import StuntInput from './sheet/stuntInput';
@@ -18,10 +19,11 @@ interface CharacterFormProps {
 const CharacterForm: React.FC<CharacterFormProps> = ({
   onClose,
   initialSheet,
-  disabled,
+  disabled = false,
 }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(initialSheet?.name || '');
+  const [icon, setIcon] = useState<string>(initialSheet?.icon || '');
   const [description, setDescription] = useState(
     initialSheet?.description || '',
   );
@@ -41,6 +43,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     setIsSubmitting(true);
     const sheet = {
       name,
+      icon,
       description,
       aspects,
       skills,
@@ -59,13 +62,22 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
 
   return (
     <FormContainer onSubmit={handleSubmit}>
-      <Input name="name" required onChange={(e) => setName(e.target.value)} />
-      <Input
-        name="Description"
-        multiline
-        required
-        onChange={(e) => setDescription(e.target.value)}
-      />
+      <div className={`flex items-center `}>
+        <ImageUploader setIcon={setIcon} icon={icon} />
+        <div className={`flex flex-col ml-4 flex-grow`}>
+          <Input
+            name="name"
+            required
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            name="Description"
+            multiline
+            required
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+      </div>
       <div className="flex justify-between">
         <AspectInput aspects={aspects} setAspects={setAspects} />
         <SkillGrid skills={skills} setSkills={setSkills} />
