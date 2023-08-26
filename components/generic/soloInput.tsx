@@ -4,11 +4,12 @@ interface SoloInputProps {
   type?: HTMLInputTypeAttribute;
   value?: string;
   required?: boolean;
-  multiline?: boolean;
   placeholder?: string;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
+  multiline?: boolean;
+  disabled?: boolean;
 }
 
 const SoloInput: React.FC<SoloInputProps> = ({
@@ -16,9 +17,10 @@ const SoloInput: React.FC<SoloInputProps> = ({
   type = 'text',
   value,
   required,
-  multiline = false,
   placeholder,
   onChange,
+  multiline = false,
+  disabled = false,
 }) =>
   multiline ? (
     <textarea
@@ -28,6 +30,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
       className="h-32 p-2 text-base w-full text-gray-700 bg-white border border-gray-300 rounded placeholder-gray-400"
       required={required}
       onChange={onChange}
+      disabled={disabled}
     />
   ) : (
     <input
@@ -38,6 +41,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
       className="h-10 p-2 text-base w-full text-gray-700 bg-white border border-gray-300 rounded placeholder-gray-400"
       required={required}
       onChange={onChange}
+      disabled={disabled}
     />
   );
 

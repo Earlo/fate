@@ -1,15 +1,19 @@
 import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
-import React from 'react';
 
 interface AspectInputProps {
   aspects: string[];
   setAspects: React.Dispatch<React.SetStateAction<string[]>>;
+  disabled?: boolean;
 }
 
 const hints = ['High Concept', 'Trouble'];
 
-const AspectInput: React.FC<AspectInputProps> = ({ aspects, setAspects }) => {
+const AspectInput: React.FC<AspectInputProps> = ({
+  aspects,
+  setAspects,
+  disabled,
+}) => {
   const handleAspectChange = (index: number, value: string) => {
     setAspects([
       ...aspects.slice(0, index),
@@ -30,6 +34,7 @@ const AspectInput: React.FC<AspectInputProps> = ({ aspects, setAspects }) => {
           }
           value={aspects[index] || ''}
           onChange={(e) => handleAspectChange(index, e.target.value)}
+          disabled={disabled}
         />
       ))}
     </div>

@@ -1,7 +1,6 @@
 import SkillInput from './skillInput';
 import Label from '../generic/label';
 import { Skill } from '@/types/fate';
-import React from 'react';
 /*
 export const tiers = [
   { level: 8, label: 'Legendary' },
@@ -28,9 +27,14 @@ export const tiers = [
 interface SkillGridProps {
   skills: { [level: number]: Skill[] };
   setSkills: React.Dispatch<React.SetStateAction<{ [level: number]: Skill[] }>>;
+  disabled?: boolean;
 }
 
-const SkillGrid: React.FC<SkillGridProps> = ({ skills, setSkills }) => {
+const SkillGrid: React.FC<SkillGridProps> = ({
+  skills,
+  setSkills,
+  disabled,
+}) => {
   const handleSkillChange = (level: number, slotIndex: number, name: Skill) => {
     const updatedSkills = { ...skills };
     updatedSkills[level] = updatedSkills[level] || [];
@@ -55,9 +59,10 @@ const SkillGrid: React.FC<SkillGridProps> = ({ skills, setSkills }) => {
                     level={tier.level}
                     value={(skills[tier.level] || [])[slotIndex] || ''}
                     disabled={
-                      slotIndex != 0 &&
-                      !(skills[tier.level] || [])[slotIndex - 1] &&
-                      !(skills[tier.level] || [])[slotIndex]
+                      disabled ||
+                      (slotIndex != 0 &&
+                        !(skills[tier.level] || [])[slotIndex - 1] &&
+                        !(skills[tier.level] || [])[slotIndex])
                     }
                     onChange={(name) =>
                       handleSkillChange(tier.level, slotIndex, name)

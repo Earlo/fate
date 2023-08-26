@@ -1,13 +1,18 @@
 import SoloInput from '../generic/soloInput';
 import Label from '../generic/label';
-import React from 'react';
+import Button from '../generic/button';
 
 interface StuntInputProps {
   stunts: { name: string; description: string }[];
   setStunts: (value: { name: string; description: string }[]) => void;
+  disabled?: boolean;
 }
 
-const StuntInput: React.FC<StuntInputProps> = ({ stunts, setStunts }) => {
+const StuntInput: React.FC<StuntInputProps> = ({
+  stunts,
+  setStunts,
+  disabled = false,
+}) => {
   return (
     <div>
       <Label name="Stunts" />
@@ -18,6 +23,7 @@ const StuntInput: React.FC<StuntInputProps> = ({ stunts, setStunts }) => {
             value={stunt.name}
             placeholder="Stunt Name"
             required
+            disabled={disabled}
             onChange={(e) =>
               setStunts([
                 ...stunts.slice(0, index),
@@ -34,6 +40,7 @@ const StuntInput: React.FC<StuntInputProps> = ({ stunts, setStunts }) => {
             }
             multiline
             required
+            disabled={disabled}
             onChange={(e) =>
               setStunts([
                 ...stunts.slice(0, index),
@@ -44,6 +51,12 @@ const StuntInput: React.FC<StuntInputProps> = ({ stunts, setStunts }) => {
           />
         </div>
       ))}
+      {!disabled && (
+        <Button
+          label="Add Stunt"
+          onClick={() => setStunts([...stunts, { name: '', description: '' }])}
+        />
+      )}
     </div>
   );
 };

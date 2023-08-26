@@ -11,6 +11,7 @@ interface InputProps {
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
+  disabled?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -21,6 +22,7 @@ const Input: React.FC<InputProps> = ({
   multiline = false,
   placeholder,
   onChange,
+  disabled = false,
 }) => (
   <div className="mb-4">
     <Label name={name} />
@@ -32,6 +34,7 @@ const Input: React.FC<InputProps> = ({
       multiline={multiline}
       placeholder={placeholder}
       onChange={onChange}
+      disabled={disabled}
     />
   </div>
 );

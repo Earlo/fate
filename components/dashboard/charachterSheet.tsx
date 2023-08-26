@@ -10,7 +10,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   character,
   editable,
 }) => {
-  return <CharacterForm initialSheet={character} disabled={!editable} />;
+  return (
+    <CharacterForm
+      initialSheet={character}
+      state={editable ? 'edit' : 'view'}
+    />
+  );
 };
 
 export default CharacterSheet;

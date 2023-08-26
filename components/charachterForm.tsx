@@ -13,13 +13,13 @@ import { useSession } from 'next-auth/react';
 interface CharacterFormProps {
   onClose?: () => void;
   initialSheet?: CharacterSheetT;
-  disabled?: boolean;
+  state?: 'create' | 'edit' | 'view';
 }
 
 const CharacterForm: React.FC<CharacterFormProps> = ({
   onClose,
   initialSheet,
-  disabled = false,
+  state = 'create',
 }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(initialSheet?.name || '');
@@ -37,9 +37,11 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     initialSheet?.stunts || [{ name: '', description: '' }],
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const isViewMode = state === 'view';
+  const isEditMode = state === 'edit';
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isViewMode) return;
     setIsSubmitting(true);
     const sheet = {
       name,
@@ -63,32 +65,46 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   return (
     <FormContainer onSubmit={handleSubmit}>
       <div className={`flex items-center `}>
-        <ImageUploader setIcon={setIcon} icon={icon} />
+        <ImageUploader setIcon={setIcon} icon={icon} path={'charachter'} />
         <div className={`flex flex-col ml-4 flex-grow`}>
           <Input
             name="name"
-            required
+            required={!isViewMode}
+            disabled={isViewMode}
             onChange={(e) => setName(e.target.value)}
+            value={name}
           />
           <Input
             name="Description"
             multiline
-            required
+            required={!isViewMode}
+            disabled={isViewMode}
             onChange={(e) => setDescription(e.target.value)}
+            value={description}
           />
         </div>
       </div>
       <div className="flex justify-between">
-        <AspectInput aspects={aspects} setAspects={setAspects} />
-        <SkillGrid skills={skills} setSkills={setSkills} />
+        <AspectInput
+          aspects={aspects}
+          setAspects={setAspects}
+          disabled={isViewMode}
+        />
+        <SkillGrid
+          skills={skills}
+          setSkills={setSkills}
+          disabled={isViewMode}
+        />
       </div>
-      <StuntInput stunts={stunts} setStunts={setStunts} />
-      <Button
-        label="Add Stunt"
-        onClick={() => setStunts([...stunts, { name: '', description: '' }])}
-      />
-      <Button label="Create" disabled={isSubmitting} type="submit" />
-      <Button label="Cancel" disabled={isSubmitting} onClick={onClose} />
+      <StuntInput stunts={stunts} setStunts={setStunts} disabled={isViewMode} />
+      {!isViewMode && (
+        <Button
+          label={isEditMode ? 'Save Changes' : 'Create'}
+          disabled={isSubmitting}
+          type="submit"
+        />
+      )}
+      <Button label="Cancel" disabled={isSubmitting} onClick={onClose} />{' '}
     </FormContainer>
   );
 };
