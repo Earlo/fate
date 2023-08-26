@@ -14,12 +14,14 @@ interface CharacterFormProps {
   onClose?: () => void;
   initialSheet?: CharacterSheetT;
   state?: 'create' | 'edit' | 'view';
+  setCharachters?: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
 }
 
 const CharacterForm: React.FC<CharacterFormProps> = ({
   onClose,
   initialSheet,
   state = 'create',
+  setCharachters,
 }) => {
   const { data: session } = useSession();
   const [name, setName] = useState(initialSheet?.name || '');
@@ -39,25 +41,53 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isViewMode = state === 'view';
   const isEditMode = state === 'edit';
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isViewMode) return;
     setIsSubmitting(true);
-    const sheet = {
+    let sheet: Partial<CharacterSheetT> = {
       name,
       icon,
       description,
       aspects,
       skills,
       stunts,
-      visibleToPlayers: session?.user.admin ? false : true,
-      controlledBy: session?.user.id,
     };
-    await fetch('/api/sheet', {
-      method: 'POST',
+
+    if (!isEditMode) {
+      sheet = {
+        ...sheet,
+        visibleToPlayers: session?.user.admin ? false : true,
+        controlledBy: session?.user.id,
+      };
+    }
+    const apiMethod = isEditMode ? 'PUT' : 'POST';
+    const apiUrl = isEditMode
+      ? `/api/sheet/${initialSheet?._id}`
+      : '/api/sheet';
+    const response = await fetch(apiUrl, {
+      method: apiMethod,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(sheet),
     });
+    const data = await response.json();
+    if (setCharachters) {
+      setCharachters((prevCharachters) => {
+        const index = prevCharachters.findIndex(
+          (char) => char._id === data._id,
+        );
+        if (index !== -1) {
+          return [
+            ...prevCharachters.slice(0, index),
+            data,
+            ...prevCharachters.slice(index + 1),
+          ];
+        } else {
+          return [...prevCharachters, data];
+        }
+      });
+    }
     if (onClose) onClose();
     setIsSubmitting(false);
   };
@@ -104,7 +134,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
           type="submit"
         />
       )}
-      <Button label="Cancel" disabled={isSubmitting} onClick={onClose} />{' '}
+      <Button label="Cancel" disabled={isSubmitting} onClick={onClose} />
     </FormContainer>
   );
 };

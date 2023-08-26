@@ -10,20 +10,20 @@ import { useSession, signOut } from 'next-auth/react';
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const [showSheetForm, setShowSheetForm] = useState(false);
-  const [CharacterForms, setCharacterForms] = useState<CharacterSheetT[]>([]);
+  const [charachters, setCharachters] = useState<CharacterSheetT[]>([]);
   const [selectedCharacter, setSelectedCharacter] =
     useState<CharacterSheetT | null>(null);
 
   const toggleSelectedCharachter = (character: CharacterSheetT) => {
     setSelectedCharacter((currentChar) =>
-      currentChar?.name === character.name ? null : character,
+      currentChar?._id === character._id ? null : character,
     );
   };
   useEffect(() => {
     if (session) {
       fetch(`/api/sheets?id=${session.user.id}`)
         .then((response) => response.json())
-        .then((data) => setCharacterForms(data));
+        .then((data) => setCharachters(data));
     }
   }, [session]);
 
@@ -43,9 +43,9 @@ export default function Dashboard() {
         />
         <div>
           <h2>Your Character Sheets:</h2>
-          {CharacterForms.map((sheet) => (
+          {charachters.map((sheet) => (
             <CharacterButton
-              key={sheet.name}
+              key={sheet._id}
               name={sheet.name}
               highConcept={sheet.aspects[0]}
               onClick={() => toggleSelectedCharachter(sheet)}
@@ -53,7 +53,12 @@ export default function Dashboard() {
           ))}
         </div>
         {selectedCharacter && (
-          <CharachterSheet character={selectedCharacter} editable={false} />
+          <CharachterSheet
+            character={selectedCharacter}
+            editable={selectedCharacter.controlledBy === session.user.id}
+            setCharachters={setCharachters}
+            onClose={() => setSelectedCharacter(null)}
+          />
         )}
         {showSheetForm && (
           <CharacterForm onClose={() => setShowSheetForm(false)} />

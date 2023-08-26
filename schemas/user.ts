@@ -7,4 +7,6 @@ export const userSchema = new Schema({
 });
 
 export const UserModel = mongoose.models.User || model('User', userSchema);
-export type UserModelT = InferSchemaType<typeof userSchema>;
+export type UserModelT = {
+  _id: string;
+} & InferSchemaType<typeof userSchema>;

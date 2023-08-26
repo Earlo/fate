@@ -25,18 +25,20 @@ const AspectInput: React.FC<AspectInputProps> = ({
   return (
     <div className="w-3/10">
       <Label name="Aspects" />
-      {Array.from({ length: 5 }).map((_, index) => (
-        <SoloInput
-          key={index}
-          name={`aspect-${index}`}
-          placeholder={
-            index < hints.length ? hints[index] : 'Additional Aspect'
-          }
-          value={aspects[index] || ''}
-          onChange={(e) => handleAspectChange(index, e.target.value)}
-          disabled={disabled}
-        />
-      ))}
+      {Array.from({ length: 5 }).map((_, index) =>
+        !aspects[index] && disabled ? null : (
+          <SoloInput
+            key={index}
+            name={`aspect-${index}`}
+            placeholder={
+              index < hints.length ? hints[index] : 'Additional Aspect'
+            }
+            value={aspects[index] || ''}
+            onChange={(e) => handleAspectChange(index, e.target.value)}
+            disabled={disabled}
+          />
+        ),
+      )}
     </div>
   );
 };

@@ -23,7 +23,8 @@ export const CharacterSheet =
 // Need to override one field here since egh :D
 export type CharacterSheetT = {
   skills: { [level: number]: Skill[] };
-} & InferSchemaType<typeof characterSheetSchema>;
+  _id: string;
+} & Omit<InferSchemaType<typeof characterSheetSchema>, 'skills'>;
 
 export async function createCharacterSheet(sheet: CharacterSheetT) {
   return await CharacterSheet.create(sheet);
@@ -37,7 +38,9 @@ export async function updateCharacterSheet(
   id: string,
   updates: Partial<CharacterSheetT>,
 ) {
-  return await CharacterSheet.findByIdAndUpdate(id, updates);
+  return await CharacterSheet.findByIdAndUpdate(id, updates, {
+    new: true,
+  });
 }
 
 export async function deleteCharacterSheet(id: string) {

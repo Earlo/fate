@@ -10,8 +10,8 @@ export default async function handler(
   switch (req.method) {
     case 'GET':
       try {
-        const sheet = await getCharacterSheets(req.query.id as string);
-        res.status(200).json(sheet);
+        const sheets = await getCharacterSheets(req.query.id as string);
+        res.status(200).json(sheets);
       } catch (error) {
         res.status(404).json({ error: 'Character sheet not found' });
       }

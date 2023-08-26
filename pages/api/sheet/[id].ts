@@ -1,6 +1,5 @@
 import {
   CharacterSheetT,
-  createCharacterSheet,
   getCharacterSheet,
   updateCharacterSheet,
   deleteCharacterSheet,
@@ -9,26 +8,16 @@ import connect from '@/lib/mongo';
 import { NextApiRequest, NextApiResponse } from 'next';
 connect();
 
-// POST request to create a character sheet
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  switch (req.method) {
-    case 'POST':
-      try {
-        const sheet: CharacterSheetT = req.body;
-        const newSheet = await createCharacterSheet(sheet);
-        res.status(201).json(newSheet);
-      } catch (error) {
-        console.log(error);
-        res.status(400).json({ error: 'Failed to create character sheet' });
-      }
-      break;
+  const id = req.query.id as string;
 
+  switch (req.method) {
     case 'GET':
       try {
-        const sheet = await getCharacterSheet(req.query.id as string);
+        const sheet = await getCharacterSheet(id);
         res.status(200).json(sheet);
       } catch (error) {
         res.status(404).json({ error: 'Character sheet not found' });
@@ -37,11 +26,8 @@ export default async function handler(
 
     case 'PUT':
       try {
-        const updates: Partial<CharacterSheetT> = JSON.parse(req.body);
-        const updatedSheet = await updateCharacterSheet(
-          req.query.id as string,
-          updates,
-        );
+        const updates: Partial<CharacterSheetT> = req.body;
+        const updatedSheet = await updateCharacterSheet(id, updates);
         res.status(200).json(updatedSheet);
       } catch (error) {
         res.status(400).json({ error: 'Failed to update character sheet' });
@@ -50,7 +36,7 @@ export default async function handler(
 
     case 'DELETE':
       try {
-        await deleteCharacterSheet(req.query.id as string);
+        await deleteCharacterSheet(id);
         res.status(204).end();
       } catch (error) {
         res.status(400).json({ error: 'Failed to delete character sheet' });
