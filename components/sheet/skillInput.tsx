@@ -35,11 +35,13 @@ const SkillInput: React.FC<SkillInputProps> = ({
 }) => {
   return (
     <select
-      className={`h-10 p-2 text-base ${
-        !value ? 'text-gray-400' : 'text-gray-700'
-      } 
-      ${disabled && !value ? 'bg-gray-200' : 'bg-white'}
-        border border-gray-300 rounded`}
+      className={`
+        h-10 p-2 text-base w-32
+        ${!value ? 'text-gray-400' : 'text-gray-700'}
+        ${disabled && !value ? 'bg-gray-200' : 'bg-white'}
+        ${disabled ? 'appearance-none' : ''}
+        border border-gray-300 rounded
+      `}
       value={value}
       onChange={(e) => onChange(e.target.value as Skill)}
       disabled={disabled}
