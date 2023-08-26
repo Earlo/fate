@@ -48,6 +48,7 @@ export default function Dashboard() {
               key={sheet._id}
               name={sheet.name}
               highConcept={sheet.aspects[0]}
+              imageUrl={sheet.icon}
               onClick={() => toggleSelectedCharachter(sheet)}
             />
           ))}
