@@ -44,3 +44,15 @@ export async function updateCampaign(id: string, updates: Partial<CampaignT>) {
     new: true,
   });
 }
+
+export const getCampaigns = async (userId: string) => {
+  return await Campaign.find({
+    $or: [{ public: true }, { visibleTo: userId }],
+  }).populate({
+    path: 'factions.characters',
+    populate: {
+      path: 'player',
+      select: 'name',
+    },
+  });
+};

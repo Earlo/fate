@@ -3,6 +3,9 @@ import Button from '@/components/generic/button';
 import { CharacterSheetT } from '@/schemas/sheet';
 import CharacterButton from '@/components/dashboard/charachterButton';
 import CharachterSheet from '@/components/dashboard/charachterSheet';
+import CampaignForm from '@/components/campaignForm';
+import { CampaignT } from '@/schemas/campaign';
+import CampaignButton from '@/components/dashboard/campaignButton';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
@@ -12,6 +15,20 @@ export default function Dashboard() {
   const [charachters, setCharachters] = useState<CharacterSheetT[]>([]);
   const [selectedCharacter, setSelectedCharacter] =
     useState<CharacterSheetT | null>(null);
+
+  const [showCampaignForm, setShowCampaignForm] = useState(false);
+  const [campaigns, setCampaigns] = useState<CampaignT[]>([]);
+  const [selectedCampaign, setSelectedCampaign] = useState<CampaignT | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (session) {
+      fetch(`/api/campaigns?id=${session.user.id}`)
+        .then((response) => response.json())
+        .then((data) => setCampaigns(data));
+    }
+  }, [session]);
 
   useEffect(() => {
     if (session) {
@@ -40,6 +57,28 @@ export default function Dashboard() {
           />
         ))}
       </div>
+      <Button
+        className="bg-blue-500 hover:bg-blue-700 mt-4"
+        label="Create New Campaign"
+        onClick={() => setShowCampaignForm(true)}
+      />
+      <div>
+        <h2>Your Campaigns:</h2>
+        {campaigns.map((campaign) => (
+          <CampaignButton
+            key={campaign._id}
+            name={campaign.name}
+            onClick={() => setSelectedCampaign(campaign)}
+          />
+        ))}
+      </div>
+
+      {selectedCampaign && selectedCampaign._id}
+
+      {showCampaignForm && (
+        <CampaignForm onClose={() => setShowCampaignForm(false)} />
+      )}
+
       {selectedCharacter && (
         <CharachterSheet
           key={selectedCharacter._id}

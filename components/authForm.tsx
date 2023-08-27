@@ -1,7 +1,6 @@
 import FormContainer from './formContainer';
 import Input from './generic/input';
 import Button from './generic/button';
-import CloseButton from './generic/closeButton';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 export default function AuthForm() {
