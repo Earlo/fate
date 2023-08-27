@@ -30,23 +30,23 @@ export async function createCharacterSheet(sheet: CharacterSheetT) {
   return await CharacterSheet.create(sheet);
 }
 
-export async function getCharacterSheet(id: string) {
-  return await CharacterSheet.findById(id);
+export async function getCharacterSheet(sheetId: string) {
+  return await CharacterSheet.findById(sheetId);
 }
 
 export async function updateCharacterSheet(
-  id: string,
+  sheetId: string,
   updates: Partial<CharacterSheetT>,
 ) {
-  return await CharacterSheet.findByIdAndUpdate(id, updates, {
+  return await CharacterSheet.findByIdAndUpdate(sheetId, updates, {
     new: true,
   });
 }
 
-export async function deleteCharacterSheet(id: string) {
-  return await CharacterSheet.findByIdAndDelete(id);
+export async function deleteCharacterSheet(sheetId: string) {
+  return await CharacterSheet.findByIdAndDelete(sheetId);
 }
 
-export async function getCharacterSheets(id: string) {
-  return await CharacterSheet.find({ controlledBy: id });
+export async function getCharacterSheets(userId: string) {
+  return await CharacterSheet.find({ controlledBy: userId });
 }

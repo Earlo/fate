@@ -31,7 +31,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     //Add controlled by and visibility
     const submitData = {
       ...formState,
-      controlledBy: session?.user?.id,
+      controlledBy: session?.user?._id,
       visibleToPlayers: !session?.user.admin,
     };
 

@@ -20,7 +20,8 @@ export default NextAuth({
           });
           if (user && (await compare(credentials.password, user.password))) {
             return {
-              id: user._id.toString(),
+              id: user._id,
+              _id: user._id,
               username: user.username,
             };
           }
@@ -40,7 +41,7 @@ export default NextAuth({
       session.user = {
         username: found.username,
         admin: found.admin,
-        id: found._id.toString(),
+        _id: found._id.toString(),
       };
       return session;
     },

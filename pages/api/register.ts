@@ -28,5 +28,5 @@ export default async function register(
     username,
     password: hashedPassword,
   });
-  return res.status(201).json({ id: newUser._id });
+  return res.status(201).json({ _id: newUser._id });
 }

@@ -25,7 +25,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (session) {
-      fetch(`/api/campaigns?id=${session.user.id}`)
+      fetch(`/api/campaigns?id=${session.user._id}`)
         .then((response) => response.json())
         .then((data) => setCampaigns(data));
     }
@@ -33,7 +33,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (session) {
-      fetch(`/api/sheets?id=${session.user.id}`)
+      fetch(`/api/sheets?id=${session.user._id}`)
         .then((response) => response.json())
         .then((data) => setCharachters(data));
     }
@@ -78,7 +78,7 @@ export default function Dashboard() {
       </div>
 
       {selectedCampaign &&
-        (selectedCampaign.controlledBy === session?.user?.id ? (
+        (selectedCampaign.controlledBy === session?.user?._id ? (
           <CampaignForm
             key={selectedCampaign._id}
             initialCampaign={selectedCampaign}

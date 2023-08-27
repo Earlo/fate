@@ -3,11 +3,15 @@ export type ISODateString = string;
 
 declare module 'next-auth' {
   interface Session {
-    user: Omit<UserModelT & { id: string }, 'password'>;
+    user: Omit<UserModelT, 'password'>;
+  }
+  interface DefaultUser {
+    _id: string;
+    username: string;
   }
 
   interface User {
-    id: string;
+    _id: string;
     username: string;
   }
 }

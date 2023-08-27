@@ -1,4 +1,4 @@
-import AuthForm from '../components/authForm';
+import AuthForm from '@/components/authForm';
 import Dashboard from '@/components/dashboard/dashboard';
 import TopBar from '@/components/dashboard/topBar';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
