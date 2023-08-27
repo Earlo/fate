@@ -24,6 +24,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
 }) =>
   multiline ? (
     <textarea
+      id={name}
       name={name}
       value={value}
       placeholder={placeholder}
@@ -34,6 +35,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
     />
   ) : (
     <input
+      id={name}
       type={type}
       name={name}
       value={value}

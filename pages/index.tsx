@@ -1,6 +1,5 @@
 import AuthForm from '@/components/authForm';
 import Dashboard from '@/components/dashboard/board';
-import TopBar from '@/components/dashboard/topBar';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
 import { useSession } from 'next-auth/react';
 
@@ -9,7 +8,6 @@ export default function Home() {
 
   return (
     <>
-      <TopBar />
       {status === 'loading' && (
         <div className="flex justify-center items-center h-screen">
           <LoadingSpinner />

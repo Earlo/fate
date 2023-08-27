@@ -12,10 +12,7 @@ const TopBar: React.FC = () => {
           : 'Fate core character sheet app thingy'}
       </div>
       <div>
-        {
-          session ? <Button label="Log Out" onClick={() => signOut()} /> : null
-          //<Button label="Log In" /* Add your login function here */ />
-        }
+        {session ? <Button label="Log Out" onClick={() => signOut()} /> : null}
       </div>
     </div>
   );
