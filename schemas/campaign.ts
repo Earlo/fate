@@ -9,7 +9,7 @@ export const campaignSchema = new Schema({
       name: { type: String, required: true },
       characters: [
         {
-          type: mongoose.Schema.Types.ObjectId,
+          type: String,
           ref: 'CharacterSheet',
         },
       ],
@@ -18,10 +18,11 @@ export const campaignSchema = new Schema({
   public: { type: Boolean, required: true, default: false },
   visibleTo: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: 'User',
     },
   ],
+  controlledBy: { type: String, ref: 'User' },
 });
 
 export const Campaign =
@@ -40,14 +41,20 @@ export async function getCampaign(id: string) {
 }
 
 export async function updateCampaign(id: string, updates: Partial<CampaignT>) {
+  // Remove _id and __v to avoid updating these fields
+  delete updates._id;
+  //delete updates?.__v;
   return await Campaign.findByIdAndUpdate(id, updates, {
     new: true,
   });
 }
-
 export const getCampaigns = async (userId: string) => {
   return await Campaign.find({
-    $or: [{ public: true }, { visibleTo: userId }],
+    $or: [
+      { public: true },
+      { visibleTo: { $in: [userId] } },
+      { controlledBy: userId },
+    ],
   }).populate({
     path: 'factions.characters',
     populate: {

@@ -14,7 +14,7 @@ export const characterSheetSchema = new Schema({
     },
   ],
   visibleToPlayers: Boolean,
-  controlledBy: String,
+  controlledBy: { type: String, ref: 'User' },
 });
 export const CharacterSheet =
   mongoose.models.CharacterSheet ||

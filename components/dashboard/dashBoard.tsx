@@ -2,7 +2,6 @@ import CharacterForm from '@/components/charachterForm';
 import Button from '@/components/generic/button';
 import { CharacterSheetT } from '@/schemas/sheet';
 import CharacterButton from '@/components/dashboard/charachterButton';
-import CharachterSheet from '@/components/dashboard/charachterSheet';
 import CampaignForm from '@/components/campaignForm';
 import { CampaignT } from '@/schemas/campaign';
 import CampaignButton from '@/components/dashboard/campaignButton';
@@ -68,28 +67,43 @@ export default function Dashboard() {
           <CampaignButton
             key={campaign._id}
             name={campaign.name}
+            imageUrl={campaign.icon}
             onClick={() => setSelectedCampaign(campaign)}
           />
         ))}
       </div>
 
-      {selectedCampaign && selectedCampaign._id}
+      {selectedCampaign && (
+        <CampaignForm
+          key={selectedCampaign._id}
+          initialCampaign={selectedCampaign}
+          state="edit"
+          setCampaigns={setCampaigns}
+          onClose={() => setSelectedCampaign(null)}
+        />
+      )}
 
       {showCampaignForm && (
-        <CampaignForm onClose={() => setShowCampaignForm(false)} />
+        <CampaignForm
+          onClose={() => setShowCampaignForm(false)}
+          setCampaigns={setCampaigns}
+        />
       )}
 
       {selectedCharacter && (
-        <CharachterSheet
+        <CharacterForm
           key={selectedCharacter._id}
-          character={selectedCharacter}
-          editable={selectedCharacter.controlledBy === session?.user.id}
+          initialSheet={selectedCharacter}
+          state="edit"
           setCharachters={setCharachters}
           onClose={() => setSelectedCharacter(null)}
         />
       )}
       {showSheetForm && (
-        <CharacterForm onClose={() => setShowSheetForm(false)} />
+        <CharacterForm
+          onClose={() => setShowSheetForm(false)}
+          setCharachters={setCharachters}
+        />
       )}
     </div>
   );

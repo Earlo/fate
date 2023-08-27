@@ -39,7 +39,6 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     const updatedSkills = { ...skills };
     updatedSkills[level] = updatedSkills[level] || [];
     updatedSkills[level][slotIndex] = name;
-    console.log(updatedSkills);
     setSkills(updatedSkills);
   };
 
@@ -60,7 +59,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                     value={(skills[tier.level] || [])[slotIndex] || ''}
                     disabled={
                       disabled ||
-                      (slotIndex != 0 &&
+                      (slotIndex !== 0 &&
                         !(skills[tier.level] || [])[slotIndex - 1] &&
                         !(skills[tier.level] || [])[slotIndex])
                     }

@@ -3,7 +3,7 @@ import { handleUpload } from '@/lib/cloudinary';
 import { ChangeEvent, useRef, useState } from 'react';
 import Image from 'next/image';
 interface ImageUploaderProps {
-  setIcon: React.Dispatch<React.SetStateAction<string>>;
+  setIcon: (icon: string) => void;
   icon?: string;
   path?: string;
   disabled?: boolean;
@@ -31,6 +31,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     <>
       <input
         type="file"
+        name="icon"
         onChange={handleFileChange}
         ref={fileInputRef}
         style={{ display: 'none' }}
@@ -47,7 +48,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           width={128}
           height={128}
           onClick={() => {
-            fileInputRef.current?.click();
+            if (!disabled) {
+              fileInputRef.current?.click();
+            }
           }}
         />
       )}
