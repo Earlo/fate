@@ -1,5 +1,5 @@
 import AuthForm from '@/components/authForm';
-import Dashboard from '@/components/dashboard/dashboard';
+import Dashboard from '@/components/dashboard/board';
 import TopBar from '@/components/dashboard/topBar';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
 import { useSession } from 'next-auth/react';
