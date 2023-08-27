@@ -7,7 +7,7 @@ import StuntInput from './sheet/stuntInput';
 import SkillGrid from './sheet/skillGrid';
 import { Skill } from '@/types/fate';
 import { CharacterSheetT } from '@/schemas/sheet';
-import React, { FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
 interface CharacterFormProps {
