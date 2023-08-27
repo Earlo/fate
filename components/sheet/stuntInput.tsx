@@ -15,7 +15,18 @@ const StuntInput: React.FC<StuntInputProps> = ({
 }) => {
   return (
     <div>
-      <Label name="Stunts" />
+      <Label name="Stunts">
+        {!disabled && (
+          <span
+            className="text-2xl font-bold cursor-pointer pr-2 hover:text-gray-400 transition duration"
+            onClick={() =>
+              setStunts([...stunts, { name: '', description: '' }])
+            }
+          >
+            +
+          </span>
+        )}
+      </Label>
       {stunts.map((stunt, index) => (
         <div key={index} className="flex">
           <SoloInput
@@ -49,14 +60,19 @@ const StuntInput: React.FC<StuntInputProps> = ({
               ])
             }
           />
+          {!disabled && (
+            <Button
+              label="Delete"
+              onClick={() =>
+                setStunts([
+                  ...stunts.slice(0, index),
+                  ...stunts.slice(index + 1),
+                ])
+              }
+            />
+          )}
         </div>
       ))}
-      {!disabled && (
-        <Button
-          label="Add Stunt"
-          onClick={() => setStunts([...stunts, { name: '', description: '' }])}
-        />
-      )}
     </div>
   );
 };

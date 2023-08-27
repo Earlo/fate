@@ -16,7 +16,6 @@ export default function Dashboard() {
   const [charachters, setCharachters] = useState<CharacterSheetT[]>([]);
   const [selectedCharacter, setSelectedCharacter] =
     useState<CharacterSheetT | null>(null);
-
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [campaigns, setCampaigns] = useState<CampaignT[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<CampaignT | null>(
