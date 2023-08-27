@@ -24,19 +24,29 @@ export default function Dashboard() {
   );
 
   useEffect(() => {
-    if (session) {
-      fetch(`/api/campaigns?id=${session.user._id}`)
-        .then((response) => response.json())
-        .then((data) => setCampaigns(data));
-    }
+    const fetchData = async () => {
+      if (session) {
+        const response = await fetch(`/api/campaigns?id=${session.user._id}`);
+        if (response.status === 200) {
+          const data = await response.json();
+          setCampaigns(data);
+        }
+      }
+    };
+    fetchData();
   }, [session]);
 
   useEffect(() => {
-    if (session) {
-      fetch(`/api/sheets?id=${session.user._id}`)
-        .then((response) => response.json())
-        .then((data) => setCharachters(data));
-    }
+    const fetchData = async () => {
+      if (session) {
+        const response = await fetch(`/api/sheets?id=${session.user._id}`);
+        if (response.status === 200) {
+          const data = await response.json();
+          setCharachters(data);
+        }
+      }
+    };
+    fetchData();
   }, [session]);
 
   return (
