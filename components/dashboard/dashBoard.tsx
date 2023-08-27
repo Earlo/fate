@@ -5,6 +5,8 @@ import CharacterButton from '@/components/dashboard/charachterButton';
 import CampaignForm from '@/components/campaignForm';
 import { CampaignT } from '@/schemas/campaign';
 import CampaignButton from '@/components/dashboard/campaignButton';
+import CampaignSheet from '@/components/campaignSheet';
+import CloseButton from '@/components/generic/closeButton';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
@@ -56,11 +58,13 @@ export default function Dashboard() {
           />
         ))}
       </div>
-      <Button
-        className="bg-blue-500 hover:bg-blue-700 mt-4"
-        label="Create New Campaign"
-        onClick={() => setShowCampaignForm(true)}
-      />
+      {session?.user.admin ? (
+        <Button
+          className="bg-blue-500 hover:bg-blue-700 mt-4"
+          label="Create New Campaign"
+          onClick={() => setShowCampaignForm(true)}
+        />
+      ) : null}
       <div>
         <h2>Your Campaigns:</h2>
         {campaigns.map((campaign) => (
@@ -73,15 +77,24 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {selectedCampaign && (
-        <CampaignForm
-          key={selectedCampaign._id}
-          initialCampaign={selectedCampaign}
-          state="edit"
-          setCampaigns={setCampaigns}
-          onClose={() => setSelectedCampaign(null)}
-        />
-      )}
+      {selectedCampaign &&
+        (selectedCampaign.controlledBy === session?.user?.id ? (
+          <CampaignForm
+            key={selectedCampaign._id}
+            initialCampaign={selectedCampaign}
+            state="edit"
+            setCampaigns={setCampaigns}
+            onClose={() => setSelectedCampaign(null)}
+          />
+        ) : (
+          <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <CloseButton
+              className="float-right relative bottom-4 left-4"
+              onClick={() => setSelectedCampaign(null)}
+            />
+            <CampaignSheet campaign={selectedCampaign} />
+          </div>
+        ))}
 
       {showCampaignForm && (
         <CampaignForm

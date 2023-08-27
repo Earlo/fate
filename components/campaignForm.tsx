@@ -21,11 +21,12 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
   setCampaigns,
 }) => {
   const { data: session } = useSession();
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState<Partial<CampaignT>>(
     initialCampaign || {},
   );
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isEditMode = state === 'edit';
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -36,11 +37,10 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
     };
 
     try {
-      const apiMethod = state === 'edit' ? 'PUT' : 'POST';
-      const apiUrl =
-        state === 'edit'
-          ? `/api/campaign/${initialCampaign?._id}`
-          : '/api/campaign';
+      const apiMethod = isEditMode ? 'PUT' : 'POST';
+      const apiUrl = isEditMode
+        ? `/api/campaign/${initialCampaign?._id}`
+        : '/api/campaign';
       const response = await fetch(apiUrl, {
         method: apiMethod,
         headers: { 'Content-Type': 'application/json' },
@@ -91,7 +91,11 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
           setFormState((prev) => ({ ...prev, public: e.target.checked }))
         }
       />
-      <Button label="Create Campaign" type="submit" disabled={isSubmitting} />
+      <Button
+        label={isEditMode ? 'Save Changes' : 'Create'}
+        type="submit"
+        disabled={isSubmitting}
+      />
     </FormContainer>
   );
 };
