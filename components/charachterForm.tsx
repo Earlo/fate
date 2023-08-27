@@ -5,11 +5,11 @@ import FormContainer from './formContainer';
 import AspectInput from './sheet/aspectInput';
 import StuntInput from './sheet/stuntInput';
 import SkillGrid from './sheet/skillGrid';
+import CloseButton from './generic/closeButton';
 import { Skill } from '@/types/fate';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
-
 interface CharacterFormProps {
   onClose?: () => void;
   initialSheet?: CharacterSheetT;
@@ -94,6 +94,10 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
 
   return (
     <FormContainer onSubmit={handleSubmit}>
+      <CloseButton
+        className="float-right relative bottom-4 left-4 "
+        onClick={onClose}
+      />
       <div className={`flex items-center `}>
         <ImageUploader setIcon={setIcon} icon={icon} path={'charachter'} />
         <div className={`flex flex-col ml-4 flex-grow`}>
@@ -134,7 +138,6 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
           type="submit"
         />
       )}
-      <Button label="Cancel" disabled={isSubmitting} onClick={onClose} />
     </FormContainer>
   );
 };

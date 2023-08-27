@@ -7,14 +7,15 @@ const TopBar: React.FC = () => {
   return (
     <div className="flex justify-between items-center bg-gray-800 text-white p-4">
       <div className="text-xl font-bold">
-        Welcome, {session?.user?.username || 'Guest'}!
+        {session
+          ? 'Welcome, ' + session.user.username + '!'
+          : 'Fate core character sheet app thingy'}
       </div>
       <div>
-        {session ? (
-          <Button label="Log Out" onClick={() => signOut()} />
-        ) : (
-          <Button label="Log In" /* Add your login function here */ />
-        )}
+        {
+          session ? <Button label="Log Out" onClick={() => signOut()} /> : null
+          //<Button label="Log In" /* Add your login function here */ />
+        }
       </div>
     </div>
   );
