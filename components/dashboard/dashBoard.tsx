@@ -4,7 +4,7 @@ import { CharacterSheetT } from '@/schemas/sheet';
 import CharacterButton from '@/components/dashboard/charachterButton';
 import CharachterSheet from '@/components/dashboard/charachterSheet';
 import { useState, useEffect } from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -20,14 +20,9 @@ export default function Dashboard() {
         .then((data) => setCharachters(data));
     }
   }, [session]);
-  if (!session) {
-    return <p>Loading...</p>;
-  }
-  console.log(session);
+
   return (
     <div className="p-4 text-xl font-bold">
-      Welcome, {session.user.username}!
-      <Button label="log out" onClick={() => signOut()} />
       <Button
         className="bg-green-500 hover:bg-green-700 "
         label="Create New Character Sheet"
@@ -49,7 +44,7 @@ export default function Dashboard() {
         <CharachterSheet
           key={selectedCharacter._id}
           character={selectedCharacter}
-          editable={selectedCharacter.controlledBy === session.user.id}
+          editable={selectedCharacter.controlledBy === session?.user.id}
           setCharachters={setCharachters}
           onClose={() => setSelectedCharacter(null)}
         />
