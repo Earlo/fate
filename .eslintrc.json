@@ -39,7 +39,7 @@
     "import/default": 2,
     "import/export": 2,
     "import/order": [
-      "warning",
+      "warn",
       {
         "groups": [
           "index",
