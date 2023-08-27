@@ -1,13 +1,13 @@
 import { UserModel, UserModelT } from '@/schemas/user';
 import connect from '@/lib/mongo';
 import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
+import Credentials from 'next-auth/providers/credentials';
 import { compare } from 'bcrypt';
 connect();
 
 export default NextAuth({
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: 'Username and Password',
       credentials: {
         username: { label: 'Username', type: 'text' },
