@@ -1,4 +1,4 @@
-import { CampaignT } from '@/schemas/campaign';
+import { PopulatedCampaignT, PopulatedFaction } from '@/schemas/campaign';
 import Button from '@/components/generic/button';
 import Faction from '@/components/dashboard/faction';
 import { useRouter } from 'next/router';
@@ -6,14 +6,14 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
-const getCampaignById = async (id: string): Promise<CampaignT> => {
+const getCampaignById = async (id: string): Promise<PopulatedCampaignT> => {
   return await fetch(`/api/campaign/${id}`).then((res) => res.json());
 };
 
 const updateCampaignAPI = async (
   campaignId: string,
-  updatedCampaign: CampaignT,
-): Promise<CampaignT> => {
+  updatedCampaign: PopulatedCampaignT,
+): Promise<PopulatedCampaignT> => {
   return await fetch(`/api/campaign/${campaignId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -25,7 +25,7 @@ const CampaignPage = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const { id } = router.query;
-  const [campaign, setCampaign] = useState<CampaignT | null>(null);
+  const [campaign, setCampaign] = useState<PopulatedCampaignT | null>(null);
   const [isLoading, setIsLoading] = useState(status === 'loading');
   const isAdmin = !!session?.user.admin;
   useEffect(() => {
@@ -67,7 +67,7 @@ const CampaignPage = () => {
 
   const updateFaction = async (
     factionIndex: number,
-    updatedFaction: CampaignT['factions'][0],
+    updatedFaction: PopulatedFaction,
   ) => {
     if (campaign && id) {
       const updatedCampaign = { ...campaign };

@@ -1,18 +1,13 @@
 import CharacterButton from './characterButton';
 import Input from '../generic/input';
 import Button from '@/components/generic/button';
-import { CampaignT } from '@/schemas/campaign';
+import { PopulatedFaction } from '@/schemas/campaign';
 import { useState } from 'react';
 
 interface FactionProps {
-  faction: {
-    name: string;
-    public: boolean;
-    visible: boolean;
-    characters: any[];
-  };
+  faction: PopulatedFaction;
   isAdmin: boolean;
-  onChange: (updatedFaction: CampaignT['factions'][0]) => void;
+  onChange: (updatedFaction: PopulatedFaction) => void;
 }
 
 const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
@@ -74,13 +69,17 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
       )}
       {faction.characters.map((character) => (
         <CharacterButton
-          key={character._id}
-          name={character.name}
-          highConcept={character.aspects[0]}
-          imageUrl={character.icon}
+          key={character.sheet._id}
+          character={character.sheet}
           onClick={() => console.log(character)}
         />
       ))}
+      {faction.public && (
+        <Button
+          label="Add character"
+          onClick={() => console.log('Add character', faction.name)}
+        />
+      )}
     </div>
   );
 };

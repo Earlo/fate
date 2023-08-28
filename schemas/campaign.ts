@@ -1,3 +1,4 @@
+import { CharacterSheetT } from './sheet';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const campaignSchema = new Schema({
@@ -9,7 +10,7 @@ export const campaignSchema = new Schema({
       name: { type: String, required: true },
       characters: [
         {
-          character: {
+          sheet: {
             type: String,
             ref: 'CharacterSheet',
             required: true,
@@ -38,6 +39,15 @@ export type CampaignT = {
   _id: string;
 } & InferSchemaType<typeof campaignSchema>;
 
+export type PopulatedFaction = Omit<CampaignT['factions'][0], 'characters'> & {
+  characters: Array<{ sheet: CharacterSheetT; visible: boolean }>;
+};
+
+export type PopulatedCampaignT = {
+  _id: string;
+  factions: PopulatedFaction[];
+} & Omit<InferSchemaType<typeof campaignSchema>, 'factions'>;
+
 export async function createCampaign(campaign: CampaignT) {
   return await Campaign.create(campaign);
 }
@@ -54,7 +64,9 @@ export async function updateCampaign(id: string, updates: Partial<CampaignT>) {
     new: true,
   });
 }
-export const getCampaigns = async (userId: string) => {
+export const getCampaigns = async (
+  userId: string,
+): Promise<PopulatedCampaignT[]> => {
   return await Campaign.find({
     $or: [
       { public: true },

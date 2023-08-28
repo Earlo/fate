@@ -5,11 +5,11 @@ import { CampaignT } from '@/schemas/campaign';
 import CampaignButton from '@/components/dashboard/campaignButton';
 import CampaignSheet from '@/components/campaignSheet';
 import CloseButton from '@/components/generic/closeButton';
+import CharacterButton from '@/components/dashboard/characterButton';
+import CharacterForm from '@/components/characterForm';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import CharacterButton from '@/components/dashboard/characterButton';
-import CharacterForm from '@/components/characterForm';
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -61,9 +61,7 @@ export default function Dashboard() {
         {characters.map((sheet) => (
           <CharacterButton
             key={sheet._id}
-            name={sheet.name.text}
-            highConcept={sheet.aspects[0].name}
-            imageUrl={sheet.icon?.url}
+            character={sheet}
             onClick={() => setSelectedCharacter(sheet)}
           />
         ))}
