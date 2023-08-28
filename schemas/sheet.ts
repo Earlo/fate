@@ -2,18 +2,18 @@ import { Skill } from '@/types/fate';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const characterSheetSchema = new Schema({
+  icon: {
+    type: {
+      url: { type: String, required: true },
+      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+    },
+  },
   name: {
     type: {
       text: { type: String, required: true },
       visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
     },
     required: true,
-  },
-  icon: {
-    type: {
-      url: { type: String, required: true },
-      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
-    },
   },
   description: {
     type: {
@@ -31,7 +31,7 @@ export const characterSheetSchema = new Schema({
     type: Map,
     of: [
       {
-        skill: { type: String, required: true },
+        name: { type: String, required: true },
         visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
       },
     ],

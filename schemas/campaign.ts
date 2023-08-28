@@ -40,7 +40,7 @@ export type CampaignT = {
 } & InferSchemaType<typeof campaignSchema>;
 
 export type PopulatedFaction = Omit<CampaignT['factions'][0], 'characters'> & {
-  characters: Array<{ sheet: CharacterSheetT; visible: boolean }>;
+  characters: { sheet: CharacterSheetT; visible: boolean }[];
 };
 
 export type PopulatedCampaignT = {
@@ -53,7 +53,7 @@ export async function createCampaign(campaign: CampaignT) {
 }
 
 export async function getCampaign(id: string) {
-  return await Campaign.findById(id);
+  return await Campaign.findById(id).populate('factions.characters.sheet');
 }
 
 export async function updateCampaign(id: string, updates: Partial<CampaignT>) {

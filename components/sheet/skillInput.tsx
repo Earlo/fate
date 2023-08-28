@@ -46,7 +46,7 @@ const SkillInput: React.FC<SkillInputProps> = ({
       onChange={(e) => onChange(e.target.value as Skill)}
       disabled={disabled}
     >
-      <option value="">{disabled ? '' : 'Select Skill'}</option>
+      <option value={''}>{disabled ? '' : 'Select Skill'}</option>
       {skillOptions.map((skill: Skill) => (
         <option key={skill} value={skill}>
           {skill}

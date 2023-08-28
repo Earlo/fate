@@ -39,10 +39,21 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   setSkills,
   disabled,
 }) => {
-  const handleSkillChange = (level: number, slotIndex: number, name: Skill) => {
+  const handleSkillChange = (
+    level: number,
+    slotIndex: number,
+    name: Skill | '',
+  ) => {
     const updatedSkills = { ...skills };
     updatedSkills[level] = updatedSkills[level] || [];
-    updatedSkills[level][slotIndex] = { name, visibleIn: [] };
+    if (name === '') {
+      updatedSkills[level].splice(slotIndex, 1); // Remove the element
+      if (updatedSkills[level].length === 0) {
+        delete updatedSkills[level]; // Remove the entire row if it's empty
+      }
+    } else {
+      updatedSkills[level][slotIndex] = { name, visibleIn: [] };
+    }
     setSkills(updatedSkills);
   };
 

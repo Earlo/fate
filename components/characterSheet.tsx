@@ -27,13 +27,15 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
         <ImageUploader
           icon={character?.icon?.url}
           path={'character'}
-          setIcon={(icon) => updateField('icon', icon)}
+          setIcon={(icon) => updateField('icon', { url: icon, visibleIn: [] })}
           disabled={!setCharacter}
         />
         <div className="flex flex-col ml-4 flex-grow">
           <Input
             name="Name"
-            onChange={(e) => updateField('name', e.target.value)}
+            onChange={(e) =>
+              updateField('name', { text: e.target.value, visibleIn: [] })
+            }
             value={character?.name?.text}
             disabled={!setCharacter}
             required
@@ -41,7 +43,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           <Input
             name="Description"
             multiline
-            onChange={(e) => updateField('description', e.target.value)}
+            onChange={(e) =>
+              updateField('description', {
+                text: e.target.value,
+                visibleIn: [],
+              })
+            }
             value={character?.description?.text}
             disabled={!setCharacter}
             required

@@ -3,7 +3,6 @@ import TopBar from '@/components/dashboard/topBar';
 import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 import type { AppProps } from 'next/app';
-
 interface MyAppProps extends AppProps {
   pageProps: {
     session: Session | null | undefined;
