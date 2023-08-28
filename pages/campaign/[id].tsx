@@ -10,6 +10,17 @@ const getCampaignById = async (id: string): Promise<CampaignT> => {
   return await fetch(`/api/campaign/${id}`).then((res) => res.json());
 };
 
+const updateCampaignAPI = async (
+  campaignId: string,
+  updatedCampaign: CampaignT,
+): Promise<CampaignT> => {
+  return await fetch(`/api/campaign/${campaignId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedCampaign),
+  }).then((res) => res.json());
+};
+
 const CampaignPage = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -38,29 +49,34 @@ const CampaignPage = () => {
     };
     fetchCampaign();
   }, [id, router]);
-  const handleAddFaction = () => {
-    if (campaign) {
+
+  const handleAddFaction = async () => {
+    if (campaign && id) {
       const newFaction = {
         name: 'New Faction',
         public: false,
         visible: true,
         characters: [],
       };
-      // Make a deep copy of the existing campaign and update the factions
       const updatedCampaign = { ...campaign };
       updatedCampaign.factions.push(newFaction);
+      await updateCampaignAPI(id as string, updatedCampaign);
       setCampaign(updatedCampaign);
-      // You could also make an API call here to update the backend
     }
   };
-  const updateFactionName = (factionIndex: number, newName: string) => {
-    if (campaign) {
+
+  const updateFaction = async (
+    factionIndex: number,
+    updatedFaction: CampaignT['factions'][0],
+  ) => {
+    if (campaign && id) {
       const updatedCampaign = { ...campaign };
-      updatedCampaign.factions[factionIndex].name = newName;
+      updatedCampaign.factions[factionIndex] = updatedFaction;
+      await updateCampaignAPI(id as string, updatedCampaign);
       setCampaign(updatedCampaign);
-      // Make API call to update back-end data here
     }
   };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -91,7 +107,7 @@ const CampaignPage = () => {
               key={index}
               faction={faction}
               isAdmin={isAdmin}
-              updateFactionName={(newName) => updateFactionName(index, newName)}
+              onChange={(faction) => updateFaction(index, faction)}
             />
           ))}
         </div>

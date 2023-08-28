@@ -1,5 +1,6 @@
 import Input from '../generic/input';
 import Button from '@/components/generic/button';
+import { CampaignT } from '@/schemas/campaign';
 import { useState } from 'react';
 
 interface FactionProps {
@@ -10,25 +11,27 @@ interface FactionProps {
     characters: any[];
   };
   isAdmin: boolean;
-  updateFactionName: (newName: string) => void;
+  onChange: (updatedFaction: CampaignT['factions'][0]) => void;
 }
 
-const Faction: React.FC<FactionProps> = ({
-  faction,
-  isAdmin,
-  updateFactionName,
-}) => {
+const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(faction.name);
 
   const handleSave = () => {
-    updateFactionName(newName);
     setIsEditing(false);
+    const updatedFaction = { ...faction, name: newName };
+    onChange(updatedFaction);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setNewName(faction.name); // Reset the name to the original
+    setNewName(faction.name);
+  };
+
+  const toggleProperty = (property: 'public' | 'visible') => {
+    const updatedFaction = { ...faction, [property]: !faction[property] };
+    onChange(updatedFaction);
   };
 
   return (
@@ -50,6 +53,22 @@ const Faction: React.FC<FactionProps> = ({
           ) : (
             <Button label="Edit" onClick={() => setIsEditing(true)} />
           )}
+          <label>
+            Visible
+            <input
+              type="checkbox"
+              checked={faction.visible}
+              onChange={() => toggleProperty('visible')}
+            />
+          </label>
+          <label>
+            Public
+            <input
+              type="checkbox"
+              checked={faction.public}
+              onChange={() => toggleProperty('public')}
+            />
+          </label>
         </div>
       )}
     </div>
