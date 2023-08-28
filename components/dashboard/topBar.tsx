@@ -7,7 +7,7 @@ const TopBar: React.FC = () => {
   const { data: session } = useSession();
   const [showAuthForm, setShowAuthForm] = useState(false);
   return (
-    <div className="flex justify-between items-center bg-gray-800 text-white p-4">
+    <div className="flex items-center justify-between bg-gray-800 p-4 text-white">
       <div className="text-xl font-bold">
         {session
           ? 'Welcome, ' + session.user.username + '!'
@@ -21,7 +21,7 @@ const TopBar: React.FC = () => {
         )}
       </div>
       {showAuthForm && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-opacity-50 bg-black">
+        <div className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50">
           <AuthForm onClose={() => setShowAuthForm(false)} />
         </div>
       )}

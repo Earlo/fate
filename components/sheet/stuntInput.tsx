@@ -20,7 +20,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
       <Label name="Stunts">
         {!disabled && (
           <span
-            className="text-2xl font-bold cursor-pointer pr-2 hover:text-gray-400 transition duration"
+            className="duration cursor-pointer pr-2 text-2xl font-bold transition hover:text-gray-400"
             onClick={() =>
               setStunts([
                 ...stunts,

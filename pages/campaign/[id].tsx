@@ -86,14 +86,14 @@ const CampaignPage = () => {
   }
   return (
     <div>
-      <h1 className="text-4xl font-bold text-center">{campaign.name}</h1>
+      <h1 className="text-center text-4xl font-bold">{campaign.name}</h1>
       <div className="flex flex-row items-center">
         <Image
           src={campaign.icon || '/drowsee_128.png'}
           alt={campaign.name}
           width={128}
           height={128}
-          className="w-32 h-32 mx-4"
+          className="mx-4 h-32 w-32"
         />
         <p>{campaign.description}</p>
       </div>

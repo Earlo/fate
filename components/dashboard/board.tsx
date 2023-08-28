@@ -68,7 +68,7 @@ export default function Dashboard() {
       </div>
       {session?.user.admin ? (
         <Button
-          className="bg-blue-500 hover:bg-blue-700 mt-4"
+          className="mt-4 bg-blue-500 hover:bg-blue-700"
           label="Create New Campaign"
           onClick={() => setShowCampaignForm(true)}
         />
@@ -95,15 +95,15 @@ export default function Dashboard() {
             onClose={() => setSelectedCampaign(null)}
           />
         ) : (
-          <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <div className="mb-4 rounded bg-white px-8 pb-8 pt-6 shadow-md">
             <CloseButton
-              className="float-right relative bottom-4 left-4"
+              className="relative bottom-4 left-4 float-right"
               onClick={() => setSelectedCampaign(null)}
             />
             <CampaignSheet campaign={selectedCampaign} />
             <Link href={`/campaign/${selectedCampaign._id}`} passHref>
               <Button
-                className="bg-blue-500 hover:bg-blue-700 mt-4"
+                className="mt-4 bg-blue-500 hover:bg-blue-700"
                 label="View Campaign"
               />
             </Link>

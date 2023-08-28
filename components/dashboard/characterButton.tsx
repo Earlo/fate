@@ -11,14 +11,14 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
 }) => (
   <div
     onClick={onClick}
-    className="flex items-center p-4 border rounded-lg hover:bg-gray-200 hover:text-gray-800 cursor-pointer  w-48"
+    className="flex w-48 cursor-pointer items-center rounded-lg border p-4 hover:bg-gray-200  hover:text-gray-800"
   >
     <Image
       src={character.icon?.url || '/drowsee_128.png'}
       alt={character.name.text}
       width={64}
       height={64}
-      className="w-16 h-16"
+      className="h-16 w-16"
     />
     <div className="ml-4">
       <h3 className="text-lg font-bold">{character.name.text}</h3>

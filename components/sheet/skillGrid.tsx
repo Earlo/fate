@@ -64,7 +64,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
         <tbody>
           {tiers.map((tier, index) => (
             <tr key={index}>
-              <td className="block font-black uppercase text-black p-1 mt-1 text-xl whitespace-nowrap">
+              <td className="mt-1 block whitespace-nowrap p-1 text-xl font-black uppercase text-black">
                 {`${tier.label} +${tier.level}`}
               </td>
               {Array.from({ length: 5 }).map((_, slotIndex) => (

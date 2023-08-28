@@ -79,7 +79,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
   return (
     <FormContainer onSubmit={handleSubmit}>
       <CloseButton
-        className="float-right relative bottom-4 left-4"
+        className="relative bottom-4 left-4 float-right"
         onClick={onClose}
       />
       <CampaignSheet campaign={formState} setCampaign={setFormState} />

@@ -25,7 +25,7 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
         setIcon={(icon) => updateField('icon', icon)}
         disabled={!setCampaign}
       />
-      <div className="flex flex-col ml-4 flex-grow">
+      <div className="ml-4 flex flex-grow flex-col">
         <Input
           name="Campaign Name"
           onChange={(e) => updateField('name', e.target.value)}

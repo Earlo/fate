@@ -30,12 +30,12 @@ const Checkbox: React.FC<CheckboxProps> = ({ name, checked, onChange }) => {
         />
         <div
           onClick={handleClick}
-          className={`w-8 h-8 bg-white border-2 rounded cursor-pointer ${
+          className={`h-8 w-8 cursor-pointer rounded border-2 bg-white ${
             checked ? 'border-green-500' : 'border-gray-300'
           }`}
         >
           {checked && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-green-500">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-green-500">
               ✓
             </div>
           )}

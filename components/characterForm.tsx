@@ -82,7 +82,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   return (
     <FormContainer onSubmit={handleSubmit}>
       <CloseButton
-        className="float-right relative bottom-4 left-4 "
+        className="relative bottom-4 left-4 float-right "
         onClick={onClose}
       />
       <CharacterSheet character={formState} setCharacter={setFormState} />

@@ -30,7 +30,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           setIcon={(icon) => updateField('icon', { url: icon, visibleIn: [] })}
           disabled={!setCharacter}
         />
-        <div className="flex flex-col ml-4 flex-grow">
+        <div className="ml-4 flex flex-grow flex-col">
           <Input
             name="Name"
             onChange={(e) =>

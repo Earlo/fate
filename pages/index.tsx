@@ -9,13 +9,13 @@ export default function Home() {
   return (
     <>
       {status === 'loading' && (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex h-screen items-center justify-center">
           <LoadingSpinner />
         </div>
       )}
       {status === 'authenticated' && session && <Dashboard />}
       {status === 'unauthenticated' && (
-        <div className="w-full max-w-xs mx-auto mt-8">
+        <div className="mx-auto mt-8 w-full max-w-xs">
           <AuthForm />
         </div>
       )}

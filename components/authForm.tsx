@@ -51,7 +51,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
     <FormContainer onSubmit={handleSubmit}>
       {onClose && (
         <CloseButton
-          className="float-right relative bottom-4 left-4"
+          className="relative bottom-4 left-4 float-right"
           onClick={onClose}
         />
       )}

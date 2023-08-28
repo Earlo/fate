@@ -9,13 +9,13 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ onClose, className, children }) => {
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center z-50 ${className}`}
+      className={`fixed inset-0 z-50 flex items-center justify-center ${className}`}
     >
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden w-3/4 md:w-1/2 relative">
+      <div className="relative w-3/4 overflow-hidden rounded-lg bg-white shadow-lg md:w-1/2">
         {onClose && (
           <CloseButton
             onClick={onClose}
-            className="absolute top-2 right-2 z-10"
+            className="absolute right-2 top-2 z-10"
           />
         )}
         <div className="p-4">{children}</div>

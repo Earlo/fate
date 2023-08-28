@@ -65,7 +65,7 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
     onChange(updatedFaction);
   };
   return (
-    <div className="flex justify-between items-center bg-gray-800 text-white p-4 w-1/2 mx-auto">
+    <div className="mx-auto flex w-1/2 items-center justify-between bg-gray-800 p-4 text-white">
       <Input
         type="text"
         name={'name'}
