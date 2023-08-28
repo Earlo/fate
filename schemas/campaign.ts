@@ -9,7 +9,7 @@ export const campaignSchema = new Schema({
       name: { type: String, required: true },
       characters: [
         {
-          charachter: {
+          character: {
             type: String,
             ref: 'CharacterSheet',
             required: true,

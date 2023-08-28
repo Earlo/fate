@@ -3,8 +3,7 @@ export const handleUpload = async (file: File, path?: string) => {
   formData.append('file', file);
   formData.append(
     'upload_preset',
-    process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS ||
-      'fate_core_charachters',
+    process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS || 'fate_core_characters',
   );
   if (path) {
     formData.append('folder', path);

@@ -1,7 +1,5 @@
-import CharacterForm from '@/components/charachterForm';
 import Button from '@/components/generic/button';
 import { CharacterSheetT } from '@/schemas/sheet';
-import CharacterButton from '@/components/dashboard/charachterButton';
 import CampaignForm from '@/components/campaignForm';
 import { CampaignT } from '@/schemas/campaign';
 import CampaignButton from '@/components/dashboard/campaignButton';
@@ -10,11 +8,13 @@ import CloseButton from '@/components/generic/closeButton';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import CharacterButton from '@/components/dashboard/characterButton';
+import CharacterForm from '@/components/characterForm';
 
 export default function Dashboard() {
   const { data: session } = useSession();
   const [showSheetForm, setShowSheetForm] = useState(false);
-  const [charachters, setCharachters] = useState<CharacterSheetT[]>([]);
+  const [characters, setCharacters] = useState<CharacterSheetT[]>([]);
   const [selectedCharacter, setSelectedCharacter] =
     useState<CharacterSheetT | null>(null);
   const [showCampaignForm, setShowCampaignForm] = useState(false);
@@ -42,7 +42,7 @@ export default function Dashboard() {
         const response = await fetch(`/api/sheets?id=${session.user._id}`);
         if (response.status === 200) {
           const data = await response.json();
-          setCharachters(data);
+          setCharacters(data);
         }
       }
     };
@@ -58,7 +58,7 @@ export default function Dashboard() {
       />
       <div>
         <h2>Your Character Sheets:</h2>
-        {charachters.map((sheet) => (
+        {characters.map((sheet) => (
           <CharacterButton
             key={sheet._id}
             name={sheet.name.text}
@@ -124,14 +124,14 @@ export default function Dashboard() {
           key={selectedCharacter._id}
           initialSheet={selectedCharacter}
           state="edit"
-          setCharachters={setCharachters}
+          setCharacters={setCharacters}
           onClose={() => setSelectedCharacter(null)}
         />
       )}
       {showSheetForm && (
         <CharacterForm
           onClose={() => setShowSheetForm(false)}
-          setCharachters={setCharachters}
+          setCharacters={setCharacters}
         />
       )}
     </div>

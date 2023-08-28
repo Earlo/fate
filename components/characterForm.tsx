@@ -1,7 +1,7 @@
 import Button from './generic/button';
 import FormContainer from './formContainer';
 import CloseButton from './generic/closeButton';
-import CharachterSheet from './charachterSheet';
+import CharacterSheet from './characterSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -9,14 +9,14 @@ interface CharacterFormProps {
   onClose?: () => void;
   initialSheet?: CharacterSheetT;
   state?: 'create' | 'edit' | 'view';
-  setCharachters?: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
+  setCharacters?: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
 }
 
 const CharacterForm: React.FC<CharacterFormProps> = ({
   onClose,
   initialSheet,
   state = 'create',
-  setCharachters,
+  setCharacters,
 }) => {
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,19 +52,19 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
 
       const data = await response.json();
 
-      if (setCharachters) {
-        setCharachters((prevCharachters) => {
-          const index = prevCharachters.findIndex(
+      if (setCharacters) {
+        setCharacters((prevCharacters) => {
+          const index = prevCharacters.findIndex(
             (char) => char._id === data._id,
           );
           if (index !== -1) {
             return [
-              ...prevCharachters.slice(0, index),
+              ...prevCharacters.slice(0, index),
               data,
-              ...prevCharachters.slice(index + 1),
+              ...prevCharacters.slice(index + 1),
             ];
           } else {
-            return [...prevCharachters, data];
+            return [...prevCharacters, data];
           }
         });
       }
@@ -85,8 +85,8 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
         className="float-right relative bottom-4 left-4 "
         onClick={onClose}
       />
-      <CharachterSheet charachter={formState} setCharachter={setFormState} />
-      {setCharachters && (
+      <CharacterSheet character={formState} setCharacter={setFormState} />
+      {setCharacters && (
         <Button
           label={isEditMode ? 'Save Changes' : 'Create'}
           disabled={isSubmitting}

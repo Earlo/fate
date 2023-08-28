@@ -6,20 +6,18 @@ import SkillGrid from './sheet/skillGrid';
 import { CharacterSheetT } from '@/schemas/sheet';
 
 interface CharacterSheetProps {
-  charachter?: Partial<CharacterSheetT>;
-  setCharachter?: React.Dispatch<
-    React.SetStateAction<Partial<CharacterSheetT>>
-  >;
+  character?: Partial<CharacterSheetT>;
+  setCharacter?: React.Dispatch<React.SetStateAction<Partial<CharacterSheetT>>>;
 }
 
 const CharacterSheet: React.FC<CharacterSheetProps> = ({
-  charachter,
-  setCharachter,
+  character,
+  setCharacter,
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateField = (field: keyof CharacterSheetT, value: any) => {
-    if (setCharachter) {
-      setCharachter((prev) => ({ ...prev, [field]: value }));
+    if (setCharacter) {
+      setCharacter((prev) => ({ ...prev, [field]: value }));
     }
   };
 
@@ -27,45 +25,45 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
     <>
       <div className="flex items-center">
         <ImageUploader
-          icon={charachter?.icon?.url}
-          path={'charachter'}
+          icon={character?.icon?.url}
+          path={'character'}
           setIcon={(icon) => updateField('icon', icon)}
-          disabled={!setCharachter}
+          disabled={!setCharacter}
         />
         <div className="flex flex-col ml-4 flex-grow">
           <Input
             name="Name"
             onChange={(e) => updateField('name', e.target.value)}
-            value={charachter?.name?.text}
-            disabled={!setCharachter}
+            value={character?.name?.text}
+            disabled={!setCharacter}
             required
           />
           <Input
             name="Description"
             multiline
             onChange={(e) => updateField('description', e.target.value)}
-            value={charachter?.description?.text}
-            disabled={!setCharachter}
+            value={character?.description?.text}
+            disabled={!setCharacter}
             required
           />
         </div>
       </div>
       <div className="flex justify-between">
         <AspectInput
-          aspects={charachter?.aspects || []}
+          aspects={character?.aspects || []}
           setAspects={(aspects) => updateField('aspects', aspects)}
-          disabled={!setCharachter}
+          disabled={!setCharacter}
         />
         <SkillGrid
-          skills={charachter?.skills || {}}
+          skills={character?.skills || {}}
           setSkills={(skills) => updateField('skills', skills)}
-          disabled={!setCharachter}
+          disabled={!setCharacter}
         />
       </div>
       <StuntInput
-        stunts={charachter?.stunts || []}
+        stunts={character?.stunts || []}
         setStunts={(stunts) => updateField('stunts', stunts)}
-        disabled={!setCharachter}
+        disabled={!setCharacter}
       />
     </>
   );

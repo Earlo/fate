@@ -1,3 +1,4 @@
+import CharacterButton from './characterButton';
 import Input from '../generic/input';
 import Button from '@/components/generic/button';
 import { CampaignT } from '@/schemas/campaign';
@@ -71,6 +72,15 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
           </label>
         </div>
       )}
+      {faction.characters.map((character) => (
+        <CharacterButton
+          key={character._id}
+          name={character.name}
+          highConcept={character.aspects[0]}
+          imageUrl={character.icon}
+          onClick={() => console.log(character)}
+        />
+      ))}
     </div>
   );
 };
