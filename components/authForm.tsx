@@ -1,9 +1,14 @@
 import FormContainer from './formContainer';
 import Input from './generic/input';
 import Button from './generic/button';
+import CloseButton from './generic/closeButton';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-export default function AuthForm() {
+interface AuthFormProps {
+  onClose?: () => void;
+}
+
+export default function AuthForm({ onClose }: AuthFormProps) {
   const [usernameExists, setUsernameExists] = useState(false);
 
   const handleUsernameChange = async (
@@ -43,14 +48,18 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="w-full max-w-xs mx-auto mt-8">
-      <FormContainer onSubmit={handleSubmit}>
-        <Input name="username" required onChange={handleUsernameChange} />
-        <Input name="password" type="password" required />
-        <div className="flex items-center justify-between">
-          <Button label={usernameExists ? 'Login' : 'Register'} type="submit" />
-        </div>
-      </FormContainer>
-    </div>
+    <FormContainer onSubmit={handleSubmit}>
+      {onClose && (
+        <CloseButton
+          className="float-right relative bottom-4 left-4"
+          onClick={onClose}
+        />
+      )}
+      <Input name="username" required onChange={handleUsernameChange} />
+      <Input name="password" type="password" required />
+      <div className="flex items-center justify-between">
+        <Button label={usernameExists ? 'Login' : 'Register'} type="submit" />
+      </div>
+    </FormContainer>
   );
 }

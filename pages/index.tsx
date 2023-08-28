@@ -14,7 +14,11 @@ export default function Home() {
         </div>
       )}
       {status === 'authenticated' && session && <Dashboard />}
-      {status === 'unauthenticated' && <AuthForm />}
+      {status === 'unauthenticated' && (
+        <div className="w-full max-w-xs mx-auto mt-8">
+          <AuthForm />
+        </div>
+      )}
     </>
   );
 }

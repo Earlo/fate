@@ -7,7 +7,6 @@ export const campaignSchema = new Schema({
   factions: [
     {
       name: { type: String, required: true },
-      visible: { type: Boolean, required: true, default: false },
       characters: [
         {
           charachter: {
@@ -18,6 +17,8 @@ export const campaignSchema = new Schema({
           visible: { type: Boolean, required: true, default: false },
         },
       ],
+      visible: { type: Boolean, required: true, default: false },
+      public: { type: Boolean, required: true, default: false },
     },
   ],
   public: { type: Boolean, required: true, default: false },
