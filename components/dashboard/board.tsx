@@ -9,6 +9,7 @@ import CampaignSheet from '@/components/campaignSheet';
 import CloseButton from '@/components/generic/closeButton';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -102,6 +103,12 @@ export default function Dashboard() {
               onClick={() => setSelectedCampaign(null)}
             />
             <CampaignSheet campaign={selectedCampaign} />
+            <Link href={`/campaign/${selectedCampaign._id}`} passHref>
+              <Button
+                className="bg-blue-500 hover:bg-blue-700 mt-4"
+                label="View Campaign"
+              />
+            </Link>
           </div>
         ))}
 

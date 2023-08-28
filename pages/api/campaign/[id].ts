@@ -7,16 +7,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const campaign = await getCampaign(id as string);
     if (!campaign) {
-      res.status(404).json({ error: 'Campaign not found' });
-      return;
+      return res.status(404).json({ error: 'Campaign not found' });
     }
-    res.status(200).json(campaign);
+    return res.status(200).json(campaign);
   }
 
   if (req.method === 'PUT') {
     const updates = req.body;
     const updatedCampaign = await updateCampaign(id as string, updates);
-    res.status(200).json(updatedCampaign);
+    return res.status(200).json(updatedCampaign);
   }
 };
 

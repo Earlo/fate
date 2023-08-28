@@ -11,12 +11,14 @@ export default async function handler(
     try {
       const sheet: CharacterSheetT = req.body;
       const newSheet = await createCharacterSheet(sheet);
-      res.status(201).json(newSheet);
+      return res.status(201).json(newSheet);
     } catch (error) {
       console.log(error);
-      res.status(400).json({ error: 'Failed to create character sheet' });
+      return res
+        .status(400)
+        .json({ error: 'Failed to create character sheet' });
     }
   } else {
-    res.status(405).end(); // Method Not Allowed
+    return res.status(405).end();
   }
 }
