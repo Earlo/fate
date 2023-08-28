@@ -27,7 +27,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
     <>
       <div className="flex items-center">
         <ImageUploader
-          icon={charachter?.icon}
+          icon={charachter?.icon?.url}
           path={'charachter'}
           setIcon={(icon) => updateField('icon', icon)}
           disabled={!setCharachter}
@@ -36,7 +36,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           <Input
             name="Name"
             onChange={(e) => updateField('name', e.target.value)}
-            value={charachter?.name}
+            value={charachter?.name?.text}
             disabled={!setCharachter}
             required
           />
@@ -44,7 +44,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             name="Description"
             multiline
             onChange={(e) => updateField('description', e.target.value)}
-            value={charachter?.description}
+            value={charachter?.description?.text}
             disabled={!setCharachter}
             required
           />

@@ -2,19 +2,49 @@ import { Skill } from '@/types/fate';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const characterSheetSchema = new Schema({
-  name: { type: String, required: true },
-  icon: String,
-  description: String,
-  aspects: [String],
-  skills: { type: Map, of: [String], keyType: Number },
+  name: {
+    type: {
+      text: { type: String, required: true },
+      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+    },
+    required: true,
+  },
+  icon: {
+    type: {
+      url: { type: String, required: true },
+      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+    },
+  },
+  description: {
+    type: {
+      text: { type: String, required: true },
+      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+    },
+  },
+  aspects: [
+    {
+      name: { type: String, required: true },
+      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+    },
+  ],
+  skills: {
+    type: Map,
+    of: [
+      {
+        skill: { type: String, required: true },
+        visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+      },
+    ],
+    keyType: Number,
+  },
   stunts: [
     {
       name: { type: String, required: true },
       description: { type: String, required: true },
+      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
     },
   ],
-  visibleToPlayers: Boolean,
-  controlledBy: { type: String, ref: 'User' },
+  controlledBy: { type: String, ref: 'User', required: true },
 });
 export const CharacterSheet =
   mongoose.models.CharacterSheet ||
@@ -22,7 +52,7 @@ export const CharacterSheet =
 
 // Need to override one field here since egh :D
 export type CharacterSheetT = {
-  skills: { [level: number]: Skill[] };
+  skills: { [level: number]: { name: Skill; visibleIn: string[] }[] };
   _id: string;
 } & Omit<InferSchemaType<typeof characterSheetSchema>, 'skills'>;
 

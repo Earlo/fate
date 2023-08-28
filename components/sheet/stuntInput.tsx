@@ -3,8 +3,10 @@ import Label from '../generic/label';
 import Button from '../generic/button';
 
 interface StuntInputProps {
-  stunts: { name: string; description: string }[];
-  setStunts: (value: { name: string; description: string }[]) => void;
+  stunts: { name: string; description: string; visibleIn: string[] }[];
+  setStunts: (
+    value: { name: string; description: string; visibleIn: string[] }[],
+  ) => void;
   disabled?: boolean;
 }
 
@@ -20,7 +22,10 @@ const StuntInput: React.FC<StuntInputProps> = ({
           <span
             className="text-2xl font-bold cursor-pointer pr-2 hover:text-gray-400 transition duration"
             onClick={() =>
-              setStunts([...stunts, { name: '', description: '' }])
+              setStunts([
+                ...stunts,
+                { name: '', description: '', visibleIn: [] },
+              ])
             }
           >
             +
@@ -38,7 +43,11 @@ const StuntInput: React.FC<StuntInputProps> = ({
             onChange={(e) =>
               setStunts([
                 ...stunts.slice(0, index),
-                { name: e.target.value, description: stunt.description },
+                {
+                  name: e.target.value,
+                  description: stunt.description,
+                  visibleIn: stunt.visibleIn,
+                },
                 ...stunts.slice(index + 1),
               ])
             }
@@ -55,7 +64,11 @@ const StuntInput: React.FC<StuntInputProps> = ({
             onChange={(e) =>
               setStunts([
                 ...stunts.slice(0, index),
-                { name: stunt.name, description: e.target.value },
+                {
+                  name: stunt.name,
+                  description: e.target.value,
+                  visibleIn: stunt.visibleIn,
+                },
                 ...stunts.slice(index + 1),
               ])
             }

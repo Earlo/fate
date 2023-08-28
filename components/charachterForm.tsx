@@ -28,11 +28,9 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    //Add controlled by and visibility
     const submitData = {
       ...formState,
       controlledBy: session?.user?._id,
-      visibleToPlayers: !session?.user.admin,
     };
 
     try {

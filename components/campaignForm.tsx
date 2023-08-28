@@ -33,7 +33,6 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
     const submitData = {
       ...formState,
       controlledBy: session?.user?._id,
-      visibleToPlayers: !session?.user.admin,
     };
 
     try {

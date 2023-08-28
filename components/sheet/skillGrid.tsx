@@ -25,8 +25,12 @@ export const tiers = [
 ];
 
 interface SkillGridProps {
-  skills: { [level: number]: Skill[] };
-  setSkills: React.Dispatch<React.SetStateAction<{ [level: number]: Skill[] }>>;
+  skills: { [level: number]: { name: Skill; visibleIn: string[] }[] };
+  setSkills: React.Dispatch<
+    React.SetStateAction<{
+      [level: number]: { name: Skill; visibleIn: string[] }[];
+    }>
+  >;
   disabled?: boolean;
 }
 
@@ -38,7 +42,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   const handleSkillChange = (level: number, slotIndex: number, name: Skill) => {
     const updatedSkills = { ...skills };
     updatedSkills[level] = updatedSkills[level] || [];
-    updatedSkills[level][slotIndex] = name;
+    updatedSkills[level][slotIndex] = { name, visibleIn: [] };
     setSkills(updatedSkills);
   };
 
@@ -56,7 +60,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                 <td key={slotIndex}>
                   <SkillInput
                     level={tier.level}
-                    value={(skills[tier.level] || [])[slotIndex] || ''}
+                    value={(skills[tier.level] || [])[slotIndex]?.name || ''}
                     disabled={
                       disabled ||
                       (slotIndex !== 0 &&

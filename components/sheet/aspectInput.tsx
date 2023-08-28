@@ -2,8 +2,10 @@ import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
 
 interface AspectInputProps {
-  aspects: string[];
-  setAspects: React.Dispatch<React.SetStateAction<string[]>>;
+  aspects: { name: string; visibleIn: string[] }[];
+  setAspects: React.Dispatch<
+    React.SetStateAction<{ name: string; visibleIn: string[] }[]>
+  >;
   disabled?: boolean;
 }
 
@@ -14,7 +16,10 @@ const AspectInput: React.FC<AspectInputProps> = ({
   setAspects,
   disabled,
 }) => {
-  const handleAspectChange = (index: number, value: string) => {
+  const handleAspectChange = (
+    index: number,
+    value: { name: string; visibleIn: string[] },
+  ) => {
     setAspects([
       ...aspects.slice(0, index),
       value,
@@ -33,8 +38,13 @@ const AspectInput: React.FC<AspectInputProps> = ({
             placeholder={
               index < hints.length ? hints[index] : 'Additional Aspect'
             }
-            value={aspects[index] || ''}
-            onChange={(e) => handleAspectChange(index, e.target.value)}
+            value={aspects[index]?.name || ''}
+            onChange={(e) =>
+              handleAspectChange(index, {
+                name: e.target.value,
+                visibleIn: aspects[index]?.visibleIn || [],
+              })
+            }
             disabled={disabled}
           />
         ),

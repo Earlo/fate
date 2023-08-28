@@ -60,9 +60,9 @@ export default function Dashboard() {
         {charachters.map((sheet) => (
           <CharacterButton
             key={sheet._id}
-            name={sheet.name}
-            highConcept={sheet.aspects[0]}
-            imageUrl={sheet.icon}
+            name={sheet.name.text}
+            highConcept={sheet.aspects[0].name}
+            imageUrl={sheet.icon?.url}
             onClick={() => setSelectedCharacter(sheet)}
           />
         ))}

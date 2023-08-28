@@ -7,10 +7,15 @@ export const campaignSchema = new Schema({
   factions: [
     {
       name: { type: String, required: true },
+      visible: { type: Boolean, required: true, default: false },
       characters: [
         {
-          type: String,
-          ref: 'CharacterSheet',
+          charachter: {
+            type: String,
+            ref: 'CharacterSheet',
+            required: true,
+          },
+          visible: { type: Boolean, required: true, default: false },
         },
       ],
     },
@@ -22,7 +27,7 @@ export const campaignSchema = new Schema({
       ref: 'User',
     },
   ],
-  controlledBy: { type: String, ref: 'User' },
+  controlledBy: { type: String, ref: 'User', required: true },
 });
 
 export const Campaign =
