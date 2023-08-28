@@ -84,7 +84,6 @@ const CampaignPage = () => {
   if (!campaign) {
     return <div>Not Found</div>;
   }
-  console.log('campaign', campaign);
   return (
     <div>
       <h1 className="text-4xl font-bold text-center">{campaign.name}</h1>

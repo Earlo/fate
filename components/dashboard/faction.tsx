@@ -64,7 +64,6 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
     const updatedFaction = { ...faction, characters: updatedCharacters };
     onChange(updatedFaction);
   };
-  console.log('faction.characters', faction.characters);
   return (
     <div className="flex justify-between items-center bg-gray-800 text-white p-4 w-1/2 mx-auto">
       <Input
