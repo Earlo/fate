@@ -23,14 +23,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex flex-col items-center md:flex-row">
         <ImageUploader
           icon={character?.icon?.url}
           path={'character'}
           setIcon={(icon) => updateField('icon', { url: icon, visibleIn: [] })}
           disabled={!setCharacter}
         />
-        <div className="ml-4 flex flex-grow flex-col">
+        <div className="ml-0 flex flex-grow flex-col md:ml-4">
           <Input
             name="Name"
             onChange={(e) =>
@@ -55,7 +55,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           />
         </div>
       </div>
-      <div className="flex justify-between">
+      <div className="flex flex-col justify-between md:flex-row">
         <AspectInput
           aspects={character?.aspects || []}
           setAspects={(aspects) => updateField('aspects', aspects)}

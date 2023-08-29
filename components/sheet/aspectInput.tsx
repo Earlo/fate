@@ -28,27 +28,30 @@ const AspectInput: React.FC<AspectInputProps> = ({
   };
 
   return (
-    <div className="w-3/10">
+    <div className="lg:w-3/10 w-full pr-4 md:w-1/2">
       <Label name="Aspects" />
-      {Array.from({ length: 5 }).map((_, index) =>
-        !aspects[index] && disabled ? null : (
-          <SoloInput
-            key={index}
-            name={`aspect-${index}`}
-            placeholder={
-              index < hints.length ? hints[index] : 'Additional Aspect'
-            }
-            value={aspects[index]?.name || ''}
-            onChange={(e) =>
-              handleAspectChange(index, {
-                name: e.target.value,
-                visibleIn: aspects[index]?.visibleIn || [],
-              })
-            }
-            disabled={disabled}
-          />
-        ),
-      )}
+      <div className="flex flex-col">
+        {Array.from({ length: 5 }).map((_, index) =>
+          !aspects[index] && disabled ? null : (
+            <div key={index} className="mb-2">
+              <SoloInput
+                name={`aspect-${index}`}
+                placeholder={
+                  index < hints.length ? hints[index] : 'Additional Aspect'
+                }
+                value={aspects[index]?.name || ''}
+                onChange={(e) =>
+                  handleAspectChange(index, {
+                    name: e.target.value,
+                    visibleIn: aspects[index]?.visibleIn || [],
+                  })
+                }
+                disabled={disabled}
+              />
+            </div>
+          ),
+        )}
+      </div>
     </div>
   );
 };
