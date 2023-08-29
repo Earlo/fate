@@ -58,14 +58,14 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   };
 
   return (
-    <div className="lg:w-7/10 md:w-6/10 w-full overflow-x-hidden">
+    <div className="w-full overflow-x-hidden sm:max-w-fit md:w-fit lg:w-9/12">
       <Label name="Skills" />
       {tiers.map((tier, index) => (
-        <div key={index} className="mb-2 flex w-full flex-col  md:flex-row">
-          <span className="flex h-10 w-32 flex-shrink-0 items-center justify-center text-lg font-black uppercase text-black">
+        <div key={index} className="mb-2 flex w-full flex-col lg:flex-row">
+          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/6">
             {`${tier.label} +${tier.level}`}
           </span>
-          <div className="flex w-full flex-col overflow-x-hidden sm:flex-row">
+          <div className="flex flex-grow flex-col overflow-x-hidden sm:flex-row">
             {Array.from({ length: 5 }).map((_, slotIndex) => (
               <SkillInput
                 key={tier.label + slotIndex}
