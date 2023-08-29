@@ -58,36 +58,33 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   };
 
   return (
-    <div className="w-4/6">
+    <div className="lg:w-7/10 md:w-6/10 w-full overflow-x-hidden">
       <Label name="Skills" />
-      <table>
-        <tbody>
-          {tiers.map((tier, index) => (
-            <tr key={index}>
-              <td className="mt-1 block whitespace-nowrap p-1 text-xl font-black uppercase text-black">
-                {`${tier.label} +${tier.level}`}
-              </td>
-              {Array.from({ length: 5 }).map((_, slotIndex) => (
-                <td key={slotIndex}>
-                  <SkillInput
-                    level={tier.level}
-                    value={(skills[tier.level] || [])[slotIndex]?.name || ''}
-                    disabled={
-                      disabled ||
-                      (slotIndex !== 0 &&
-                        !(skills[tier.level] || [])[slotIndex - 1] &&
-                        !(skills[tier.level] || [])[slotIndex])
-                    }
-                    onChange={(name) =>
-                      handleSkillChange(tier.level, slotIndex, name)
-                    }
-                  />
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {tiers.map((tier, index) => (
+        <div key={index} className="mb-2 flex w-full flex-col  md:flex-row">
+          <span className="flex h-10 w-32 flex-shrink-0 items-center justify-center text-lg font-black uppercase text-black">
+            {`${tier.label} +${tier.level}`}
+          </span>
+          <div className="flex w-full flex-col overflow-x-hidden sm:flex-row">
+            {Array.from({ length: 5 }).map((_, slotIndex) => (
+              <SkillInput
+                key={tier.label + slotIndex}
+                level={tier.level}
+                value={(skills[tier.level] || [])[slotIndex]?.name || ''}
+                disabled={
+                  disabled ||
+                  (slotIndex !== 0 &&
+                    !(skills[tier.level] || [])[slotIndex - 1] &&
+                    !(skills[tier.level] || [])[slotIndex])
+                }
+                onChange={(name) =>
+                  handleSkillChange(tier.level, slotIndex, name)
+                }
+              />
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
