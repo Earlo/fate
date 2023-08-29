@@ -29,7 +29,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
 
   return (
     //<div className="w-full pr-4 md:w-1/2 lg:w-4/12">
-    <div className=" flex flex-col pr-4">
+    <div className="flex flex-col pr-4">
       <div>
         <Label name="Aspects" />
       </div>

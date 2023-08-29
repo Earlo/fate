@@ -1,5 +1,4 @@
 import Button from './generic/button';
-import FormContainer from './formContainer';
 import CloseButton from './generic/closeButton';
 import CharacterSheet from './characterSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
@@ -80,7 +79,10 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   };
 
   return (
-    <FormContainer onSubmit={handleSubmit}>
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto mb-4 max-w-5xl rounded bg-white px-8 pb-8 pt-6 shadow-md"
+    >
       <CloseButton
         className="relative bottom-4 left-4 float-right "
         onClick={onClose}
@@ -93,7 +95,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
           type="submit"
         />
       )}
-    </FormContainer>
+    </form>
   );
 };
 
