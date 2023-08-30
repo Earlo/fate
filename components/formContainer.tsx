@@ -9,7 +9,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
 }) => (
   <form
     onSubmit={onSubmit}
-    className="mb-4 rounded bg-white px-8 pb-8 pt-6 shadow-md"
+    className="mb-4 h-fit rounded bg-white px-8 pb-8 pt-6 shadow-md"
   >
     {children}
   </form>

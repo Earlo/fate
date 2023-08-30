@@ -10,6 +10,7 @@ interface SoloInputProps {
   ) => void;
   multiline?: boolean;
   disabled?: boolean;
+  className?: string;
 }
 
 const SoloInput: React.FC<SoloInputProps> = ({
@@ -21,6 +22,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
   onChange,
   multiline = false,
   disabled = false,
+  className = '',
 }) =>
   multiline ? (
     <textarea
@@ -28,7 +30,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
       name={name}
       value={value}
       placeholder={placeholder}
-      className="h-32 w-full rounded border border-gray-300 bg-white p-2 text-base text-gray-700 placeholder-gray-400"
+      className={`h-32 w-full rounded border border-gray-300 bg-white p-2 text-base text-gray-700 placeholder-gray-400 ${className}`} // Include className here
       required={required}
       onChange={onChange}
       disabled={disabled}
@@ -40,7 +42,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
       name={name}
       value={value}
       placeholder={placeholder}
-      className="h-10 w-full rounded border border-gray-300 bg-white p-2 text-base text-gray-700 placeholder-gray-400"
+      className={`h-10 w-full rounded border border-gray-300 bg-white p-2 text-base text-gray-700 placeholder-gray-400 ${className}`}
       required={required}
       onChange={onChange}
       disabled={disabled}
