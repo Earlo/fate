@@ -81,7 +81,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto mb-4 max-w-5xl rounded bg-white px-8 pb-8 pt-6 shadow-md"
+      className="absolute left-1/2 top-1/2 mx-auto max-h-screen w-full max-w-full -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded bg-white p-4 shadow-md md:w-auto md:p-8 md:pb-8 md:pt-6 lg:max-w-5xl"
     >
       <CloseButton
         className="relative bottom-4 left-4 float-right "
