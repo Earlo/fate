@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react';
 interface CharacterFormProps {
   onClose?: () => void;
   initialSheet?: CharacterSheetT;
-  state?: 'create' | 'edit' | 'view';
+  state?: 'create' | 'edit' | 'toggle' | 'view';
   setCharacters?: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
 }
 
@@ -22,7 +22,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   const [formState, setFormState] = useState<Partial<CharacterSheetT>>(
     initialSheet || {},
   );
-  const isEditMode = state === 'edit';
+  const isCreateMode = state === 'create';
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,12 +31,11 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
       ...formState,
       controlledBy: session?.user?._id,
     };
-
     try {
-      const apiMethod = isEditMode ? 'PUT' : 'POST';
-      const apiUrl = isEditMode
-        ? `/api/sheet/${initialSheet?._id}`
-        : '/api/sheet';
+      const apiMethod = isCreateMode ? 'POST' : 'PUT';
+      const apiUrl = isCreateMode
+        ? '/api/sheet'
+        : `/api/sheet/${initialSheet?._id}`;
 
       const response = await fetch(apiUrl, {
         method: apiMethod,
@@ -48,9 +47,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
         console.error('Failed to submit form', await response.json());
         return;
       }
-
       const data = await response.json();
-
       if (setCharacters) {
         setCharacters((prevCharacters) => {
           const index = prevCharacters.findIndex(
@@ -87,10 +84,15 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
         className="relative bottom-4 left-4 float-right "
         onClick={onClose}
       />
-      <CharacterSheet character={formState} setCharacter={setFormState} />
+      <CharacterSheet
+        character={formState}
+        setCharacter={setCharacters ? setFormState : undefined}
+        state={state}
+        campaignId={'64ebe70c89f5a2e7cc3b4a00'}
+      />
       {setCharacters && (
         <Button
-          label={isEditMode ? 'Save Changes' : 'Create'}
+          label={isCreateMode ? 'Create' : 'Save Changes'}
           disabled={isSubmitting}
           type="submit"
         />

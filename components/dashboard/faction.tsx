@@ -1,5 +1,6 @@
 import CharacterButton from './characterButton';
 import Input from '../generic/input';
+import CharacterForm from '../characterForm';
 import Button from '@/components/generic/button';
 import { PopulatedFaction } from '@/schemas/campaign';
 import { CharacterSheetT } from '@/schemas/sheet';
@@ -17,6 +18,8 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(faction.name);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] =
+    useState<CharacterSheetT | null>(null);
   // Global state? Or not
   const [allCharacters, setAllCharacters] = useState<CharacterSheetT[]>([]);
   useEffect(() => {
@@ -105,7 +108,7 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
         <CharacterButton
           key={character.sheet._id}
           character={character.sheet}
-          onClick={() => console.log(character)}
+          onClick={() => setSelectedCharacter(character.sheet)}
         />
       ))}
       {faction.public && (
@@ -130,6 +133,16 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
             </div>
           ))}
         </div>
+      )}
+      {selectedCharacter && (
+        <CharacterForm
+          key={selectedCharacter._id}
+          initialSheet={selectedCharacter}
+          state={isAdmin ? 'toggle' : 'view'}
+          // EEh :D but ok
+          setCharacters={isAdmin ? setAllCharacters : undefined}
+          onClose={() => setSelectedCharacter(null)}
+        />
       )}
     </div>
   );

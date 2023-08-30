@@ -12,6 +12,7 @@ interface InputProps {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
   disabled?: boolean;
+  children?: React.ReactNode;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -23,9 +24,10 @@ const Input: React.FC<InputProps> = ({
   placeholder,
   onChange,
   disabled = false,
+  children,
 }) => (
   <div className="mb-4">
-    <Label name={name} />
+    <Label name={name}>{children}</Label>
     <SoloInput
       name={name}
       type={type}

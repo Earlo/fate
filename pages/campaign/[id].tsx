@@ -115,4 +115,13 @@ const CampaignPage = () => {
   );
 };
 
+/*
+const getStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
+*/
+
 export default CampaignPage;

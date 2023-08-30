@@ -5,26 +5,26 @@ export const characterSheetSchema = new Schema({
   icon: {
     type: {
       url: { type: String, required: true },
-      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   },
   name: {
     type: {
       text: { type: String, required: true },
-      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
     required: true,
   },
   description: {
     type: {
       text: { type: String, required: true },
-      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   },
   aspects: [
     {
       name: { type: String, required: true },
-      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   ],
   skills: {
@@ -32,7 +32,7 @@ export const characterSheetSchema = new Schema({
     of: [
       {
         name: { type: String, required: true },
-        visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+        visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
       },
     ],
     keyType: Number,
@@ -41,7 +41,7 @@ export const characterSheetSchema = new Schema({
     {
       name: { type: String, required: true },
       description: { type: String, required: true },
-      visibleIn: [{ type: String, ref: 'Campaign', default: [] }],
+      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   ],
   controlledBy: { type: String, ref: 'User', required: true },
