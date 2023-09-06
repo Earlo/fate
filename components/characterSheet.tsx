@@ -7,7 +7,7 @@ import VisibilityToggle from './sheet/visibilityToggle';
 import { CharacterSheetT } from '@/schemas/sheet';
 
 interface CharacterSheetProps {
-  character?: Partial<CharacterSheetT>;
+  character: Partial<CharacterSheetT>;
   setCharacter?: React.Dispatch<React.SetStateAction<Partial<CharacterSheetT>>>;
   campaignId?: string;
   state?: 'create' | 'edit' | 'toggle' | 'view';
@@ -16,14 +16,19 @@ interface CharacterSheetProps {
 const CharacterSheet: React.FC<CharacterSheetProps> = ({
   character,
   setCharacter,
-  campaignId,
+  campaignId = '',
   state = 'view',
 }) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateField = (field: keyof CharacterSheetT, value: any) => {
-    console.log('updateField', field, value, !!setCharacter);
+  const updateField = (
+    field: keyof Omit<CharacterSheetT, 'controlledBy' | '_id'>,
+    value: (typeof character)[keyof Omit<
+      CharacterSheetT,
+      'controlledBy' | '_id'
+    >],
+  ) => {
+    const newValue = { ...character[field], ...value };
     if (setCharacter) {
-      setCharacter((prev) => ({ ...prev, [field]: value }));
+      setCharacter((prev) => ({ ...prev, [field]: newValue }));
     }
   };
 
@@ -36,7 +41,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           setIcon={(icon) =>
             updateField('icon', {
               url: icon,
-              visibleIn: character?.icon?.visibleIn || [],
             })
           }
           disabled={!setCharacter}
@@ -47,7 +51,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             onChange={(e) =>
               updateField('name', {
                 text: e.target.value,
-                visibleIn: character?.name?.visibleIn || [],
               })
             }
             value={
@@ -59,14 +62,13 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             disabled={!setCharacter}
             required
           >
-            {state === 'toggle' && campaignId && (
+            {state === 'toggle' && (
               <VisibilityToggle
                 visible={
                   character?.name?.visibleIn?.includes(campaignId) || false
                 }
                 onChange={(visible) =>
                   updateField('name', {
-                    text: character?.name?.text,
                     visibleIn: visible
                       ? [...(character?.name?.visibleIn || []), campaignId]
                       : character?.name?.visibleIn?.filter(
@@ -83,7 +85,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             onChange={(e) =>
               updateField('description', {
                 text: e.target.value,
-                visibleIn: character?.description?.visibleIn || [],
               })
             }
             value={
@@ -95,7 +96,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             disabled={!setCharacter}
             required
           >
-            {state === 'toggle' && campaignId && (
+            {state === 'toggle' && (
               <VisibilityToggle
                 visible={
                   character?.description?.visibleIn?.includes(campaignId) ||
@@ -103,10 +104,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                 }
                 onChange={(visible) =>
                   updateField('description', {
-                    text: character?.description?.text,
                     visibleIn: visible
-                      ? [...(character?.name?.visibleIn || []), campaignId]
-                      : character?.name?.visibleIn?.filter(
+                      ? [
+                          ...(character?.description?.visibleIn || []),
+                          campaignId,
+                        ]
+                      : character?.description?.visibleIn?.filter(
                           (id) => id !== campaignId,
                         ),
                   })

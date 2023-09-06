@@ -3,9 +3,7 @@ import SoloInput from '../generic/soloInput';
 
 interface AspectInputProps {
   aspects: { name: string; visibleIn: string[] }[];
-  setAspects: React.Dispatch<
-    React.SetStateAction<{ name: string; visibleIn: string[] }[]>
-  >;
+  setAspects: (aspects: { name: string; visibleIn: string[] }[]) => void;
   disabled?: boolean;
 }
 

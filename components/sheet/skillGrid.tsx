@@ -26,11 +26,9 @@ export const tiers = [
 
 interface SkillGridProps {
   skills: { [level: number]: { name: Skill; visibleIn: string[] }[] };
-  setSkills: React.Dispatch<
-    React.SetStateAction<{
-      [level: number]: { name: Skill; visibleIn: string[] }[];
-    }>
-  >;
+  setSkills: (skills: {
+    [level: number]: { name: Skill; visibleIn: string[] }[];
+  }) => void;
   disabled?: boolean;
 }
 
