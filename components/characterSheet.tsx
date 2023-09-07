@@ -26,8 +26,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   ) => {
     const newValue = { ...character[field], ...value };
     if (setCharacter) {
-      console.log('new value', newValue);
-      //setCharacter((prev) => ({ ...prev, [field]: newValue }));
+      setCharacter((prev) => ({ ...prev, [field]: newValue }));
     }
   };
 
