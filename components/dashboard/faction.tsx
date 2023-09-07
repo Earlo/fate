@@ -108,7 +108,11 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
         <CharacterButton
           key={character.sheet._id}
           character={character.sheet}
-          onClick={() => setSelectedCharacter(character.sheet)}
+          onClick={() =>
+            setSelectedCharacter(
+              allCharacters.find((c) => c._id === character.sheet._id) || null,
+            )
+          }
         />
       ))}
       {faction.public && (
@@ -136,7 +140,6 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
       )}
       {selectedCharacter && (
         <CharacterForm
-          key={selectedCharacter._id}
           initialSheet={selectedCharacter}
           state={isAdmin ? 'toggle' : 'view'}
           // EEh :D but ok

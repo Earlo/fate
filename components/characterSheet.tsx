@@ -13,6 +13,7 @@ interface CharacterSheetProps {
   state?: 'create' | 'edit' | 'toggle' | 'view';
 }
 
+type editableFields = Omit<CharacterSheetT, 'controlledBy' | '_id'>;
 const CharacterSheet: React.FC<CharacterSheetProps> = ({
   character,
   setCharacter,
@@ -20,11 +21,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   state = 'view',
 }) => {
   const updateField = (
-    field: keyof Omit<CharacterSheetT, 'controlledBy' | '_id'>,
-    value: (typeof character)[keyof Omit<
-      CharacterSheetT,
-      'controlledBy' | '_id'
-    >],
+    field: keyof editableFields,
+    value: editableFields[keyof editableFields],
   ) => {
     const newValue = { ...character[field], ...value };
     if (setCharacter) {
