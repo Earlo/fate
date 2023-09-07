@@ -68,53 +68,58 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
     onChange(updatedFaction);
   };
   return (
-    <div className="mx-auto flex w-1/2 items-center justify-between bg-gray-800 p-4 text-white">
-      <Input
-        type="text"
-        name={'name'}
-        value={newName}
-        onChange={(e) => setNewName(e.target.value)}
-        disabled={!isEditing}
-      />
-      {isAdmin && (
-        <div className="flex space-x-2">
-          {isEditing ? (
-            <>
-              <Button label="Save" onClick={handleSave} />
-              <Button label="Cancel" onClick={handleCancel} />
-            </>
-          ) : (
-            <Button label="Edit" onClick={() => setIsEditing(true)} />
-          )}
-          <label>
-            Visible
-            <input
-              type="checkbox"
-              checked={faction.visible}
-              onChange={() => toggleProperty('visible')}
-            />
-          </label>
-          <label>
-            Public
-            <input
-              type="checkbox"
-              checked={faction.public}
-              onChange={() => toggleProperty('public')}
-            />
-          </label>
-        </div>
-      )}
-      {faction.characters.map((character) => (
-        <CharacterButton
-          key={character.sheet._id}
-          character={character.sheet}
-          onClick={() =>
-            setSelectedCharacter(
-              allCharacters.find((c) => c._id === character.sheet._id) || null,
-            )
-          }
+    <div className="mx-auto flex w-full flex-col bg-gray-800 p-4 text-white md:w-1/2">
+      <div className="mb-4 flex flex-col items-center justify-between md:flex-row">
+        <Input
+          type="text"
+          name={'name'}
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          disabled={!isEditing}
         />
-      ))}
+        {isAdmin && (
+          <div className="flex space-x-2">
+            {isEditing ? (
+              <>
+                <Button label="Save" onClick={handleSave} />
+                <Button label="Cancel" onClick={handleCancel} />
+              </>
+            ) : (
+              <Button label="Edit" onClick={() => setIsEditing(true)} />
+            )}
+            <label>
+              Visible
+              <input
+                type="checkbox"
+                checked={faction.visible}
+                onChange={() => toggleProperty('visible')}
+              />
+            </label>
+            <label>
+              Public
+              <input
+                type="checkbox"
+                checked={faction.public}
+                onChange={() => toggleProperty('public')}
+              />
+            </label>
+          </div>
+        )}
+      </div>
+      <div className="mb-4 flex flex-wrap gap-2">
+        {faction.characters.map((character) => (
+          <CharacterButton
+            key={character.sheet._id}
+            character={character.sheet}
+            onClick={() =>
+              setSelectedCharacter(
+                allCharacters.find((c) => c._id === character.sheet._id) ||
+                  null,
+              )
+            }
+          />
+        ))}
+      </div>
       {faction.public && (
         <Button
           label="Add character"
@@ -122,9 +127,9 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
         />
       )}
       {isDropdownOpen && (
-        <div className="character-dropdown">
+        <div className="mb-4 flex flex-col gap-2 rounded bg-gray-700 p-2">
           {allCharacters.map((character) => (
-            <div key={character._id}>
+            <div key={character._id} className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={faction.characters.some(
@@ -142,7 +147,6 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
         <CharacterForm
           initialSheet={selectedCharacter}
           state={isAdmin ? 'toggle' : 'view'}
-          // EEh :D but ok
           setCharacters={isAdmin ? setAllCharacters : undefined}
           onClose={() => setSelectedCharacter(null)}
         />
