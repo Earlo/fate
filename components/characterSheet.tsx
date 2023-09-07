@@ -26,10 +26,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   ) => {
     const newValue = { ...character[field], ...value };
     if (setCharacter) {
-      setCharacter((prev) => ({ ...prev, [field]: newValue }));
+      console.log('new value', newValue);
+      //setCharacter((prev) => ({ ...prev, [field]: newValue }));
     }
   };
 
+  console.log(character.aspects);
   return (
     <>
       <div className="flex flex-col items-center md:flex-row">
@@ -120,7 +122,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
       <div className="flex flex-col justify-between md:flex-row">
         <AspectInput
           aspects={character?.aspects || []}
-          setAspects={(aspects) => updateField('aspects', aspects)}
+          setAspects={(aspects) =>
+            setCharacter
+              ? setCharacter((prev) => ({ ...prev, aspects: aspects }))
+              : null
+          }
           disabled={!setCharacter}
         />
         <SkillGrid
@@ -131,7 +137,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
       </div>
       <StuntInput
         stunts={character?.stunts || []}
-        setStunts={(stunts) => updateField('stunts', stunts)}
+        setStunts={(stunts) =>
+          setCharacter
+            ? setCharacter((prev) => ({ ...prev, stunts: stunts }))
+            : null
+        }
         disabled={!setCharacter}
       />
     </>

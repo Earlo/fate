@@ -18,6 +18,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
     index: number,
     value: { name: string; visibleIn: string[] },
   ) => {
+    console.log('ass', aspects);
     setAspects([
       ...aspects.slice(0, index),
       value,
