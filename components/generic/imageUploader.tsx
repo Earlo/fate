@@ -47,7 +47,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           alt={'Upload Image'}
           width={128}
           height={128}
-          className="cursor-pointer"
+          className="cursor-pointer rounded-full transition-opacity duration-200 hover:opacity-80"
           onClick={() => {
             if (!disabled) {
               fileInputRef.current?.click();

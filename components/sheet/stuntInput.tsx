@@ -21,7 +21,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
   state,
 }) => {
   return (
-    <div>
+    <div className="pb-4">
       <Label name="Stunts">
         {!disabled && (
           <span
@@ -76,7 +76,11 @@ const StuntInput: React.FC<StuntInputProps> = ({
             <SoloInput
               name={`stunt-${index}-name`}
               value={
-                stunt?.visibleIn.includes(campaignId || '') ? stunt.name : '???'
+                state === 'toggle'
+                  ? stunt?.visibleIn.includes(campaignId || '')
+                    ? stunt.name
+                    : '???'
+                  : stunt.name
               }
               placeholder="Stunt Name"
               required
@@ -97,9 +101,11 @@ const StuntInput: React.FC<StuntInputProps> = ({
           <SoloInput
             name={`stunt-${index}-description`}
             value={
-              stunt?.visibleIn.includes(campaignId || '')
-                ? stunt.description
-                : '???'
+              state === 'toggle'
+                ? stunt?.visibleIn.includes(campaignId || '')
+                  ? stunt.description
+                  : '???'
+                : stunt.description
             }
             placeholder={
               stunt.name ? `Description for ${stunt.name}` : 'Stunt Description'

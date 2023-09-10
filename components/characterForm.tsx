@@ -92,7 +92,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
       />
       {setCharacters && (
         <Button
-          label={isCreateMode ? 'Create' : 'Save Changes'}
+          label={isCreateMode ? 'Create Character' : 'Save Changes'}
           disabled={isSubmitting}
           type="submit"
         />

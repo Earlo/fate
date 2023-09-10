@@ -107,7 +107,7 @@ const CampaignPage = () => {
           alt={campaign.name}
           width={128}
           height={128}
-          className="w-full rounded-full sm:h-32 sm:w-32"
+          className="w-full sm:h-32 sm:w-32"
         />
         <p className="text-lg sm:text-xl">{campaign.description}</p>
       </div>

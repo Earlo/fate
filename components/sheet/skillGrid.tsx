@@ -70,7 +70,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
       <Label name="Skills" />
       {tiers.map((tier, index) => (
         <div key={index} className="mb-2 flex w-full flex-col lg:flex-row">
-          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/6">
+          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/5  ">
             {`${tier.label} +${tier.level}`}
           </span>
           <div className="flex flex-grow flex-col overflow-x-hidden sm:flex-row">
@@ -111,11 +111,13 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                   key={tier.label + slotIndex}
                   level={tier.level}
                   value={
-                    (skills[tier.level] || [])[slotIndex]?.visibleIn.includes(
-                      campaignId || '',
-                    )
-                      ? (skills[tier.level] || [])[slotIndex]?.name || ''
-                      : ''
+                    state === 'toggle'
+                      ? (skills[tier.level] || [])[
+                          slotIndex
+                        ]?.visibleIn.includes(campaignId || '')
+                        ? (skills[tier.level] || [])[slotIndex]?.name || ''
+                        : ''
+                      : (skills[tier.level] || [])[slotIndex]?.name || ''
                   }
                   disabled={
                     disabled ||

@@ -120,7 +120,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           </Input>
         </div>
       </div>
-      <div className="flex flex-col justify-between md:flex-row">
+      <div className="flex flex-col justify-between pb-2 md:flex-row">
         <AspectInput
           aspects={character?.aspects || []}
           setAspects={(aspects) =>
