@@ -34,7 +34,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         name="icon"
         onChange={handleFileChange}
         ref={fileInputRef}
-        style={{ display: 'none' }}
+        className="hidden"
         disabled={disabled}
       />
       {isLoading ? (
@@ -47,6 +47,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           alt={'Upload Image'}
           width={128}
           height={128}
+          className="cursor-pointer"
           onClick={() => {
             if (!disabled) {
               fileInputRef.current?.click();

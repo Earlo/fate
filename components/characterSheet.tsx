@@ -13,7 +13,10 @@ interface CharacterSheetProps {
   state?: 'create' | 'edit' | 'toggle' | 'view';
 }
 
-type editableFields = Omit<CharacterSheetT, 'controlledBy' | '_id'>;
+type editableFields = Omit<
+  CharacterSheetT,
+  'controlledBy' | '_id' | 'public' | 'visibleTo'
+>;
 const CharacterSheet: React.FC<CharacterSheetProps> = ({
   character,
   setCharacter,

@@ -44,6 +44,67 @@ export const characterSheetSchema = new Schema({
       visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   ],
+  stress: {
+    type: {
+      physical: {
+        type: {
+          boxes: { type: [Boolean], required: true },
+          visibleIn: {
+            type: [{ type: String, ref: 'Campaign' }],
+            default: [],
+          },
+        },
+      },
+      mental: {
+        type: {
+          boxes: { type: [Boolean], required: true },
+          visibleIn: {
+            type: [{ type: String, ref: 'Campaign' }],
+            default: [],
+          },
+        },
+      },
+    },
+  },
+  consequences: {
+    type: {
+      mild: {
+        type: {
+          name: { type: String, required: true },
+          visibleIn: {
+            type: [{ type: String, ref: 'Campaign' }],
+            default: [],
+          },
+        },
+      },
+      moderate: {
+        type: {
+          name: { type: String, required: true },
+          visibleIn: {
+            type: [{ type: String, ref: 'Campaign' }],
+            default: [],
+          },
+        },
+      },
+      severe: {
+        type: {
+          name: { type: String, required: true },
+          visibleIn: {
+            type: [{ type: String, ref: 'Campaign' }],
+            default: [],
+          },
+        },
+      },
+    },
+  },
+  public: { type: Boolean, required: true, default: false },
+  visibleTo: [
+    {
+      type: String,
+      ref: 'User',
+      default: [],
+    },
+  ],
   controlledBy: { type: String, ref: 'User', required: true },
 });
 export const CharacterSheet =
