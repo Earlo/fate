@@ -1,6 +1,5 @@
 import Button from './generic/button';
 import FormContainer from './formContainer';
-import CloseButton from './generic/closeButton';
 import Checkbox from './generic/checkbox';
 import CampaignSheet from './campaignSheet';
 import { CampaignT } from '@/schemas/campaign';
