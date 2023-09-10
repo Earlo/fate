@@ -50,39 +50,43 @@ export default function Dashboard() {
   }, [session]);
 
   return (
-    <div className="p-4 text-xl font-bold">
-      <Button
-        className="bg-green-500 hover:bg-green-700 "
-        label="Create New Character Sheet"
-        onClick={() => setShowSheetForm(true)}
-      />
-      <div>
-        <h2>Your Character Sheets:</h2>
-        {characters.map((sheet) => (
-          <CharacterButton
-            key={sheet._id}
-            character={sheet}
-            onClick={() => setSelectedCharacter(sheet)}
-          />
-        ))}
-      </div>
-      {session?.user.admin ? (
+    <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 ">
+      <div className="col-span-1">
+        <h2 className="mb-2 text-xl font-bold">Your Character Sheets:</h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {characters.map((sheet) => (
+            <CharacterButton
+              key={sheet._id}
+              character={sheet}
+              onClick={() => setSelectedCharacter(sheet)}
+            />
+          ))}
+        </div>
         <Button
-          className="mt-4 bg-blue-500 hover:bg-blue-700"
-          label="Create New Campaign"
-          onClick={() => setShowCampaignForm(true)}
+          className="mt-4 w-full bg-green-500 hover:bg-green-700"
+          label="Create New Character Sheet"
+          onClick={() => setShowSheetForm(true)}
         />
-      ) : null}
-      <div>
-        <h2>Your Campaigns:</h2>
-        {campaigns.map((campaign) => (
-          <CampaignButton
-            key={campaign._id}
-            name={campaign.name}
-            imageUrl={campaign.icon}
-            onClick={() => setSelectedCampaign(campaign)}
+      </div>
+      <div className="col-span-1">
+        <h2 className="mb-2 text-xl font-bold">Your Campaigns:</h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {campaigns.map((campaign) => (
+            <CampaignButton
+              key={campaign._id}
+              name={campaign.name}
+              imageUrl={campaign.icon}
+              onClick={() => setSelectedCampaign(campaign)}
+            />
+          ))}
+        </div>
+        {session?.user.admin && (
+          <Button
+            className="mt-4 w-full bg-blue-500 hover:bg-blue-700"
+            label="Create New Campaign"
+            onClick={() => setShowCampaignForm(true)}
           />
-        ))}
+        )}
       </div>
 
       {selectedCampaign &&
