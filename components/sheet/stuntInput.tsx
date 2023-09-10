@@ -1,3 +1,4 @@
+import VisibilityToggle from './visibilityToggle';
 import SoloInput from '../generic/soloInput';
 import Label from '../generic/label';
 import CloseButton from '../generic/closeButton';
@@ -8,12 +9,16 @@ interface StuntInputProps {
     value: { name: string; description: string; visibleIn: string[] }[],
   ) => void;
   disabled?: boolean;
+  campaignId?: string;
+  state?: 'create' | 'edit' | 'toggle' | 'view';
 }
 
 const StuntInput: React.FC<StuntInputProps> = ({
   stunts,
   setStunts,
   disabled = false,
+  campaignId,
+  state,
 }) => {
   return (
     <div>
@@ -46,9 +51,33 @@ const StuntInput: React.FC<StuntInputProps> = ({
                 }
               />
             )}
+            {state === 'toggle' && campaignId && (
+              <div
+                className={`inline-flex h-fit items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 `}
+              >
+                <VisibilityToggle
+                  visible={stunt?.visibleIn.includes(campaignId)}
+                  onChange={(visible) =>
+                    setStunts([
+                      ...stunts.slice(0, index),
+                      {
+                        name: stunt.name,
+                        description: stunt.description,
+                        visibleIn: visible
+                          ? [...stunt.visibleIn, campaignId]
+                          : stunt.visibleIn.filter((id) => id !== campaignId),
+                      },
+                      ...stunts.slice(index + 1),
+                    ])
+                  }
+                />
+              </div>
+            )}
             <SoloInput
               name={`stunt-${index}-name`}
-              value={stunt.name}
+              value={
+                stunt?.visibleIn.includes(campaignId || '') ? stunt.name : '???'
+              }
               placeholder="Stunt Name"
               required
               disabled={disabled}
@@ -67,7 +96,11 @@ const StuntInput: React.FC<StuntInputProps> = ({
           </div>
           <SoloInput
             name={`stunt-${index}-description`}
-            value={stunt.description}
+            value={
+              stunt?.visibleIn.includes(campaignId || '')
+                ? stunt.description
+                : '???'
+            }
             placeholder={
               stunt.name ? `Description for ${stunt.name}` : 'Stunt Description'
             }
