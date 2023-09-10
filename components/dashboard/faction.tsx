@@ -26,6 +26,7 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
     const fetchData = async () => {
       if (session) {
         const response = await fetch(`/api/sheets?id=${session.user._id}`);
+        console.log(response);
         if (response.status === 200) {
           const data = await response.json();
           setAllCharacters(data);
@@ -111,12 +112,9 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
           <CharacterButton
             key={character.sheet._id}
             character={character.sheet}
-            onClick={() =>
-              setSelectedCharacter(
-                allCharacters.find((c) => c._id === character.sheet._id) ||
-                  null,
-              )
-            }
+            onClick={() => {
+              setSelectedCharacter(character.sheet);
+            }}
           />
         ))}
       </div>

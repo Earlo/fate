@@ -46,7 +46,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
                 }
                 value={
                   state === 'view' &&
-                  !aspects[index].visibleIn?.includes(campaignId || '')
+                  !aspects[index].visibleIn.includes(campaignId || '')
                     ? '???'
                     : aspects[index]?.name || ''
                 }
@@ -60,7 +60,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
               />
               {state === 'toggle' && campaignId && aspects[index] && (
                 <VisibilityToggle
-                  visible={aspects[index].visibleIn?.includes(campaignId)}
+                  visible={aspects[index].visibleIn.includes(campaignId)}
                   onChange={(visible) =>
                     handleAspectChange(index, {
                       name: aspects[index].name,

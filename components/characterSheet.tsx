@@ -30,7 +30,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
     }
   };
 
-  console.log(character.aspects);
   return (
     <>
       <div className="flex flex-col items-center md:flex-row">
@@ -134,6 +133,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           skills={character?.skills || {}}
           setSkills={(skills) => updateField('skills', skills)}
           disabled={!setCharacter}
+          campaignId={campaignId}
+          state={state}
         />
       </div>
       <StuntInput

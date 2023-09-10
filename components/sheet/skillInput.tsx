@@ -3,7 +3,7 @@ import { Skill } from '@/types/fate';
 interface SkillInputProps {
   level: number;
   onChange: (value: Skill) => void;
-  value: Skill;
+  value: Skill | '';
   disabled?: boolean;
 }
 
