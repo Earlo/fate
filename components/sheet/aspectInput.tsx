@@ -1,3 +1,4 @@
+import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
 
@@ -5,6 +6,8 @@ interface AspectInputProps {
   aspects: { name: string; visibleIn: string[] }[];
   setAspects: (aspects: { name: string; visibleIn: string[] }[]) => void;
   disabled?: boolean;
+  state?: 'create' | 'edit' | 'toggle' | 'view';
+  campaignId?: string;
 }
 
 const hints = ['High Concept', 'Trouble'];
@@ -12,13 +15,14 @@ const hints = ['High Concept', 'Trouble'];
 const AspectInput: React.FC<AspectInputProps> = ({
   aspects,
   setAspects,
+  state,
   disabled,
+  campaignId,
 }) => {
   const handleAspectChange = (
     index: number,
     value: { name: string; visibleIn: string[] },
   ) => {
-    console.log('ass', aspects);
     setAspects([
       ...aspects.slice(0, index),
       value,
@@ -27,7 +31,6 @@ const AspectInput: React.FC<AspectInputProps> = ({
   };
 
   return (
-    //<div className="w-full pr-4 md:w-1/2 lg:w-4/12">
     <div className="flex flex-col pr-4">
       <div>
         <Label name="Aspects" />
@@ -35,13 +38,18 @@ const AspectInput: React.FC<AspectInputProps> = ({
       <div className="flex flex-col">
         {Array.from({ length: 5 }).map((_, index) =>
           !aspects[index] && disabled ? null : (
-            <div key={index} className="mb-2">
+            <div key={index} className="mb-2 flex items-center">
               <SoloInput
                 name={`aspect-${index}`}
                 placeholder={
                   index < hints.length ? hints[index] : 'Additional Aspect'
                 }
-                value={aspects[index]?.name || ''}
+                value={
+                  state === 'view' &&
+                  !aspects[index].visibleIn?.includes(campaignId || '')
+                    ? '???'
+                    : aspects[index]?.name || ''
+                }
                 onChange={(e) =>
                   handleAspectChange(index, {
                     name: e.target.value,
@@ -50,6 +58,21 @@ const AspectInput: React.FC<AspectInputProps> = ({
                 }
                 disabled={disabled}
               />
+              {state === 'toggle' && campaignId && aspects[index] && (
+                <VisibilityToggle
+                  visible={aspects[index].visibleIn?.includes(campaignId)}
+                  onChange={(visible) =>
+                    handleAspectChange(index, {
+                      name: aspects[index].name,
+                      visibleIn: visible
+                        ? [...(aspects[index].visibleIn || []), campaignId]
+                        : aspects[index].visibleIn.filter(
+                            (id) => id !== campaignId,
+                          ),
+                    })
+                  }
+                />
+              )}
             </div>
           ),
         )}

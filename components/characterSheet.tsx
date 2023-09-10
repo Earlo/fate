@@ -127,6 +127,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
               : null
           }
           disabled={!setCharacter}
+          campaignId={campaignId}
+          state={state}
         />
         <SkillGrid
           skills={character?.skills || {}}

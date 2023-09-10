@@ -1,6 +1,8 @@
 import SkillInput from './skillInput';
+import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
 import { Skill } from '@/types/fate';
+
 /*
 export const tiers = [
   { level: 8, label: 'Legendary' },
@@ -30,12 +32,16 @@ interface SkillGridProps {
     [level: number]: { name: Skill; visibleIn: string[] }[];
   }) => void;
   disabled?: boolean;
+  state?: 'create' | 'edit' | 'toggle' | 'view';
+  campaignId?: string;
 }
 
 const SkillGrid: React.FC<SkillGridProps> = ({
   skills,
   setSkills,
   disabled,
+  state,
+  campaignId,
 }) => {
   const handleSkillChange = (
     level: number,
