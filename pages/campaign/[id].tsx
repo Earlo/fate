@@ -54,6 +54,9 @@ const CampaignPage = () => {
     if (campaign && id) {
       const newFaction = {
         name: 'New Faction',
+        description: '',
+        icon: '',
+        color: '',
         public: false,
         visible: true,
         characters: [],
@@ -78,50 +81,60 @@ const CampaignPage = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center text-2xl">
+        Loading...
+      </div>
+    );
   }
 
   if (!campaign) {
-    return <div>Not Found</div>;
+    return (
+      <div className="flex h-screen items-center justify-center text-2xl">
+        Not Found
+      </div>
+    );
   }
+
   return (
-    <div>
-      <h1 className="text-center text-4xl font-bold">{campaign.name}</h1>
-      <div className="flex flex-row items-center">
+    <div className="px-4 py-6">
+      <h1 className="mb-6 text-center text-4xl font-bold sm:text-5xl">
+        {campaign.name}
+      </h1>
+      <div className="mb-6 flex flex-col items-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
         <Image
           src={campaign.icon || '/drowsee_128.png'}
           alt={campaign.name}
           width={128}
           height={128}
-          className="mx-4 h-32 w-32"
+          className="w-full rounded-full sm:h-32 sm:w-32"
         />
-        <p>{campaign.description}</p>
+        <p className="text-lg sm:text-xl">{campaign.description}</p>
       </div>
-      {isAdmin && <Button label="Add Faction" onClick={handleAddFaction} />}
+      {isAdmin && (
+        <Button
+          label="Add Faction"
+          onClick={handleAddFaction}
+          className="mb-6"
+        />
+      )}
       {campaign?.factions && campaign.factions.length > 0 && (
         <div>
-          <h2>Factions</h2>
-          {campaign.factions.map((faction, index) => (
-            <Faction
-              key={index}
-              faction={faction}
-              isAdmin={isAdmin}
-              onChange={(faction) => updateFaction(index, faction)}
-            />
-          ))}
+          <h2 className="mb-4 text-2xl font-semibold">Factions</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {campaign.factions.map((faction, index) => (
+              <Faction
+                key={index}
+                faction={faction}
+                isAdmin={isAdmin}
+                onChange={(faction) => updateFaction(index, faction)}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
   );
 };
-
-/*
-const getStaticPaths = async () => {
-  return {
-    paths: [],
-    fallback: true,
-  };
-};
-*/
 
 export default CampaignPage;

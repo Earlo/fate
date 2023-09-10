@@ -8,6 +8,9 @@ export const campaignSchema = new Schema({
   factions: [
     {
       name: { type: String, required: true },
+      description: { type: String, required: true, default: '' },
+      icon: String,
+      color: String,
       characters: [
         {
           sheet: {
@@ -18,6 +21,7 @@ export const campaignSchema = new Schema({
           visible: { type: Boolean, required: true, default: false },
         },
       ],
+
       visible: { type: Boolean, required: true, default: false },
       public: { type: Boolean, required: true, default: false },
     },

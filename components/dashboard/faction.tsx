@@ -69,8 +69,8 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
     onChange(updatedFaction);
   };
   return (
-    <div className="mx-auto flex w-full flex-col bg-gray-800 p-4 text-white md:w-1/2">
-      <div className="mb-4 flex flex-col items-center justify-between md:flex-row">
+    <div className="mx-auto flex w-full flex-col space-y-4 rounded-lg bg-gray-800 p-4 text-white shadow-lg">
+      <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
         <Input
           type="text"
           name={'name'}
@@ -79,7 +79,7 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
           disabled={!isEditing}
         />
         {isAdmin && (
-          <div className="flex space-x-2">
+          <div className="flex items-center space-x-2">
             {isEditing ? (
               <>
                 <Button label="Save" onClick={handleSave} />
@@ -88,26 +88,28 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
             ) : (
               <Button label="Edit" onClick={() => setIsEditing(true)} />
             )}
-            <label>
-              Visible
-              <input
-                type="checkbox"
-                checked={faction.visible}
-                onChange={() => toggleProperty('visible')}
-              />
-            </label>
-            <label>
-              Public
-              <input
-                type="checkbox"
-                checked={faction.public}
-                onChange={() => toggleProperty('public')}
-              />
-            </label>
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={faction.visible}
+                  onChange={() => toggleProperty('visible')}
+                />
+                <span>Visible</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={faction.public}
+                  onChange={() => toggleProperty('public')}
+                />
+                <span>Public</span>
+              </label>
+            </div>
           </div>
         )}
       </div>
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="grid grid-cols-1 gap-2">
         {faction.characters.map((character) => (
           <CharacterButton
             key={character.sheet._id}
@@ -120,12 +122,12 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
       </div>
       {faction.public && (
         <Button
-          label="Add character"
+          label="Toggle your characters"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         />
       )}
       {isDropdownOpen && (
-        <div className="mb-4 flex flex-col gap-2 rounded bg-gray-700 p-2">
+        <div className="flex flex-col gap-2 rounded bg-gray-700 p-2">
           {allCharacters.map((character) => (
             <div key={character._id} className="flex items-center gap-2">
               <input
