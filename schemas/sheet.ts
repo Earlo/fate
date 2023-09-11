@@ -8,7 +8,18 @@ export const characterSheetSchema = new Schema({
       visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   },
-  color: { type: String, required: true, default: '#000000' },
+  colorPalette: {
+    type: {
+      primary: { type: String, required: true },
+      secondary: { type: String, required: true },
+      tertiary: { type: String, required: true },
+    },
+    default: {
+      primary: '#000000',
+      secondary: '#000000',
+      tertiary: '#000000',
+    },
+  },
   name: {
     type: {
       text: { type: String, required: true },

@@ -56,7 +56,11 @@ const CampaignPage = () => {
         name: 'New Faction',
         description: '',
         icon: '',
-        color: '',
+        colorPalette: {
+          primary: '209 213 219',
+          secondary: '156 163 175',
+          tertiary: '107 114 128',
+        },
         public: false,
         visible: true,
         characters: [],

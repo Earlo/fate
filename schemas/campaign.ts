@@ -5,13 +5,35 @@ export const campaignSchema = new Schema({
   name: { type: String, required: true },
   icon: String,
   description: String,
-  color: { type: String, required: true, default: '#000000' },
+  colorPalette: {
+    type: {
+      primary: { type: String, required: true },
+      secondary: { type: String, required: true },
+      tertiary: { type: String, required: true },
+    },
+    default: {
+      primary: '#000000',
+      secondary: '#000000',
+      tertiary: '#000000',
+    },
+  },
   factions: [
     {
       name: { type: String, required: true },
       description: { type: String, required: true, default: '' },
       icon: String,
-      color: { type: String, required: true, default: '#000000' },
+      colorPalette: {
+        type: {
+          primary: { type: String, required: true },
+          secondary: { type: String, required: true },
+          tertiary: { type: String, required: true },
+        },
+        default: {
+          primary: '#000000',
+          secondary: '#000000',
+          tertiary: '#000000',
+        },
+      },
       characters: [
         {
           sheet: {
