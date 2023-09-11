@@ -5,6 +5,7 @@ import CampaignSheet from './campaignSheet';
 import { CampaignT } from '@/schemas/campaign';
 import { useState, FormEvent } from 'react';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 interface CampaignFormProps {
   onClose?: () => void;
@@ -90,6 +91,14 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
         type="submit"
         disabled={isSubmitting}
       />
+      {isEditMode && initialCampaign && (
+        <Link href={`/campaign/${initialCampaign._id}`} passHref>
+          <Button
+            className="mt-4 bg-blue-500 hover:bg-blue-700"
+            label="View Campaign"
+          />
+        </Link>
+      )}
     </FormContainer>
   );
 };

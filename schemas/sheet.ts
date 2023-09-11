@@ -8,6 +8,7 @@ export const characterSheetSchema = new Schema({
       visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   },
+  color: { type: String, required: true, default: '#000000' },
   name: {
     type: {
       text: { type: String, required: true },
@@ -65,6 +66,16 @@ export const characterSheetSchema = new Schema({
         },
       },
     },
+    default: {
+      physical: {
+        boxes: [false, false],
+        visibleIn: [],
+      },
+      mental: {
+        boxes: [false, false],
+        visibleIn: [],
+      },
+    },
   },
   consequences: {
     type: {
@@ -94,6 +105,20 @@ export const characterSheetSchema = new Schema({
             default: [],
           },
         },
+      },
+    },
+    default: {
+      mild: {
+        name: '',
+        visibleIn: [],
+      },
+      moderate: {
+        name: '',
+        visibleIn: [],
+      },
+      severe: {
+        name: '',
+        visibleIn: [],
       },
     },
   },
