@@ -70,7 +70,7 @@ export default function Dashboard() {
       </div>
       <div className="col-span-1">
         <h2 className="mb-2 text-xl font-bold">Your Campaigns:</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
           {campaigns.map((campaign) => (
             <CampaignButton
               key={campaign._id}
@@ -80,6 +80,30 @@ export default function Dashboard() {
             />
           ))}
         </div>
+        {selectedCampaign &&
+          (selectedCampaign.controlledBy === session?.user?._id ? (
+            <CampaignForm
+              key={selectedCampaign._id}
+              initialCampaign={selectedCampaign}
+              state="edit"
+              setCampaigns={setCampaigns}
+              onClose={() => setSelectedCampaign(null)}
+            />
+          ) : (
+            <div className="mb-4 rounded bg-white px-8 pb-8 pt-6 shadow-md">
+              <CloseButton
+                className="relative bottom-4 left-4 float-right"
+                onClick={() => setSelectedCampaign(null)}
+              />
+              <CampaignSheet campaign={selectedCampaign} />
+              <Link href={`/campaign/${selectedCampaign._id}`} passHref>
+                <Button
+                  className="mt-4 bg-blue-500 hover:bg-blue-700"
+                  label="View Campaign"
+                />
+              </Link>
+            </div>
+          ))}
         {session?.user.admin && (
           <Button
             className="mt-4 w-full bg-blue-500 hover:bg-blue-700"
@@ -88,31 +112,6 @@ export default function Dashboard() {
           />
         )}
       </div>
-
-      {selectedCampaign &&
-        (selectedCampaign.controlledBy === session?.user?._id ? (
-          <CampaignForm
-            key={selectedCampaign._id}
-            initialCampaign={selectedCampaign}
-            state="edit"
-            setCampaigns={setCampaigns}
-            onClose={() => setSelectedCampaign(null)}
-          />
-        ) : (
-          <div className="mb-4 rounded bg-white px-8 pb-8 pt-6 shadow-md">
-            <CloseButton
-              className="relative bottom-4 left-4 float-right"
-              onClick={() => setSelectedCampaign(null)}
-            />
-            <CampaignSheet campaign={selectedCampaign} />
-            <Link href={`/campaign/${selectedCampaign._id}`} passHref>
-              <Button
-                className="mt-4 bg-blue-500 hover:bg-blue-700"
-                label="View Campaign"
-              />
-            </Link>
-          </div>
-        ))}
 
       {showCampaignForm && (
         <CampaignForm

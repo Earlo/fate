@@ -14,17 +14,19 @@ const CampaignButton: React.FC<CampaignButtonProps> = ({
   return (
     <div
       onClick={onClick}
-      className="mb-2 flex w-48 items-center justify-between rounded bg-gray-200 p-2"
+      className="group flex min-h-0 w-full cursor-pointer items-center space-x-4 rounded-lg border border-gray-300 p-2 transition-colors duration-200 hover:border-gray-400 hover:bg-gray-100 hover:text-gray-800 active:bg-gray-200"
     >
       <Image
         src={imageUrl || '/drowsee_128.png'}
         alt={name}
         width={64}
         height={64}
-        className="h-16 w-16"
+        className="flex-shrink-0"
       />
-      <div className="ml-4">
-        <h3 className="text-lg font-bold text-black">{name}</h3>
+      <div className="flex min-w-0 flex-col">
+        <h3 className="line-clamp-2 overflow-hidden text-lg font-semibold leading-6 group-hover:underline">
+          {name || 'Unnamed campaign'}
+        </h3>
       </div>
     </div>
   );
