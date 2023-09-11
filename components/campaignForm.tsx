@@ -86,19 +86,21 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
           setFormState((prev) => ({ ...prev, public: e.target.checked }))
         }
       />
-      <Button
-        label={isEditMode ? 'Save Changes' : 'Create'}
-        type="submit"
-        disabled={isSubmitting}
-      />
-      {isEditMode && initialCampaign && (
-        <Link href={`/campaign/${initialCampaign._id}`} passHref>
-          <Button
-            className="mt-4 bg-blue-500 hover:bg-blue-700"
-            label="View Campaign"
-          />
-        </Link>
-      )}
+      <div className="space-between flex">
+        <Button
+          label={isEditMode ? 'Save Changes' : 'Create'}
+          type="submit"
+          disabled={isSubmitting}
+        />
+        {isEditMode && initialCampaign && (
+          <Link href={`/campaign/${initialCampaign._id}`} passHref>
+            <Button
+              className="mt-4 bg-blue-500 hover:bg-blue-700"
+              label="View Campaign"
+            />
+          </Link>
+        )}
+      </div>
     </FormContainer>
   );
 };
