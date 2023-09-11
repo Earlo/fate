@@ -15,9 +15,9 @@ export const characterSheetSchema = new Schema({
       tertiary: { type: String, required: true },
     },
     default: {
-      primary: '#000000',
-      secondary: '#000000',
-      tertiary: '#000000',
+      primary: '209 213 219',
+      secondary: '156 163 175',
+      tertiary: '107 114 128',
     },
   },
   name: {
