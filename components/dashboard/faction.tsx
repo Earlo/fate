@@ -11,9 +11,15 @@ interface FactionProps {
   faction: PopulatedFaction;
   isAdmin: boolean;
   onChange: (updatedFaction: PopulatedFaction) => void;
+  campaignId: string;
 }
 
-const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
+const Faction: React.FC<FactionProps> = ({
+  faction,
+  isAdmin,
+  onChange,
+  campaignId,
+}) => {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(faction.name);
@@ -149,6 +155,7 @@ const Faction: React.FC<FactionProps> = ({ faction, isAdmin, onChange }) => {
           state={isAdmin ? 'toggle' : 'view'}
           setCharacters={isAdmin ? setAllCharacters : undefined}
           onClose={() => setSelectedCharacter(null)}
+          campaignId={campaignId}
         />
       )}
     </div>

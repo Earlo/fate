@@ -9,6 +9,7 @@ interface CharacterFormProps {
   initialSheet?: CharacterSheetT;
   state?: 'create' | 'edit' | 'toggle' | 'view';
   setCharacters?: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
+  campaignId?: string;
 }
 
 const CharacterForm: React.FC<CharacterFormProps> = ({
@@ -16,6 +17,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   initialSheet,
   state = 'create',
   setCharacters,
+  campaignId,
 }) => {
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -88,7 +90,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
         character={formState}
         setCharacter={setCharacters ? setFormState : undefined}
         state={state}
-        campaignId={'64ebe70c89f5a2e7cc3b4a00'}
+        campaignId={campaignId}
       />
       {setCharacters && (
         <Button

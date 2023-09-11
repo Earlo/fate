@@ -128,6 +128,7 @@ const CampaignPage = () => {
                 faction={faction}
                 isAdmin={isAdmin}
                 onChange={(faction) => updateFaction(index, faction)}
+                campaignId={id as string}
               />
             ))}
           </div>
