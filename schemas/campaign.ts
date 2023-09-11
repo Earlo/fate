@@ -5,12 +5,13 @@ export const campaignSchema = new Schema({
   name: { type: String, required: true },
   icon: String,
   description: String,
+  color: { type: String, required: true, default: '#000000' },
   factions: [
     {
       name: { type: String, required: true },
       description: { type: String, required: true, default: '' },
       icon: String,
-      color: String,
+      color: { type: String, required: true, default: '#000000' },
       characters: [
         {
           sheet: {
