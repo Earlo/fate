@@ -1,5 +1,6 @@
 import AuthForm from '../authForm';
 import Button from '@/components/generic/button';
+import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -8,10 +9,15 @@ const TopBar: React.FC = () => {
   const [showAuthForm, setShowAuthForm] = useState(false);
   return (
     <div className="flex items-center justify-between bg-gray-800 p-4 text-white">
-      <div className="text-xl font-bold">
-        {session
-          ? 'Welcome, ' + session.user.username + '!'
-          : 'Fate core character sheet app thingy'}
+      <div className="flex items-center space-x-4">
+        <Link href="/">
+          <a className="text-xl font-bold">Home</a>
+        </Link>
+        <div className="text-xl font-bold">
+          {session
+            ? 'Welcome, ' + session.user.username + '!'
+            : 'Fate core character sheet app thingy'}
+        </div>
       </div>
       <div>
         {session ? (
