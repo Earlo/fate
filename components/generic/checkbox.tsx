@@ -2,6 +2,7 @@ import Label from './label';
 import React, { useRef } from 'react';
 
 interface CheckboxProps {
+  id?: string;
   name: string;
   checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -9,6 +10,7 @@ interface CheckboxProps {
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({
+  id,
   name,
   checked,
   onChange,
@@ -32,7 +34,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         <input
           ref={checkboxRef}
           type="checkbox"
-          id={name}
+          id={id || name}
           name={name}
           checked={checked}
           className="hidden"
@@ -52,7 +54,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
           )}
         </div>
       </div>
-      <Label name={name} />
+      <Label label={name} name={id || name} />
     </div>
   );
 };
