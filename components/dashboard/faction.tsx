@@ -75,8 +75,8 @@ const Faction: React.FC<FactionProps> = ({
     onChange(updatedFaction);
   };
   return (
-    <div className="mx-auto flex w-full flex-col space-y-4 rounded-lg bg-gray-800 p-4 text-white shadow-lg">
-      <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
+    <div className="mx-auto flex w-full flex-col rounded-lg bg-gray-800 p-4 text-white shadow-lg">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <Input
           type="text"
           name={'name'}
@@ -85,7 +85,7 @@ const Faction: React.FC<FactionProps> = ({
           disabled={!isEditing}
         />
         {isAdmin && (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center">
             {isEditing ? (
               <>
                 <Button label="Save" onClick={handleSave} />
@@ -94,8 +94,8 @@ const Faction: React.FC<FactionProps> = ({
             ) : (
               <Button label="Edit" onClick={() => setIsEditing(true)} />
             )}
-            <div className="flex items-center space-x-4">
-              <label className="flex items-center space-x-2">
+            <div className="flex items-center">
+              <label className="flex items-center">
                 <input
                   type="checkbox"
                   checked={faction.visible}
@@ -103,7 +103,7 @@ const Faction: React.FC<FactionProps> = ({
                 />
                 <span>Visible</span>
               </label>
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center">
                 <input
                   type="checkbox"
                   checked={faction.public}

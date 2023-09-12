@@ -11,7 +11,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
 }) => (
   <div
     onClick={onClick}
-    className="group flex min-h-0 w-full cursor-pointer items-center space-x-4 rounded-lg border border-gray-300 pl-4 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 active:bg-gray-300"
+    className="group flex h-24 min-h-0 w-full cursor-pointer items-center justify-around rounded-lg border border-gray-300 pl-4 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 active:bg-gray-300"
   >
     <Image
       src={character.icon?.url || '/drowsee_128.png'}
@@ -20,7 +20,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
       height={64}
       className="flex-shrink-0 rounded-full"
     />
-    <div className="flex min-w-0 flex-col">
+    <div className="flex min-w-0 flex-col pl-4">
       <div className="flex h-12 flex-col justify-end">
         <h3 className="line-clamp-2 overflow-hidden text-lg font-semibold leading-6 group-hover:underline">
           {character.name.text || 'Unnamed Character'}

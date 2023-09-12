@@ -105,7 +105,7 @@ const CampaignPage = () => {
       <h1 className="mb-6 text-center text-4xl font-bold sm:text-5xl">
         {campaign.name}
       </h1>
-      <div className="mb-6 flex flex-col items-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+      <div className="mb-6 flex flex-col items-center sm:flex-row">
         <Image
           src={campaign.icon || '/drowsee_128.png'}
           alt={campaign.name}
