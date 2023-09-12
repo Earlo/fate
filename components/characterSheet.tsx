@@ -139,6 +139,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           disabled={!setCharacter}
           campaignId={campaignId}
           state={state}
+          setStress={(stress) => updateField('stress', stress)}
+          stress={character.stress}
         />
       </div>
       <StuntInput
@@ -152,7 +154,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
         campaignId={campaignId}
         state={state}
       />
-      {(state === 'play' || state === 'view') && <Stress />}
+      <Stress
+        stress={character.stress}
+        disabled={state === 'view'}
+        setStress={(stress) => updateField('stress', stress)}
+      />
     </>
   );
 };

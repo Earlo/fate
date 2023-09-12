@@ -63,7 +63,7 @@ export default function Dashboard() {
           ))}
         </div>
         <Button
-          className="mt-4 w-full bg-green-500 hover:bg-green-700"
+          className="w-full bg-green-500 pt-4 hover:bg-green-700"
           label="Create New Character Sheet"
           onClick={() => setShowSheetForm(true)}
         />
@@ -98,7 +98,7 @@ export default function Dashboard() {
               <CampaignSheet campaign={selectedCampaign} />
               <Link href={`/campaign/${selectedCampaign._id}`} passHref>
                 <Button
-                  className="mt-4 bg-blue-500 hover:bg-blue-700"
+                  className="bg-blue-500 pt-4 hover:bg-blue-700"
                   label="View Campaign"
                 />
               </Link>
@@ -106,7 +106,7 @@ export default function Dashboard() {
           ))}
         {session?.user.admin && (
           <Button
-            className="mt-4 w-full bg-blue-500 hover:bg-blue-700"
+            className="w-full bg-blue-500 pt-4 hover:bg-blue-700"
             label="Create New Campaign"
             onClick={() => setShowCampaignForm(true)}
           />

@@ -1,44 +1,82 @@
-import { useState } from 'react';
+import Label from '../generic/label';
+import Checkbox from '../generic/checkbox';
+import { CharacterSheetT } from '@/schemas/sheet';
 
-const Stress: React.FC = () => {
-  const [physicalStress, setPhysicalStress] = useState([false, false, false]);
-  const [mentalStress, setMentalStress] = useState([false, false, false]);
+interface StressProps {
+  stress?: CharacterSheetT['stress'];
+  setStress: (value: CharacterSheetT['stress']) => void;
+  disabled: boolean;
+}
+/** 
+ * (parameter) stress: {
+    physical?: {
+        visibleIn: string[];
+        boxes: boolean[];
+    } | undefined;
+    mental?: {
+        visibleIn: string[];
+        boxes: boolean[];
+    } | undefined;
+} | undefined
 
+*/
+const Stress: React.FC<StressProps> = ({ stress, setStress, disabled }) => {
   const toggleStress = (index: number, type: 'physical' | 'mental') => {
-    if (type === 'physical') {
-      setPhysicalStress((prev) =>
-        prev.map((val, i) => (i === index ? !val : val)),
-      );
-    } else {
-      setMentalStress((prev) =>
-        prev.map((val, i) => (i === index ? !val : val)),
-      );
-    }
+    const updatedStress =
+      type === 'physical'
+        ? {
+            ...stress,
+            physical: {
+              ...stress?.physical,
+              boxes:
+                stress?.physical?.boxes.map((val, idx) =>
+                  idx === index ? !val : val,
+                ) || [],
+              visibleIn: stress?.physical?.visibleIn || [],
+            },
+          }
+        : {
+            ...stress,
+            mental: {
+              ...stress?.mental,
+              boxes:
+                stress?.mental?.boxes.map((val, idx) =>
+                  idx === index ? !val : val,
+                ) || [],
+              visibleIn: stress?.mental?.visibleIn || [],
+            },
+          };
+    setStress(updatedStress);
   };
 
   return (
-    <div className="flex flex-col space-y-4">
-      <div className="flex space-x-2">
-        <span>Physical:</span>
-        {physicalStress.map((stressed, index) => (
-          <input
+    <div className="flex flex-col py-4">
+      <Label name="Stress" />
+      <div className="flex">
+        <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/5  ">
+          Physical:
+        </span>
+        {stress?.physical?.boxes.map((stressed, index) => (
+          <Checkbox
+            name={(index + 1).toString()}
             key={index}
-            type="checkbox"
             checked={stressed}
+            disabled={disabled}
             onChange={() => toggleStress(index, 'physical')}
-            className="form-checkbox h-5 w-5"
           />
         ))}
       </div>
-      <div className="flex space-x-2">
-        <span>Mental:</span>
-        {mentalStress.map((stressed, index) => (
-          <input
+      <div className="flex">
+        <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/5  ">
+          Mental:
+        </span>
+        {stress?.mental?.boxes.map((stressed, index) => (
+          <Checkbox
+            name={(index + 1).toString()}
             key={index}
-            type="checkbox"
             checked={stressed}
+            disabled={disabled}
             onChange={() => toggleStress(index, 'mental')}
-            className="form-checkbox h-5 w-5"
           />
         ))}
       </div>

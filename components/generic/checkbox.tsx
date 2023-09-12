@@ -5,19 +5,29 @@ interface CheckboxProps {
   name: string;
   checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ name, checked, onChange }) => {
+const Checkbox: React.FC<CheckboxProps> = ({
+  name,
+  checked,
+  onChange,
+  disabled,
+}) => {
   const checkboxRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
-    if (checkboxRef.current) {
+    if (checkboxRef.current && !disabled) {
       checkboxRef.current.click();
     }
   };
 
   return (
-    <div className="mb-4 flex items-center">
+    <div
+      className={`flex items-center justify-center pb-4 pl-4 ${
+        disabled ? 'cursor-not-allowed opacity-80' : ''
+      }`}
+    >
       <div className="relative">
         <input
           ref={checkboxRef}
@@ -27,15 +37,16 @@ const Checkbox: React.FC<CheckboxProps> = ({ name, checked, onChange }) => {
           checked={checked}
           className="hidden"
           onChange={onChange}
+          disabled={disabled}
         />
         <div
           onClick={handleClick}
-          className={`h-8 w-8 cursor-pointer rounded border-2 bg-white ${
-            checked ? 'border-green-500' : 'border-gray-300'
-          }`}
+          className={`h-10 w-10 cursor-pointer rounded border-2 bg-white ${
+            checked ? 'border-black' : 'border-gray-300'
+          } ${disabled ? 'cursor-not-allowed' : ''}`}
         >
           {checked && (
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-green-500">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-black">
               ✓
             </div>
           )}

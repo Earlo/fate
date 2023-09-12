@@ -26,7 +26,7 @@ const Input: React.FC<InputProps> = ({
   disabled = false,
   children,
 }) => (
-  <div className="mb-4">
+  <div className="pb-4">
     <Label name={name}>{children}</Label>
     <SoloInput
       name={name}

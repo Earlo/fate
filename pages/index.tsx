@@ -15,7 +15,7 @@ export default function Home() {
       )}
       {status === 'authenticated' && session && <Dashboard />}
       {status === 'unauthenticated' && (
-        <div className="mx-auto mt-8 w-full max-w-xs">
+        <div className="mx-auto w-full max-w-xs pt-8">
           <AuthForm />
         </div>
       )}

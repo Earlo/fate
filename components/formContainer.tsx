@@ -13,7 +13,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
 }) => (
   <form
     onSubmit={onSubmit}
-    className="z-10 mb-4 h-fit rounded bg-white px-8 pb-8 pt-6 shadow-md"
+    className="z-10 h-fit rounded bg-white px-8 pb-8 pt-6 shadow-md"
   >
     {onClose && (
       <CloseButton

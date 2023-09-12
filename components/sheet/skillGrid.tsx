@@ -3,6 +3,7 @@ import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
 import { Skill } from '@/types/fate';
+import { CharacterSheetT } from '@/schemas/sheet';
 
 /*
 export const tiers = [
@@ -35,6 +36,8 @@ interface SkillGridProps {
   disabled?: boolean;
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   campaignId?: string;
+  setStress: (value: CharacterSheetT['stress']) => void;
+  stress?: CharacterSheetT['stress'];
 }
 
 const SkillGrid: React.FC<SkillGridProps> = ({
@@ -43,6 +46,8 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   disabled,
   state,
   campaignId,
+  setStress,
+  stress,
 }) => {
   const handleSkillChange = (
     level: number,
@@ -59,6 +64,16 @@ const SkillGrid: React.FC<SkillGridProps> = ({
       }
     } else {
       updatedSkills[level][slotIndex] = { name, visibleIn: visibleIn };
+    }
+    if (name === 'Physique') {
+      const boxCount = level / 2 + 2;
+      const boxes = Array.from({ length: boxCount }).map(() => false);
+      setStress({ ...stress, physical: { boxes, visibleIn: visibleIn } });
+    }
+    if (name === 'Will') {
+      const boxCount = level / 2 + 2;
+      const boxes = Array.from({ length: boxCount }).map(() => false);
+      setStress({ ...stress, mental: { boxes, visibleIn: visibleIn } });
     }
     setSkills(updatedSkills);
   };
