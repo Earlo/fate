@@ -5,6 +5,7 @@ import StuntInput from './sheet/stuntInput';
 import SkillGrid from './sheet/skillGrid';
 import VisibilityToggle from './sheet/visibilityToggle';
 import Stress from './sheet/stress';
+import Consequences from './sheet/consequences';
 import { CharacterSheetT } from '@/schemas/sheet';
 
 interface CharacterSheetProps {
@@ -141,6 +142,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           state={state}
           setStress={(stress) => updateField('stress', stress)}
           stress={character.stress}
+          setConsequences={(consequences) =>
+            updateField('consequences', consequences)
+          }
+          consequences={character.consequences}
         />
       </div>
       <StuntInput
@@ -154,11 +159,20 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
         campaignId={campaignId}
         state={state}
       />
-      <Stress
-        stress={character.stress}
-        disabled={state === 'view'}
-        setStress={(stress) => updateField('stress', stress)}
-      />
+      <div className="flex flex-col justify-between pb-2 md:flex-row">
+        <Stress
+          stress={character.stress}
+          disabled={state === 'view'}
+          setStress={(stress) => updateField('stress', stress)}
+        />
+        <Consequences
+          consequences={character.consequences}
+          disabled={state === 'view'}
+          setConsequences={(consequences) =>
+            updateField('consequences', consequences)
+          }
+        />
+      </div>
     </>
   );
 };

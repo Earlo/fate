@@ -6,7 +6,7 @@ interface LabelProps {
 
 const Label: React.FC<LabelProps> = ({ label, name, children }) => (
   <label
-    className="flex flex-grow items-end justify-between whitespace-nowrap bg-black p-1 text-xl font-black uppercase text-white"
+    className="flex w-full items-end justify-between whitespace-nowrap bg-black p-1 text-xl font-black uppercase text-white"
     style={{ fontFamily: "'Archivo Black', sans-serif", fontSize: '22px' }}
     htmlFor={name}
   >

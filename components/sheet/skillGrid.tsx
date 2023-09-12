@@ -38,6 +38,8 @@ interface SkillGridProps {
   campaignId?: string;
   setStress: (value: CharacterSheetT['stress']) => void;
   stress?: CharacterSheetT['stress'];
+  setConsequences: (value: CharacterSheetT['consequences']) => void;
+  consequences?: CharacterSheetT['consequences'];
 }
 
 const SkillGrid: React.FC<SkillGridProps> = ({
@@ -48,6 +50,8 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   campaignId,
   setStress,
   stress,
+  setConsequences,
+  consequences,
 }) => {
   const handleSkillChange = (
     level: number,
@@ -66,14 +70,32 @@ const SkillGrid: React.FC<SkillGridProps> = ({
       updatedSkills[level][slotIndex] = { name, visibleIn: visibleIn };
     }
     if (name === 'Physique') {
-      const boxCount = level / 2 + 2;
+      const boxCount = level >= 3 ? 4 : level >= 1 ? 3 : 2;
       const boxes = Array.from({ length: boxCount }).map(() => false);
       setStress({ ...stress, physical: { boxes, visibleIn: visibleIn } });
+      if (level >= 5 && !consequences?.physical) {
+        setConsequences({
+          mild: consequences?.mild || { name: '', visibleIn: [] },
+          moderate: consequences?.moderate || { name: '', visibleIn: [] },
+          severe: consequences?.severe || { name: '', visibleIn: [] },
+          physical: { name: '', visibleIn: visibleIn },
+          mental: consequences?.mental,
+        });
+      }
     }
     if (name === 'Will') {
-      const boxCount = level / 2 + 2;
+      const boxCount = level >= 3 ? 4 : level >= 1 ? 3 : 2;
       const boxes = Array.from({ length: boxCount }).map(() => false);
       setStress({ ...stress, mental: { boxes, visibleIn: visibleIn } });
+      if (level >= 5 && !consequences?.mental) {
+        setConsequences({
+          mild: consequences?.mild || { name: '', visibleIn: [] },
+          moderate: consequences?.moderate || { name: '', visibleIn: [] },
+          severe: consequences?.severe || { name: '', visibleIn: [] },
+          physical: consequences?.physical,
+          mental: { name: '', visibleIn: visibleIn },
+        });
+      }
     }
     setSkills(updatedSkills);
   };

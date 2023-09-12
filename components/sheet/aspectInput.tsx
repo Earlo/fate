@@ -32,9 +32,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
 
   return (
     <div className="flex flex-col pr-4">
-      <div>
-        <Label name="Aspects" />
-      </div>
+      <Label name="Aspects" />
       <div className="flex flex-col">
         {Array.from({ length: 5 }).map((_, index) =>
           !aspects[index] && disabled ? null : (

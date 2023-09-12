@@ -1,5 +1,5 @@
+import StressBox from './stressBox';
 import Label from '../generic/label';
-import Checkbox from '../generic/checkbox';
 import { CharacterSheetT } from '@/schemas/sheet';
 
 interface StressProps {
@@ -35,31 +35,34 @@ const Stress: React.FC<StressProps> = ({ stress, setStress, disabled }) => {
   const renderBoxes = (type: 'physical' | 'mental') => {
     const boxes = stress?.[type]?.boxes;
     return [0, 1, 2, 3].map((index) => (
-      <Checkbox
+      <StressBox
         name={(index + 1).toString()}
         id={type + (index + 1).toString()}
         key={type + (index + 1).toString()}
         checked={boxes?.at(index) || false}
         disabled={disabled || (index > 1 && boxes?.at(index) === undefined)}
+        available={boxes?.at(index) !== undefined}
         onChange={() => toggleStress(index, type)}
       />
     ));
   };
 
   return (
-    <div className="flex flex-col py-4">
+    <div className="flex flex-col pr-4">
       <Label name="Stress" />
-      <div className="flex">
-        <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/5">
-          Physical:
-        </span>
-        {renderBoxes('physical')}
-      </div>
-      <div className="flex">
-        <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/5">
-          Mental:
-        </span>
-        {renderBoxes('mental')}
+      <div className="flex flex-col pt-2">
+        <div className="flex flex-row">
+          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap pr-4 text-lg font-black uppercase text-black lg:w-1/5">
+            Physical
+          </span>
+          {renderBoxes('physical')}
+        </div>
+        <div className="flex flex-row">
+          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap pr-4 text-lg font-black uppercase text-black lg:w-1/5">
+            Mental
+          </span>
+          {renderBoxes('mental')}
+        </div>
       </div>
     </div>
   );
