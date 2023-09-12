@@ -7,19 +7,7 @@ interface StressProps {
   setStress: (value: CharacterSheetT['stress']) => void;
   disabled: boolean;
 }
-/** 
- * (parameter) stress: {
-    physical?: {
-        visibleIn: string[];
-        boxes: boolean[];
-    } | undefined;
-    mental?: {
-        visibleIn: string[];
-        boxes: boolean[];
-    } | undefined;
-} | undefined
 
-*/
 const Stress: React.FC<StressProps> = ({ stress, setStress, disabled }) => {
   const toggleStress = (index: number, type: 'physical' | 'mental') => {
     const updatedStress =
