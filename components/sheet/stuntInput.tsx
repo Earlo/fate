@@ -38,8 +38,8 @@ const StuntInput: React.FC<StuntInputProps> = ({
         )}
       </Label>
       {stunts.map((stunt, index) => (
-        <div key={index} className="flex flex-col sm:flex-row">
-          <div className="flex flex-row-reverse sm:flex-row">
+        <div key={index} className="flex flex-col gap-2 sm:flex-row">
+          <div className="flex flex-row-reverse items-center gap-2 sm:flex-row">
             {!disabled && (
               <CloseButton
                 className=""
@@ -52,9 +52,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
               />
             )}
             {state === 'toggle' && campaignId && (
-              <div
-                className={`inline-flex h-fit items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 `}
-              >
+              <div className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                 <VisibilityToggle
                   visible={stunt?.visibleIn.includes(campaignId)}
                   onChange={(visible) =>
@@ -96,6 +94,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
                   ...stunts.slice(index + 1),
                 ])
               }
+              className="flex-grow"
             />
           </div>
           <SoloInput
@@ -124,6 +123,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
                 ...stunts.slice(index + 1),
               ])
             }
+            className="w-full sm:w-1/2"
           />
         </div>
       ))}
