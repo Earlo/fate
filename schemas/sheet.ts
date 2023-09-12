@@ -98,6 +98,7 @@ export const characterSheetSchema = new Schema({
             default: [],
           },
         },
+        required: true,
       },
       moderate: {
         type: {
@@ -107,6 +108,7 @@ export const characterSheetSchema = new Schema({
             default: [],
           },
         },
+        required: true,
       },
       severe: {
         type: {
@@ -116,6 +118,7 @@ export const characterSheetSchema = new Schema({
             default: [],
           },
         },
+        required: true,
       },
       mental: {
         type: {
