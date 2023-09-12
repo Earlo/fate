@@ -159,7 +159,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
         campaignId={campaignId}
         state={state}
       />
-      <div className="flex flex-col space-y-4 pb-2 md:flex-row md:space-y-0">
+      <div className="flex flex-col pb-2 md:flex-row">
         <Stress
           stress={character.stress}
           disabled={state === 'view'}

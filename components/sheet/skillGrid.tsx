@@ -61,6 +61,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   ) => {
     const updatedSkills = { ...skills };
     updatedSkills[level] = updatedSkills[level] || [];
+    const replacedSkill = updatedSkills[level][slotIndex];
     if (name === '') {
       updatedSkills[level].splice(slotIndex, 1); // Remove the element
       if (updatedSkills[level].length === 0) {
@@ -68,6 +69,28 @@ const SkillGrid: React.FC<SkillGridProps> = ({
       }
     } else {
       updatedSkills[level][slotIndex] = { name, visibleIn: visibleIn };
+    }
+    if (replacedSkill?.name === 'Physique' || replacedSkill?.name === 'Will') {
+      const boxCount = 2;
+      const boxes = Array.from({ length: boxCount }).map(() => false);
+      setStress({
+        ...stress,
+        [replacedSkill?.name === 'Physique' ? 'physical' : 'mental']: {
+          boxes,
+          visibleIn: [],
+        },
+      });
+      setConsequences({
+        mild: consequences?.mild || { name: '', visibleIn: [] },
+        moderate: consequences?.moderate || { name: '', visibleIn: [] },
+        severe: consequences?.severe || { name: '', visibleIn: [] },
+        physical:
+          replacedSkill?.name === 'Physique'
+            ? undefined
+            : consequences?.physical,
+        mental:
+          replacedSkill?.name === 'Will' ? undefined : consequences?.mental,
+      });
     }
     if (name === 'Physique') {
       const boxCount = level >= 3 ? 4 : level >= 1 ? 3 : 2;
@@ -97,6 +120,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
         });
       }
     }
+
     setSkills(updatedSkills);
   };
   if (state === 'toggle' && !campaignId) {
