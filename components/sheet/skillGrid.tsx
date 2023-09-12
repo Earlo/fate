@@ -33,7 +33,7 @@ interface SkillGridProps {
     [level: number]: { name: Skill; visibleIn: string[] }[];
   }) => void;
   disabled?: boolean;
-  state?: 'create' | 'edit' | 'toggle' | 'view';
+  state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   campaignId?: string;
 }
 
@@ -74,34 +74,30 @@ const SkillGrid: React.FC<SkillGridProps> = ({
             {`${tier.label} +${tier.level}`}
           </span>
           <div className="flex flex-grow flex-col overflow-x-hidden sm:flex-row">
-            {Array.from({ length: 5 }).map((_, slotIndex) =>
-              state == 'toggle' && campaignId ? (
+            {Array.from({ length: 5 }).map((_, slotIndex) => {
+              const name = (skills[tier.level] || [])[slotIndex]?.name || '';
+              const visibleIn =
+                (skills[tier.level] || [])[slotIndex]?.visibleIn || [];
+              const isVisible = visibleIn.includes(campaignId || '');
+              return state == 'toggle' && campaignId ? (
                 <SoloInput
                   key={tier.label + slotIndex}
                   name={`skill-${tier.label}-${index}`}
                   placeholder="???"
-                  value={(skills[tier.level] || [])[slotIndex]?.name || ''}
+                  value={name}
                   disabled={true}
                   className="h-10 w-full text-base sm:w-32"
                 >
                   <VisibilityToggle
-                    visible={(skills[tier.level] || [])[
-                      slotIndex
-                    ]?.visibleIn.includes(campaignId)}
+                    visible={isVisible}
                     onChange={(visible) =>
                       handleSkillChange(
                         tier.level,
                         slotIndex,
-                        (skills[tier.level] || [])[slotIndex]?.name,
+                        name,
                         visible
-                          ? [
-                              ...((skills[tier.level] || [])[slotIndex]
-                                ?.visibleIn || []),
-                              campaignId,
-                            ]
-                          : (skills[tier.level] || [])[
-                              slotIndex
-                            ]?.visibleIn.filter((id) => id !== campaignId),
+                          ? [...visibleIn, campaignId]
+                          : visibleIn.filter((id) => id !== campaignId),
                       )
                     }
                   />
@@ -111,13 +107,11 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                   key={tier.label + slotIndex}
                   level={tier.level}
                   value={
-                    state === 'toggle'
-                      ? (skills[tier.level] || [])[
-                          slotIndex
-                        ]?.visibleIn.includes(campaignId || '')
-                        ? (skills[tier.level] || [])[slotIndex]?.name || ''
+                    state === 'view' || state === 'play'
+                      ? isVisible
+                        ? name
                         : ''
-                      : (skills[tier.level] || [])[slotIndex]?.name || ''
+                      : name
                   }
                   disabled={
                     disabled ||
@@ -126,16 +120,11 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                       !(skills[tier.level] || [])[slotIndex])
                   }
                   onChange={(name) =>
-                    handleSkillChange(
-                      tier.level,
-                      slotIndex,
-                      name,
-                      (skills[tier.level] || [])[slotIndex]?.visibleIn || [],
-                    )
+                    handleSkillChange(tier.level, slotIndex, name, visibleIn)
                   }
                 />
-              ),
-            )}
+              );
+            })}
           </div>
         </div>
       ))}

@@ -4,13 +4,14 @@ import AspectInput from './sheet/aspectInput';
 import StuntInput from './sheet/stuntInput';
 import SkillGrid from './sheet/skillGrid';
 import VisibilityToggle from './sheet/visibilityToggle';
+import Stress from './sheet/stress';
 import { CharacterSheetT } from '@/schemas/sheet';
 
 interface CharacterSheetProps {
   character: Partial<CharacterSheetT>;
   setCharacter?: React.Dispatch<React.SetStateAction<Partial<CharacterSheetT>>>;
   campaignId?: string;
-  state?: 'create' | 'edit' | 'toggle' | 'view';
+  state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
 }
 
 type editableFields = Omit<
@@ -151,6 +152,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
         campaignId={campaignId}
         state={state}
       />
+      {(state === 'play' || state === 'view') && <Stress />}
     </>
   );
 };

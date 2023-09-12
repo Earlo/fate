@@ -6,7 +6,7 @@ interface AspectInputProps {
   aspects: { name: string; visibleIn: string[] }[];
   setAspects: (aspects: { name: string; visibleIn: string[] }[]) => void;
   disabled?: boolean;
-  state?: 'create' | 'edit' | 'toggle' | 'view';
+  state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   campaignId?: string;
 }
 

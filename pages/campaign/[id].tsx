@@ -113,7 +113,7 @@ const CampaignPage = () => {
           height={128}
           className="w-full sm:h-32 sm:w-32"
         />
-        <p className="text-lg sm:text-xl">{campaign.description}</p>
+        <p className="pl-4 text-lg sm:text-xl">{campaign.description}</p>
       </div>
       {isAdmin && (
         <Button
@@ -126,15 +126,18 @@ const CampaignPage = () => {
         <div>
           <h2 className="mb-4 text-2xl font-semibold">Factions</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {campaign.factions.map((faction, index) => (
-              <Faction
-                key={index}
-                faction={faction}
-                isAdmin={isAdmin}
-                onChange={(faction) => updateFaction(index, faction)}
-                campaignId={id as string}
-              />
-            ))}
+            {campaign.factions.map(
+              (faction, index) =>
+                (faction.visible || session?.user.admin) && (
+                  <Faction
+                    key={index}
+                    faction={faction}
+                    isAdmin={isAdmin}
+                    onChange={(faction) => updateFaction(index, faction)}
+                    campaignId={id as string}
+                  />
+                ),
+            )}
           </div>
         </div>
       )}

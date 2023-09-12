@@ -10,7 +10,7 @@ interface StuntInputProps {
   ) => void;
   disabled?: boolean;
   campaignId?: string;
-  state?: 'create' | 'edit' | 'toggle' | 'view';
+  state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
 }
 
 const StuntInput: React.FC<StuntInputProps> = ({

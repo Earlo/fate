@@ -126,7 +126,7 @@ const Faction: React.FC<FactionProps> = ({
           />
         ))}
       </div>
-      {faction.public && (
+      {(faction.public || session?.user.admin) && (
         <Button
           label="Toggle your characters"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -152,7 +152,13 @@ const Faction: React.FC<FactionProps> = ({
       {selectedCharacter && (
         <CharacterForm
           initialSheet={selectedCharacter}
-          state={isAdmin ? 'toggle' : 'view'}
+          state={
+            isAdmin
+              ? 'toggle'
+              : selectedCharacter.controlledBy === session?.user._id
+              ? 'play'
+              : 'view'
+          }
           setCharacters={isAdmin ? setAllCharacters : undefined}
           onClose={() => setSelectedCharacter(null)}
           campaignId={campaignId}

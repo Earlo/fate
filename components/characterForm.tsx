@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react';
 interface CharacterFormProps {
   onClose?: () => void;
   initialSheet?: CharacterSheetT;
-  state?: 'create' | 'edit' | 'toggle' | 'view';
+  state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   setCharacters?: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
   campaignId?: string;
 }
