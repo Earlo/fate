@@ -117,6 +117,15 @@ export const characterSheetSchema = new Schema({
           },
         },
       },
+      mental: {
+        type: {
+          name: { type: String, required: true },
+          visibleIn: {
+            type: [{ type: String, ref: 'Campaign' }],
+            default: [],
+          },
+        },
+      },
     },
     default: {
       mild: {
@@ -128,6 +137,10 @@ export const characterSheetSchema = new Schema({
         visibleIn: [],
       },
       severe: {
+        name: '',
+        visibleIn: [],
+      },
+      mental: {
         name: '',
         visibleIn: [],
       },
