@@ -1,5 +1,5 @@
+import ConsequenceInput from './consequenceInput';
 import Label from '../generic/label';
-import SoloInput from '../generic/soloInput';
 import { CharacterSheetT } from '@/schemas/sheet';
 
 interface ConsequencesProps {
@@ -36,8 +36,9 @@ const Consequences: React.FC<ConsequencesProps> = ({
       <div className="flex flex-row pt-2">
         <div className="flex flex-col">
           <div className="flex flex-col">
-            <SoloInput
+            <ConsequenceInput
               name="Mild"
+              rank="2"
               value={consequences?.mild.name || ''}
               onChange={(e) => handleChange('mild', e.target.value)}
               disabled={disabled}
@@ -45,8 +46,9 @@ const Consequences: React.FC<ConsequencesProps> = ({
           </div>
 
           <div className="flex flex-col">
-            <SoloInput
+            <ConsequenceInput
               name="Moderate"
+              rank="4"
               value={consequences?.moderate.name || ''}
               onChange={(e) => handleChange('moderate', e.target.value)}
               disabled={disabled}
@@ -54,38 +56,37 @@ const Consequences: React.FC<ConsequencesProps> = ({
           </div>
 
           <div className="flex flex-col">
-            <SoloInput
+            <ConsequenceInput
               name="Severe"
+              rank="6"
               value={consequences?.severe.name || ''}
               onChange={(e) => handleChange('severe', e.target.value)}
               disabled={disabled}
             />
           </div>
         </div>
-        {(consequences?.physical || consequences?.mental) && (
+        <div className="flex flex-col">
           <div className="flex flex-col">
-            {consequences?.physical && (
-              <div className="flex flex-col">
-                <SoloInput
-                  name="Mild"
-                  value={consequences?.physical?.name || ''}
-                  onChange={(e) => handleChange('physical', e.target.value)}
-                  disabled={disabled}
-                />
-              </div>
-            )}
-            {consequences?.mental && (
-              <div className="flex flex-col">
-                <SoloInput
-                  name="Mild"
-                  value={consequences?.mental?.name || ''}
-                  onChange={(e) => handleChange('mental', e.target.value)}
-                  disabled={disabled}
-                />
-              </div>
-            )}
+            <ConsequenceInput
+              name="Mild Physical"
+              rank="2"
+              value={consequences?.physical?.name || ''}
+              onChange={(e) => handleChange('physical', e.target.value)}
+              disabled={disabled}
+              available={!!consequences?.physical}
+            />
           </div>
-        )}
+          <div className="flex flex-col">
+            <ConsequenceInput
+              name="Mild Mental"
+              rank="2"
+              value={consequences?.mental?.name || ''}
+              onChange={(e) => handleChange('mental', e.target.value)}
+              disabled={disabled}
+              available={!!consequences?.mental}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
