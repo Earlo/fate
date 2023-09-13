@@ -56,6 +56,13 @@ export const characterSheetSchema = new Schema({
       visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   ],
+  extras: [
+    {
+      name: { type: String, required: true },
+      description: { type: String, required: true },
+      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
+    },
+  ],
   stress: {
     type: {
       physical: {

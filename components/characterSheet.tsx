@@ -148,17 +148,31 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           consequences={character.consequences}
         />
       </div>
-      <StuntInput
-        stunts={character?.stunts || []}
-        setStunts={(stunts) =>
-          setCharacter
-            ? setCharacter((prev) => ({ ...prev, stunts: stunts }))
-            : null
-        }
-        disabled={!setCharacter}
-        campaignId={campaignId}
-        state={state}
-      />
+      <div className="flex flex-col pb-2 md:flex-row">
+        <StuntInput
+          stunts={character?.extras || []}
+          setStunts={(extras) =>
+            setCharacter
+              ? setCharacter((prev) => ({ ...prev, extras: extras }))
+              : null
+          }
+          disabled={!setCharacter}
+          campaignId={campaignId}
+          state={state}
+          title="Extra"
+        />
+        <StuntInput
+          stunts={character?.stunts || []}
+          setStunts={(stunts) =>
+            setCharacter
+              ? setCharacter((prev) => ({ ...prev, stunts: stunts }))
+              : null
+          }
+          disabled={!setCharacter}
+          campaignId={campaignId}
+          state={state}
+        />
+      </div>
       <div className="flex flex-col pb-2 md:flex-row">
         <Stress
           stress={character.stress}

@@ -11,6 +11,7 @@ interface StuntInputProps {
   disabled?: boolean;
   campaignId?: string;
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
+  title?: string;
 }
 
 const StuntInput: React.FC<StuntInputProps> = ({
@@ -19,10 +20,11 @@ const StuntInput: React.FC<StuntInputProps> = ({
   disabled = false,
   campaignId,
   state,
+  title = 'Stunt',
 }) => {
   return (
-    <div className="pb-4">
-      <Label name="Stunts">
+    <div className="w-full">
+      <Label name={title + 's'}>
         {!disabled && (
           <span
             className="duration cursor-pointer pr-2 text-2xl font-bold transition hover:text-gray-400"
@@ -72,7 +74,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
               </div>
             )}
             <SoloInput
-              name={`stunt-${index}-name`}
+              name={`${title}-${index}-name`}
               value={
                 state === 'toggle'
                   ? stunt?.visibleIn.includes(campaignId || '')
@@ -80,7 +82,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
                     : '???'
                   : stunt.name
               }
-              placeholder="Stunt Name"
+              placeholder={`${title} Name`}
               required
               disabled={disabled}
               onChange={(e) =>
@@ -98,7 +100,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
             />
           </div>
           <SoloInput
-            name={`stunt-${index}-description`}
+            name={`${title}-${index}-description`}
             value={
               state === 'toggle'
                 ? stunt?.visibleIn.includes(campaignId || '')
@@ -107,7 +109,9 @@ const StuntInput: React.FC<StuntInputProps> = ({
                 : stunt.description
             }
             placeholder={
-              stunt.name ? `Description for ${stunt.name}` : 'Stunt Description'
+              stunt.name
+                ? `Description for ${stunt.name}`
+                : `${title} description`
             }
             multiline
             required
