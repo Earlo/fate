@@ -31,7 +31,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     setIsSubmitting(true);
     const submitData = {
       ...formState,
-      controlledBy: session?.user?._id,
+      ...(isCreateMode && { controlledBy: session?.user?._id }),
     };
     try {
       const apiMethod = isCreateMode ? 'POST' : 'PUT';

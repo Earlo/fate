@@ -17,6 +17,12 @@ export const campaignSchema = new Schema({
       tertiary: '107 114 128',
     },
   },
+  aspects: [
+    {
+      name: { type: String, required: true },
+      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
+    },
+  ],
   factions: [
     {
       name: { type: String, required: true },
