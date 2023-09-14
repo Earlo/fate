@@ -50,14 +50,16 @@ export default function AuthForm({ onClose }: AuthFormProps) {
     <FormContainer onSubmit={handleSubmit} onClose={onClose}>
       <Input name="username" required onChange={handleUsernameChange} />
       <Input name="password" type="password" required />
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-2">
         <Button label={usernameExists ? 'Login' : 'Register'} type="submit" />
       </div>
-      <Button
-        label={'Login with Google'}
-        type="button"
-        onClick={() => signIn('google')}
-      ></Button>
+      <div className="flex items-center justify-between">
+        <Button
+          label={'Login with Google'}
+          type="button"
+          onClick={() => signIn('google')}
+        />
+      </div>
     </FormContainer>
   );
 }
