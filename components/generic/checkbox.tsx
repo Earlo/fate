@@ -26,10 +26,11 @@ const Checkbox: React.FC<CheckboxProps> = ({
 
   return (
     <div
-      className={`flex items-center justify-center pb-4 pl-4 ${
+      className={`flex flex-col pb-4 pl-4 ${
         disabled ? 'cursor-not-allowed opacity-80' : ''
       }`}
     >
+      <Label label={name} name={id || name} className="w-fit pr-4" />
       <div className="relative">
         <input
           ref={checkboxRef}
@@ -48,13 +49,12 @@ const Checkbox: React.FC<CheckboxProps> = ({
           } ${disabled ? 'cursor-not-allowed' : ''}`}
         >
           {checked && (
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-black">
+            <div className="absolute left-5 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-black">
               ✓
             </div>
           )}
         </div>
       </div>
-      <Label label={name} name={id || name} />
     </div>
   );
 };

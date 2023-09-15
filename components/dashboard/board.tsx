@@ -85,7 +85,11 @@ export default function Dashboard() {
             <CampaignForm
               key={selectedCampaign._id}
               initialCampaign={selectedCampaign}
-              state="edit"
+              state={
+                selectedCampaign.controlledBy === session?.user?._id
+                  ? 'edit'
+                  : 'view'
+              }
               setCampaigns={setCampaigns}
               onClose={() => setSelectedCampaign(null)}
             />

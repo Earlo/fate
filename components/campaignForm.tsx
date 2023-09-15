@@ -2,6 +2,7 @@ import Button from './generic/button';
 import FormContainer from './formContainer';
 import Checkbox from './generic/checkbox';
 import CampaignSheet from './campaignSheet';
+import Input from './generic/input';
 import { CampaignT } from '@/schemas/campaign';
 import { useState, FormEvent } from 'react';
 import { useSession } from 'next-auth/react';
@@ -26,7 +27,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
     initialCampaign || {},
   );
   const isEditMode = state === 'edit';
-
+  const isViewMode = state === 'view';
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -92,7 +93,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
           type="submit"
           disabled={isSubmitting}
         />
-        {isEditMode && initialCampaign && (
+        {(isEditMode || isViewMode) && initialCampaign && (
           <Link href={`/campaign/${initialCampaign._id}`} passHref>
             <Button
               className="bg-blue-500 pt-4 hover:bg-blue-700"
@@ -101,6 +102,16 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
           </Link>
         )}
       </div>
+      {(isEditMode || isViewMode) && initialCampaign && (
+        <div className="pt-2">
+          <Input
+            name="Campaign ID (share this to your players)"
+            type="text"
+            value={`${process.env.NEXT_PUBLIC_URL}/campaign/${initialCampaign._id}`}
+            disabled
+          />
+        </div>
+      )}
     </FormContainer>
   );
 };
