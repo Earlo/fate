@@ -1,3 +1,4 @@
+import { cn } from '@/lib/helpers';
 import { HTMLInputTypeAttribute } from 'react';
 interface SoloInputProps {
   name: string;
@@ -26,7 +27,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
   className = '',
   children,
 }) => (
-  <div className={`relative ${className}`}>
+  <div className={cn(className)}>
     {multiline ? (
       <textarea
         id={name}

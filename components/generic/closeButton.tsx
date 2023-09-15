@@ -1,3 +1,5 @@
+import { cn } from '@/lib/helpers';
+
 interface CloseButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
@@ -9,7 +11,10 @@ const CloseButton: React.FC<CloseButtonProps> = ({
 }) => (
   <button
     type="button"
-    className={`inline-flex h-fit items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 ${className}`}
+    className={cn(
+      'inline-flex h-fit items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500',
+      className,
+    )}
     onClick={onClick}
   >
     <span className="sr-only">Close</span>

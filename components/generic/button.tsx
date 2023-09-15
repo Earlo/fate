@@ -1,3 +1,5 @@
+import { cn } from '@/lib/helpers';
+
 interface ButtonProps {
   label: string;
   type?: 'button' | 'submit' | 'reset';
@@ -17,7 +19,10 @@ const Button: React.FC<ButtonProps> = ({
     type={type}
     disabled={disabled}
     onClick={onClick}
-    className={`focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none ${className}`}
+    className={cn(
+      'focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none',
+      className,
+    )}
   >
     {label}
   </button>
