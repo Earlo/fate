@@ -41,7 +41,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
       </Label>
       {stunts.map((stunt, index) => (
         <div key={index} className="flex grow flex-col pb-2 sm:flex-row">
-          <div className="flex h-10 flex-row-reverse items-center sm:flex-row sm:pr-2">
+          <div className="flex h-10 min-w-[50%] flex-row-reverse items-center sm:flex-row sm:pr-2">
             {!disabled && (
               <CloseButton
                 className=""

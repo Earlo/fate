@@ -155,6 +155,12 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                     placeholder="???"
                     value={name}
                     disabled={true}
+                    className={cn(
+                      'rounded-none',
+                      { 'rounded-bl': slotIndex === 0 },
+                      { 'rounded-l': slotIndex === 0 && index !== 0 },
+                      { 'rounded-r': slotIndex === 4 },
+                    )}
                   />
                   <div className="absolute right-0 top-0 m-2">
                     <VisibilityToggle
@@ -192,6 +198,12 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                   onChange={(name) =>
                     handleSkillChange(tier.level, slotIndex, name, visibleIn)
                   }
+                  className={cn(
+                    'rounded-none',
+                    { 'rounded-bl': slotIndex === 0 },
+                    { 'rounded-l': slotIndex === 0 && index !== 0 },
+                    { 'rounded-r': slotIndex === 4 },
+                  )}
                 />
               );
             })}

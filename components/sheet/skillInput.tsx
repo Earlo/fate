@@ -1,10 +1,11 @@
 import { Skill } from '@/types/fate';
-
+import { cn } from '@/lib/helpers';
 interface SkillInputProps {
   level: number;
   onChange: (value: Skill) => void;
   value: Skill | '';
   disabled?: boolean;
+  className?: string;
 }
 
 const skillOptions: Skill[] = [
@@ -32,16 +33,17 @@ const SkillInput: React.FC<SkillInputProps> = ({
   onChange,
   value,
   disabled = false,
+  className,
 }) => {
   return (
     <select
-      className={`
-        h-10 w-full pl-2 text-base sm:w-32
-        ${!value ? 'text-gray-400' : 'text-gray-700'}
-        ${disabled && !value ? 'bg-gray-200' : 'bg-white'}
-        appearance-none rounded border border-gray-300 font-normal
-        ${disabled && !value ? 'hidden sm:flex' : ''}
-      `}
+      className={cn(
+        'h-10 w-full appearance-none rounded border border-gray-300 pl-2 text-base font-normal sm:w-32',
+        !value ? 'text-gray-400' : 'text-gray-700',
+        disabled && !value ? 'bg-gray-200' : 'bg-white',
+        { 'hidden sm:flex': disabled && !value },
+        className,
+      )}
       value={value}
       onChange={(e) => onChange(e.target.value as Skill)}
       disabled={disabled}
