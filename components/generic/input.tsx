@@ -37,6 +37,7 @@ const Input: React.FC<InputProps> = ({
       placeholder={placeholder}
       onChange={onChange}
       disabled={disabled}
+      className="rounded-tl-none"
     />
   </div>
 );

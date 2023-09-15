@@ -55,6 +55,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
                   })
                 }
                 disabled={disabled}
+                className={index === 0 ? 'rounded-tl-none' : ''}
               />
               {state === 'toggle' && campaignId && aspects[index] && (
                 <VisibilityToggle

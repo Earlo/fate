@@ -27,7 +27,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
       <Label name={title + 's'}>
         {!disabled && (
           <span
-            className="duration cursor-pointer pr-2 text-2xl font-bold transition hover:text-gray-400"
+            className="duration cursor-pointer pr-4 text-2xl font-bold transition hover:text-gray-400"
             onClick={() =>
               setStunts([
                 ...stunts,
@@ -40,8 +40,8 @@ const StuntInput: React.FC<StuntInputProps> = ({
         )}
       </Label>
       {stunts.map((stunt, index) => (
-        <div key={index} className="flex flex-col gap-2 sm:flex-row">
-          <div className="flex flex-row-reverse items-center gap-2 sm:flex-row">
+        <div key={index} className="flex grow flex-col pb-2 sm:flex-row">
+          <div className="flex h-10 flex-row-reverse items-center sm:flex-row sm:pr-2">
             {!disabled && (
               <CloseButton
                 className=""
@@ -54,24 +54,22 @@ const StuntInput: React.FC<StuntInputProps> = ({
               />
             )}
             {state === 'toggle' && campaignId && (
-              <div className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
-                <VisibilityToggle
-                  visible={stunt?.visibleIn.includes(campaignId)}
-                  onChange={(visible) =>
-                    setStunts([
-                      ...stunts.slice(0, index),
-                      {
-                        name: stunt.name,
-                        description: stunt.description,
-                        visibleIn: visible
-                          ? [...stunt.visibleIn, campaignId]
-                          : stunt.visibleIn.filter((id) => id !== campaignId),
-                      },
-                      ...stunts.slice(index + 1),
-                    ])
-                  }
-                />
-              </div>
+              <VisibilityToggle
+                visible={stunt?.visibleIn.includes(campaignId)}
+                onChange={(visible) =>
+                  setStunts([
+                    ...stunts.slice(0, index),
+                    {
+                      name: stunt.name,
+                      description: stunt.description,
+                      visibleIn: visible
+                        ? [...stunt.visibleIn, campaignId]
+                        : stunt.visibleIn.filter((id) => id !== campaignId),
+                    },
+                    ...stunts.slice(index + 1),
+                  ])
+                }
+              />
             )}
             <SoloInput
               name={`${title}-${index}-name`}
@@ -96,7 +94,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
                   ...stunts.slice(index + 1),
                 ])
               }
-              className="flex-grow"
+              className={index === 0 ? 'grow rounded-t-none' : 'grow'}
             />
           </div>
           <SoloInput
@@ -127,7 +125,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
                 ...stunts.slice(index + 1),
               ])
             }
-            className="w-full sm:w-1/2"
+            className={index === 0 ? 'grow sm:rounded-tl-none' : 'grow'}
           />
         </div>
       ))}

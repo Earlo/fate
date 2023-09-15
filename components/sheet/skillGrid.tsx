@@ -4,6 +4,7 @@ import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
 import { Skill } from '@/types/fate';
 import { CharacterSheetT } from '@/schemas/sheet';
+import { cn } from '@/lib/helpers';
 
 /*
 export const tiers = [
@@ -130,7 +131,13 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     <div className="w-full overflow-x-hidden sm:max-w-fit md:w-fit lg:w-9/12">
       <Label name="Skills" />
       {tiers.map((tier, index) => (
-        <div key={index} className="mb-2 flex w-full flex-col lg:flex-row">
+        <div
+          key={index}
+          className={cn('mb-2 flex w-full flex-col lg:flex-row', {
+            'hidden sm:flex':
+              !skills[tier.level] || skills[tier.level].length === 0,
+          })}
+        >
           <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/5  ">
             {`${tier.label} +${tier.level}`}
           </span>
@@ -141,28 +148,30 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                 (skills[tier.level] || [])[slotIndex]?.visibleIn || [];
               const isVisible = visibleIn.includes(campaignId || '');
               return state == 'toggle' && campaignId ? (
-                <SoloInput
-                  key={tier.label + slotIndex}
-                  name={`skill-${tier.label}-${index}`}
-                  placeholder="???"
-                  value={name}
-                  disabled={true}
-                  className="h-10 w-full text-base sm:w-32"
-                >
-                  <VisibilityToggle
-                    visible={isVisible}
-                    onChange={(visible) =>
-                      handleSkillChange(
-                        tier.level,
-                        slotIndex,
-                        name,
-                        visible
-                          ? [...visibleIn, campaignId]
-                          : visibleIn.filter((id) => id !== campaignId),
-                      )
-                    }
+                <div className="relative">
+                  <SoloInput
+                    key={tier.label + slotIndex}
+                    name={`skill-${tier.label}-${index}`}
+                    placeholder="???"
+                    value={name}
+                    disabled={true}
                   />
-                </SoloInput>
+                  <div className="absolute right-0 top-0 m-2">
+                    <VisibilityToggle
+                      visible={isVisible}
+                      onChange={(visible) =>
+                        handleSkillChange(
+                          tier.level,
+                          slotIndex,
+                          name,
+                          visible
+                            ? [...visibleIn, campaignId]
+                            : visibleIn.filter((id) => id !== campaignId),
+                        )
+                      }
+                    />
+                  </div>
+                </div>
               ) : (
                 <SkillInput
                   key={tier.label + slotIndex}
