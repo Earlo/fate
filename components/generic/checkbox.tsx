@@ -1,6 +1,6 @@
 import Label from './label';
 import { cn } from '@/lib/helpers';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 interface CheckboxProps {
   id?: string;
   name: string;

@@ -99,7 +99,7 @@ export const characterSheetSchema = new Schema({
     type: {
       mild: {
         type: {
-          name: { type: String, required: true },
+          name: { type: String, default: '' },
           visibleIn: {
             type: [{ type: String, ref: 'Campaign' }],
             default: [],
@@ -108,7 +108,7 @@ export const characterSheetSchema = new Schema({
       },
       moderate: {
         type: {
-          name: { type: String, required: true },
+          name: { type: String, default: '' },
           visibleIn: {
             type: [{ type: String, ref: 'Campaign' }],
             default: [],
@@ -117,7 +117,7 @@ export const characterSheetSchema = new Schema({
       },
       severe: {
         type: {
-          name: { type: String, required: true },
+          name: { type: String, default: '' },
           visibleIn: {
             type: [{ type: String, ref: 'Campaign' }],
             default: [],

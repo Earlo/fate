@@ -127,7 +127,9 @@ export default function Dashboard() {
       {selectedCharacter && (
         <CharacterForm
           key={selectedCharacter._id}
-          initialSheet={selectedCharacter}
+          initialSheet={characters.find(
+            (sheet) => sheet._id === selectedCharacter._id,
+          )}
           state="edit"
           setCharacters={setCharacters}
           onClose={() => setSelectedCharacter(null)}

@@ -2,6 +2,7 @@ import Button from './generic/button';
 import CloseButton from './generic/closeButton';
 import CharacterSheet from './characterSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
+import { blankSheet } from '@/consts/blankCharacterSheet';
 import { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
 interface CharacterFormProps {
@@ -22,7 +23,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState<Partial<CharacterSheetT>>(
-    initialSheet || {},
+    initialSheet || { ...blankSheet },
   );
   const isCreateMode = state === 'create';
 
@@ -76,7 +77,6 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
       setIsSubmitting(false);
     }
   };
-
   return (
     <form
       onSubmit={handleSubmit}

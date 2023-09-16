@@ -34,7 +34,6 @@ const Faction: React.FC<FactionProps> = ({
     const fetchData = async () => {
       if (session) {
         const response = await fetch(`/api/sheets?id=${session.user._id}`);
-        console.log(response);
         if (response.status === 200) {
           const data = await response.json();
           setAllCharacters(data);
