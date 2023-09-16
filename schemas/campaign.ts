@@ -56,12 +56,15 @@ export const campaignSchema = new Schema({
     },
   ],
   public: { type: Boolean, required: true, default: false },
-  visibleTo: [
-    {
-      type: String,
-      ref: 'User',
-    },
-  ],
+  visibleTo: {
+    type: [
+      {
+        type: String,
+        ref: 'User',
+      },
+    ],
+    default: [],
+  },
   controlledBy: { type: String, ref: 'User', required: true },
 });
 

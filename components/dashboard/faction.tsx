@@ -9,14 +9,14 @@ import { useSession } from 'next-auth/react';
 
 interface FactionProps {
   faction: PopulatedFaction;
-  isAdmin: boolean;
+  state: 'admin' | 'player' | 'view';
   onChange: (updatedFaction: PopulatedFaction) => void;
   campaignId: string;
 }
 
 const Faction: React.FC<FactionProps> = ({
   faction,
-  isAdmin,
+  state,
   onChange,
   campaignId,
 }) => {
@@ -28,6 +28,8 @@ const Faction: React.FC<FactionProps> = ({
     useState<CharacterSheetT | null>(null);
   // Global state? Or not
   const [allCharacters, setAllCharacters] = useState<CharacterSheetT[]>([]);
+  const isAdmin = state === 'admin';
+  const isPlayer = state === 'player';
   useEffect(() => {
     const fetchData = async () => {
       if (session) {
@@ -126,7 +128,7 @@ const Faction: React.FC<FactionProps> = ({
           />
         ))}
       </div>
-      {(faction.public || session?.user.admin) && (
+      {((faction.public && isPlayer) || session?.user.admin) && (
         <Button
           label="Toggle your characters"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}

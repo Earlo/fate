@@ -41,23 +41,18 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ account, profile }) {
-      console.log('signin', account, profile);
       if (account?.provider === 'google') {
-        console.log('is google', profile?.email);
         if (profile?.email && profile?.sub) {
           const user = await UserModel.findOne({
             username: profile.email,
           });
-          console.log('found user', user);
           if (user) {
             return true;
           } else {
-            console.log('creating user', profile.sub);
-            const newUser = await UserModel.create({
+            await UserModel.create({
               username: profile?.email,
               admin: false,
             });
-            console.log('created user', newUser);
             return true;
           }
         }
@@ -65,9 +60,6 @@ export default NextAuth({
       return true; // Do different verification for other providers that don't have `email_verified`
     },
     async session({ session, token, user }) {
-      console.log('session', session);
-      console.log('token', token);
-      console.log('user', user);
       const query = token.email
         ? { username: token.email }
         : { _id: token.sub };

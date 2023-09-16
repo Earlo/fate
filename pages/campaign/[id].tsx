@@ -28,13 +28,17 @@ const CampaignPage = () => {
   const [campaign, setCampaign] = useState<PopulatedCampaignT | null>(null);
   const [isLoading, setIsLoading] = useState(status === 'loading');
   const isAdmin = !!session?.user.admin;
+  const isPlayer =
+    campaign &&
+    session?.user._id &&
+    campaign.visibleTo.includes(session?.user._id);
   useEffect(() => {
     const fetchCampaign = async () => {
       if (id) {
         setIsLoading(true);
         try {
           const data = await getCampaignById(id as string);
-          if (data) {
+          if (!('error' in data)) {
             setCampaign(data);
           } else {
             router.push('/');
@@ -84,6 +88,22 @@ const CampaignPage = () => {
     }
   };
 
+  const joinLeaveCampaign = async () => {
+    if (campaign && id && session?.user._id) {
+      const updatedCampaign = { ...campaign };
+      const userId = session?.user._id;
+      if (updatedCampaign.visibleTo.includes(userId)) {
+        updatedCampaign.visibleTo = updatedCampaign.visibleTo.filter(
+          (id) => id !== userId,
+        );
+      } else {
+        updatedCampaign.visibleTo.push(userId);
+      }
+      await updateCampaignAPI(id as string, updatedCampaign);
+      setCampaign(updatedCampaign);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center text-2xl">
@@ -104,6 +124,13 @@ const CampaignPage = () => {
     <div className="px-4 py-6">
       <h1 className="mb-6 text-center text-4xl font-bold sm:text-5xl">
         {campaign.name}
+        {session?.user._id && campaign.controlledBy !== session?.user._id && (
+          <Button
+            label={isPlayer ? 'Leave Campaing' : 'Join Campaign'}
+            onClick={() => joinLeaveCampaign()}
+            className="ml-4"
+          />
+        )}
       </h1>
       <div className="mb-6 flex flex-col items-center sm:flex-row">
         <Image
@@ -132,7 +159,7 @@ const CampaignPage = () => {
                   <Faction
                     key={index}
                     faction={faction}
-                    isAdmin={isAdmin}
+                    state={isAdmin ? 'admin' : isPlayer ? 'player' : 'view'}
                     onChange={(faction) => updateFaction(index, faction)}
                     campaignId={id as string}
                   />
