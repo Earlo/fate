@@ -21,12 +21,12 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
       className="flex-shrink-0 rounded-full"
     />
     <div className="flex min-w-0 grow flex-col pl-4">
-      <div className="flex h-12 flex-col justify-end">
+      <div className="flex flex-col justify-end">
         <h3 className="line-clamp-2 overflow-hidden text-lg font-semibold leading-6 group-hover:underline">
           {character.name.text || 'Unnamed Character'}
         </h3>
       </div>
-      <div className="flex h-12 flex-col">
+      <div className="flex flex-col">
         <p
           className="overflow-hidden text-sm leading-4 text-gray-600"
           style={{

@@ -14,7 +14,7 @@ const CampaignButton: React.FC<CampaignButtonProps> = ({
   return (
     <div
       onClick={onClick}
-      className="group flex h-24 min-h-0 w-full cursor-pointer items-center rounded-lg border border-gray-300 pl-4 transition-colors duration-200 hover:border-gray-400 hover:bg-gray-100 hover:text-gray-800 active:bg-gray-200"
+      className="group flex h-24 min-h-0 w-full cursor-pointer items-center justify-around rounded-lg border border-gray-300 pl-4 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 active:bg-gray-300"
     >
       <Image
         src={imageUrl || '/drowsee_128.png'}
@@ -23,7 +23,7 @@ const CampaignButton: React.FC<CampaignButtonProps> = ({
         height={64}
         className="flex-shrink-0"
       />
-      <div className="flex min-w-0 flex-col pl-4">
+      <div className="flex min-w-0 grow flex-col pl-4">
         <h3 className="line-clamp-2 overflow-hidden text-lg font-semibold leading-6 group-hover:underline">
           {name || 'Unnamed campaign'}
         </h3>
