@@ -34,7 +34,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
       setCharacter((prev) => ({ ...prev, [field]: newValue }));
     }
   };
-
   return (
     <>
       <div className="flex flex-col items-center md:flex-row">

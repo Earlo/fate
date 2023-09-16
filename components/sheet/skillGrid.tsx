@@ -5,7 +5,7 @@ import SoloInput from '../generic/soloInput';
 import { Skill } from '@/types/fate';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
-
+import { useState, useCallback, useEffect } from 'react';
 /*
 export const tiers = [
   { level: 8, label: 'Legendary' },
@@ -54,6 +54,23 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   setConsequences,
   consequences,
 }) => {
+  const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
+  const updateSelectedSkills = useCallback(() => {
+    const selected: Skill[] = [];
+    Object.values(skills)
+      .flat()
+      .forEach((skill) => {
+        if (skill.name) {
+          selected.push(skill.name);
+        }
+      });
+    setSelectedSkills(selected.sort((a, b) => (a > b ? 1 : -1)));
+  }, [skills]);
+
+  useEffect(() => {
+    updateSelectedSkills();
+  }, [updateSelectedSkills]);
+
   const handleSkillChange = (
     level: number,
     slotIndex: number,
@@ -61,15 +78,21 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     visibleIn: string[],
   ) => {
     const updatedSkills = { ...skills };
+    Object.values(updatedSkills).forEach((skillSlots, lvl) => {
+      updatedSkills[lvl] = updatedSkills[lvl]
+        ? updatedSkills[lvl].filter((skillSlot, i) => {
+            return !(skillSlot.name === name);
+          })
+        : [];
+    });
     updatedSkills[level] = updatedSkills[level] || [];
     const replacedSkill = updatedSkills[level][slotIndex];
     if (name === '') {
-      updatedSkills[level].splice(slotIndex, 1); // Remove the element
-      if (updatedSkills[level].length === 0) {
-        delete updatedSkills[level]; // Remove the entire row if it's empty
-      }
+      updatedSkills[level] = updatedSkills[level].filter(
+        (_, i) => i !== slotIndex,
+      );
     } else {
-      updatedSkills[level][slotIndex] = { name, visibleIn: visibleIn };
+      updatedSkills[level][slotIndex] = { name, visibleIn };
     }
     if (replacedSkill?.name === 'Physique' || replacedSkill?.name === 'Will') {
       const boxCount = 2;
@@ -121,9 +144,10 @@ const SkillGrid: React.FC<SkillGridProps> = ({
         });
       }
     }
-
     setSkills(updatedSkills);
+    updateSelectedSkills();
   };
+
   if (state === 'toggle' && !campaignId) {
     return null;
   }
@@ -204,6 +228,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                     { 'rounded-l': slotIndex === 0 && index !== 0 },
                     { 'rounded-r': slotIndex === 4 },
                   )}
+                  selectedSkills={selectedSkills}
                 />
               );
             })}
