@@ -1,16 +1,16 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/5ae5a3f4-6549-476d-94fb-bfd729632c74/deploy-status)](https://app.netlify.com/sites/fatecore/deploys)
 
-# Fate Charachter Sheet Manager
+# Fate Character Sheet Manager
 
 Something I made to help me run a game based on Fate Core rules.
 Not super professional, but happy to help if someone wants to use this also.
 
 ## Features
 
-- Create Charachter Sheets
+- Create Character Sheets
 - Create Campaigns
-  - Group charachters by faction
-  - Reveal partial charachter sheets to players as GM
+  - Group characters by faction
+  - Reveal partial character sheets to players as GM
 
 ![Example sheet form the app](/readme/example_sheet.png?raw=true 'Example sheet form the app')
 
