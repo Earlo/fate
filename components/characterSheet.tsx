@@ -78,6 +78,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
+                className="pr-2"
               />
             )}
           </Input>
@@ -116,6 +117,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
+                className="pr-2"
               />
             )}
           </Input>

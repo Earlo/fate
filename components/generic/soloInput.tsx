@@ -32,7 +32,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
       value={value}
       placeholder={placeholder}
       className={cn(
-        'z-0 h-32 w-full rounded border border-gray-300 bg-white p-2 text-base text-gray-700 placeholder-gray-400',
+        'relative top-[-2px] z-0 h-32 w-full rounded border-2 border-gray-300 bg-white p-2 text-base text-gray-700 placeholder-gray-400',
         className,
       )}
       required={required}
@@ -47,7 +47,7 @@ const SoloInput: React.FC<SoloInputProps> = ({
       value={value}
       placeholder={placeholder}
       className={cn(
-        'z-0 h-10 w-full rounded border border-gray-300 bg-white p-2 text-base text-gray-700 placeholder-gray-400',
+        'relative top-[-2px] z-0 h-10 w-full rounded border-2 border-gray-300 bg-white p-2 text-base text-gray-700 placeholder-gray-400',
         className,
       )}
       required={required}

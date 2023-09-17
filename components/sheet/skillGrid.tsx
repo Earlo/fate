@@ -81,7 +81,11 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     Object.values(updatedSkills).forEach((skillSlots, lvl) => {
       updatedSkills[lvl] = updatedSkills[lvl]
         ? updatedSkills[lvl].filter((skillSlot, i) => {
-            return !(skillSlot.name === name);
+            return !(
+              skillSlot.name === name &&
+              lvl !== level &&
+              i !== slotIndex
+            );
           })
         : [];
     });
@@ -157,10 +161,13 @@ const SkillGrid: React.FC<SkillGridProps> = ({
       {tiers.map((tier, index) => (
         <div
           key={index}
-          className={cn('mb-2 flex w-full flex-col lg:flex-row', {
-            'hidden sm:flex':
-              !skills[tier.level] || skills[tier.level].length === 0,
-          })}
+          className={cn(
+            'relative mb-2 flex w-full flex-col lg:top-[-2px] lg:flex-row',
+            {
+              'hidden sm:flex':
+                !skills[tier.level] || skills[tier.level].length === 0,
+            },
+          )}
         >
           <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/6">
             {`${tier.label} +${tier.level}`}
@@ -180,10 +187,10 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                     value={name}
                     disabled={true}
                     className={cn(
-                      'rounded-none',
-                      { 'rounded-bl': slotIndex === 0 },
+                      'top-0 rounded-none border-y-2 border-l-0',
+                      { 'rounded-bl border-l-2': slotIndex === 0 },
                       { 'rounded-l': slotIndex === 0 && index !== 0 },
-                      { 'rounded-r': slotIndex === 4 },
+                      { 'rounded-r border-r-2': slotIndex === 4 },
                     )}
                   />
                   <div className="absolute right-0 top-0 m-2">
@@ -223,10 +230,13 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                     handleSkillChange(tier.level, slotIndex, name, visibleIn)
                   }
                   className={cn(
-                    'rounded-none',
-                    { 'rounded-bl': slotIndex === 0 },
+                    'rounded-none border-y-2 border-l-0',
+                    {
+                      'lg:rounded-tl-0 rounded-bl rounded-tl border-l-2':
+                        slotIndex === 0,
+                    },
                     { 'rounded-l': slotIndex === 0 && index !== 0 },
-                    { 'rounded-r': slotIndex === 4 },
+                    { 'rounded-r border-r-2': slotIndex === 4 },
                   )}
                   selectedSkills={selectedSkills}
                 />

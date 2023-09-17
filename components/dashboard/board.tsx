@@ -116,14 +116,12 @@ export default function Dashboard() {
           />
         )}
       </div>
-
       {showCampaignForm && (
         <CampaignForm
           onClose={() => setShowCampaignForm(false)}
           setCampaigns={setCampaigns}
         />
       )}
-
       {selectedCharacter && (
         <CharacterForm
           key={selectedCharacter._id}

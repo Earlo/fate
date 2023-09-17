@@ -34,7 +34,7 @@ const Consequences: React.FC<ConsequencesProps> = ({
     <div className="flex w-full flex-col">
       <Label name="Consequences" />
       <div className="flex flex-row pt-2">
-        <div className="flex flex-col">
+        <div className="flex grow flex-col">
           <ConsequenceInput
             name="Mild"
             rank="2"
@@ -59,7 +59,7 @@ const Consequences: React.FC<ConsequencesProps> = ({
             disabled={disabled}
           />
         </div>
-        <div className="flex flex-col">
+        <div className="flex grow flex-col">
           <ConsequenceInput
             name="Mild Physical"
             rank="2"
