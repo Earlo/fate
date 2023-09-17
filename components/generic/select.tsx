@@ -45,7 +45,7 @@ const Select: FC<SelectProps> = ({
     <button
       type="button"
       className={cn(
-        'h-10 w-full appearance-none items-center rounded border border-gray-300 pl-2 text-left text-base font-normal sm:flex sm:w-32',
+        'h-10 w-full flex-grow appearance-none items-center rounded border border-gray-300 pl-2 text-left text-base font-normal sm:flex',
         !value ? 'text-gray-400' : 'text-gray-700',
         disabled && !value ? 'bg-gray-200' : 'bg-white',
         { 'hidden sm:flex': disabled && !value },
@@ -57,7 +57,7 @@ const Select: FC<SelectProps> = ({
     >
       {value || 'Select'}
       {isOpen && (
-        <div className="absolute z-20 flex w-fit flex-col rounded border border-gray-200 bg-white text-gray-700 shadow-lg">
+        <div className="absolute z-30 flex w-fit flex-col rounded border border-gray-200 bg-white text-gray-700 shadow-lg">
           {value && (
             <div
               className="block w-full px-3 py-1 text-left text-gray-700 hover:bg-gray-100 "

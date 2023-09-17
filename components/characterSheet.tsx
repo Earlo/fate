@@ -47,7 +47,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           }
           disabled={!setCharacter}
         />
-        <div className="flex flex-grow flex-col md:ml-4">
+        <div className="flex w-full flex-grow flex-col md:ml-4">
           <Input
             name="Name"
             onChange={(e) =>
@@ -123,7 +123,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           </Input>
         </div>
       </div>
-      <div className="flex flex-col justify-between pb-2 md:flex-row">
+      <div className="flex flex-col justify-between md:flex-row">
         <AspectInput
           aspects={character?.aspects || []}
           setAspects={(aspects) =>
@@ -162,7 +162,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           campaignId={campaignId}
           state={state}
           title="Extra"
-          className="pr-4"
+          className="md:pr-4"
         />
         <StuntInput
           stunts={character?.stunts || []}

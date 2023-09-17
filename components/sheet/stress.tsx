@@ -48,19 +48,19 @@ const Stress: React.FC<StressProps> = ({ stress, setStress, disabled }) => {
   };
 
   return (
-    <div className="flex flex-col pr-4">
+    <div className="flex flex-col md:pr-4">
       <Label name="Stress" />
       <div className="flex flex-col pt-2">
-        <div className="flex flex-col lg:flex-row">
-          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/5  ">
+        <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row">
+          <span className="flex h-10 w-1/5 flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black">
             Physical
           </span>
           <div className="flex flex-grow overflow-x-hidden sm:flex-row">
             {renderBoxes('physical')}
           </div>
         </div>
-        <div className="flex flex-col lg:flex-row">
-          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/5  ">
+        <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row">
+          <span className="flex h-10 w-1/5 flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black">
             Mental
           </span>
           <div className="flex flex-grow overflow-x-hidden sm:flex-row">

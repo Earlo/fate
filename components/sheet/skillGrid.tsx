@@ -156,7 +156,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     return null;
   }
   return (
-    <div className="w-full overflow-x-hidden sm:max-w-fit md:w-fit lg:w-8/12">
+    <div className="w-full min-w-[66.666667%] md:w-fit lg:w-8/12">
       <Label name="Skills" />
       {tiers.map((tier, index) => (
         <div
@@ -172,7 +172,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
           <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/6">
             {`${tier.label} +${tier.level}`}
           </span>
-          <div className="flex flex-grow flex-col overflow-x-hidden sm:flex-row">
+          <div className="flex flex-grow flex-col sm:flex-row">
             {Array.from({ length: 5 }).map((_, slotIndex) => {
               const name = (skills[tier.level] || [])[slotIndex]?.name || '';
               const visibleIn =
@@ -230,13 +230,13 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                     handleSkillChange(tier.level, slotIndex, name, visibleIn)
                   }
                   className={cn(
-                    'rounded-none border-y-2 border-l-0',
+                    'border-2 border-t-0 first:border-t-2 sm:rounded-none sm:border-y-2 sm:border-l-0 ',
                     {
-                      'lg:rounded-tl-0 rounded-bl rounded-tl border-l-2':
+                      'lg:rounded-tl-0 sm:rounded-bl sm:rounded-tl sm:border-l-2':
                         slotIndex === 0,
                     },
-                    { 'rounded-l': slotIndex === 0 && index !== 0 },
-                    { 'rounded-r border-r-2': slotIndex === 4 },
+                    { 'sm:rounded-l': slotIndex === 0 && index !== 0 },
+                    { 'sm:rounded-r sm:border-r-2': slotIndex === 4 },
                   )}
                   selectedSkills={selectedSkills}
                 />

@@ -78,28 +78,30 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     }
   };
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="absolute left-1/2 top-1/2 z-10 max-h-screen w-full max-w-full -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded bg-white p-4 shadow-md lg:max-w-6xl"
-    >
-      <CloseButton
-        className="relative bottom-2 left-2 float-right "
-        onClick={onClose}
-      />
-      <CharacterSheet
-        character={formState}
-        setCharacter={setCharacters ? setFormState : undefined}
-        state={state}
-        campaignId={campaignId}
-      />
-      {setCharacters && (
-        <Button
-          label={isCreateMode ? 'Create Character' : 'Save Changes'}
-          disabled={isSubmitting}
-          type="submit"
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <form
+        onSubmit={handleSubmit}
+        className="z-50 max-h-screen w-full max-w-full overflow-y-auto rounded bg-white p-4 shadow-md lg:max-w-6xl"
+      >
+        <CloseButton
+          className="relative bottom-2 left-2 float-right "
+          onClick={onClose}
         />
-      )}
-    </form>
+        <CharacterSheet
+          character={formState}
+          setCharacter={setCharacters ? setFormState : undefined}
+          state={state}
+          campaignId={campaignId}
+        />
+        {setCharacters && (
+          <Button
+            label={isCreateMode ? 'Create Character' : 'Save Changes'}
+            disabled={isSubmitting}
+            type="submit"
+          />
+        )}
+      </form>
+    </div>
   );
 };
 
