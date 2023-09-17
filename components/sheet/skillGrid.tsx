@@ -152,7 +152,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     return null;
   }
   return (
-    <div className="w-full overflow-x-hidden sm:max-w-fit md:w-fit lg:w-9/12">
+    <div className="w-full overflow-x-hidden sm:max-w-fit md:w-fit lg:w-8/12">
       <Label name="Skills" />
       {tiers.map((tier, index) => (
         <div
@@ -162,7 +162,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
               !skills[tier.level] || skills[tier.level].length === 0,
           })}
         >
-          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/5  ">
+          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/6">
             {`${tier.label} +${tier.level}`}
           </span>
           <div className="flex flex-grow flex-col overflow-x-hidden sm:flex-row">

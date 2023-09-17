@@ -1,6 +1,7 @@
 import { PopulatedCampaignT, PopulatedFaction } from '@/schemas/campaign';
 import Button from '@/components/generic/button';
 import Faction from '@/components/dashboard/faction';
+import AspectInput from '@/components/sheet/aspectInput';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -142,6 +143,15 @@ const CampaignPage = () => {
         />
         <p className="pl-4 text-lg sm:text-xl">{campaign.description}</p>
       </div>
+      <AspectInput
+        //TODO make this look cooler here?
+        aspects={campaign?.aspects || []}
+        setAspects={(aspects) => null}
+        disabled={true}
+        campaignId={campaign?._id}
+        hints={['Current Issues', 'Impeding Issues']}
+      />
+
       {isAdmin && (
         <Button
           label="Add Faction"

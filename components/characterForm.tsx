@@ -80,10 +80,10 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="absolute left-1/2 top-1/2 z-10 mx-auto max-h-screen w-full max-w-full -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded bg-white p-4 shadow-md md:w-auto md:p-8 md:pb-8 md:pt-6 lg:max-w-5xl"
+      className="absolute left-1/2 top-1/2 z-10 max-h-screen w-full max-w-full -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded bg-white p-4 shadow-md lg:max-w-6xl"
     >
       <CloseButton
-        className="relative bottom-4 left-4 float-right "
+        className="relative bottom-2 left-2 float-right "
         onClick={onClose}
       />
       <CharacterSheet

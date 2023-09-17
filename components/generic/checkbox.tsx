@@ -26,7 +26,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
 
   return (
     <div
-      className={cn('flex flex-col pb-4 pl-4', {
+      className={cn('flex flex-col pb-4', {
         'cursor-not-allowed opacity-80': disabled,
       })}
     >

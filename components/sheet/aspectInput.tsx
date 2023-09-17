@@ -1,6 +1,7 @@
 import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
+import { cn } from '@/lib/helpers';
 
 interface AspectInputProps {
   aspects: { name: string; visibleIn: string[] }[];
@@ -8,9 +9,9 @@ interface AspectInputProps {
   disabled?: boolean;
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   campaignId?: string;
+  hints?: string[];
+  className?: string;
 }
-
-const hints = ['High Concept', 'Trouble'];
 
 const AspectInput: React.FC<AspectInputProps> = ({
   aspects,
@@ -18,6 +19,8 @@ const AspectInput: React.FC<AspectInputProps> = ({
   state,
   disabled,
   campaignId,
+  hints = ['High Concept', 'Trouble'],
+  className,
 }) => {
   const handleAspectChange = (
     index: number,
@@ -31,7 +34,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
   };
 
   return (
-    <div className="flex flex-col pr-4">
+    <div className={cn('flex grow flex-col', className)}>
       <Label name="Aspects" />
       <div className="flex flex-col">
         {Array.from({ length: 5 }).map((_, index) =>

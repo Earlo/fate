@@ -47,7 +47,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           }
           disabled={!setCharacter}
         />
-        <div className="ml-0 flex flex-grow flex-col md:ml-4">
+        <div className="flex flex-grow flex-col md:ml-4">
           <Input
             name="Name"
             onChange={(e) =>
@@ -132,6 +132,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           disabled={!setCharacter}
           campaignId={campaignId}
           state={state}
+          className="pr-4"
         />
         <SkillGrid
           skills={character?.skills || {}}
@@ -159,6 +160,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           campaignId={campaignId}
           state={state}
           title="Extra"
+          className="pr-4"
         />
         <StuntInput
           stunts={character?.stunts || []}

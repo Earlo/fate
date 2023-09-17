@@ -105,7 +105,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
       {(isEditMode || isViewMode) && initialCampaign && (
         <div className="pt-2">
           <Input
-            name="Campaign ID (share this to your players)"
+            name="Campaign link"
             type="text"
             value={`${process.env.NEXT_PUBLIC_URL}/campaign/${initialCampaign._id}`}
             disabled

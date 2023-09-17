@@ -2,6 +2,7 @@ import VisibilityToggle from './visibilityToggle';
 import SoloInput from '../generic/soloInput';
 import Label from '../generic/label';
 import CloseButton from '../generic/closeButton';
+import { cn } from '@/lib/helpers';
 
 interface StuntInputProps {
   stunts: { name: string; description: string; visibleIn: string[] }[];
@@ -12,6 +13,7 @@ interface StuntInputProps {
   campaignId?: string;
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   title?: string;
+  className?: string;
 }
 
 const StuntInput: React.FC<StuntInputProps> = ({
@@ -21,9 +23,10 @@ const StuntInput: React.FC<StuntInputProps> = ({
   campaignId,
   state,
   title = 'Stunt',
+  className,
 }) => {
   return (
-    <div className="w-full">
+    <div className={cn('w-full', className)}>
       <Label name={title + 's'}>
         {!disabled && (
           <span
