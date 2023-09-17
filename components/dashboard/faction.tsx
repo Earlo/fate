@@ -127,7 +127,7 @@ const Faction: React.FC<FactionProps> = ({
           />
         ))}
       </div>
-      {((faction.public && isPlayer) || session?.user.admin) && (
+      {((faction.public && isPlayer) || isAdmin) && (
         <Button
           label="Toggle your characters"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -135,19 +135,21 @@ const Faction: React.FC<FactionProps> = ({
       )}
       {isDropdownOpen && (
         <div className="flex flex-col gap-2 rounded bg-gray-700 p-2">
-          {allCharacters.map((character) => (
-            <div key={character._id} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={faction.characters.some(
-                  (factionCharacter) =>
-                    factionCharacter.sheet._id === character._id,
-                )}
-                onChange={() => toggleCharacter(character._id)}
-              />
-              {character.name.text}
-            </div>
-          ))}
+          {allCharacters.length > 0
+            ? allCharacters.map((character) => (
+                <div key={character._id} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={faction.characters.some(
+                      (factionCharacter) =>
+                        factionCharacter.sheet._id === character._id,
+                    )}
+                    onChange={() => toggleCharacter(character._id)}
+                  />
+                  {character.name.text}
+                </div>
+              ))
+            : "You haven't created any characters yet"}
         </div>
       )}
       {selectedCharacter && (

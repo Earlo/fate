@@ -28,7 +28,8 @@ const CampaignPage = () => {
   const { id } = router.query;
   const [campaign, setCampaign] = useState<PopulatedCampaignT | null>(null);
   const [isLoading, setIsLoading] = useState(status === 'loading');
-  const isAdmin = !!session?.user.admin;
+  const isAdmin =
+    !!session?.user.admin || campaign?.controlledBy === session?.user._id;
   const isPlayer =
     campaign &&
     session?.user._id &&
@@ -165,7 +166,7 @@ const CampaignPage = () => {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {campaign.factions.map(
               (faction, index) =>
-                (faction.visible || session?.user.admin) && (
+                (faction.visible || isAdmin) && (
                   <Faction
                     key={index}
                     faction={faction}

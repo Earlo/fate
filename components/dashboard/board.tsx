@@ -53,7 +53,7 @@ export default function Dashboard() {
     <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 ">
       <div className="col-span-1">
         <h2 className="mb-2 text-xl font-bold">Your Character Sheets:</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
           {characters.map((sheet) => (
             <CharacterButton
               key={sheet._id}
@@ -108,13 +108,11 @@ export default function Dashboard() {
               </Link>
             </div>
           ))}
-        {session?.user.admin && (
-          <Button
-            className="w-full bg-blue-500 pt-4 hover:bg-blue-700"
-            label="Create New Campaign"
-            onClick={() => setShowCampaignForm(true)}
-          />
-        )}
+        <Button
+          className="w-full bg-blue-500 pt-4 hover:bg-blue-700"
+          label="Create New Campaign"
+          onClick={() => setShowCampaignForm(true)}
+        />
       </div>
       {showCampaignForm && (
         <CampaignForm
