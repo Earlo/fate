@@ -14,7 +14,28 @@ export const blankSheet: Omit<CharacterSheetT, '_id'> = {
     text: '',
     visibleIn: [],
   },
-  aspects: [],
+  aspects: [
+    {
+      name: '',
+      visibleIn: [],
+    },
+    {
+      name: '',
+      visibleIn: [],
+    },
+    {
+      name: '',
+      visibleIn: [],
+    },
+    {
+      name: '',
+      visibleIn: [],
+    },
+    {
+      name: '',
+      visibleIn: [],
+    },
+  ],
   skills: {},
   stunts: [],
   extras: [],

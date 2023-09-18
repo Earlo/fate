@@ -35,7 +35,7 @@ export const characterSheetSchema = new Schema({
   },
   aspects: [
     {
-      name: { type: String, required: true },
+      name: { type: String, default: '' },
       visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   ],
