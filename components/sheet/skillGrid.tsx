@@ -214,11 +214,11 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                   key={tier.label + slotIndex}
                   level={tier.level}
                   value={
-                    state === 'view' || state === 'play'
-                      ? isVisible
-                        ? name
-                        : ''
-                      : name
+                    state === 'play'
+                      ? name
+                      : state === 'view' && isVisible
+                      ? name
+                      : ''
                   }
                   disabled={
                     disabled ||
