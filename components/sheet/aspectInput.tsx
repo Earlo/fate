@@ -1,8 +1,8 @@
 import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
+import AddButton from '../generic/addButton';
 import { cn } from '@/lib/helpers';
-
 interface AspectInputProps {
   aspects: { name: string; visibleIn: string[] }[];
   setAspects: (aspects: { name: string; visibleIn: string[] }[]) => void;
@@ -35,10 +35,18 @@ const AspectInput: React.FC<AspectInputProps> = ({
 
   return (
     <div className={cn('flex grow flex-col', className)}>
-      <Label name="Aspects" />
+      <Label name="Aspects">
+        {!disabled && (
+          <AddButton
+            onClick={() =>
+              setAspects([...aspects, { name: '', visibleIn: [] }])
+            }
+          />
+        )}
+      </Label>
       <div className="flex flex-col">
-        {Array.from({ length: 5 }).map((_, index) =>
-          !aspects[index] && disabled ? null : (
+        {aspects.map((aspect, index) =>
+          !aspect && disabled ? null : (
             <div key={index} className="mb-2 flex items-center">
               <SoloInput
                 name={`aspect-${index}`}
@@ -47,30 +55,28 @@ const AspectInput: React.FC<AspectInputProps> = ({
                 }
                 value={
                   state === 'view' &&
-                  !aspects[index].visibleIn.includes(campaignId || '')
+                  !aspect.visibleIn.includes(campaignId || '')
                     ? '???'
-                    : aspects[index]?.name || ''
+                    : aspect?.name || ''
                 }
                 onChange={(e) =>
                   handleAspectChange(index, {
                     name: e.target.value,
-                    visibleIn: aspects[index]?.visibleIn || [],
+                    visibleIn: aspect?.visibleIn || [],
                   })
                 }
                 disabled={disabled}
                 className={index === 0 ? 'rounded-tl-none' : ''}
               />
-              {state === 'toggle' && campaignId && aspects[index] && (
+              {state === 'toggle' && campaignId && aspect && (
                 <VisibilityToggle
-                  visible={aspects[index].visibleIn.includes(campaignId)}
+                  visible={aspect.visibleIn.includes(campaignId)}
                   onChange={(visible) =>
                     handleAspectChange(index, {
-                      name: aspects[index].name,
+                      name: aspect.name,
                       visibleIn: visible
-                        ? [...(aspects[index].visibleIn || []), campaignId]
-                        : aspects[index].visibleIn.filter(
-                            (id) => id !== campaignId,
-                          ),
+                        ? [...(aspect.visibleIn || []), campaignId]
+                        : aspect.visibleIn.filter((id) => id !== campaignId),
                     })
                   }
                 />

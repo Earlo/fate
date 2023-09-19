@@ -173,13 +173,15 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   return (
     <div className="w-full min-w-[66.666667%] md:w-fit lg:w-8/12">
       <Label name="Skills">
-        <AddButton
-          onClick={() =>
-            maxDisplayedTier < 18
-              ? setMaxDisplayedTier(maxDisplayedTier + 1)
-              : setMinDisplayerTier(minDisplayedTier - 1)
-          }
-        />
+        {!disabled && (
+          <AddButton
+            onClick={() =>
+              maxDisplayedTier < 18
+                ? setMaxDisplayedTier(maxDisplayedTier + 1)
+                : setMinDisplayerTier(minDisplayedTier - 1)
+            }
+          />
+        )}
       </Label>
       {tiers
         .filter(
