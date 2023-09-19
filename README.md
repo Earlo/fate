@@ -5,12 +5,16 @@
 Something I made to help me run a game based on Fate Core rules.
 Not super professional, but happy to help if someone wants to use this also.
 
+### Project goals
+
+This software isn't meant to be a virtual table top simulator or an online RPG platform, but instead a simple additional tool to use in live game sessions, making them more streamlined by providing each player with access to all the relevant information.
+
 ## Features
 
 - Create Character Sheets
 - Create Campaigns
   - Group characters by faction
-  - Reveal partial character sheets to players as GM
+  - Reveal partial character sheets to players as
 
 ![Example sheet form the app](/readme/example_sheet.png?raw=true 'Example sheet form the app')
 
