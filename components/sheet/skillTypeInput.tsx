@@ -39,7 +39,16 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
 
   return (
     <div className="flex flex-col">
-      <Label name="Skills" />
+      <Label name="Skills">
+        {!disabled && (
+          <span
+            className="duration cursor-pointer pr-4 text-2xl font-bold transition hover:text-gray-400"
+            onClick={() => setSkills([...skills, { name: '', actions: [] }])}
+          >
+            +
+          </span>
+        )}
+      </Label>
       {skills.map((skill, index) => (
         <div key={index} className="flex">
           <SoloInput

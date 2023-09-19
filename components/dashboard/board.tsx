@@ -7,6 +7,7 @@ import CampaignSheet from '@/components/campaignSheet';
 import CloseButton from '@/components/generic/closeButton';
 import CharacterButton from '@/components/dashboard/characterButton';
 import CharacterForm from '@/components/characterForm';
+import { defaultSkills } from '@/consts/blankCampaingSheet';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -22,6 +23,14 @@ export default function Dashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState<CampaignT | null>(
     null,
   );
+  // merge all unique skills from all campaigns on top of defaultSkills
+  const allSkills = [
+    ...defaultSkills.map((skill) => skill.name),
+    ...campaigns
+      .map((campaign) => campaign.skills)
+      .flat()
+      .map((skill) => skill.name),
+  ].filter((skill, index, self) => self.indexOf(skill) === index);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,12 +138,14 @@ export default function Dashboard() {
           state="edit"
           setCharacters={setCharacters}
           onClose={() => setSelectedCharacter(null)}
+          skills={allSkills}
         />
       )}
       {showSheetForm && (
         <CharacterForm
           onClose={() => setShowSheetForm(false)}
           setCharacters={setCharacters}
+          skills={allSkills}
         />
       )}
     </div>

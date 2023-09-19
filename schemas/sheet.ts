@@ -1,4 +1,3 @@
-import { Skill } from '@/types/fate';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const characterSheetSchema = new Schema({
@@ -174,7 +173,7 @@ export const CharacterSheet =
 
 // Need to override one field here since egh :D
 export type CharacterSheetT = {
-  skills: { [level: number]: { name: Skill; visibleIn: string[] }[] };
+  skills: { [level: number]: { name: string; visibleIn: string[] }[] };
   _id: string;
 } & Omit<InferSchemaType<typeof characterSheetSchema>, 'skills'>;
 
