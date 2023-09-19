@@ -184,7 +184,8 @@ const SkillGrid: React.FC<SkillGridProps> = ({
             'relative mb-2 flex w-full flex-col lg:top-[-2px] lg:flex-row',
             {
               'hidden sm:flex':
-                !skills[tier.level] || skills[tier.level].length === 0,
+                (!skills[tier.level] || skills[tier.level].length === 0) &&
+                state === 'view',
             },
           )}
         >
