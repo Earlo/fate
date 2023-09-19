@@ -12,6 +12,7 @@ interface CharacterSheetProps {
   character: Partial<CharacterSheetT>;
   setCharacter?: React.Dispatch<React.SetStateAction<Partial<CharacterSheetT>>>;
   campaignId?: string;
+  skills: string[];
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
 }
 
@@ -22,6 +23,7 @@ type editableFields = Omit<
 const CharacterSheet: React.FC<CharacterSheetProps> = ({
   character,
   setCharacter,
+  skills,
   campaignId = '',
   state = 'view',
 }) => {
@@ -138,6 +140,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
         />
         <SkillGrid
           skills={character?.skills || {}}
+          skillsList={skills}
           setSkills={(skills) => updateField('skills', skills)}
           disabled={!setCharacter}
           campaignId={campaignId}

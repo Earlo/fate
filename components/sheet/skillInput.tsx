@@ -1,34 +1,13 @@
 import Select from '../generic/select';
-import { Skill } from '@/types/fate';
 interface SkillInputProps {
   level: number;
-  onChange: (value: Skill) => void;
-  value: Skill | '';
+  onChange: (value: string) => void;
+  value: string | '';
   disabled?: boolean;
   className?: string;
-  selectedSkills?: Skill[];
+  selectedSkills?: string[];
+  skillOptions: string[];
 }
-
-const skillOptions: Skill[] = [
-  'Athletics',
-  'Burglary',
-  'Contacts',
-  'Crafts',
-  'Deceive',
-  'Drive',
-  'Empathy',
-  'Fight',
-  'Investigate',
-  'Lore',
-  'Notice',
-  'Physique',
-  'Provoke',
-  'Rapport',
-  'Resources',
-  'Shoot',
-  'Stealth',
-  'Will',
-];
 
 const SkillInput: React.FC<SkillInputProps> = ({
   onChange,
@@ -36,6 +15,7 @@ const SkillInput: React.FC<SkillInputProps> = ({
   disabled = false,
   className,
   selectedSkills = [],
+  skillOptions,
 }) => {
   const options = skillOptions
     .sort((a, b) => {
@@ -54,7 +34,7 @@ const SkillInput: React.FC<SkillInputProps> = ({
   return (
     <Select
       options={options}
-      onChange={(value) => onChange(value as Skill)}
+      onChange={(value) => onChange(value as string)}
       value={value}
       disabled={disabled}
       className={className}

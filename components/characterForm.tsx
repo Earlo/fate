@@ -3,14 +3,17 @@ import CloseButton from './generic/closeButton';
 import CharacterSheet from './characterSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { blankSheet } from '@/consts/blankCharacterSheet';
+import { defaultSkills } from '@/consts/blankCampaingSheet';
 import { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
+
 interface CharacterFormProps {
   onClose?: () => void;
   initialSheet?: CharacterSheetT;
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   setCharacters?: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
   campaignId?: string;
+  skills?: string[];
 }
 
 const CharacterForm: React.FC<CharacterFormProps> = ({
@@ -19,6 +22,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   state = 'create',
   setCharacters,
   campaignId,
+  skills = defaultSkills.map((skill) => skill.name),
 }) => {
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,6 +96,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
           setCharacter={setCharacters ? setFormState : undefined}
           state={state}
           campaignId={campaignId}
+          skills={skills}
         />
         {setCharacters && (
           <Button

@@ -2,7 +2,6 @@ import SkillInput from './skillInput';
 import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
-import { Skill } from '@/types/fate';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
 import { useState, useCallback, useEffect } from 'react';
@@ -30,9 +29,9 @@ export const tiers = [
 ];
 
 interface SkillGridProps {
-  skills: { [level: number]: { name: Skill; visibleIn: string[] }[] };
+  skills: { [level: number]: { name: string; visibleIn: string[] }[] };
   setSkills: (skills: {
-    [level: number]: { name: Skill; visibleIn: string[] }[];
+    [level: number]: { name: string; visibleIn: string[] }[];
   }) => void;
   disabled?: boolean;
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
@@ -41,6 +40,7 @@ interface SkillGridProps {
   stress?: CharacterSheetT['stress'];
   setConsequences: (value: CharacterSheetT['consequences']) => void;
   consequences?: CharacterSheetT['consequences'];
+  skillsList: string[];
 }
 
 const SkillGrid: React.FC<SkillGridProps> = ({
@@ -53,10 +53,11 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   stress,
   setConsequences,
   consequences,
+  skillsList,
 }) => {
-  const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const updateSelectedSkills = useCallback(() => {
-    const selected: Skill[] = [];
+    const selected: string[] = [];
     Object.values(skills)
       .flat()
       .forEach((skill) => {
@@ -74,7 +75,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   const handleSkillChange = (
     level: number,
     slotIndex: number,
-    name: Skill | '',
+    name: string | '',
     visibleIn: string[],
   ) => {
     const updatedSkills = { ...skills };
@@ -211,15 +212,10 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                 </div>
               ) : (
                 <SkillInput
+                  skillOptions={skillsList}
                   key={tier.label + slotIndex}
                   level={tier.level}
-                  value={
-                    state === 'play'
-                      ? name
-                      : state === 'view' && isVisible
-                      ? name
-                      : ''
-                  }
+                  value={state === 'view' && !isVisible ? '' : name}
                   disabled={
                     disabled ||
                     (slotIndex !== 0 &&

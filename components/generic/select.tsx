@@ -40,7 +40,6 @@ const Select: FC<SelectProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [ref]);
-
   return (
     <button
       type="button"

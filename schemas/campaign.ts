@@ -19,8 +19,19 @@ export const campaignSchema = new Schema({
   },
   aspects: [
     {
-      name: { type: String, required: true },
-      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
+      name: { type: String, default: '' },
+      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] }, // Pointless. Maybe it could reference players instead.
+    },
+  ],
+  skills: [
+    {
+      name: { type: String, default: '' },
+      actions: [
+        {
+          type: String,
+          enum: ['overcome', 'advantage', 'attack', 'defend'], // is this something we want to hard code?
+        },
+      ],
     },
   ],
   factions: [
