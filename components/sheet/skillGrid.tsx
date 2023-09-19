@@ -7,6 +7,16 @@ import { cn } from '@/lib/helpers';
 import { useState, useCallback, useEffect } from 'react';
 /*
 export const tiers = [
+  { level: 18, label: 'Transcendent' },
+  { level: 17, label: 'Mythic' },
+  { level: 16, label: 'Godlike' },
+  { level: 15, label: 'Immortal' },
+  { level: 14, label: 'Masterful' },
+  { level: 13, label: 'Illustrious' },
+  { level: 12, label: 'Exalted' },
+  { level: 11, label: 'Heroic' },
+  { level: 10, label: 'Formidable' },
+  { level: 9, label: 'Powerful' },
   { level: 8, label: 'Legendary' },
   { level: 7, label: 'Epic' },
   { level: 6, label: 'Fantastic' },
@@ -18,6 +28,14 @@ export const tiers = [
   { level: 0, label: 'Mediocre' },
   { level: -1, label: 'Poor' },
   { level: -2, label: 'Terrible' },
+  { level: -3, label: 'Abysmal' },
+  { level: -4, label: 'Dreadful' },
+  { level: -5, label: 'Horrible' },
+  { level: -6, label: 'Traumatic' },
+  { level: -7, label: 'Catastrophic' },
+  { level: -8, label: 'Apocalyptic' },
+  { level: -9, label: 'Nightmarish' },
+  { level: -10, label: 'Unthinkable' },
 ];
 */
 export const tiers = [
