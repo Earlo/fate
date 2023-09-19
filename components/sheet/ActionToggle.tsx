@@ -1,11 +1,4 @@
 import { cn } from '@/lib/helpers';
-import {
-  AcademicCapIcon,
-  ShieldExclamationIcon,
-  PencilIcon,
-  PhoneIcon,
-} from '@heroicons/react/24/solid';
-
 interface ActionToggleProps {
   actions: ('overcome' | 'advantage' | 'attack' | 'defend')[];
   onChange: (
@@ -23,10 +16,10 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
 }) => (
   <>
     {!(actions.indexOf('overcome') !== -1 && disabled) && (
-      <AcademicCapIcon
+      <span
         aria-hidden="true"
         className={cn(
-          'h-6 w-6 cursor-pointer text-green-400 hover:text-green-500',
+          'font-fate cursor-pointer text-green-400 hover:text-green-500',
           {
             'text-gray-400 hover:text-gray-500':
               actions.indexOf('overcome') === -1,
@@ -40,15 +33,17 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
             onChange(actions.filter((action) => action !== 'overcome'));
           }
         }}
-      />
+      >
+        O
+      </span>
     )}
     {!(actions.indexOf('advantage') !== -1 && disabled) && (
-      <ShieldExclamationIcon
+      <span
         aria-hidden="true"
         className={cn(
-          'h-6 w-6 cursor-pointer text-green-400 hover:text-gray-500',
+          'font-fate cursor-pointer text-green-400 hover:text-green-500',
           {
-            'text-gray-300 hover:text-gray-300':
+            'text-gray-400 hover:text-gray-500':
               actions.indexOf('advantage') === -1,
           },
           className,
@@ -60,15 +55,17 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
             onChange(actions.filter((action) => action !== 'advantage'));
           }
         }}
-      />
+      >
+        C
+      </span>
     )}
     {!(actions.indexOf('attack') !== -1 && disabled) && (
-      <PencilIcon
+      <span
         aria-hidden="true"
         className={cn(
-          'h-6 w-6 cursor-pointer text-green-400 hover:text-gray-500',
+          'font-fate cursor-pointer text-green-400 hover:text-green-500',
           {
-            'text-gray-300 hover:text-gray-300':
+            'text-gray-400 hover:text-gray-500':
               actions.indexOf('attack') === -1,
           },
           className,
@@ -80,15 +77,17 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
             onChange(actions.filter((action) => action !== 'attack'));
           }
         }}
-      />
+      >
+        A
+      </span>
     )}
     {!(actions.indexOf('defend') !== -1 && disabled) && (
-      <PhoneIcon
+      <span
         aria-hidden="true"
         className={cn(
-          'h-6 w-6 cursor-pointer text-green-400 hover:text-gray-500',
+          'font-fate cursor-pointer text-green-400 hover:text-green-500',
           {
-            'text-gray-300 hover:text-gray-300':
+            'text-gray-400 hover:text-gray-500':
               actions.indexOf('defend') === -1,
           },
           className,
@@ -100,7 +99,9 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
             onChange(actions.filter((action) => action !== 'defend'));
           }
         }}
-      />
+      >
+        D
+      </span>
     )}
   </>
 );
