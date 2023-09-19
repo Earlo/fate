@@ -2,6 +2,7 @@ import VisibilityToggle from './visibilityToggle';
 import SoloInput from '../generic/soloInput';
 import Label from '../generic/label';
 import CloseButton from '../generic/closeButton';
+import AddButton from '../generic/addButton';
 import { cn } from '@/lib/helpers';
 
 interface StuntInputProps {
@@ -29,17 +30,14 @@ const StuntInput: React.FC<StuntInputProps> = ({
     <div className={cn('w-full', className)}>
       <Label name={title + 's'}>
         {!disabled && (
-          <span
-            className="duration cursor-pointer pr-4 text-2xl font-bold transition hover:text-gray-400"
+          <AddButton
             onClick={() =>
               setStunts([
                 ...stunts,
                 { name: '', description: '', visibleIn: [] },
               ])
             }
-          >
-            +
-          </span>
+          />
         )}
       </Label>
       {stunts.map((stunt, index) => (

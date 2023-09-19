@@ -1,6 +1,7 @@
 import ActionToggle from './ActionToggle';
 import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
+import AddButton from '../generic/addButton';
 import { cn } from '@/lib/helpers';
 type actionOption = 'overcome' | 'advantage' | 'attack' | 'defend';
 interface SkillTypeInputProps {
@@ -41,12 +42,9 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
     <div className="flex flex-col">
       <Label name="Skills">
         {!disabled && (
-          <span
-            className="duration cursor-pointer pr-4 text-2xl font-bold transition hover:text-gray-400"
+          <AddButton
             onClick={() => setSkills([...skills, { name: '', actions: [] }])}
-          >
-            +
-          </span>
+          />
         )}
       </Label>
       {skills.map((skill, index) => (
