@@ -4,8 +4,9 @@ import Label from '../generic/label';
 import SoloInput from '../generic/soloInput';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
+import AddButton from '@/components/generic/addButton';
 import { useState, useCallback, useEffect } from 'react';
-/*
+
 export const tiers = [
   { level: 18, label: 'Transcendent' },
   { level: 17, label: 'Mythic' },
@@ -37,14 +38,6 @@ export const tiers = [
   { level: -9, label: 'Nightmarish' },
   { level: -10, label: 'Unthinkable' },
 ];
-*/
-export const tiers = [
-  { level: 5, label: 'Superb' },
-  { level: 4, label: 'Great' },
-  { level: 3, label: 'Good' },
-  { level: 2, label: 'Fair' },
-  { level: 1, label: 'Average' },
-];
 
 interface SkillGridProps {
   skills: { [level: number]: { name: string; visibleIn: string[] }[] };
@@ -74,6 +67,9 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   skillsList,
 }) => {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [maxDisplayedTier, setMaxDisplayedTier] = useState(5);
+  const [minDisplayedTier, setMinDisplayerTier] = useState(0);
+
   const updateSelectedSkills = useCallback(() => {
     const selected: string[] = [];
     Object.values(skills)
@@ -176,90 +172,108 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   }
   return (
     <div className="w-full min-w-[66.666667%] md:w-fit lg:w-8/12">
-      <Label name="Skills" />
-      {tiers.map((tier, index) => (
-        <div
-          key={index}
-          className={cn(
-            'relative mb-2 flex w-full flex-col lg:top-[-2px] lg:flex-row',
-            {
-              'hidden sm:flex':
-                (!skills[tier.level] || skills[tier.level].length === 0) &&
-                state === 'view',
-            },
-          )}
-        >
-          <span className="flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/6">
-            {`${tier.label} +${tier.level}`}
-          </span>
-          <div className="flex flex-grow flex-col sm:flex-row">
-            {Array.from({ length: 5 }).map((_, slotIndex) => {
-              const name = (skills[tier.level] || [])[slotIndex]?.name || '';
-              const visibleIn =
-                (skills[tier.level] || [])[slotIndex]?.visibleIn || [];
-              const isVisible = visibleIn.includes(campaignId || '');
-              return state == 'toggle' && campaignId ? (
-                <div className="relative">
-                  <SoloInput
-                    key={tier.label + slotIndex}
-                    name={`skill-${tier.label}-${index}`}
-                    placeholder="???"
-                    value={name}
-                    disabled={true}
-                    className={cn(
-                      'top-0 rounded-none border-y-2 border-l-0',
-                      { 'rounded-bl border-l-2': slotIndex === 0 },
-                      { 'rounded-l': slotIndex === 0 && index !== 0 },
-                      { 'rounded-r border-r-2': slotIndex === 4 },
-                    )}
-                  />
-                  <div className="absolute right-0 top-0 m-2">
-                    <VisibilityToggle
-                      visible={isVisible}
-                      onChange={(visible) =>
-                        handleSkillChange(
-                          tier.level,
-                          slotIndex,
-                          name,
-                          visible
-                            ? [...visibleIn, campaignId]
-                            : visibleIn.filter((id) => id !== campaignId),
-                        )
-                      }
+      <Label name="Skills">
+        <AddButton
+          onClick={() =>
+            maxDisplayedTier < 18
+              ? setMaxDisplayedTier(maxDisplayedTier + 1)
+              : setMinDisplayerTier(minDisplayedTier - 1)
+          }
+        />
+      </Label>
+      {tiers
+        .filter(
+          (tier) =>
+            tier.level <= maxDisplayedTier && tier.level > minDisplayedTier,
+        )
+        .map((tier, index) => (
+          <div
+            key={index}
+            className={cn(
+              'relative flex w-full flex-col pb-2 lg:top-[-2px] lg:flex-row',
+              {
+                'hidden sm:flex':
+                  (!skills[tier.level] || skills[tier.level].length === 0) &&
+                  state === 'view',
+              },
+            )}
+          >
+            <span
+              className={cn(
+                'flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/6',
+                { 'lg:w-fit': tier.level > 5 || tier.level < -5 }, //You aren't meant to go here. You can, but it won't look good.
+              )}
+            >
+              {`${tier.label} ${tier.level > 0 ? '+' : ''}${tier.level}`}
+            </span>
+            <div className="flex flex-grow flex-col sm:flex-row">
+              {Array.from({ length: 5 }).map((_, slotIndex) => {
+                const name = (skills[tier.level] || [])[slotIndex]?.name || '';
+                const visibleIn =
+                  (skills[tier.level] || [])[slotIndex]?.visibleIn || [];
+                const isVisible = visibleIn.includes(campaignId || '');
+                return state == 'toggle' && campaignId ? (
+                  <div className="relative">
+                    <SoloInput
+                      key={tier.label + slotIndex}
+                      name={`skill-${tier.label}-${index}`}
+                      placeholder="???"
+                      value={name}
+                      disabled={true}
+                      className={cn(
+                        'top-0 rounded-none border-y-2 border-l-0',
+                        { 'rounded-bl border-l-2': slotIndex === 0 },
+                        { 'rounded-l': slotIndex === 0 && index !== 0 },
+                        { 'rounded-r border-r-2': slotIndex === 4 },
+                      )}
                     />
+                    <div className="absolute right-0 top-0 m-2">
+                      <VisibilityToggle
+                        visible={isVisible}
+                        onChange={(visible) =>
+                          handleSkillChange(
+                            tier.level,
+                            slotIndex,
+                            name,
+                            visible
+                              ? [...visibleIn, campaignId]
+                              : visibleIn.filter((id) => id !== campaignId),
+                          )
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <SkillInput
-                  skillOptions={skillsList}
-                  key={tier.label + slotIndex}
-                  level={tier.level}
-                  value={state === 'view' && !isVisible ? '' : name}
-                  disabled={
-                    disabled ||
-                    (slotIndex !== 0 &&
-                      !(skills[tier.level] || [])[slotIndex - 1] &&
-                      !(skills[tier.level] || [])[slotIndex])
-                  }
-                  onChange={(name) =>
-                    handleSkillChange(tier.level, slotIndex, name, visibleIn)
-                  }
-                  className={cn(
-                    'border-2 border-t-0 first:border-t-2 sm:rounded-none sm:border-y-2 sm:border-l-0 ',
-                    {
-                      'lg:rounded-tl-0 sm:rounded-bl sm:rounded-tl sm:border-l-2':
-                        slotIndex === 0,
-                    },
-                    { 'sm:rounded-l': slotIndex === 0 && index !== 0 },
-                    { 'sm:rounded-r sm:border-r-2': slotIndex === 4 },
-                  )}
-                  selectedSkills={selectedSkills}
-                />
-              );
-            })}
+                ) : (
+                  <SkillInput
+                    skillOptions={skillsList}
+                    key={tier.label + slotIndex}
+                    level={tier.level}
+                    value={state === 'view' && !isVisible ? '' : name}
+                    disabled={
+                      disabled ||
+                      (slotIndex !== 0 &&
+                        !(skills[tier.level] || [])[slotIndex - 1] &&
+                        !(skills[tier.level] || [])[slotIndex])
+                    }
+                    onChange={(name) =>
+                      handleSkillChange(tier.level, slotIndex, name, visibleIn)
+                    }
+                    className={cn(
+                      'border-2 border-t-0 first:border-t-2 sm:rounded-none sm:border-y-2 sm:border-l-0 ',
+                      {
+                        'lg:rounded-tl-0 sm:rounded-bl sm:rounded-tl sm:border-l-2':
+                          slotIndex === 0,
+                      },
+                      { 'sm:rounded-l': slotIndex === 0 && index !== 0 },
+                      { 'sm:rounded-r sm:border-r-2': slotIndex === 4 },
+                    )}
+                    selectedSkills={selectedSkills}
+                  />
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
     </div>
   );
 };
