@@ -4,6 +4,7 @@ import Checkbox from './generic/checkbox';
 import CampaignSheet from './campaignSheet';
 import Input from './generic/input';
 import { CampaignT } from '@/schemas/campaign';
+import { blankSheet } from '@/consts/blankCampaingSheet';
 import { useState, FormEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -24,7 +25,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState<Partial<CampaignT>>(
-    initialCampaign || {},
+    initialCampaign || { ...blankSheet },
   );
   const isEditMode = state === 'edit';
   const isViewMode = state === 'view';

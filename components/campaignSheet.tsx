@@ -1,6 +1,7 @@
 import Input from './generic/input';
 import ImageUploader from './generic/imageUploader';
 import AspectInput from './sheet/aspectInput';
+import SkillTypeInput from './sheet/skillTypeInput';
 import { CampaignT } from '@/schemas/campaign';
 
 interface CampaignSheetProps {
@@ -52,13 +53,20 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
           />
         </div>
       </div>
-      <AspectInput
-        aspects={campaign?.aspects || []}
-        setAspects={(aspects) => updateField('aspects', aspects)}
-        disabled={!setCampaign}
-        campaignId={campaign?._id}
-        hints={['Current Issues', 'Impeding Issues']}
-      />
+      <div className="flex">
+        <AspectInput
+          aspects={campaign?.aspects || []}
+          setAspects={(aspects) => updateField('aspects', aspects)}
+          disabled={!setCampaign}
+          campaignId={campaign?._id}
+          hints={['Current Issues', 'Impeding Issues']}
+        />
+        <SkillTypeInput
+          skills={campaign?.skills || []}
+          setSkills={(skills) => updateField('skills', skills)}
+          disabled={!setCampaign}
+        />
+      </div>
     </div>
   );
 };
