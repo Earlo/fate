@@ -1,18 +1,21 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 import '@/schemas';
 
-//shoul have meta information that
 /*
-
-    The Fate Core font is © Evil Hat Productions, LLC and is used with permission. The Four Actions icons were designed by Jeremy Keller.
-    */
+The Fate Core font is © Evil Hat Productions, LLC and is used with permission.
+The Four Actions icons were designed by Jeremy Keller.
+*/
 export default function Document() {
   return (
-    <Html>
+    <Html lang="en">
       <Head>
         <meta
           name="credit"
           content="The Fate Core font is © Evil Hat Productions, LLC and is used with permission. The Four Actions icons were designed by Jeremy Keller."
+        />
+        <meta
+          name="description"
+          content="A tool for creating and managning Fate Core style character sheets."
         />
         <link
           rel="stylesheet"

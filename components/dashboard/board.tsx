@@ -110,15 +110,12 @@ export default function Dashboard() {
               />
               <CampaignSheet campaign={selectedCampaign} />
               <Link href={`/campaign/${selectedCampaign._id}`} passHref>
-                <Button
-                  className="bg-blue-500 pt-4 hover:bg-blue-700"
-                  label="View Campaign"
-                />
+                <Button className="pt-4" label="View Campaign" />
               </Link>
             </div>
           ))}
         <Button
-          className="w-full bg-blue-500 pt-4 hover:bg-blue-700"
+          className="w-full pt-4"
           label="Create New Campaign"
           onClick={() => setShowCampaignForm(true)}
         />

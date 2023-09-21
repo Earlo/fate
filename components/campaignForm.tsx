@@ -96,10 +96,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
         />
         {(isEditMode || isViewMode) && initialCampaign && (
           <Link href={`/campaign/${initialCampaign._id}`} passHref>
-            <Button
-              className="bg-blue-500 pt-4 hover:bg-blue-700"
-              label="View Campaign"
-            />
+            <Button label="View Campaign" />
           </Link>
         )}
       </div>
