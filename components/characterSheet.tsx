@@ -1,4 +1,4 @@
-import Input from './generic/input';
+import LabeledInput from './generic/labeledInput';
 import ImageUploader from './generic/imageUploader';
 import AspectInput from './sheet/aspectInput';
 import StuntInput from './sheet/stuntInput';
@@ -50,7 +50,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           disabled={!setCharacter}
         />
         <div className="flex w-full flex-grow flex-col md:ml-4">
-          <Input
+          <LabeledInput
             name="Name"
             onChange={(e) =>
               updateField('name', {
@@ -83,8 +83,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                 className="pr-2"
               />
             )}
-          </Input>
-          <Input
+          </LabeledInput>
+          <LabeledInput
             name="Description"
             multiline
             onChange={(e) =>
@@ -122,7 +122,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                 className="pr-2"
               />
             )}
-          </Input>
+          </LabeledInput>
         </div>
       </div>
       <div className="flex flex-col justify-between md:flex-row">

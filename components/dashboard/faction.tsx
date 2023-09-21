@@ -1,5 +1,5 @@
 import CharacterButton from './characterButton';
-import Input from '../generic/input';
+import LabeledInput from '../generic/labeledInput';
 import CharacterForm from '../characterForm';
 import Button from '@/components/generic/button';
 import { PopulatedFaction } from '@/schemas/campaign';
@@ -78,7 +78,7 @@ const Faction: React.FC<FactionProps> = ({
   return (
     <div className="mx-auto flex w-full flex-col rounded-lg bg-gray-800 p-4 text-white shadow-lg">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-        <Input
+        <LabeledInput
           type="text"
           name={'name'}
           value={newName}

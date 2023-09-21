@@ -1,7 +1,8 @@
 import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
-import SoloInput from '../generic/soloInput';
+import Input from '../generic/input';
 import AddButton from '../generic/addButton';
+import CloseButton from '../generic/closeButton';
 import { cn } from '@/lib/helpers';
 interface AspectInputProps {
   aspects: { name: string; visibleIn: string[] }[];
@@ -48,7 +49,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
         {aspects.map((aspect, index) =>
           !aspect && disabled ? null : (
             <div key={index} className="mb-2 flex items-center">
-              <SoloInput
+              <Input
                 name={`aspect-${index}`}
                 placeholder={
                   index < hints.length ? hints[index] : 'Additional Aspect'
@@ -78,6 +79,13 @@ const AspectInput: React.FC<AspectInputProps> = ({
                         ? [...(aspect.visibleIn || []), campaignId]
                         : aspect.visibleIn.filter((id) => id !== campaignId),
                     })
+                  }
+                />
+              )}
+              {!disabled && (
+                <CloseButton
+                  onClick={() =>
+                    setAspects(aspects.filter((_, i) => i !== index))
                   }
                 />
               )}

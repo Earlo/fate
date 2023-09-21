@@ -19,7 +19,7 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
       <span
         aria-hidden="true"
         className={cn(
-          'font-fate cursor-pointer text-green-400 hover:text-green-500',
+          'cursor-pointer font-fate text-2xl text-green-400 hover:text-green-500',
           {
             'text-gray-400 hover:text-gray-500':
               actions.indexOf('overcome') === -1,
@@ -41,7 +41,7 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
       <span
         aria-hidden="true"
         className={cn(
-          'font-fate cursor-pointer text-green-400 hover:text-green-500',
+          'cursor-pointer font-fate text-2xl text-green-400 hover:text-green-500',
           {
             'text-gray-400 hover:text-gray-500':
               actions.indexOf('advantage') === -1,
@@ -63,7 +63,7 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
       <span
         aria-hidden="true"
         className={cn(
-          'font-fate cursor-pointer text-green-400 hover:text-green-500',
+          'cursor-pointer font-fate text-2xl text-green-400 hover:text-green-500',
           {
             'text-gray-400 hover:text-gray-500':
               actions.indexOf('attack') === -1,
@@ -85,7 +85,7 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
       <span
         aria-hidden="true"
         className={cn(
-          'font-fate cursor-pointer text-green-400 hover:text-green-500',
+          'cursor-pointer font-fate text-2xl text-green-400 hover:text-green-500',
           {
             'text-gray-400 hover:text-gray-500':
               actions.indexOf('defend') === -1,

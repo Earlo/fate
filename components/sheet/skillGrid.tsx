@@ -1,7 +1,7 @@
 import SkillInput from './skillInput';
 import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
-import SoloInput from '../generic/soloInput';
+import Input from '../generic/input';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
 import AddButton from '@/components/generic/addButton';
@@ -216,7 +216,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                 const isVisible = visibleIn.includes(campaignId || '');
                 return state == 'toggle' && campaignId ? (
                   <div className="relative">
-                    <SoloInput
+                    <Input
                       key={tier.label + slotIndex}
                       name={`skill-${tier.label}-${index}`}
                       placeholder="???"

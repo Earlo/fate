@@ -1,5 +1,5 @@
 import VisibilityToggle from './visibilityToggle';
-import SoloInput from '../generic/soloInput';
+import Input from '../generic/input';
 import Label from '../generic/label';
 import CloseButton from '../generic/closeButton';
 import AddButton from '../generic/addButton';
@@ -72,7 +72,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
                 }
               />
             )}
-            <SoloInput
+            <Input
               name={`${title}-${index}-name`}
               value={
                 state === 'toggle'
@@ -98,7 +98,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
               className={index === 0 ? 'grow rounded-t-none' : 'grow'}
             />
           </div>
-          <SoloInput
+          <Input
             name={`${title}-${index}-description`}
             value={
               state === 'toggle'

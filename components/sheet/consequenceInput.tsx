@@ -1,4 +1,4 @@
-import SoloInput from '../generic/soloInput';
+import Input from '../generic/input';
 import React from 'react';
 interface ConsequenceInputProps {
   rank: string;
@@ -34,7 +34,7 @@ const ConsequenceInput: React.FC<ConsequenceInputProps> = ({
       >
         {rank}
       </label>
-      <SoloInput
+      <Input
         placeholder={name}
         name={name}
         value={value}

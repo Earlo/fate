@@ -2,7 +2,7 @@ import Button from './generic/button';
 import FormContainer from './formContainer';
 import Checkbox from './generic/checkbox';
 import CampaignSheet from './campaignSheet';
-import Input from './generic/input';
+import LabeledInput from './generic/labeledInput';
 import { CampaignT } from '@/schemas/campaign';
 import { blankSheet } from '@/consts/blankCampaingSheet';
 import { useState, FormEvent } from 'react';
@@ -105,7 +105,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
       </div>
       {(isEditMode || isViewMode) && initialCampaign && (
         <div className="pt-2">
-          <Input
+          <LabeledInput
             name="Campaign link"
             type="text"
             value={`${process.env.NEXT_PUBLIC_URL}/campaign/${initialCampaign._id}`}

@@ -1,4 +1,4 @@
-import Input from './generic/input';
+import LabeledInput from './generic/labeledInput';
 import ImageUploader from './generic/imageUploader';
 import AspectInput from './sheet/aspectInput';
 import SkillTypeInput from './sheet/skillTypeInput';
@@ -37,14 +37,14 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
           disabled={!setCampaign}
         />
         <div className="flex flex-grow flex-col md:ml-4">
-          <Input
+          <LabeledInput
             name="Campaign Name"
             onChange={(e) => updateField('name', e.target.value)}
             value={campaign?.name}
             disabled={!setCampaign}
             required
           />
-          <Input
+          <LabeledInput
             name="Description"
             multiline
             onChange={(e) => updateField('description', e.target.value)}

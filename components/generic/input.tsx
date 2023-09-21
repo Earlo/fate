@@ -1,18 +1,17 @@
-import Label from './label';
-import SoloInput from './soloInput';
+import { cn } from '@/lib/helpers';
 import { HTMLInputTypeAttribute } from 'react';
 interface InputProps {
   name: string;
   type?: HTMLInputTypeAttribute;
   value?: string;
   required?: boolean;
-  multiline?: boolean;
   placeholder?: string;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
+  multiline?: boolean;
   disabled?: boolean;
-  children?: React.ReactNode;
+  className?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -20,26 +19,41 @@ const Input: React.FC<InputProps> = ({
   type = 'text',
   value,
   required,
-  multiline = false,
   placeholder,
   onChange,
+  multiline = false,
   disabled = false,
-  children,
-}) => (
-  <div className="pb-4">
-    <Label name={name}>{children}</Label>
-    <SoloInput
+  className = '',
+}) =>
+  multiline ? (
+    <textarea
+      id={name}
       name={name}
-      type={type}
       value={value}
-      required={required}
-      multiline={multiline}
       placeholder={placeholder}
+      className={cn(
+        'relative top-[-2px] z-0 h-32 w-full rounded border-2 border-black bg-white p-2 text-base text-gray-700 placeholder-gray-400',
+        className,
+      )}
+      required={required}
       onChange={onChange}
       disabled={disabled}
-      className="rounded-tl-none"
     />
-  </div>
-);
+  ) : (
+    <input
+      id={name}
+      type={type}
+      name={name}
+      value={value}
+      placeholder={placeholder}
+      className={cn(
+        'relative top-[-2px] z-0 h-10 w-full rounded border-2 border-black bg-white p-2 text-base text-gray-700 placeholder-gray-400',
+        className,
+      )}
+      required={required}
+      onChange={onChange}
+      disabled={disabled}
+    />
+  );
 
 export default Input;

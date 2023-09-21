@@ -1,7 +1,8 @@
 import ActionToggle from './ActionToggle';
 import Label from '../generic/label';
-import SoloInput from '../generic/soloInput';
+import Input from '../generic/input';
 import AddButton from '../generic/addButton';
+import CloseButton from '../generic/closeButton';
 import { cn } from '@/lib/helpers';
 type actionOption = 'overcome' | 'advantage' | 'attack' | 'defend';
 interface SkillTypeInputProps {
@@ -48,8 +49,8 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
         )}
       </Label>
       {skills.map((skill, index) => (
-        <div key={index} className="flex">
-          <SoloInput
+        <div key={index} className="flex items-center">
+          <Input
             name="name"
             value={skill.name}
             onChange={(e) => handleSkillChange(index, 'name', e.target.value)}
@@ -61,6 +62,11 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
             onChange={(actions) => handleSkillChange(index, 'actions', actions)}
             disabled={disabled}
           />
+          {!disabled && (
+            <CloseButton
+              onClick={() => setSkills(skills.filter((_, i) => i !== index))}
+            />
+          )}
         </div>
       ))}
     </div>

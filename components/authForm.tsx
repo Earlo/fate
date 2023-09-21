@@ -1,5 +1,5 @@
 import FormContainer from './formContainer';
-import Input from './generic/input';
+import LabeledInput from './generic/labeledInput';
 import Button from './generic/button';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
@@ -48,8 +48,8 @@ export default function AuthForm({ onClose }: AuthFormProps) {
 
   return (
     <FormContainer onSubmit={handleSubmit} onClose={onClose}>
-      <Input name="username" required onChange={handleUsernameChange} />
-      <Input name="password" type="password" required />
+      <LabeledInput name="username" required onChange={handleUsernameChange} />
+      <LabeledInput name="password" type="password" required />
       <div className="flex items-center justify-between pb-2">
         <Button label={usernameExists ? 'Login' : 'Register'} type="submit" />
       </div>
