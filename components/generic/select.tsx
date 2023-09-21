@@ -44,7 +44,7 @@ const Select: FC<SelectProps> = ({
     <button
       type="button"
       className={cn(
-        'h-10 w-full flex-grow appearance-none items-center rounded border border-gray-400 pl-2 text-left text-base font-normal sm:flex',
+        'h-10 w-full flex-grow appearance-none items-center rounded border border-black pl-2 text-left text-base font-normal sm:flex',
         !value ? 'text-gray-400' : 'text-gray-700',
         disabled && !value ? 'bg-gray-200' : 'bg-white',
         { 'hidden sm:flex': disabled && !value },
