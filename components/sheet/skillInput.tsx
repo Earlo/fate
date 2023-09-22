@@ -38,6 +38,7 @@ const SkillInput: React.FC<SkillInputProps> = ({
       value={value}
       disabled={disabled}
       className={className}
+      removeText="Remove Skill"
     />
   );
 };

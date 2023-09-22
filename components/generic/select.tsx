@@ -1,5 +1,5 @@
 import { cn } from '@/lib/helpers';
-import React, { useState, FC, useRef, useEffect } from 'react';
+import { useState, FC, useRef, useEffect, ChangeEvent } from 'react';
 
 interface Option {
   value: string;
@@ -13,6 +13,7 @@ interface SelectProps {
   value: string;
   disabled?: boolean;
   className?: string;
+  removeText?: string;
 }
 
 const Select: FC<SelectProps> = ({
@@ -21,10 +22,12 @@ const Select: FC<SelectProps> = ({
   value,
   disabled,
   className,
+  removeText,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLButtonElement>(null);
-
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [customValue, setCustomValue] = useState<string | null>(null);
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
       if (
@@ -40,6 +43,13 @@ const Select: FC<SelectProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [ref]);
+
+  useEffect(() => {
+    if (customValue !== null && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen, customValue]);
+  console.log('Select', { value, customValue });
   return (
     <button
       type="button"
@@ -49,13 +59,31 @@ const Select: FC<SelectProps> = ({
         disabled && !value ? 'bg-gray-200' : 'bg-white',
         { 'hidden sm:flex': disabled && !value },
         className,
+        { 'z-[2] border-2 border-blue-700': customValue !== null },
       )}
       onClick={() => setIsOpen(!isOpen)}
       disabled={disabled}
       ref={ref}
     >
-      {value || 'Select'}
-      {isOpen && (
+      {customValue === null && (value || 'Select')}
+      {customValue !== null && (
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Fill your own"
+          value={customValue || ''}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setCustomValue(e.target.value);
+            onChange(e.target.value || '');
+          }}
+          className="block w-full text-left text-gray-700 focus:outline-none"
+          onBlur={() => {
+            onChange(customValue || '');
+            setCustomValue(null);
+          }}
+        />
+      )}
+      {isOpen && !customValue && (
         <div className="absolute z-30 flex w-fit flex-col rounded border border-gray-200 bg-white text-gray-700 shadow-lg">
           {value && (
             <div
@@ -65,9 +93,19 @@ const Select: FC<SelectProps> = ({
                 onChange('');
               }}
             >
-              {'Remove skill'}
+              {removeText}
             </div>
           )}
+          <div
+            className="block w-full px-3 py-1 text-left text-gray-700 hover:bg-gray-100 "
+            onClick={() => {
+              setIsOpen(false);
+              setCustomValue('');
+            }}
+          >
+            {'Custom value'}
+          </div>
+
           {options.map((option, index) => (
             <div
               key={option.label + index}

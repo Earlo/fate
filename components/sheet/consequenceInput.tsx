@@ -1,5 +1,4 @@
 import Input from '../generic/input';
-import React from 'react';
 interface ConsequenceInputProps {
   rank: string;
   name: string;
