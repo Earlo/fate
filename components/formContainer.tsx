@@ -1,19 +1,25 @@
 import CloseButton from './generic/closeButton';
+import { cn } from '@/lib/helpers';
 
 interface FormContainerProps {
   onSubmit: (e: React.ChangeEvent<HTMLFormElement>) => Promise<void>;
   onClose?: () => void;
   children?: React.ReactNode;
+  className?: string;
 }
 
 const FormContainer: React.FC<FormContainerProps> = ({
   onSubmit,
   children,
   onClose,
+  className,
 }) => (
   <form
     onSubmit={onSubmit}
-    className="z-10 h-fit rounded bg-white px-8 pb-8 pt-6 shadow-md"
+    className={cn(
+      'z-10 h-fit max-h-[100dvh] overflow-y-auto rounded bg-white px-4 pb-8 pt-6 shadow-md',
+      className,
+    )}
   >
     {onClose && (
       <CloseButton

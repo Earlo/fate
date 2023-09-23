@@ -28,15 +28,16 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex w-full grow flex-col">
       <div className="flex flex-col items-center md:flex-row">
         <ImageUploader
           icon={campaign?.icon}
           path={'campaign'}
           setIcon={(icon) => updateField('icon', icon)}
           disabled={!setCampaign}
+          className="pb-2"
         />
-        <div className="flex flex-grow flex-col md:ml-4">
+        <div className="flex w-full flex-grow flex-col md:ml-4">
           <LabeledInput
             name="Campaign Name"
             onChange={(e) => updateField('name', e.target.value)}
@@ -53,7 +54,7 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
           />
         </div>
       </div>
-      <div className="flex">
+      <div className="flex grow flex-col sm:flex-row">
         <AspectInput
           aspects={campaign?.aspects || []}
           setAspects={(aspects) => updateField('aspects', aspects)}

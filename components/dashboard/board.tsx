@@ -103,7 +103,7 @@ export default function Dashboard() {
               onClose={() => setSelectedCampaign(null)}
             />
           ) : (
-            <div className="mb-4 rounded bg-white px-8 pb-8 pt-6 shadow-md">
+            <div className="fixed inset-0 z-50 mb-4 max-h-[100dvh] overflow-y-auto rounded bg-white px-8 pb-8 pt-6 shadow-md">
               <CloseButton
                 className="relative bottom-4 left-4 float-right"
                 onClick={() => setSelectedCampaign(null)}

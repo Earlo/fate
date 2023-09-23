@@ -79,7 +79,11 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
   };
 
   return (
-    <FormContainer onSubmit={handleSubmit} onClose={onClose}>
+    <FormContainer
+      onSubmit={handleSubmit}
+      onClose={onClose}
+      className="fixed inset-0 z-50"
+    >
       <CampaignSheet campaign={formState} setCampaign={setFormState} />
       <Checkbox
         name="Is Public"
