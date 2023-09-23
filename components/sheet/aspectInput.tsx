@@ -33,7 +33,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
       ...aspects.slice(index + 1),
     ]);
   };
-
+  const showVisibility = state === 'toggle' && campaignId;
   return (
     <div className={cn('flex grow flex-col', className)}>
       <Label name="Aspects">
@@ -67,9 +67,13 @@ const AspectInput: React.FC<AspectInputProps> = ({
                   })
                 }
                 disabled={disabled}
-                className={index === 0 ? 'rounded-tl-none' : ''}
+                className={cn({
+                  'rounded-tl-none': index === 0,
+                  'rounded-tr-none':
+                    index === 0 && (showVisibility || !disabled),
+                })}
               />
-              {state === 'toggle' && campaignId && aspect && (
+              {showVisibility && aspect && (
                 <VisibilityToggle
                   visible={aspect.visibleIn.includes(campaignId)}
                   onChange={(visible) =>
