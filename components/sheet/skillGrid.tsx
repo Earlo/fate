@@ -208,9 +208,11 @@ const SkillGrid: React.FC<SkillGridProps> = ({
             >
               {`${tier.label} ${tier.level > 0 ? '+' : ''}${tier.level}`}
             </span>
-            <div className="flex flex-grow flex-col sm:flex-row">
+            <div className="flex flex-grow flex-col last:rounded-b sm:flex-row">
               {Array.from({ length: 5 }).map((_, slotIndex) => {
                 const name = (skills[tier.level] || [])[slotIndex]?.name || '';
+                const nextName =
+                  (skills[tier.level] || [])[slotIndex + 1]?.name || '';
                 const visibleIn =
                   (skills[tier.level] || [])[slotIndex]?.visibleIn || [];
                 const isVisible = visibleIn.includes(campaignId || '');
@@ -223,10 +225,18 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                       value={name}
                       disabled={true}
                       className={cn(
-                        'top-0 rounded-none border-y-2 border-l-0',
-                        { 'rounded-bl border-l-2': slotIndex === 0 },
-                        { 'rounded-l': slotIndex === 0 && index !== 0 },
-                        { 'rounded-r border-r-2': slotIndex === 4 },
+                        'top-[0px] rounded-none border-t-0 sm:border-l-0 sm:border-t-2',
+                        {
+                          'rounded-t border-t-2 sm:rounded-bl sm:rounded-tr-none sm:border-l-2':
+                            slotIndex === 0,
+                        },
+                        {
+                          'lg:rounded-tl-none': slotIndex === 0 && index === 0,
+                        },
+                        {
+                          'rounded-b sm:rounded-b-none sm:rounded-br sm:rounded-tr':
+                            slotIndex === 4,
+                        },
                       )}
                     />
                     <div className="absolute right-0 top-0 m-2">
@@ -261,13 +271,17 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                       handleSkillChange(tier.level, slotIndex, name, visibleIn)
                     }
                     className={cn(
-                      'border-2 border-t-0 first:border-t-2 sm:rounded-none sm:border-y-2 sm:border-l-0 ',
+                      'rounded-none border-t-0 sm:border-l-0 sm:border-t-2',
                       {
-                        'lg:rounded-tl-0 sm:rounded-bl sm:rounded-tl sm:border-l-2':
+                        'rounded-b sm:rounded-b-none':
+                          nextName === '' && disabled,
+                      },
+                      {
+                        'rounded-t border-t-2 sm:rounded-bl sm:rounded-tr-none sm:border-l-2':
                           slotIndex === 0,
                       },
-                      { 'sm:rounded-l': slotIndex === 0 && index !== 0 },
-                      { 'sm:rounded-r sm:border-r-2': slotIndex === 4 },
+                      { 'lg:rounded-tl-none': slotIndex === 0 && index === 0 },
+                      { 'sm:rounded-br sm:rounded-tr': slotIndex === 4 },
                     )}
                     selectedSkills={selectedSkills}
                   />
@@ -281,3 +295,17 @@ const SkillGrid: React.FC<SkillGridProps> = ({
 };
 
 export default SkillGrid;
+
+/**
+
+cn(
+                      'border-2 border-t-0 first:border-t-2 sm:rounded-none sm:border-y-2 sm:border-l-0 ',
+                      {
+                        'lg:rounded-tl-0 sm:rounded-bl sm:rounded-tl sm:border-l-2':
+                          slotIndex === 0,
+                      },
+                      { 'sm:rounded-l': slotIndex === 0 && index !== 0 },
+                      { 'sm:rounded-r sm:border-r-2': slotIndex === 4 },
+                    )
+
+ */

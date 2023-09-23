@@ -54,12 +54,12 @@ const Select: FC<SelectProps> = ({
     <button
       type="button"
       className={cn(
-        'h-10 w-full flex-grow appearance-none items-center rounded border border-black pl-2 text-left text-base font-normal sm:flex',
+        'flex h-10 w-full rounded border-2 border-black bg-white p-2 text-left text-gray-700',
         !value ? 'text-gray-400' : 'text-gray-700',
         disabled && !value ? 'bg-gray-200' : 'bg-white',
+        { 'z-[2] border-2 border-blue-700': customValue !== null },
         { 'hidden sm:flex': disabled && !value },
         className,
-        { 'z-[2] border-2 border-blue-700': customValue !== null },
       )}
       onClick={() => setIsOpen(!isOpen)}
       disabled={disabled}

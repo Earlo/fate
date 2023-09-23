@@ -32,7 +32,7 @@ const Input: React.FC<InputProps> = ({
       value={value}
       placeholder={placeholder}
       className={cn(
-        'relative top-[-2px] z-0 h-32 w-full rounded border-2 border-black bg-white p-2 text-base text-gray-700 placeholder-gray-400',
+        'relative top-[-2px] z-0 h-32 w-full rounded border-2 border-black bg-white p-2 text-gray-700 placeholder-gray-400',
         className,
       )}
       required={required}
@@ -47,7 +47,7 @@ const Input: React.FC<InputProps> = ({
       value={value}
       placeholder={placeholder}
       className={cn(
-        'relative top-[-2px] z-0 h-10 w-full rounded border-2 border-black bg-white p-2 text-base text-gray-700 placeholder-gray-400',
+        'relative top-[-2px] z-0 h-10 w-full rounded border-2 border-black bg-white p-2 text-gray-700 placeholder-gray-400',
         className,
       )}
       required={required}
