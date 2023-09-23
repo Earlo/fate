@@ -295,17 +295,3 @@ const SkillGrid: React.FC<SkillGridProps> = ({
 };
 
 export default SkillGrid;
-
-/**
-
-cn(
-                      'border-2 border-t-0 first:border-t-2 sm:rounded-none sm:border-y-2 sm:border-l-0 ',
-                      {
-                        'lg:rounded-tl-0 sm:rounded-bl sm:rounded-tl sm:border-l-2':
-                          slotIndex === 0,
-                      },
-                      { 'sm:rounded-l': slotIndex === 0 && index !== 0 },
-                      { 'sm:rounded-r sm:border-r-2': slotIndex === 4 },
-                    )
-
- */
