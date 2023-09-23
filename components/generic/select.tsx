@@ -1,4 +1,5 @@
 import { cn } from '@/lib/helpers';
+import SelectOption from '@/components/generic/selectOption';
 import { useState, FC, useRef, useEffect, ChangeEvent } from 'react';
 
 interface Option {
@@ -49,7 +50,6 @@ const Select: FC<SelectProps> = ({
       inputRef.current.focus();
     }
   }, [isOpen, customValue]);
-  console.log('Select', { value, customValue });
   return (
     <button
       type="button"
@@ -86,40 +86,31 @@ const Select: FC<SelectProps> = ({
       {isOpen && !customValue && (
         <div className="absolute z-30 flex w-fit flex-col rounded border border-gray-200 bg-white text-gray-700 shadow-lg">
           {value && (
-            <div
-              className="block w-full px-3 py-1 text-left text-gray-700 hover:bg-gray-100 "
+            <SelectOption
               onClick={() => {
                 setIsOpen(false);
                 onChange('');
               }}
-            >
-              {removeText}
-            </div>
+              label={removeText || 'Remove'}
+            />
           )}
-          <div
-            className="block w-full px-3 py-1 text-left text-gray-700 hover:bg-gray-100 "
+          <SelectOption
             onClick={() => {
               setIsOpen(false);
               setCustomValue('');
             }}
-          >
-            {'Custom value'}
-          </div>
-
+            label="Custom value"
+          />
           {options.map((option, index) => (
-            <div
+            <SelectOption
               key={option.label + index}
-              className={cn(
-                'block w-full px-3 py-1 text-left text-gray-700 hover:bg-gray-100',
-                option.className,
-              )}
+              className={option.className}
               onClick={() => {
                 setIsOpen(false);
                 onChange(option.value);
               }}
-            >
-              {option.label}
-            </div>
+              label={option.label}
+            />
           ))}
         </div>
       )}
