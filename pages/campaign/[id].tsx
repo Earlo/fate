@@ -8,6 +8,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
+import Head from 'next/head';
+
 const getCampaignById = async (id: string): Promise<PopulatedCampaignT> => {
   return await fetch(`/api/campaign/${id}`).then((res) => res.json());
 };
@@ -124,64 +126,69 @@ const CampaignPage = () => {
   }
 
   return (
-    <BaseLayout className="px-4 py-6">
-      <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
-        {campaign.name}
-        {session?.user._id && campaign.controlledBy !== session?.user._id && (
+    <>
+      <Head>
+        <title>Fate Core Campaing: {campaign.name}</title>
+      </Head>
+      <BaseLayout className="px-4 py-6">
+        <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
+          {campaign.name}
+          {session?.user._id && campaign.controlledBy !== session?.user._id && (
+            <Button
+              label={isPlayer ? 'Leave Campaing' : 'Join Campaign'}
+              onClick={() => joinLeaveCampaign()}
+              className="ml-4"
+            />
+          )}
+        </h1>
+        <div className="flex flex-col items-center pb-6 sm:flex-row">
+          <Image
+            src={campaign.icon || '/drowsee_128.png'}
+            alt={campaign.name}
+            width={128}
+            height={128}
+            className="w-full sm:h-32 sm:w-32"
+          />
+          <p className="pl-4 text-lg sm:text-xl">{campaign.description}</p>
+        </div>
+        <div>
+          <AspectInput
+            //TODO make this look cooler here?
+            aspects={campaign?.aspects || []}
+            setAspects={(aspects) => null}
+            disabled={true}
+            campaignId={campaign?._id}
+            hints={['Current Issues', 'Impeding Issues']}
+          />
+        </div>
+        {isAdmin && (
           <Button
-            label={isPlayer ? 'Leave Campaing' : 'Join Campaign'}
-            onClick={() => joinLeaveCampaign()}
-            className="ml-4"
+            label="Add Faction"
+            onClick={handleAddFaction}
+            className="mb-6"
           />
         )}
-      </h1>
-      <div className="flex flex-col items-center pb-6 sm:flex-row">
-        <Image
-          src={campaign.icon || '/drowsee_128.png'}
-          alt={campaign.name}
-          width={128}
-          height={128}
-          className="w-full sm:h-32 sm:w-32"
-        />
-        <p className="pl-4 text-lg sm:text-xl">{campaign.description}</p>
-      </div>
-      <div>
-        <AspectInput
-          //TODO make this look cooler here?
-          aspects={campaign?.aspects || []}
-          setAspects={(aspects) => null}
-          disabled={true}
-          campaignId={campaign?._id}
-          hints={['Current Issues', 'Impeding Issues']}
-        />
-      </div>
-      {isAdmin && (
-        <Button
-          label="Add Faction"
-          onClick={handleAddFaction}
-          className="mb-6"
-        />
-      )}
-      {campaign?.factions && campaign.factions.length > 0 && (
-        <>
-          <h2 className="mb-4 text-2xl font-semibold">Factions</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {campaign.factions.map(
-              (faction, index) =>
-                (faction.visible || isAdmin) && (
-                  <Faction
-                    key={index}
-                    faction={faction}
-                    state={isAdmin ? 'admin' : isPlayer ? 'player' : 'view'}
-                    onChange={(faction) => updateFaction(index, faction)}
-                    campaignId={id as string}
-                  />
-                ),
-            )}
-          </div>
-        </>
-      )}
-    </BaseLayout>
+        {campaign?.factions && campaign.factions.length > 0 && (
+          <>
+            <h2 className="mb-4 text-2xl font-semibold">Factions</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {campaign.factions.map(
+                (faction, index) =>
+                  (faction.visible || isAdmin) && (
+                    <Faction
+                      key={index}
+                      faction={faction}
+                      state={isAdmin ? 'admin' : isPlayer ? 'player' : 'view'}
+                      onChange={(faction) => updateFaction(index, faction)}
+                      campaignId={id as string}
+                    />
+                  ),
+              )}
+            </div>
+          </>
+        )}
+      </BaseLayout>
+    </>
   );
 };
 
