@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
-import TopBar from '@/components/dashboard/topBar';
+import TopBar from '@/components/layout/topBar';
+import Footer from '@/components/layout/footer';
 import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 import type { AppProps } from 'next/app';
@@ -15,8 +16,11 @@ export default function App({
 }: MyAppProps) {
   return (
     <SessionProvider session={session}>
-      <TopBar />
-      <Component {...pageProps} />
+      <div className="flex min-h-[100dvh] flex-col">
+        <TopBar />
+        <Component {...pageProps} />
+        <Footer />
+      </div>
     </SessionProvider>
   );
 }

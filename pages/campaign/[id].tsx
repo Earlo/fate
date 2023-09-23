@@ -2,11 +2,12 @@ import { PopulatedCampaignT, PopulatedFaction } from '@/schemas/campaign';
 import Button from '@/components/generic/button';
 import Faction from '@/components/dashboard/faction';
 import AspectInput from '@/components/sheet/aspectInput';
+import BaseLayout from '@/components/layout/baseLayout';
+import LoadingSpinner from '@/components/generic/loadingSpinner';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-
 const getCampaignById = async (id: string): Promise<PopulatedCampaignT> => {
   return await fetch(`/api/campaign/${id}`).then((res) => res.json());
 };
@@ -108,9 +109,9 @@ const CampaignPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center text-2xl">
-        Loading...
-      </div>
+      <BaseLayout className="items-center justify-center">
+        <LoadingSpinner />
+      </BaseLayout>
     );
   }
 
@@ -123,8 +124,8 @@ const CampaignPage = () => {
   }
 
   return (
-    <div className="px-4 py-6">
-      <h1 className="mb-6 text-center text-4xl font-bold sm:text-5xl">
+    <BaseLayout className="px-4 py-6">
+      <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
         {campaign.name}
         {session?.user._id && campaign.controlledBy !== session?.user._id && (
           <Button
@@ -134,7 +135,7 @@ const CampaignPage = () => {
           />
         )}
       </h1>
-      <div className="mb-6 flex flex-col items-center sm:flex-row">
+      <div className="flex flex-col items-center pb-6 sm:flex-row">
         <Image
           src={campaign.icon || '/drowsee_128.png'}
           alt={campaign.name}
@@ -144,15 +145,16 @@ const CampaignPage = () => {
         />
         <p className="pl-4 text-lg sm:text-xl">{campaign.description}</p>
       </div>
-      <AspectInput
-        //TODO make this look cooler here?
-        aspects={campaign?.aspects || []}
-        setAspects={(aspects) => null}
-        disabled={true}
-        campaignId={campaign?._id}
-        hints={['Current Issues', 'Impeding Issues']}
-      />
-
+      <div>
+        <AspectInput
+          //TODO make this look cooler here?
+          aspects={campaign?.aspects || []}
+          setAspects={(aspects) => null}
+          disabled={true}
+          campaignId={campaign?._id}
+          hints={['Current Issues', 'Impeding Issues']}
+        />
+      </div>
       {isAdmin && (
         <Button
           label="Add Faction"
@@ -161,7 +163,7 @@ const CampaignPage = () => {
         />
       )}
       {campaign?.factions && campaign.factions.length > 0 && (
-        <div>
+        <>
           <h2 className="mb-4 text-2xl font-semibold">Factions</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {campaign.factions.map(
@@ -177,9 +179,9 @@ const CampaignPage = () => {
                 ),
             )}
           </div>
-        </div>
+        </>
       )}
-    </div>
+    </BaseLayout>
   );
 };
 

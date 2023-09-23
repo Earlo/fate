@@ -1,3 +1,4 @@
+import BaseLayout from '@/components/layout/baseLayout';
 import AuthForm from '@/components/authForm';
 import Dashboard from '@/components/dashboard/board';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
@@ -9,15 +10,19 @@ export default function Home() {
   return (
     <>
       {status === 'loading' && (
-        <div className="flex h-screen items-center justify-center">
+        <BaseLayout className="items-center justify-center">
           <LoadingSpinner />
-        </div>
+        </BaseLayout>
       )}
-      {status === 'authenticated' && session && <Dashboard />}
+      {status === 'authenticated' && session && (
+        <BaseLayout>
+          <Dashboard />
+        </BaseLayout>
+      )}
       {status === 'unauthenticated' && (
-        <div className="mx-auto w-full max-w-xs pt-8">
+        <BaseLayout className="mx-auto pt-8">
           <AuthForm />
-        </div>
+        </BaseLayout>
       )}
     </>
   );

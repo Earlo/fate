@@ -27,7 +27,7 @@ export default function Document() {
           rel="stylesheet"
         />
       </Head>
-      <body>
+      <body className="min-h-[100dvh]">
         <Main />
         <NextScript />
       </body>

@@ -12,13 +12,22 @@ This software isn't meant to be a virtual table top simulator or an online RPG p
 ## Features
 
 - Create Character Sheets
+  - Possible skills are tied to campaigns you are taking part in
+  - Also supports free form skill input
 - Create Campaigns
-  - Group characters by faction
-  - Reveal partial character sheets to players as
+  - Define Skills used in campaign
+  - Define aspects of the campaign
+  - Group characters by "faction"
+  - Reveal partial character sheets to players as GM
 
 ![Example sheet form the app](/readme/example_sheet.png?raw=true 'Example sheet form the app')
 
 ![Example of factions](/readme/faction_view.png?raw=true 'Example of factions')
+
+## Using the software
+
+Demo is running at https://fatecore.opensauce.fi
+For running your own instance, check INSTALL.md (thanks to [John Helmuth](https://github.com/johnhelmuth) for writing the instructions)
 
 ## Contact
 

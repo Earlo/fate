@@ -48,6 +48,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             })
           }
           disabled={!setCharacter}
+          className="pb-2"
         />
         <div className="flex w-full flex-grow flex-col md:ml-4">
           <LabeledInput
@@ -136,7 +137,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           disabled={!setCharacter}
           campaignId={campaignId}
           state={state}
-          className="pr-4"
+          className="md:pr-4"
         />
         <SkillGrid
           skills={character?.skills || {}}

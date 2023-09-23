@@ -1,5 +1,6 @@
 import LoadingSpinner from './loadingSpinner';
 import { handleUpload } from '@/lib/cloudinary';
+import { cn } from '@/lib/helpers';
 import { ChangeEvent, useRef, useState } from 'react';
 import Image from 'next/image';
 interface ImageUploaderProps {
@@ -7,6 +8,7 @@ interface ImageUploaderProps {
   icon?: string;
   path?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -14,6 +16,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   icon,
   path,
   disabled = false,
+  className,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,9 +50,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           alt={'Upload Image'}
           width={128}
           height={128}
-          className={`cursor-pointer rounded-full transition-opacity duration-200 ${
-            !disabled ? 'hover:opacity-80' : ''
-          }`}
+          className={cn(
+            'cursor-pointer rounded-full transition-opacity duration-200',
+            {
+              'hover:opacity-80': !disabled,
+            },
+            className,
+          )}
           onClick={() => {
             if (!disabled) {
               fileInputRef.current?.click();
