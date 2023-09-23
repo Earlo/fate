@@ -26,8 +26,8 @@ This software isn't meant to be a virtual table top simulator or an online RPG p
 
 ## Using the software
 
-Demo is running at https://fatecore.opensauce.fi
-For running your own instance, check INSTALL.md (thanks to [John Helmuth](https://github.com/johnhelmuth) for writing the instructions)
+- Demo is running at https://fatecore.opensauce.fi
+- For running your own instance, check INSTALL.md (thanks to [John Helmuth](https://github.com/johnhelmuth) for writing the instructions)
 
 ## Contact
 
