@@ -19,7 +19,10 @@ const About = () => {
           <li>Create Character Sheets</li>
           <li>Create Campaigns</li>
           <li>Organize characters by group</li>
-          <li>And many more...</li>
+          <li>
+            Reveal partial information about characters in the campaign to
+            players
+          </li>
         </ul>
         <h2 className="mb-2 mt-4 text-3xl">Contact</h2>
         <p>

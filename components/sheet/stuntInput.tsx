@@ -26,6 +26,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
   title = 'Stunt',
   className,
 }) => {
+  const anyWidgets = !(!disabled || (state === 'toggle' && campaignId));
   return (
     <div className={cn('w-full', className)}>
       <Label name={title + 's'}>
@@ -95,7 +96,12 @@ const StuntInput: React.FC<StuntInputProps> = ({
                   ...stunts.slice(index + 1),
                 ])
               }
-              className={index === 0 ? 'grow rounded-t-none' : 'grow'}
+              className={cn(
+                'grow rounded-b-none border-b-0 sm:rounded-b sm:border-b-2',
+                {
+                  'rounded-t-none': index === 0 && !anyWidgets,
+                },
+              )}
             />
           </div>
           <Input
@@ -126,7 +132,10 @@ const StuntInput: React.FC<StuntInputProps> = ({
                 ...stunts.slice(index + 1),
               ])
             }
-            className={index === 0 ? 'grow sm:rounded-tl-none' : 'grow'}
+            className={cn('grow rounded-tl-none sm:rounded-tl', {
+              'rounded-tr-none sm:rounded-tr': anyWidgets,
+              'sm:rounded-tl-none': index === 0,
+            })}
           />
         </div>
       ))}

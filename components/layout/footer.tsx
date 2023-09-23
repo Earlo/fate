@@ -7,9 +7,6 @@ const Footer: React.FC = () => {
         <Link href="/about" className="mr-4 hover:underline">
           About
         </Link>
-        <Link href="/terms-and-conditions" className="mr-4 hover:underline">
-          Terms & Conditions
-        </Link>
       </div>
     </div>
   );
