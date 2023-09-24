@@ -186,7 +186,8 @@ const SkillGrid: React.FC<SkillGridProps> = ({
       {tiers
         .filter(
           (tier) =>
-            tier.level <= maxDisplayedTier && tier.level > minDisplayedTier,
+            (tier.level <= maxDisplayedTier && tier.level > minDisplayedTier) ||
+            !(!skills[tier.level] || skills[tier.level].length === 0), // could maybe filter based on displayed skills
         )
         .map((tier, index) => (
           <div
