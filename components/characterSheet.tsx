@@ -7,6 +7,7 @@ import VisibilityToggle from './sheet/visibilityToggle';
 import Stress from './sheet/stress';
 import Consequences from './sheet/consequences';
 import { CharacterSheetT } from '@/schemas/sheet';
+import { cn } from '@/lib/helpers';
 
 interface CharacterSheetProps {
   character: Partial<CharacterSheetT>;
@@ -48,8 +49,27 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             })
           }
           disabled={!setCharacter}
-          className="pb-2"
+          className={cn('pb-2', {
+            blur:
+              state === 'view' &&
+              !character?.icon?.visibleIn?.includes(campaignId),
+          })}
         />
+        {state === 'toggle' && (
+          <VisibilityToggle
+            visible={character?.icon?.visibleIn?.includes(campaignId) || false}
+            onChange={(visible) =>
+              updateField('icon', {
+                visibleIn: visible
+                  ? [...(character?.icon?.visibleIn || []), campaignId]
+                  : character?.icon?.visibleIn?.filter(
+                      (id) => id !== campaignId,
+                    ),
+              })
+            }
+            className="pr-2"
+          />
+        )}
         <div className="flex w-full flex-grow flex-col md:ml-4">
           <LabeledInput
             name="Name"

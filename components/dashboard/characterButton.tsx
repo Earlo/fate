@@ -1,12 +1,15 @@
 import { CharacterSheetT } from '@/schemas/sheet';
+import { cn } from '@/lib/helpers';
 import Image from 'next/image';
 interface CharacterButtonProps {
   character: CharacterSheetT;
+  campaingId?: string;
   onClick?: () => void;
 }
 
 const CharacterButton: React.FC<CharacterButtonProps> = ({
   character,
+  campaingId,
   onClick,
 }) => (
   <div
@@ -18,12 +21,20 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
       alt={character.name.text || 'Character icon'}
       width={64}
       height={64}
-      className="flex-shrink-0 rounded-full"
+      className={cn('flex-shrink-0 rounded-full', {
+        'blur filter': campaingId
+          ? !character.icon?.visibleIn?.includes(campaingId)
+          : false,
+      })}
     />
     <div className="flex min-w-0 grow flex-col pl-4">
       <div className="flex flex-col justify-end">
         <h3 className="line-clamp-2 overflow-hidden text-lg font-semibold leading-6 group-hover:underline">
-          {character.name.text || 'Unnamed Character'}
+          {campaingId
+            ? character.name.visibleIn.includes(campaingId)
+              ? character.name.text
+              : '???'
+            : character.name.text || 'Unnamed Character'}
         </h3>
       </div>
       <div className="flex flex-col">
@@ -36,7 +47,11 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
             overflow: 'hidden',
           }}
         >
-          {character.aspects[0]?.name || 'No aspects available'}
+          {campaingId
+            ? character.aspects[0]?.visibleIn.includes(campaingId)
+              ? character.aspects[0]?.name
+              : '???'
+            : character.aspects[0]?.name || 'No aspects available'}
         </p>
       </div>
     </div>

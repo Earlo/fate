@@ -51,9 +51,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           width={128}
           height={128}
           className={cn(
-            'cursor-pointer rounded-full transition-opacity duration-200',
+            'rounded-full',
             {
-              'hover:opacity-80': !disabled,
+              'cursor-pointer transition-opacity duration-200 hover:opacity-80':
+                !disabled,
             },
             className,
           )}
