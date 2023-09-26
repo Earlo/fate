@@ -12,14 +12,14 @@ help with development.
 
 The Fate Character Sheet Manager requires the following pieces of software be run locally.
 
-* Nodejs - Any version greater than or equal to 18.
-* MongoDB - Any modern version should work.
+- Nodejs - Any version greater than or equal to 18.
+- MongoDB - Any modern version should work.
 
 ### Installation for Mac OS X Ventura on an M1 processor.
 
 #### Nodejs
 
-If you use the following command in a terminal, and your Nodejs version that it reports is greater than 18, then you are 
+If you use the following command in a terminal, and your Nodejs version that it reports is greater than 18, then you are
 good to go with this dependency.
 
 ```bash
@@ -28,7 +28,7 @@ v20.6.1
 ```
 
 I like to use [Node Version Manager](https://github.com/nvm-sh/nvm) to manage Nodejs so that I can easily switch between
-versions. 
+versions.
 
 If Nodejs is not installed, or if the version of your Nodejs installed on your workstation is lower than 18, then I recommend
 NVM to install Nodejs. Follow the documentation for NVM to install it and learn how to switch versions.
@@ -44,7 +44,7 @@ nvm use 20
 #### Mongodb
 
 Use [Homebrew](https://docs.brew.sh) to install Mongodb Community Edition on your workstation. Follow [Homebrew's
-installation instructions](https://docs.brew.sh/Installation) to install it, then use these commands to install MongoDB Community 
+installation instructions](https://docs.brew.sh/Installation) to install it, then use these commands to install MongoDB Community
 Edition and the MongoDB Compass tool to troubleshoot data problems.
 
 ```bash
@@ -80,6 +80,7 @@ cp .env.example .env
 ```
 
 Edit the `.env` file so the line for the`MONGO_URL` variable looks like this:
+
 ```bash
 MONGO_URL=mongodb://127.0.0.1:27017/fate
 ```
