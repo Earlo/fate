@@ -157,6 +157,17 @@ export const characterSheetSchema = new Schema({
       },
     },
   },
+  notes: [
+    {
+      name: { type: String, required: true },
+      content: { type: String, required: true },
+      visibleIn: {
+        type: [{ type: String, ref: 'Campaign' }],
+        default: [],
+      },
+      default: [],
+    },
+  ],
   public: { type: Boolean, required: true, default: false },
   visibleTo: [
     {

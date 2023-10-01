@@ -67,6 +67,13 @@ export const campaignSchema = new Schema({
     },
   ],
   public: { type: Boolean, required: true, default: false },
+  notes: [
+    {
+      name: { type: String, required: true },
+      content: { type: String, required: true },
+      default: [],
+    },
+  ],
   visibleTo: {
     type: [
       {
