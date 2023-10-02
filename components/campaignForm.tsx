@@ -79,8 +79,14 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
   };
 
   return (
-    <FormContainer onSubmit={handleSubmit} onClose={onClose}>
-      <CampaignSheet campaign={formState} setCampaign={setFormState} />
+    <FormContainer
+      onSubmit={!isViewMode ? handleSubmit : undefined}
+      onClose={onClose}
+    >
+      <CampaignSheet
+        campaign={formState}
+        setCampaign={state !== 'view' ? setFormState : undefined}
+      />
       <Checkbox
         name="Is Public"
         checked={formState.public || false}
@@ -89,11 +95,13 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
         }
       />
       <div className="space-between flex">
-        <Button
-          label={isEditMode ? 'Save Changes' : 'Create'}
-          type="submit"
-          disabled={isSubmitting}
-        />
+        {!isViewMode && (
+          <Button
+            label={isEditMode ? 'Save Changes' : 'Create'}
+            type="submit"
+            disabled={isSubmitting}
+          />
+        )}
         {(isEditMode || isViewMode) && initialCampaign && (
           <Link href={`/campaign/${initialCampaign._id}`} passHref>
             <Button label="View Campaign" />

@@ -3,14 +3,11 @@ import { CharacterSheetT } from '@/schemas/sheet';
 import CampaignForm from '@/components/campaignForm';
 import { CampaignT } from '@/schemas/campaign';
 import CampaignButton from '@/components/dashboard/campaignButton';
-import CampaignSheet from '@/components/campaignSheet';
-import CloseButton from '@/components/generic/closeButton';
 import CharacterButton from '@/components/dashboard/characterButton';
 import CharacterForm from '@/components/characterForm';
 import { defaultSkills } from '@/consts/blankCampaingSheet';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -89,31 +86,19 @@ export default function Dashboard() {
             />
           ))}
         </div>
-        {selectedCampaign &&
-          (selectedCampaign.controlledBy === session?.user?._id ? (
-            <CampaignForm
-              key={selectedCampaign._id}
-              initialCampaign={selectedCampaign}
-              state={
-                selectedCampaign.controlledBy === session?.user?._id
-                  ? 'edit'
-                  : 'view'
-              }
-              setCampaigns={setCampaigns}
-              onClose={() => setSelectedCampaign(null)}
-            />
-          ) : (
-            <div className="fixed inset-0 z-50 mb-4 max-h-[100dvh] overflow-y-auto rounded bg-white px-8 pb-8 pt-6 shadow-md">
-              <CloseButton
-                className="relative bottom-4 left-4 float-right"
-                onClick={() => setSelectedCampaign(null)}
-              />
-              <CampaignSheet campaign={selectedCampaign} />
-              <Link href={`/campaign/${selectedCampaign._id}`} passHref>
-                <Button className="pt-4" label="View Campaign" />
-              </Link>
-            </div>
-          ))}
+        {selectedCampaign && (
+          <CampaignForm
+            key={selectedCampaign._id}
+            initialCampaign={selectedCampaign}
+            state={
+              selectedCampaign.controlledBy === session?.user?._id
+                ? 'edit'
+                : 'view'
+            }
+            setCampaigns={setCampaigns}
+            onClose={() => setSelectedCampaign(null)}
+          />
+        )}
         <Button
           className="w-full pt-4"
           label="Create New Campaign"

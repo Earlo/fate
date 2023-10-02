@@ -2,7 +2,7 @@ import CloseButton from './generic/closeButton';
 import { cn } from '@/lib/helpers';
 
 interface FormContainerProps {
-  onSubmit: (e: React.ChangeEvent<HTMLFormElement>) => Promise<void>;
+  onSubmit?: (e: React.ChangeEvent<HTMLFormElement>) => Promise<void>;
   onClose?: () => void;
   children?: React.ReactNode;
   className?: string;

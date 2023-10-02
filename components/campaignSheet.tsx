@@ -61,6 +61,7 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
           disabled={!setCampaign}
           campaignId={campaign?._id}
           hints={['Current Issues', 'Impeding Issues']}
+          className="pr-2"
         />
         <SkillTypeInput
           skills={campaign?.skills || []}
