@@ -1,6 +1,6 @@
 import Button from './generic/button';
-import CloseButton from './generic/closeButton';
 import CharacterSheet from './characterSheet';
+import FormContainer from './formContainer';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { blankSheet } from '@/consts/blankCharacterSheet';
 import { defaultSkills } from '@/consts/blankCampaingSheet';
@@ -82,31 +82,22 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     }
   };
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="z-50 max-h-screen w-full max-w-full overflow-y-auto rounded bg-white p-4 shadow-md lg:max-w-6xl"
-      >
-        <CloseButton
-          className="relative bottom-2 left-2 float-right "
-          onClick={onClose}
+    <FormContainer onSubmit={handleSubmit} onClose={onClose}>
+      <CharacterSheet
+        character={formState}
+        setCharacter={setCharacters ? setFormState : undefined}
+        state={state}
+        campaignId={campaignId}
+        skills={skills}
+      />
+      {setCharacters && (
+        <Button
+          label={isCreateMode ? 'Create Character' : 'Save Changes'}
+          disabled={isSubmitting}
+          type="submit"
         />
-        <CharacterSheet
-          character={formState}
-          setCharacter={setCharacters ? setFormState : undefined}
-          state={state}
-          campaignId={campaignId}
-          skills={skills}
-        />
-        {setCharacters && (
-          <Button
-            label={isCreateMode ? 'Create Character' : 'Save Changes'}
-            disabled={isSubmitting}
-            type="submit"
-          />
-        )}
-      </form>
-    </div>
+      )}
+    </FormContainer>
   );
 };
 

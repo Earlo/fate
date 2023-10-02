@@ -24,11 +24,7 @@ const TopBar: React.FC = () => {
           <Button label="Sign In" onClick={() => setShowAuthForm(true)} />
         )}
       </div>
-      {showAuthForm && (
-        <div className="fixed left-0 top-0 z-10 flex h-full w-full items-center justify-center bg-black bg-opacity-50">
-          <AuthForm onClose={() => setShowAuthForm(false)} />
-        </div>
-      )}
+      {showAuthForm && <AuthForm onClose={() => setShowAuthForm(false)} />}
     </div>
   );
 };

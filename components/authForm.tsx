@@ -47,7 +47,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
   };
 
   return (
-    <FormContainer onSubmit={handleSubmit} onClose={onClose}>
+    <FormContainer className="mt-6" onSubmit={handleSubmit} onClose={onClose}>
       <LabeledInput name="username" required onChange={handleUsernameChange} />
       <LabeledInput name="password" type="password" required />
       <div className="flex items-center justify-between pb-2">
