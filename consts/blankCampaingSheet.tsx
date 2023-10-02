@@ -107,6 +107,7 @@ export const blankSheet: Omit<CampaignT, '_id'> = {
   ],
   skills: defaultSkills,
   factions: [],
+  notes: [],
   public: false,
   visibleTo: [],
   controlledBy: '',
