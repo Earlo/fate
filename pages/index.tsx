@@ -6,21 +6,25 @@ import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useEffect, useRef } from 'react';
 
-const diceSides = ['+', '-', ' '];
+const diceSides = ['plus', 'minus', 'blank'];
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const backgrounDice = Array.from(Array(4).keys()).map((_, i) => (
+  const backgrounDice = Array.from(Array(6).keys()).map((_, i) => (
     <div
       key={i}
-      id={`dice-${i}`}
-      className="animate-float absolute flex h-24 w-24 items-center justify-center rounded border-2 border-slate-950 bg-transparent text-6xl font-bold leading-none text-black opacity-20"
+      className={`dice animate-float absolute transform ${
+        diceSides[Math.floor(Math.random() * diceSides.length)]
+      }`}
     >
-      <div id={'face'} className="mt-[-13px]">
-        {diceSides[Math.floor(Math.random() * diceSides.length)]}
-      </div>
+      <div className="one absolute flex h-full w-full items-center justify-center border-2 border-black bg-pink-600 opacity-70"></div>
+      <div className="two absolute flex h-full w-full items-center justify-center border-2 border-black bg-pink-600 opacity-70"></div>
+      <div className="three absolute flex h-full w-full items-center justify-center border-2 border-black bg-pink-600 opacity-70"></div>
+      <div className="four absolute flex h-full w-full items-center justify-center border-2 border-black bg-pink-600 opacity-70"></div>
+      <div className="five absolute flex h-full w-full items-center justify-center border-2 border-black bg-pink-600 opacity-70"></div>
+      <div className="six absolute flex h-full w-full items-center justify-center border-2 border-black bg-pink-600 opacity-70"></div>
     </div>
   ));
 
@@ -32,33 +36,25 @@ export default function Home() {
     ) as HTMLElement[];
 
     // Initialize squares with random positions, sizes, and angles
-    const squareStates = squares.map((el) => {
+    squares.forEach((el) => {
       const initialX = Math.random() * window.innerWidth;
       const initialY = Math.random() * window.innerHeight;
-      const angle = Math.random() * Math.PI * 2;
-      const rotation = Math.random() * 10 - 5;
-      const angularMomentum = Math.random() - 0.5;
       el.style.left = `${initialX}px`;
       el.style.top = `${initialY}px`;
-      const side = diceSides[Math.floor(Math.random() * diceSides.length)];
       // Remove the 'hidden' class and add 'flex' class
       el.classList.remove('hidden');
       el.classList.add('flex');
-      const jiggleScale = 1;
-      return { el, angle, rotation, angularMomentum, side, jiggleScale };
     });
 
     const updatePosition = ({
       el,
       angle,
       rotation,
-      side,
       jiggleScale,
     }: {
       el: HTMLElement;
       angle: number;
       rotation: number;
-      side: string;
       jiggleScale: number;
     }) => {
       const x = parseFloat(el.style.left || '0');
@@ -72,15 +68,12 @@ export default function Home() {
       if (newY > window.innerHeight) newY = -150;
       if (newY < -150) newY = window.innerHeight;
 
-      el.style.left = `${newX}px`;
-      el.style.top = `${newY}px`;
-      el.style.transform = `rotate(${rotation}deg) scale(${jiggleScale})`;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      //old
+      //el.style.transform = `rotate(${rotation}deg) scale(${jiggleScale})`;
       el.classList.remove('hidden');
       el.classList.add('flex');
-      const face = el.querySelector('#face') as HTMLElement;
-      if (face) {
-        face.innerText = side;
-      }
     };
 
     const animate = () => {
@@ -89,28 +82,11 @@ export default function Home() {
         state.angle += Math.random() * 0.01 - 0.005; // Slight random curve
         state.angularMomentum += Math.random() * 0.2 - 0.1; // Slight random rotation
         state.rotation += state.angularMomentum;
-        if (state.el.classList.contains('jiggle')) {
-          state.jiggleScale = 1 + 0.4 * (Math.random() - 0.5);
-        } else if (Math.random() < 0.01) {
-          const newSide =
-            diceSides[Math.floor(Math.random() * diceSides.length)];
-          if (newSide !== state.side) {
-            state.el.classList.add('jiggle');
-            state.side = newSide;
-
-            // Remove the jiggle class after animation completes
-            setTimeout(() => {
-              state.el.classList.remove('jiggle');
-            }, 200);
-          }
-        } else {
-          state.jiggleScale = 1;
-        }
         updatePosition(state);
       });
       requestAnimationFrame(animate);
     };
-    animate();
+    //animate();
   }, [backgrounDice]);
 
   const LandingPage = () => (

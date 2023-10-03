@@ -45,3 +45,87 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.dice {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  transform-style: preserve-3d;
+}
+
+.one {
+  transform: translateZ(100px);
+  &:before {
+    position: absolute;
+    content: '';
+    width: 60%;
+    height: 20%;
+    background: black;
+    border-radius: 0%;
+  }
+}
+.two {
+  transform: translateX(-100px) rotateY(-90deg);
+  &:before {
+    position: absolute;
+    content: '';
+    width: 60%;
+    height: 20%;
+    background: black;
+    border-radius: 0%;
+  }
+  &:after {
+    position: absolute;
+    content: '';
+    width: 20%;
+    height: 60%;
+    background: black;
+  }
+}
+.three {
+  transform: translateY(100px) rotateX(90deg);
+}
+.four {
+  transform: translateY(-100px) rotateX(90deg);
+}
+.five {
+  transform: translateX(100px) rotateY(90deg);
+  &:before {
+    position: absolute;
+    content: '';
+    width: 60%;
+    height: 20%;
+    background: black;
+    border-radius: 0%;
+  }
+  &:after {
+    position: absolute;
+    content: '';
+    width: 20%;
+    height: 60%;
+    background: black;
+  }
+}
+.six {
+  transform: translateZ(-100px);
+  &:before {
+    position: absolute;
+    content: '';
+    width: 60%;
+    height: 20%;
+    background: black;
+    border-radius: 0%;
+  }
+}
+
+.minus {
+  transform: rotateY(0deg) rotateX(45deg) rotateZ(45deg);
+}
+
+.plus {
+  transform: rotateY(-45deg) rotateX(-22.5deg) rotateZ(-67.5deg);
+}
+
+.blank {
+  transform: rotateY(45deg) rotateX(-22.5deg) rotateZ(-22.5deg);
+}
