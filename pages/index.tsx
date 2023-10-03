@@ -88,6 +88,10 @@ export default function Home() {
         updatePosition(state);
         state.angle += Math.random() * 0.01 - 0.005; // Slight random curve
         state.angularMomentum += Math.random() * 0.2 - 0.1; // Slight random rotation
+        state.angularMomentum = Math.max(
+          Math.min(state.angularMomentum, 2),
+          -2,
+        );
         state.rotation += state.angularMomentum;
         if (state.el.classList.contains('jiggle')) {
           state.jiggleScale = 1 + 0.4 * (Math.random() - 0.5);
