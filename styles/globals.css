@@ -45,7 +45,3 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
-
-.animate-float {
-  opacity: 0.2;
-}
