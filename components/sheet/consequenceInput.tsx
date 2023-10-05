@@ -21,7 +21,7 @@ const ConsequenceInput: React.FC<ConsequenceInputProps> = ({
 }) => {
   return (
     <div
-      className={`flex items-center justify-center pb-4 pl-4 ${
+      className={`flex items-center justify-center pb-4 ${
         disabled ? 'cursor-not-allowed' : ''
       }`}
     >

@@ -48,19 +48,19 @@ const Stress: React.FC<StressProps> = ({ stress, setStress, disabled }) => {
   };
 
   return (
-    <div className="flex flex-col md:pr-4">
+    <div className="flex flex-col pb-4 sm:pb-0 md:pr-4">
       <Label name="Stress" />
-      <div className="flex flex-col pt-2">
-        <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row">
-          <span className="flex h-10 w-1/5 flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black">
+      <div className="flex flex-col pt-0 sm:pt-2 md:pt-0 lg:pt-2 ">
+        <div className="flex flex-col pb-0 sm:flex-row sm:pb-4 md:flex-col md:pb-0 lg:flex-row lg:pb-4">
+          <span className="flex h-8 w-1/5 flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black sm:h-10 md:h-8 lg:h-10">
             Physical
           </span>
           <div className="flex flex-grow overflow-x-hidden sm:flex-row">
             {renderBoxes('physical')}
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row">
-          <span className="flex h-10 w-1/5 flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black">
+        <div className="flex flex-col pb-0 sm:flex-row sm:pb-4 md:flex-col md:pb-0 lg:flex-row lg:pb-4">
+          <span className="flex h-8 w-1/5 flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black sm:h-10 md:h-8 lg:h-10">
             Mental
           </span>
           <div className="flex flex-grow overflow-x-hidden sm:flex-row">

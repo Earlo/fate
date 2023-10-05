@@ -171,7 +171,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     return null;
   }
   return (
-    <div className="w-full min-w-[66.666667%] md:w-fit lg:w-8/12">
+    <div className="w-full min-w-[66.666667%] pb-2 md:w-fit lg:w-8/12 lg:pb-0">
       <Label name="Skills">
         {!disabled && (
           <AddButton
@@ -193,7 +193,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
           <div
             key={index}
             className={cn(
-              'relative flex w-full flex-col pb-2 lg:top-[-2px] lg:flex-row',
+              'relative flex w-full flex-col lg:top-[-2px] lg:flex-row lg:pb-2',
               {
                 'hidden sm:flex':
                   (!skills[tier.level] || skills[tier.level].length === 0) &&
@@ -203,7 +203,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
           >
             <span
               className={cn(
-                'flex h-10 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:w-1/6',
+                'flex h-8 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:h-10 lg:w-1/6',
                 { 'lg:w-fit': tier.level > 5 || tier.level < -5 }, //You aren't meant to go here. You can, but it won't look good.
               )}
             >

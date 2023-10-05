@@ -27,7 +27,7 @@ const StressBox: React.FC<StressBoxProps> = ({
 
   return (
     <div
-      className={`flex items-center justify-center pb-4 pl-4 ${
+      className={`flex items-center justify-center pl-4 ${
         disabled ? 'cursor-not-allowed' : ''
       }`}
     >
