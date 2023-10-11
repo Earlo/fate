@@ -4,6 +4,7 @@ import Faction from '@/components/dashboard/faction';
 import AspectInput from '@/components/sheet/aspectInput';
 import BaseLayout from '@/components/layout/baseLayout';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
+import NoteInput from '@/components/sheet/noteInput';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -80,6 +81,23 @@ const CampaignPage = () => {
       setCampaign(updatedCampaign);
     }
   };
+  const handleSetNotes = async (
+    notes: {
+      name: string;
+      visibleIn: string[];
+      content: string;
+    }[],
+  ) => {
+    if (!isAdmin) {
+      console.log('User is not admin', notes);
+    }
+    if (campaign && id && isAdmin) {
+      const updatedCampaign = { ...campaign };
+      updatedCampaign.notes = notes;
+      await updateCampaignAPI(id as string, updatedCampaign);
+      setCampaign(updatedCampaign);
+    }
+  };
 
   const updateFaction = async (
     factionIndex: number,
@@ -151,13 +169,20 @@ const CampaignPage = () => {
           />
           <p className="pl-4 text-lg sm:text-xl">{campaign.description}</p>
         </div>
-        <div>
+        <div className="flex flex-row">
           <AspectInput
             aspects={campaign?.aspects || []}
             setAspects={(aspects) => null}
             disabled={true}
             campaignId={campaign?._id}
             hints={['Current Issues', 'Impeding Issues']}
+          />
+          <NoteInput
+            notes={campaign?.notes || []}
+            disabled={!isAdmin}
+            setNotes={handleSetNotes}
+            campaignId={campaign?._id}
+            className="w-1/2"
           />
         </div>
         {isAdmin && (

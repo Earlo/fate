@@ -4,11 +4,13 @@ import Label from '../generic/label';
 import CloseButton from '../generic/closeButton';
 import AddButton from '../generic/addButton';
 import { cn } from '@/lib/helpers';
+import useDebounce from '@/hooks/debounce';
+import { useState, useEffect } from 'react';
 
 interface NoteInputProps {
-  stunts: { name: string; description: string; visibleIn: string[] }[];
-  setStunts: (
-    value: { name: string; description: string; visibleIn: string[] }[],
+  notes: { name: string; content: string; visibleIn: string[] }[];
+  setNotes: (
+    value: { name: string; content: string; visibleIn: string[] }[],
   ) => void;
   disabled?: boolean;
   campaignId?: string;
@@ -18,57 +20,73 @@ interface NoteInputProps {
 }
 
 const NoteInput: React.FC<NoteInputProps> = ({
-  stunts,
-  setStunts,
+  notes,
+  setNotes,
   disabled = false,
   campaignId,
   state,
-  title = 'Stunt',
+  title = 'Note',
   className,
 }) => {
+  const [debouncedNames, setDebouncedNames] = useState<string[]>(
+    notes.map((n) => n.name),
+  );
+  const [debouncedContents, setDebouncedContents] = useState<string[]>(
+    notes.map((n) => n.content),
+  );
+
+  const debouncedName = useDebounce(debouncedNames, 300);
+  const debouncedContent = useDebounce(debouncedContents, 300);
+  useEffect(() => {
+    // update notes once debounced name or content changes
+    const updatedNotes = notes.map((note, index) => ({
+      ...note,
+      name: debouncedName[index],
+      content: debouncedContent[index],
+    }));
+    setNotes(updatedNotes);
+  }, [debouncedName, debouncedContent]);
+
   const anyWidgets = !(!disabled || (state === 'toggle' && campaignId));
   return (
-    <div className={cn('w-full', className)}>
+    <div className={cn(className)}>
       <Label name={title + 's'}>
         {!disabled && (
           <AddButton
             onClick={() =>
-              setStunts([
-                ...stunts,
-                { name: '', description: '', visibleIn: [] },
-              ])
+              setNotes([...notes, { name: '', content: '', visibleIn: [] }])
             }
           />
         )}
       </Label>
-      {stunts.map((stunt, index) => (
+      {notes.map((note, index) => (
         <div key={index} className="flex grow flex-col pb-2 sm:flex-row">
           <div className="flex h-10 min-w-[50%] flex-row-reverse items-center sm:flex-row sm:pr-2">
             {!disabled && (
               <CloseButton
                 className=""
                 onClick={() =>
-                  setStunts([
-                    ...stunts.slice(0, index),
-                    ...stunts.slice(index + 1),
+                  setNotes([
+                    ...notes.slice(0, index),
+                    ...notes.slice(index + 1),
                   ])
                 }
               />
             )}
             {state === 'toggle' && campaignId && (
               <VisibilityToggle
-                visible={stunt?.visibleIn.includes(campaignId)}
+                visible={note?.visibleIn.includes(campaignId)}
                 onChange={(visible) =>
-                  setStunts([
-                    ...stunts.slice(0, index),
+                  setNotes([
+                    ...notes.slice(0, index),
                     {
-                      name: stunt.name,
-                      description: stunt.description,
+                      name: note.name,
+                      content: note.content,
                       visibleIn: visible
-                        ? [...stunt.visibleIn, campaignId]
-                        : stunt.visibleIn.filter((id) => id !== campaignId),
+                        ? [...note.visibleIn, campaignId]
+                        : note.visibleIn.filter((id) => id !== campaignId),
                     },
-                    ...stunts.slice(index + 1),
+                    ...notes.slice(index + 1),
                   ])
                 }
               />
@@ -77,25 +95,19 @@ const NoteInput: React.FC<NoteInputProps> = ({
               name={`${title}-${index}-name`}
               value={
                 state === 'toggle'
-                  ? stunt?.visibleIn.includes(campaignId || '')
-                    ? stunt.name
+                  ? note?.visibleIn.includes(campaignId || '')
+                    ? note.name
                     : '???'
-                  : stunt.name
+                  : debouncedNames[index]
               }
               placeholder={`${title} Name`}
               required
               disabled={disabled}
-              onChange={(e) =>
-                setStunts([
-                  ...stunts.slice(0, index),
-                  {
-                    name: e.target.value,
-                    description: stunt.description,
-                    visibleIn: stunt.visibleIn,
-                  },
-                  ...stunts.slice(index + 1),
-                ])
-              }
+              onChange={(e) => {
+                const updatedNames = [...debouncedNames];
+                updatedNames[index] = e.target.value;
+                setDebouncedNames(updatedNames);
+              }}
               className={cn(
                 'grow rounded-b-none border-b-0 sm:rounded-b sm:border-b-2',
                 {
@@ -105,33 +117,25 @@ const NoteInput: React.FC<NoteInputProps> = ({
             />
           </div>
           <Input
-            name={`${title}-${index}-description`}
+            name={`${title}-${index}-content`}
             value={
               state === 'toggle'
-                ? stunt?.visibleIn.includes(campaignId || '')
-                  ? stunt.description
+                ? note?.visibleIn.includes(campaignId || '')
+                  ? note.content
                   : '???'
-                : stunt.description
+                : debouncedContents[index]
             }
             placeholder={
-              stunt.name
-                ? `Description for ${stunt.name}`
-                : `${title} description`
+              note.name ? `Description for ${note.name}` : `${title} content`
             }
             multiline
             required
             disabled={disabled}
-            onChange={(e) =>
-              setStunts([
-                ...stunts.slice(0, index),
-                {
-                  name: stunt.name,
-                  description: e.target.value,
-                  visibleIn: stunt.visibleIn,
-                },
-                ...stunts.slice(index + 1),
-              ])
-            }
+            onChange={(e) => {
+              const updatedContents = [...debouncedContents];
+              updatedContents[index] = e.target.value;
+              setDebouncedContents(updatedContents);
+            }}
             className={cn('grow rounded-tl-none sm:rounded-tl', {
               'rounded-tr-none sm:rounded-tr': anyWidgets,
               'sm:rounded-tl-none': index === 0,
