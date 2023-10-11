@@ -153,7 +153,6 @@ const CampaignPage = () => {
         </div>
         <div>
           <AspectInput
-            //TODO make this look cooler here?
             aspects={campaign?.aspects || []}
             setAspects={(aspects) => null}
             disabled={true}
