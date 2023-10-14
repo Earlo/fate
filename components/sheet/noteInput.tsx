@@ -3,6 +3,7 @@ import Input from '../generic/input';
 import Label from '../generic/label';
 import CloseButton from '../generic/closeButton';
 import AddButton from '../generic/addButton';
+import IconButton from '../generic/iconButton';
 import { cn } from '@/lib/helpers';
 import useDebounce from '@/hooks/debounce';
 import { useState, useEffect } from 'react';
@@ -87,8 +88,17 @@ const NoteInput: React.FC<NoteInputProps> = ({
               )}
             />
             {!disabled && (
-              <CloseButton
+              <IconButton
                 className="mb-1 p-1"
+                onClick={() => {
+                  // this should call GPT-4 to generate the note content
+                  return;
+                }}
+              />
+            )}
+            {!disabled && (
+              <CloseButton
+                className="mb-1 ml-1 p-1"
                 onClick={() =>
                   setNotes([
                     ...notes.slice(0, index),
