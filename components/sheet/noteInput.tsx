@@ -50,7 +50,7 @@ const NoteInput: React.FC<NoteInputProps> = ({
   const anyWidgets = !(!disabled || (state === 'toggle' && campaignId));
   return (
     <div className={cn(className)}>
-      <Label name={title + 's'}>
+      <Label name={title + 's'} className="pb-0">
         {!disabled && (
           <AddButton
             onClick={() =>
@@ -60,11 +60,35 @@ const NoteInput: React.FC<NoteInputProps> = ({
         )}
       </Label>
       {notes.map((note, index) => (
-        <div key={index} className="flex grow flex-col pb-2 sm:flex-row">
-          <div className="flex h-10 min-w-[50%] flex-row-reverse items-center sm:flex-row sm:pr-2">
+        <div key={index} className="flex grow flex-col pb-1">
+          <div className="flex h-10 min-w-[50%] items-center align-middle">
+            <Input
+              name={`${title}-${index}-name`}
+              value={
+                state === 'toggle'
+                  ? note?.visibleIn.includes(campaignId || '')
+                    ? note.name
+                    : '???'
+                  : debouncedNames[index]
+              }
+              placeholder={`${title} Name`}
+              required
+              disabled={disabled}
+              onChange={(e) => {
+                const updatedNames = [...debouncedNames];
+                updatedNames[index] = e.target.value;
+                setDebouncedNames(updatedNames);
+              }}
+              className={cn(
+                'grow rounded-b-none border-b-0 sm:rounded-b sm:border-b-2',
+                {
+                  'rounded-t-none': index === 0 && !anyWidgets,
+                },
+              )}
+            />
             {!disabled && (
               <CloseButton
-                className=""
+                className="mb-1 p-1"
                 onClick={() =>
                   setNotes([
                     ...notes.slice(0, index),
@@ -91,30 +115,6 @@ const NoteInput: React.FC<NoteInputProps> = ({
                 }
               />
             )}
-            <Input
-              name={`${title}-${index}-name`}
-              value={
-                state === 'toggle'
-                  ? note?.visibleIn.includes(campaignId || '')
-                    ? note.name
-                    : '???'
-                  : debouncedNames[index]
-              }
-              placeholder={`${title} Name`}
-              required
-              disabled={disabled}
-              onChange={(e) => {
-                const updatedNames = [...debouncedNames];
-                updatedNames[index] = e.target.value;
-                setDebouncedNames(updatedNames);
-              }}
-              className={cn(
-                'grow rounded-b-none border-b-0 sm:rounded-b sm:border-b-2',
-                {
-                  'rounded-t-none': index === 0 && !anyWidgets,
-                },
-              )}
-            />
           </div>
           <Input
             name={`${title}-${index}-content`}
