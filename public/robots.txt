@@ -1,2 +1,4 @@
 User-agent: *
+Disallow: /api/
 Allow: /
+Sitemap: https://fatecore.opensauce.fi/sitemap.xml
