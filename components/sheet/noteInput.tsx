@@ -37,10 +37,17 @@ const NoteInput: React.FC<NoteInputProps> = ({
   );
 
   const callOpenAi = async (title: string) => {
+    console.log(campaignId);
+    if (!campaignId) {
+      console.error('No campaignId provided to callOpenAi');
+      return;
+    }
+    console.log('campaingId', campaignId);
     const response = await fetch('/api/writeNote', {
       method: 'POST',
       body: JSON.stringify({
-        prompt: `Write note "${title}" for the campaign "${campaignId}".`,
+        campaignId,
+        prompt: `Write note "${title}" for campaign ${campaignId}.`,
       }),
       headers: { 'Content-Type': 'application/json' },
     });

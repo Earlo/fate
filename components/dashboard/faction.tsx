@@ -124,7 +124,7 @@ const Faction: React.FC<FactionProps> = ({
             onClick={() => {
               setSelectedCharacter(character.sheet);
             }}
-            campaingId={faction.public ? undefined : campaignId}
+            campaignId={faction.public ? undefined : campaignId}
           />
         ))}
       </div>

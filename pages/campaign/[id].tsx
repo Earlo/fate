@@ -146,14 +146,14 @@ const CampaignPage = () => {
   return (
     <>
       <Head>
-        <title>Fate Core Campaing: {campaign.name}</title>
+        <title>Fate Core Campaign: {campaign.name}</title>
       </Head>
       <BaseLayout className="px-4 py-6">
         <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
           {campaign.name}
           {session?.user._id && campaign.controlledBy !== session?.user._id && (
             <Button
-              label={isPlayer ? 'Leave Campaing' : 'Join Campaign'}
+              label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
               onClick={() => joinLeaveCampaign()}
               className="ml-4"
             />

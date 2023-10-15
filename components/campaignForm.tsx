@@ -4,10 +4,10 @@ import Checkbox from './generic/checkbox';
 import CampaignSheet from './campaignSheet';
 import LabeledInput from './generic/labeledInput';
 import { CampaignT } from '@/schemas/campaign';
-import { blankSheet } from '@/consts/blankCampaingSheet';
 import { useState, FormEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { blankSheet } from '@/consts/blankcampaignSheet';
 
 interface CampaignFormProps {
   onClose?: () => void;
