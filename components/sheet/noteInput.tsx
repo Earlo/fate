@@ -36,6 +36,18 @@ const NoteInput: React.FC<NoteInputProps> = ({
     notes.map((n) => n.content),
   );
 
+  const callOpenAi = async (title: string) => {
+    const response = await fetch('/api/writeNote', {
+      method: 'POST',
+      body: JSON.stringify({
+        prompt: `Write note "${title}" for the campaign "${campaignId}".`,
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const content = await response.json();
+    return content;
+  };
+
   const debouncedName = useDebounce(debouncedNames, 300);
   const debouncedContent = useDebounce(debouncedContents, 300);
   useEffect(() => {
@@ -90,9 +102,11 @@ const NoteInput: React.FC<NoteInputProps> = ({
             {!disabled && (
               <IconButton
                 className="mb-1 p-1"
-                onClick={() => {
-                  // this should call GPT-4 to generate the note content
-                  return;
+                onClick={async () => {
+                  const response = await callOpenAi(debouncedNames[index]);
+                  const updatedContents = [...debouncedContents];
+                  updatedContents[index] = response;
+                  setDebouncedContents(updatedContents);
                 }}
               />
             )}
