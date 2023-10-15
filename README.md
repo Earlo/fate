@@ -14,6 +14,7 @@ This software isn't meant to be a virtual table top simulator or an online RPG p
 - Create Character Sheets
   - Possible skills are tied to campaigns you are taking part in
   - Also supports free form skill input
+  - AI powered note writing tool for the DM (WIP)
 - Create Campaigns
   - Define Skills used in campaign
   - Define aspects of the campaign
