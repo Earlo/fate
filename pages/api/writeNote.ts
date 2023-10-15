@@ -3,8 +3,8 @@ import OpenAI from 'openai';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 const openai = new OpenAI({
-  organization: process.env.OPENAI_ORGANIZATION,
-  apiKey: process.env.OPENAI_API_KEY,
+  organization: process.env.OPENAI_ORGANIZATION || '',
+  apiKey: process.env.OPENAI_API_KEY || '',
 });
 
 export default async function writeNote(
