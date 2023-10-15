@@ -4,7 +4,7 @@ import CharacterForm from '../characterForm';
 import Button from '@/components/generic/button';
 import { PopulatedFaction } from '@/schemas/campaign';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 
 interface FactionProps {
@@ -12,6 +12,8 @@ interface FactionProps {
   state: 'admin' | 'player' | 'view';
   onChange: (updatedFaction: PopulatedFaction) => void;
   campaignId: string;
+  allCharacters: CharacterSheetT[];
+  setAllCharacters: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
 }
 
 const Faction: React.FC<FactionProps> = ({
@@ -19,6 +21,8 @@ const Faction: React.FC<FactionProps> = ({
   state,
   onChange,
   campaignId,
+  allCharacters = [],
+  setAllCharacters,
 }) => {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
@@ -26,22 +30,8 @@ const Faction: React.FC<FactionProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCharacter, setSelectedCharacter] =
     useState<CharacterSheetT | null>(null);
-  // Global state? Or not
-  const [allCharacters, setAllCharacters] = useState<CharacterSheetT[]>([]);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
-  useEffect(() => {
-    const fetchData = async () => {
-      if (session) {
-        const response = await fetch(`/api/sheets?id=${session.user._id}`);
-        if (response.status === 200) {
-          const data = await response.json();
-          setAllCharacters(data);
-        }
-      }
-    };
-    fetchData();
-  }, [session]);
 
   const handleSave = () => {
     setIsEditing(false);
@@ -163,6 +153,7 @@ const Faction: React.FC<FactionProps> = ({
               ? 'play'
               : 'view'
           }
+          // Ugly passing down set. List of charachters user owns should be part of context
           setCharacters={isAdmin ? setAllCharacters : undefined}
           onClose={() => setSelectedCharacter(null)}
           campaignId={campaignId}

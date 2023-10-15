@@ -5,6 +5,7 @@ import AspectInput from '@/components/sheet/aspectInput';
 import BaseLayout from '@/components/layout/baseLayout';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
 import NoteInput from '@/components/sheet/noteInput';
+import { CharacterSheetT } from '@/schemas/sheet';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -38,6 +39,21 @@ const CampaignPage = () => {
     campaign &&
     session?.user._id &&
     campaign.visibleTo.includes(session?.user._id);
+  const [allCharacters, setAllCharacters] = useState<CharacterSheetT[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (session) {
+        const response = await fetch(`/api/sheets?id=${session.user._id}`);
+        if (response.status === 200) {
+          const data = await response.json();
+          setAllCharacters(data);
+        }
+      }
+    };
+    fetchData();
+  }, [session]);
+
   useEffect(() => {
     const fetchCampaign = async () => {
       if (id) {
@@ -206,6 +222,8 @@ const CampaignPage = () => {
                       state={isAdmin ? 'admin' : isPlayer ? 'player' : 'view'}
                       onChange={(faction) => updateFaction(index, faction)}
                       campaignId={id as string}
+                      allCharacters={allCharacters}
+                      setAllCharacters={setAllCharacters}
                     />
                   ),
               )}

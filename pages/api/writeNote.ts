@@ -1,8 +1,8 @@
 import { getCampaign } from '@/schemas/campaign';
-import OpenAI from 'openai';
+import OpenAIClient from 'openai';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const openai = new OpenAI({
+const openai = new OpenAIClient({
   organization: process.env.OPENAI_ORGANIZATION || '',
   apiKey: process.env.OPENAI_API_KEY || '',
 });
@@ -23,10 +23,12 @@ export default async function writeNote(
           ? undefined
           : keyToRemove.includes(key) ||
             val === '' ||
-            Object.keys(val).length === 0
+            (typeof val === 'object' && Object.keys(val).length === 0)
           ? undefined
           : Object.keys(val).length === 1
           ? val[Object.keys(val)[0]]
+          : Array.isArray(val)
+          ? val.filter((x) => !(x === null || x === false))
           : typeof val === 'string'
           ? val.trim().replace('\n', '')
           : val,
@@ -34,17 +36,20 @@ export default async function writeNote(
     );
   campaign = removeKey(
     removeKey(
-      removeKey(campaign, [
-        '_id',
-        '__v',
-        'visibleTo',
-        'colorPalette',
-        'icon',
-        'controlledBy',
-        'visible',
-        'public',
-        'visibleIn',
-      ]),
+      removeKey(
+        removeKey(campaign, [
+          '_id',
+          '__v',
+          'visibleTo',
+          'colorPalette',
+          'icon',
+          'controlledBy',
+          'visible',
+          'public',
+          'visibleIn',
+        ]),
+        [],
+      ),
       [],
     ),
     [],
@@ -58,19 +63,31 @@ export default async function writeNote(
           JSON.stringify(campaign),
       );
   }
-  const params: OpenAI.Chat.ChatCompletionCreateParams = {
-    messages: [
-      {
-        role: 'system',
-        content: `You're helping user to manage a fate Core Campaign by writing notes. Here is JSON dumb of the campaign object: ${JSON.stringify(
-          campaign,
-        )}`,
-      },
-      { role: 'user', content: prompt },
-    ],
-    model: 'gpt-3.5-turbo',
-  };
-  const chatCompletion: OpenAI.Chat.ChatCompletion =
-    await openai.chat.completions.create(params);
-  return res.status(200).json(chatCompletion.choices[0].message.content);
+  try {
+    const params: OpenAIClient.Chat.ChatCompletionCreateParams = {
+      messages: [
+        {
+          role: 'system',
+          content: `You're helping user to manage a fate Core campaign by writing notes. Campaign context JSON: ${JSON.stringify(
+            campaign,
+          )}`,
+        },
+        { role: 'user', content: prompt },
+      ],
+      model: 'gpt-3.5-turbo',
+    };
+    const chatCompletion: OpenAIClient.Chat.ChatCompletion =
+      await openai.chat.completions.create(params);
+    return res.status(200).json(chatCompletion.choices[0].message.content);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json(
+        'Error' +
+          JSON.stringify(error) +
+          ' with following context: ' +
+          JSON.stringify(campaign),
+      );
+  }
 }
