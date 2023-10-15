@@ -169,20 +169,21 @@ const CampaignPage = () => {
           />
           <p className="pl-4 text-lg sm:text-xl">{campaign.description}</p>
         </div>
-        <div className="flex flex-row">
+        <div className="flex flex-col sm:flex-row">
           <AspectInput
             aspects={campaign?.aspects || []}
             setAspects={(aspects) => null}
             disabled={true}
             campaignId={campaign?._id}
             hints={['Current Issues', 'Impeding Issues']}
+            title="Issues"
           />
           <NoteInput
             notes={campaign?.notes || []}
             disabled={!isAdmin}
             setNotes={handleSetNotes}
             campaignId={campaign?._id}
-            className="w-1/2"
+            className="w-full sm:w-8/12"
           />
         </div>
         {isAdmin && (

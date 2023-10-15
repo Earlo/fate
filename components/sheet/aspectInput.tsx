@@ -12,6 +12,7 @@ interface AspectInputProps {
   campaignId?: string;
   hints?: string[];
   className?: string;
+  title?: string;
 }
 
 const AspectInput: React.FC<AspectInputProps> = ({
@@ -22,6 +23,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
   campaignId,
   hints = ['High Concept', 'Trouble'],
   className,
+  title = 'Aspect',
 }) => {
   const handleAspectChange = (
     index: number,
@@ -36,7 +38,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
   const showVisibility = state === 'toggle' && campaignId;
   return (
     <div className={cn('flex grow flex-col', className)}>
-      <Label name="Aspects">
+      <Label name={title}>
         {!disabled && (
           <AddButton
             onClick={() =>
