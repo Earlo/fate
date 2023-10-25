@@ -20,12 +20,12 @@ const VisibilityToggle: React.FC<VisibilityToggleProps> = ({
     {visible ? (
       <EyeIcon
         aria-hidden="true"
-        className="h-6 w-6 cursor-pointer text-gray-400 hover:text-gray-500"
+        className="mr-2 h-6 w-6 cursor-pointer text-white duration-200 hover:text-gray-400"
       />
     ) : (
       <EyeSlashIcon
         aria-hidden="true"
-        className="h-6 w-6 cursor-pointer text-gray-400 hover:text-gray-500"
+        className="mr-2 h-6 w-6 cursor-pointer text-white duration-200 hover:text-gray-400"
       />
     )}
   </button>
