@@ -4,9 +4,14 @@ import { SparklesIcon } from '@heroicons/react/24/solid';
 interface IconButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
+  icon?: string;
 }
 
-const IconButton: React.FC<IconButtonProps> = ({ onClick, className = '' }) => (
+const IconButton: React.FC<IconButtonProps> = ({
+  onClick,
+  className = '',
+  icon = 'sparkles',
+}) => (
   <button
     type="button"
     className={cn(
@@ -15,10 +20,12 @@ const IconButton: React.FC<IconButtonProps> = ({ onClick, className = '' }) => (
     )}
     onClick={onClick}
   >
-    <SparklesIcon
-      aria-hidden="true"
-      className="h-6 w-6 cursor-pointer text-gray-400 hover:text-gray-500"
-    />
+    {icon === 'sparkles' && (
+      <SparklesIcon
+        aria-hidden="true"
+        className="h-6 w-6 cursor-pointer text-gray-400 hover:text-gray-500"
+      />
+    )}
   </button>
 );
 

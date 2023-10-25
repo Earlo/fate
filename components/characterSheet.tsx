@@ -8,6 +8,7 @@ import Stress from './sheet/stress';
 import Consequences from './sheet/consequences';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
+import { SparklesIcon } from '@heroicons/react/24/solid';
 
 interface CharacterSheetProps {
   character: Partial<CharacterSheetT>;
@@ -37,6 +38,23 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
       setCharacter((prev) => ({ ...prev, [field]: newValue }));
     }
   };
+  const callOpenAi = async (field: string) => {
+    if (!field) {
+      console.error('No campaignId provided to callOpenAi');
+      return;
+    }
+    const response = await fetch('/api/writeSheet', {
+      method: 'POST',
+      body: JSON.stringify({
+        sheet: character,
+        prompt: `Complete field "${field}" for the sheet. The response should be just text to complete the sheet`,
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const content = await response.json();
+    return content;
+  };
+
   return (
     <>
       <div className="flex flex-col items-center md:flex-row">
@@ -122,6 +140,17 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             disabled={!setCharacter}
             required
           >
+            {(state === 'create' || state === 'edit') && (
+              <SparklesIcon
+                className="mr-2 h-6 w-6 cursor-pointer text-white duration-200 hover:text-gray-400"
+                onClick={async () => {
+                  const response = await callOpenAi('description');
+                  updateField('description', {
+                    text: response,
+                  });
+                }}
+              />
+            )}
             {state === 'toggle' && (
               <VisibilityToggle
                 visible={

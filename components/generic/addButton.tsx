@@ -1,20 +1,19 @@
 import { cn } from '@/lib/helpers';
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 interface AddButtonProps {
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (e: React.MouseEvent<SVGSVGElement>) => void;
   className?: string;
 }
 
 const AddButton: React.FC<AddButtonProps> = ({ onClick, className = '' }) => (
-  <span
+  <PlusIcon
     className={cn(
-      'duration cursor-pointer pr-4 text-2xl font-bold transition hover:text-gray-400',
+      'mr-2 h-6 w-6 cursor-pointer text-white duration-200 hover:text-gray-400',
       className,
     )}
     onClick={onClick}
-  >
-    +
-  </span>
+  />
 );
 
 export default AddButton;

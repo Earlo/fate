@@ -153,7 +153,7 @@ const Faction: React.FC<FactionProps> = ({
               ? 'play'
               : 'view'
           }
-          // Ugly passing down set. List of charachters user owns should be part of context
+          // Ugly passing down set. List of characters user owns should be part of context
           setCharacters={isAdmin ? setAllCharacters : undefined}
           onClose={() => setSelectedCharacter(null)}
           campaignId={campaignId}
