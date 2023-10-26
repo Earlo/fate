@@ -9,6 +9,7 @@ import Consequences from './sheet/consequences';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
 import { SparklesIcon } from '@heroicons/react/24/solid';
+import { useCompletion } from 'ai/react';
 
 interface CharacterSheetProps {
   character: Partial<CharacterSheetT>;
@@ -38,21 +39,34 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
       setCharacter((prev) => ({ ...prev, [field]: newValue }));
     }
   };
+  const { complete } = useCompletion({
+    api: 'api/writeSheet',
+    onResponse: (response) => {
+      console.log('response', response);
+    },
+  });
+
   const callOpenAi = async (field: string) => {
     if (!field) {
       console.error('No campaignId provided to callOpenAi');
       return;
     }
-    const response = await fetch('/api/writeSheet', {
-      method: 'POST',
-      body: JSON.stringify({
-        sheet: character,
-        prompt: `Complete field "${field}" for the sheet. The response should be just text to complete the sheet`,
-      }),
-      headers: { 'Content-Type': 'application/json' },
+    const body = JSON.stringify({
+      sheet: character,
+      userContent: `Complete field "${field}" for the sheet. The response should be just text to complete the sheet`,
     });
-    const content = await response.json();
-    return content;
+    const completion = await complete(body);
+    console.log('completion', completion);
+    if (completion) {
+      updateField(field as keyof editableFields, {
+        text: completion,
+      });
+    } else {
+      console.log('response', completion);
+      updateField(field as keyof editableFields, {
+        text: 'Something went wrong',
+      });
+    }
   };
 
   return (
@@ -143,12 +157,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             {(state === 'create' || state === 'edit') && (
               <SparklesIcon
                 className="mr-2 h-6 w-6 cursor-pointer text-white duration-200 hover:text-gray-400"
-                onClick={async () => {
-                  const response = await callOpenAi('description');
-                  updateField('description', {
-                    text: response,
-                  });
-                }}
+                onClick={async () => callOpenAi('description')}
               />
             )}
             {state === 'toggle' && (
