@@ -2,8 +2,8 @@ import Button from './generic/button';
 import CharacterSheet from './characterSheet';
 import FormContainer from './formContainer';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { blankSheet } from '@/consts/blankCharacterSheet';
-import { defaultSkills } from '@/consts/blankCampaignSheet';
+import { blankSheet } from '@/schemas/consts/blankCharacterSheet';
+import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
 import { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
 

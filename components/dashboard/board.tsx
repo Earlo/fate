@@ -5,7 +5,7 @@ import { CampaignT } from '@/schemas/campaign';
 import CampaignButton from '@/components/dashboard/campaignButton';
 import CharacterButton from '@/components/dashboard/characterButton';
 import CharacterForm from '@/components/characterForm';
-import { defaultSkills } from '@/consts/blankCampaignSheet';
+import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
