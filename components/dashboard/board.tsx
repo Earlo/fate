@@ -81,7 +81,7 @@ export default function Dashboard() {
             <CampaignButton
               key={campaign._id}
               name={campaign.name}
-              imageUrl={campaign.icon}
+              imageUrl={campaign.icon ?? undefined}
               onClick={() => setSelectedCampaign(campaign)}
             />
           ))}

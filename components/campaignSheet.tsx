@@ -31,7 +31,7 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
     <div className="flex w-full grow flex-col">
       <div className="flex flex-col items-center md:flex-row">
         <ImageUploader
-          icon={campaign?.icon}
+          icon={campaign?.icon ?? undefined}
           path={'campaign'}
           setIcon={(icon) => updateField('icon', icon)}
           disabled={!setCampaign}
@@ -49,7 +49,7 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
             name="Description"
             multiline
             onChange={(e) => updateField('description', e.target.value)}
-            value={campaign?.description}
+            value={campaign?.description ?? undefined}
             disabled={!setCampaign}
           />
         </div>
