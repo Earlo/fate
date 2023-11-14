@@ -2,7 +2,7 @@
 
 [build]
   command = "npm run build"
-  publish = "public"
+  publish = ".next"
 
 [[headers]]
   for = "/*"
