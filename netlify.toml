@@ -1,0 +1,10 @@
+# FILEPATH: /Users/visapollari/clones/fate/netlify.toml
+
+[build]
+  command = "npm run build"
+  publish = "public"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "index, follow"
