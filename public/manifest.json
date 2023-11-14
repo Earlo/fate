@@ -3,13 +3,19 @@
   "name": "Fate core manager app",
   "icons": [
     {
-      "src": "/drowsee_128",
+      "src": "/plus_192.png",
       "type": "image/png",
-      "sizes": "128x128"
+      "sizes": "192x192"
+    },
+    {
+      "src": "/plus_512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "prefer_related_applications": false
 }
