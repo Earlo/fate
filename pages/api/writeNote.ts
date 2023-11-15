@@ -74,7 +74,7 @@ export default async function writeNote(
         },
         { role: 'user', content: prompt },
       ],
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-3.5-turbo-1106',
     };
     const chatCompletion: OpenAIClient.Chat.ChatCompletion =
       await openai.chat.completions.create(params);
