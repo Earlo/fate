@@ -6,7 +6,7 @@ export function cn(...inpit: ClassValue[]) {
 }
 
 export function removeKey(obj: object, keyToRemove: string[]) {
-  return JSON.parse(
+  const newObj = JSON.parse(
     JSON.stringify(obj, (key, val) =>
       typeof val === 'undefined' || val === null
         ? undefined
@@ -23,4 +23,8 @@ export function removeKey(obj: object, keyToRemove: string[]) {
                 : val,
     ),
   );
+  if (JSON.stringify(newObj) === JSON.stringify(obj)) {
+    return newObj;
+  }
+  return removeKey(newObj, keyToRemove);
 }

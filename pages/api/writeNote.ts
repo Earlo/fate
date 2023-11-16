@@ -17,27 +17,17 @@ export default async function writeNote(
   }
   const { prompt, campaignId } = req.body;
   let campaign = await getCampaign(campaignId as string);
-  campaign = removeKey(
-    removeKey(
-      removeKey(
-        removeKey(campaign, [
-          '_id',
-          '__v',
-          'visibleTo',
-          'colorPalette',
-          'icon',
-          'controlledBy',
-          'visible',
-          'public',
-          'visibleIn',
-        ]),
-        [],
-      ),
-      [],
-    ),
-    [],
-  );
-  //console.log('doing', prompt, campaignId, JSON.stringify(campaign));
+  campaign = removeKey(campaign, [
+    '_id',
+    '__v',
+    'visibleTo',
+    'colorPalette',
+    'icon',
+    'controlledBy',
+    'visible',
+    'public',
+    'visibleIn',
+  ]);
   if (!process.env.OPENAI_API_KEY) {
     return res
       .status(200)

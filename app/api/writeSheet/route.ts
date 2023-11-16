@@ -14,26 +14,17 @@ export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const body = await req.json();
   const { sheet, userContent } = JSON.parse(body.prompt);
-  const cleanSheet = removeKey(
-    removeKey(
-      removeKey(
-        removeKey(sheet, [
-          '_id',
-          '__v',
-          'visibleTo',
-          'colorPalette',
-          'icon',
-          'controlledBy',
-          'visible',
-          'public',
-          'visibleIn',
-        ]),
-        [],
-      ),
-      [],
-    ),
-    [],
-  );
+  const cleanSheet = removeKey(sheet, [
+    '_id',
+    '__v',
+    'visibleTo',
+    'colorPalette',
+    'icon',
+    'controlledBy',
+    'visible',
+    'public',
+    'visibleIn',
+  ]);
   const systemContent = `You're helping user to play a fate Core campaign by filling character sheet. Sheet context JSON: ${JSON.stringify(
     cleanSheet,
   )}. The key of the skill indicates the level of bonus character has, the higher the better. Anything under 3 isn't really worth talking about.`;
