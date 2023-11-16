@@ -150,8 +150,8 @@ const Faction: React.FC<FactionProps> = ({
             isAdmin
               ? 'toggle'
               : selectedCharacter.controlledBy === session?.user._id
-              ? 'play'
-              : 'view'
+                ? 'play'
+                : 'view'
           }
           // Ugly passing down set. List of characters user owns should be part of context
           setCharacters={isAdmin ? setAllCharacters : undefined}

@@ -1,6 +1,6 @@
+import { removeKey } from '@/lib/helpers';
 import OpenAIClient from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
-
 // Optional, but recommended: run on the edge runtime.
 // See https://vercel.com/docs/concepts/functions/edge-functions
 export const runtime = 'edge';
@@ -14,24 +14,6 @@ export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const body = await req.json();
   const { sheet, userContent } = JSON.parse(body.prompt);
-  const removeKey = (obj: object, keyToRemove: string[]) =>
-    JSON.parse(
-      JSON.stringify(obj, (key, val) =>
-        typeof val === 'undefined' || val === null
-          ? undefined
-          : keyToRemove.includes(key) ||
-            val === '' ||
-            (typeof val === 'object' && Object.keys(val).length === 0)
-          ? undefined
-          : Object.keys(val).length === 1
-          ? val[Object.keys(val)[0]]
-          : Array.isArray(val)
-          ? val.filter((x) => !(x === null || x === false))
-          : typeof val === 'string'
-          ? val.trim().replace('\n', '')
-          : val,
-      ),
-    );
   const cleanSheet = removeKey(
     removeKey(
       removeKey(

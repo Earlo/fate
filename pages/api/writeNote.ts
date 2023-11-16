@@ -1,4 +1,5 @@
 import { getCampaign } from '@/schemas/campaign';
+import { removeKey } from '@/lib/helpers';
 import OpenAIClient from 'openai';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -16,24 +17,6 @@ export default async function writeNote(
   }
   const { prompt, campaignId } = req.body;
   let campaign = await getCampaign(campaignId as string);
-  const removeKey = (obj: object, keyToRemove: string[]) =>
-    JSON.parse(
-      JSON.stringify(obj, (key, val) =>
-        typeof val === 'undefined' || val === null
-          ? undefined
-          : keyToRemove.includes(key) ||
-            val === '' ||
-            (typeof val === 'object' && Object.keys(val).length === 0)
-          ? undefined
-          : Object.keys(val).length === 1
-          ? val[Object.keys(val)[0]]
-          : Array.isArray(val)
-          ? val.filter((x) => !(x === null || x === false))
-          : typeof val === 'string'
-          ? val.trim().replace('\n', '')
-          : val,
-      ),
-    );
   campaign = removeKey(
     removeKey(
       removeKey(
