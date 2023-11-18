@@ -10,7 +10,6 @@ import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import { useCompletion } from 'ai/react';
-
 interface CharacterSheetProps {
   character: Partial<CharacterSheetT>;
   setCharacter?: React.Dispatch<React.SetStateAction<Partial<CharacterSheetT>>>;
@@ -39,13 +38,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
       setCharacter((prev) => ({ ...prev, [field]: newValue }));
     }
   };
-  const { complete } = useCompletion({
+  const { completion, complete, isLoading } = useCompletion({
     api: 'api/writeSheet',
     onResponse: (response) => {
       console.log('response', response);
     },
   });
-
   const callOpenAi = async (field: string) => {
     if (!field) {
       console.error('No campaignId provided to callOpenAi');
@@ -149,9 +147,11 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
               state === 'view' &&
               !character?.description?.visibleIn?.includes(campaignId)
                 ? '???'
-                : character?.description?.text
+                : isLoading
+                  ? completion
+                  : character?.description?.text
             }
-            disabled={!setCharacter}
+            disabled={isLoading || !setCharacter}
             required
           >
             {(state === 'create' || state === 'edit') && (

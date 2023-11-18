@@ -1,6 +1,7 @@
 import { getCampaign } from '@/schemas/campaign';
 import { removeKey } from '@/lib/helpers';
 import OpenAIClient from 'openai';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 const openai = new OpenAIClient({
@@ -48,10 +49,12 @@ export default async function writeNote(
         { role: 'user', content: prompt },
       ],
       model: 'gpt-3.5-turbo-1106',
+      stream: true,
     };
-    const chatCompletion: OpenAIClient.Chat.ChatCompletion =
-      await openai.chat.completions.create(params);
-    return res.status(200).json(chatCompletion.choices[0].message.content);
+    const chatCompletion = await openai.chat.completions.create(params);
+    //return res.status(200).json(chatCompletion.choices[0].message.content);
+    const stream = OpenAIStream(chatCompletion);
+    return new StreamingTextResponse(stream);
   } catch (error) {
     console.error(error);
     return res

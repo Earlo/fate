@@ -11,7 +11,6 @@ const openai = new OpenAIClient({
 });
 
 export async function POST(req: Request) {
-  // Extract the `messages` from the body of the request
   const body = await req.json();
   const { sheet, userContent } = JSON.parse(body.prompt);
   const cleanSheet = removeKey(sheet, [
@@ -28,9 +27,6 @@ export async function POST(req: Request) {
   const systemContent = `You're helping user to play a fate Core campaign by filling character sheet. Sheet context JSON: ${JSON.stringify(
     cleanSheet,
   )}. The key of the skill indicates the level of bonus character has, the higher the better. Anything under 3 isn't really worth talking about.`;
-
-  // Request the OpenAI API for the response based on the prompt
-  console.log('doing', userContent, systemContent);
   const response = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo-1106',
     stream: true,
@@ -42,8 +38,6 @@ export async function POST(req: Request) {
       { role: 'user', content: userContent },
     ],
   });
-  // Convert the response into a friendly text-stream
   const stream = OpenAIStream(response);
-  // Respond with the stream
   return new StreamingTextResponse(stream);
 }
