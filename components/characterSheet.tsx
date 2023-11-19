@@ -39,28 +39,23 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
     }
   };
   const { completion, complete, isLoading } = useCompletion({
-    api: 'api/writeSheet',
-    onResponse: (response) => {
-      console.log('response', response);
-    },
+    api: '/api/writeSheet',
   });
   const callOpenAi = async (field: string) => {
     if (!field) {
-      console.error('No campaignId provided to callOpenAi');
+      console.error('No field provided');
       return;
     }
     const body = JSON.stringify({
       sheet: character,
       userContent: `Complete field "${field}" for the sheet. The response should be just text to complete the sheet`,
     });
-    const completion = await complete(body);
-    console.log('completion', completion);
-    if (completion) {
+    const reponse = await complete(body);
+    if (reponse) {
       updateField(field as keyof editableFields, {
-        text: completion,
+        text: reponse,
       });
     } else {
-      console.log('response', completion);
       updateField(field as keyof editableFields, {
         text: 'Something went wrong',
       });

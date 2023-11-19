@@ -1,22 +1,19 @@
-import { getCampaign } from '@/schemas/campaign';
 import { removeKey } from '@/lib/helpers';
+import { getCampaign } from '@/schemas/campaign';
 import OpenAIClient from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
+//Shouldn't use edge on endpoints that use DB
+//export const runtime = 'edge';
 
 const openai = new OpenAIClient({
   organization: process.env.OPENAI_ORGANIZATION || '',
   apiKey: process.env.OPENAI_API_KEY || '',
 });
 
-export default async function writeNote(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).end();
-  }
-  const { prompt, campaignId } = req.body;
+export async function POST(req: Request) {
+  const body = await req.json();
+  const { campaignId, prompt } = JSON.parse(body.prompt);
   let campaign = await getCampaign(campaignId as string);
   campaign = removeKey(campaign, [
     '_id',
@@ -30,12 +27,14 @@ export default async function writeNote(
     'visibleIn',
   ]);
   if (!process.env.OPENAI_API_KEY) {
-    return res
-      .status(200)
-      .json(
-        'No OpenAI API key, would had called with following context: ' +
+    return NextResponse.json(
+      {
+        error:
+          'No OpenAI API key, would had called with following context: ' +
           JSON.stringify(campaign),
-      );
+      },
+      { status: 500 },
+    );
   }
   try {
     const params: OpenAIClient.Chat.ChatCompletionCreateParams = {
@@ -57,13 +56,15 @@ export default async function writeNote(
     return new StreamingTextResponse(stream);
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json(
-        'Error' +
+    return NextResponse.json(
+      {
+        error:
+          'Error' +
           JSON.stringify(error) +
           ' with following context: ' +
           JSON.stringify(campaign),
-      );
+      },
+      { status: 500 },
+    );
   }
 }
