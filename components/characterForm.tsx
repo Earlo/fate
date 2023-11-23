@@ -41,8 +41,8 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     try {
       const apiMethod = isCreateMode ? 'POST' : 'PUT';
       const apiUrl = isCreateMode
-        ? '/api/sheet'
-        : `/api/sheet/${initialSheet?._id}`;
+        ? '/api/sheets'
+        : `/api/sheets/${initialSheet?._id}`;
 
       const response = await fetch(apiUrl, {
         method: apiMethod,
