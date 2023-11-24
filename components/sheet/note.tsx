@@ -77,7 +77,7 @@ const Note: React.FC<NoteProps> = ({
               ? visibleIn.includes(campaignId || '')
                 ? name
                 : '???'
-              : debouncedName
+              : name
           }
           placeholder={`${name} Name`}
           required
