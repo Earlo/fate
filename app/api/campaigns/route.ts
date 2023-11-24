@@ -1,21 +1,18 @@
-import {
-  CharacterSheetT,
-  createCharacterSheet,
-  getCharacterSheets,
-} from '@/schemas/sheet';
+import { getCampaigns, createCampaign } from '@/schemas/campaign';
 import connect from '@/lib/mongo';
 import { NextResponse } from 'next/server';
+
 connect();
 
 export async function POST(req: Request) {
   try {
-    const sheet: CharacterSheetT = await req.json();
-    const newSheet = await createCharacterSheet(sheet);
-    return NextResponse.json(newSheet, { status: 200 });
+    const newCampaign = await req.json();
+    const createdCampaign = await createCampaign(newCampaign);
+    return NextResponse.json(createdCampaign, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { error: 'Failed to create character sheet' },
+      { error: 'Failed to create campaign sheet' },
       { status: 500 },
     );
   }
@@ -27,11 +24,11 @@ export async function GET(req: Request) {
     if (!userId) {
       return NextResponse.json(null, { status: 400 });
     }
-    const sheets = await getCharacterSheets(userId);
-    return NextResponse.json(sheets, { status: 200 });
+    const campaigns = await getCampaigns(userId);
+    return NextResponse.json(campaigns, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to get character sheets' },
+      { error: 'Failed to get character campaigns' },
       { status: 500 },
     );
   }

@@ -13,14 +13,14 @@ import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 
 const getCampaignById = async (id: string): Promise<PopulatedCampaignT> => {
-  return await fetch(`/api/campaign/${id}`).then((res) => res.json());
+  return await fetch(`/api/campaigns/${id}`).then((res) => res.json());
 };
 
 const updateCampaignAPI = async (
   campaignId: string,
   updatedCampaign: PopulatedCampaignT,
 ): Promise<PopulatedCampaignT> => {
-  return await fetch(`/api/campaign/${campaignId}`, {
+  return await fetch(`/api/campaigns/${campaignId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updatedCampaign),

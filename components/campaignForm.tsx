@@ -40,8 +40,8 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
     try {
       const apiMethod = isEditMode ? 'PUT' : 'POST';
       const apiUrl = isEditMode
-        ? `/api/campaign/${initialCampaign?._id}`
-        : '/api/campaign';
+        ? `/api/campaigns/${initialCampaign?._id}`
+        : '/api/campaigns';
       const response = await fetch(apiUrl, {
         method: apiMethod,
         headers: { 'Content-Type': 'application/json' },

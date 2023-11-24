@@ -17,9 +17,7 @@ export async function GET(
     const sheet = await getCharacterSheet(id);
     return new Response(JSON.stringify(sheet), {
       status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     return NextResponse.json(
@@ -39,9 +37,7 @@ export async function PUT(
     const updatedSheet = await updateCharacterSheet(id, updates);
     return NextResponse.json(updatedSheet, {
       status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     return NextResponse.json(
