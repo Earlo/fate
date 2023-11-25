@@ -64,7 +64,7 @@ const Note: React.FC<NoteProps> = ({
       content: debouncedContent,
       visibleIn,
     });
-  }, [debouncedName, debouncedContent]);
+  }, [debouncedName, debouncedContent, visibleIn]);
 
   const anyWidgets = !(!isDisabled || (state === 'toggle' && campaignId));
   return (

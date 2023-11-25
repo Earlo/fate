@@ -1,4 +1,4 @@
-import { CampaignT } from '@/schemas/campaign';
+import { CampaignT, PopulatedCampaignT } from '@/schemas/campaign';
 
 export const defaultSkills: CampaignT['skills'] = [
   {
@@ -111,4 +111,18 @@ export const blankSheet: Omit<CampaignT, '_id'> = {
   public: false,
   visibleTo: [],
   controlledBy: '',
+};
+
+export const blankFaction: Omit<PopulatedCampaignT['factions'][0], '_id'> = {
+  name: 'New Faction',
+  description: '',
+  icon: '',
+  colorPalette: {
+    primary: '209 213 219',
+    secondary: '156 163 175',
+    tertiary: '107 114 128',
+  },
+  public: false,
+  visible: true,
+  characters: [],
 };

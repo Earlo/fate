@@ -6,6 +6,7 @@ import BaseLayout from '@/components/layout/baseLayout';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
 import NoteInput from '@/components/sheet/noteInput';
 import { CharacterSheetT } from '@/schemas/sheet';
+import { blankFaction } from '@/schemas/consts/blankCampaignSheet';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -78,19 +79,7 @@ const CampaignPage = () => {
 
   const handleAddFaction = async () => {
     if (campaign && id) {
-      const newFaction = {
-        name: 'New Faction',
-        description: '',
-        icon: '',
-        colorPalette: {
-          primary: '209 213 219',
-          secondary: '156 163 175',
-          tertiary: '107 114 128',
-        },
-        public: false,
-        visible: true,
-        characters: [],
-      };
+      const newFaction = { ...blankFaction };
       const updatedCampaign = { ...campaign };
       updatedCampaign.factions.push(newFaction);
       await updateCampaignAPI(id as string, updatedCampaign);
