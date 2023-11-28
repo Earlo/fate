@@ -26,7 +26,7 @@ const LabeledInput: React.FC<LabeledInputProps> = ({
   disabled = false,
   children,
 }) => (
-  <div className="pb-4">
+  <div className="pb-2">
     <Label name={name}>{children}</Label>
     <Input
       name={name}
