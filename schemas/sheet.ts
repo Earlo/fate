@@ -1,3 +1,4 @@
+import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const characterSheetSchema = new Schema({
@@ -188,7 +189,12 @@ export const CharacterSheet =
 export type CharacterSheetT = {
   skills: { [level: number]: { name: string; visibleIn: string[] }[] };
   _id: string;
-} & Omit<InferSchemaType<typeof characterSheetSchema>, 'skills'>;
+} & Omit<
+  ReplaceMongooseDocumentArrayByArray<
+    InferSchemaType<typeof characterSheetSchema>
+  >,
+  'skills'
+>;
 
 export async function createCharacterSheet(sheet: CharacterSheetT) {
   return await CharacterSheet.create(sheet);

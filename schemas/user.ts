@@ -1,3 +1,4 @@
+import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const userSchema = new Schema({
@@ -9,4 +10,4 @@ export const userSchema = new Schema({
 export const UserModel = mongoose.models.User || model('User', userSchema);
 export type UserModelT = {
   _id: string;
-} & InferSchemaType<typeof userSchema>;
+} & ReplaceMongooseDocumentArrayByArray<InferSchemaType<typeof userSchema>>;

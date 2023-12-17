@@ -1,4 +1,5 @@
 import { CharacterSheetT } from './sheet';
+import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const campaignSchema = new Schema({
@@ -97,7 +98,7 @@ export const Campaign =
 
 export type CampaignT = {
   _id: string;
-} & InferSchemaType<typeof campaignSchema>;
+} & ReplaceMongooseDocumentArrayByArray<InferSchemaType<typeof campaignSchema>>;
 
 export type PopulatedFaction = Omit<CampaignT['factions'][0], 'characters'> & {
   characters: { sheet: CharacterSheetT; visible: boolean }[];
@@ -106,7 +107,10 @@ export type PopulatedFaction = Omit<CampaignT['factions'][0], 'characters'> & {
 export type PopulatedCampaignT = {
   _id: string;
   factions: PopulatedFaction[];
-} & Omit<InferSchemaType<typeof campaignSchema>, 'factions'>;
+} & Omit<
+  ReplaceMongooseDocumentArrayByArray<InferSchemaType<typeof campaignSchema>>,
+  'factions'
+>;
 
 export async function createCampaign(campaign: CampaignT) {
   return await Campaign.create(campaign);
