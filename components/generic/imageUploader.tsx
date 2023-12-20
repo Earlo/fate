@@ -41,7 +41,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         disabled={disabled}
       />
       {isLoading ? (
-        <div className="flex h-32 w-32 items-center justify-center">
+        <div className="flex size-32 items-center justify-center">
           <LoadingSpinner />
         </div>
       ) : (

@@ -151,7 +151,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           >
             {(state === 'create' || state === 'edit') && (
               <SparklesIcon
-                className="mr-2 h-6 w-6 cursor-pointer text-white duration-200 hover:text-gray-400"
+                className="mr-2 size-6 cursor-pointer text-white duration-200 hover:text-gray-400"
                 onClick={async () => callOpenAi('description')}
               />
             )}

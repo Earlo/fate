@@ -45,7 +45,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         <div
           onClick={handleClick}
           className={cn(
-            'h-10 w-10 cursor-pointer rounded border-2 bg-white',
+            'size-10 cursor-pointer rounded border-2 bg-white',
             checked ? 'border-black' : 'border-gray-300',
             { 'cursor-not-allowed': disabled },
           )}
