@@ -12,3 +12,4 @@ updates:
     allow:
       - dependency-type: 'all'
     versioning-strategy: 'widen'
+    open-pull-requests-limit: 10
