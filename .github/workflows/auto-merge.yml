@@ -11,4 +11,14 @@ jobs:
       - uses: ahmadnassri/action-dependabot-auto-merge@v2
         with:
           target: minor
-          github-token: ${{ secrets.MYTOKEN }}
+          github-token: ${{ secrets.AUTOMERGE_TOKEN }}
+  check-secret:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if AUTOMERGE_TOKEN secret is non-empty
+        run: |
+          if [ -z "${{ secrets.AUTOMERGE_TOKEN }}" ]; then
+            echo "Secret is empty"
+          else
+            echo "Secret is non-empty"
+          fi
