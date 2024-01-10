@@ -18,7 +18,7 @@
     "autoprefixer": "10.4.16",
     "bcrypt": "5.1.1",
     "clsx": "2.1.0",
-    "mongoose": "8.0.3",
+    "mongoose": "8.0.4",
     "next": "14.0.4",
     "next-auth": "4.24.5",
     "openai": "4.24.1",
