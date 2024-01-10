@@ -14,7 +14,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const username = e.target.value;
-    const response = await fetch('/api/check-username', {
+    const response = await fetch('/api/auth/checkUsername', {
       method: 'POST',
       body: JSON.stringify({ username }),
       headers: { 'Content-Type': 'application/json' },
@@ -33,7 +33,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
     if (usernameExists) {
       signIn('credentials', { username, password });
     } else {
-      const response = await fetch('/api/register', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify({ username, password, action: 'register' }),
         headers: { 'Content-Type': 'application/json' },

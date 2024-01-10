@@ -6,7 +6,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import { compare } from 'bcrypt';
 connect();
 
-export default NextAuth({
+const handler = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -78,3 +78,5 @@ export default NextAuth({
     },
   },
 });
+
+export { handler as GET, handler as POST };
