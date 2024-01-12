@@ -120,7 +120,10 @@ export async function getCampaign(id: string) {
   return await Campaign.findById(id).populate('factions.characters.sheet');
 }
 
-export async function updateCampaign(id: string, updates: Partial<CampaignT>) {
+export async function updateCampaign(
+  id: string,
+  updates: Partial<CampaignT>,
+): Promise<CampaignT | null> {
   // Remove _id and __v to avoid updating these fields
   delete updates._id;
   //delete updates?.__v;

@@ -2,6 +2,7 @@ import Note from './note';
 import Label from '../generic/label';
 import AddButton from '../generic/addButton';
 import { cn } from '@/lib/helpers';
+import { useCallback } from 'react';
 
 interface NoteInputProps {
   notes: { name: string; content: string; visibleIn: string[] }[];
@@ -24,6 +25,18 @@ const NoteInput: React.FC<NoteInputProps> = ({
   title = 'Note',
   className,
 }) => {
+  const setNote = useCallback(
+    (
+      value: { name: string; content: string; visibleIn: string[] },
+      index: number,
+    ) => {
+      const updatedNotes = [...notes];
+      updatedNotes[index] = value;
+      console.log('updatedNotes', updatedNotes);
+      setNotes(updatedNotes);
+    },
+    [notes, setNotes],
+  );
   return (
     <div className={cn(className)}>
       <Label name={title + 's'} className="pb-0">
@@ -44,11 +57,7 @@ const NoteInput: React.FC<NoteInputProps> = ({
           initialName={note.name}
           initialContent={note.content}
           visibleIn={note.visibleIn}
-          setNote={(value) => {
-            const updatedNotes = [...notes];
-            updatedNotes[index] = value;
-            setNotes(updatedNotes);
-          }}
+          setNote={(value) => setNote(value, index)}
           deleteNote={() => {
             const updatedNotes = [...notes];
             updatedNotes.splice(index, 1);

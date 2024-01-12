@@ -7,26 +7,12 @@ import LoadingSpinner from '@/components/generic/loadingSpinner';
 import NoteInput from '@/components/sheet/noteInput';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { blankFaction } from '@/schemas/consts/blankCampaignSheet';
+import { getCampaignById, updateCampaignAPI } from '@/lib/db/campaigns';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
-
-const getCampaignById = async (id: string): Promise<PopulatedCampaignT> => {
-  return await fetch(`/api/campaigns/${id}`).then((res) => res.json());
-};
-
-const updateCampaignAPI = async (
-  campaignId: string,
-  updatedCampaign: PopulatedCampaignT,
-): Promise<PopulatedCampaignT> => {
-  return await fetch(`/api/campaigns/${campaignId}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(updatedCampaign),
-  }).then((res) => res.json());
-};
 
 const CampaignPage = () => {
   const router = useRouter();
@@ -86,6 +72,18 @@ const CampaignPage = () => {
       setCampaign(updatedCampaign);
     }
   };
+  const updateFaction = async (
+    factionIndex: number,
+    updatedFaction: PopulatedFaction,
+  ) => {
+    if (campaign && id) {
+      const updatedCampaign = { ...campaign };
+      updatedCampaign.factions[factionIndex] = updatedFaction;
+      await updateCampaignAPI(id as string, updatedCampaign);
+      setCampaign(updatedCampaign);
+    }
+  };
+  //TODO maybe handle this inside the noteInput component?
   const handleSetNotes = async (
     notes: {
       name: string;
@@ -99,18 +97,6 @@ const CampaignPage = () => {
     if (campaign && id && isAdmin) {
       const updatedCampaign = { ...campaign };
       updatedCampaign.notes = notes;
-      await updateCampaignAPI(id as string, updatedCampaign);
-      setCampaign(updatedCampaign);
-    }
-  };
-
-  const updateFaction = async (
-    factionIndex: number,
-    updatedFaction: PopulatedFaction,
-  ) => {
-    if (campaign && id) {
-      const updatedCampaign = { ...campaign };
-      updatedCampaign.factions[factionIndex] = updatedFaction;
       await updateCampaignAPI(id as string, updatedCampaign);
       setCampaign(updatedCampaign);
     }

@@ -5,6 +5,7 @@ import CampaignSheet from './campaignSheet';
 import LabeledInput from './generic/labeledInput';
 import { CampaignT } from '@/schemas/campaign';
 import { blankSheet } from '@/schemas/consts/blankCampaignSheet';
+import { createCampaignAPI, updateCampaignAPI } from '@/lib/db/campaigns';
 import { useState, FormEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -27,8 +28,8 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
   const [formState, setFormState] = useState<Partial<CampaignT>>(
     initialCampaign || { ...blankSheet },
   );
-  const isEditMode = state === 'edit';
-  const isViewMode = state === 'view';
+  const isEditMode = state === 'edit' && initialCampaign;
+  const isViewMode = state === 'view' && initialCampaign;
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -38,20 +39,9 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
     };
 
     try {
-      const apiMethod = isEditMode ? 'PUT' : 'POST';
-      const apiUrl = isEditMode
-        ? `/api/campaigns/${initialCampaign?._id}`
-        : '/api/campaigns';
-      const response = await fetch(apiUrl, {
-        method: apiMethod,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(submitData),
-      });
-      if (!response.ok) {
-        console.error('Failed to submit form', await response.json());
-        return;
-      }
-      const data = await response.json();
+      const data = isEditMode
+        ? await updateCampaignAPI(initialCampaign._id, submitData)
+        : await createCampaignAPI(submitData);
       if (setCampaigns) {
         setCampaigns((prevCampaigns) => {
           const index = prevCampaigns.findIndex(

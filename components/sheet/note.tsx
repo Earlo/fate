@@ -36,7 +36,6 @@ const Note: React.FC<NoteProps> = ({
   const [content, setContent] = useState(initialContent);
   const debouncedName = useDebounce(name, 300);
   const debouncedContent = useDebounce(content, 300);
-
   const { completion, complete, isLoading } = useCompletion({
     api: '/api/writeNote',
   });
