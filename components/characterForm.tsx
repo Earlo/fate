@@ -4,9 +4,12 @@ import FormContainer from './formContainer';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { blankSheet } from '@/schemas/consts/blankCharacterSheet';
 import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
+import {
+  createCharacterSheet,
+  updateCharacterSheet,
+} from '@/lib/apiHelpers/sheets';
 import { FormEvent, useState } from 'react';
 import { useSession } from 'next-auth/react';
-
 interface CharacterFormProps {
   onClose?: () => void;
   initialSheet?: CharacterSheetT;
@@ -29,7 +32,8 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   const [formState, setFormState] = useState<Partial<CharacterSheetT>>(
     initialSheet || { ...blankSheet },
   );
-  const isCreateMode = state === 'create';
+  const isEditMode = state === 'edit' && initialSheet;
+  const isCreateMode = state === 'create' && !initialSheet;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,22 +43,9 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
       ...(isCreateMode && { controlledBy: session?.user?._id }),
     };
     try {
-      const apiMethod = isCreateMode ? 'POST' : 'PUT';
-      const apiUrl = isCreateMode
-        ? '/api/sheets'
-        : `/api/sheets/${initialSheet?._id}`;
-
-      const response = await fetch(apiUrl, {
-        method: apiMethod,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(submitData),
-      });
-
-      if (!response.ok) {
-        console.error('Failed to submit form', await response.json());
-        return;
-      }
-      const data = await response.json();
+      const data = isEditMode
+        ? await updateCharacterSheet(initialSheet?._id, submitData)
+        : await createCharacterSheet(submitData);
       if (setCharacters) {
         setCharacters((prevCharacters) => {
           const index = prevCharacters.findIndex(
@@ -71,7 +62,6 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
           }
         });
       }
-
       if (onClose) {
         onClose();
       }
@@ -92,7 +82,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
       />
       {setCharacters && (
         <Button
-          label={isCreateMode ? 'Create Character' : 'Save Changes'}
+          label={isEditMode ? 'Save Changes' : 'Create Character'}
           disabled={isSubmitting}
           type="submit"
         />

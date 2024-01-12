@@ -6,7 +6,8 @@ import CampaignButton from '@/components/dashboard/campaignButton';
 import CharacterButton from '@/components/dashboard/characterButton';
 import CharacterForm from '@/components/characterForm';
 import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
-import { getCampaignsByUserId } from '@/lib/db/campaigns';
+import { getCampaignsByUserId } from '@/lib/apiHelpers/campaigns';
+import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
@@ -43,11 +44,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       if (session) {
-        const response = await fetch(`/api/sheets?id=${session.user._id}`);
-        if (response.status === 200) {
-          const data = await response.json();
-          setCharacters(data);
-        }
+        const data = await getCharacterSheetsByUserId(session.user._id);
+        setCharacters(data);
       }
     };
     fetchData();

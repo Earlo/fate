@@ -5,7 +5,10 @@ import CampaignSheet from './campaignSheet';
 import LabeledInput from './generic/labeledInput';
 import { CampaignT } from '@/schemas/campaign';
 import { blankSheet } from '@/schemas/consts/blankCampaignSheet';
-import { createCampaignAPI, updateCampaignAPI } from '@/lib/db/campaigns';
+import {
+  createCampaignAPI,
+  updateCampaignAPI,
+} from '@/lib/apiHelpers/campaigns';
 import { useState, FormEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';

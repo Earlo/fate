@@ -1,6 +1,7 @@
 import FormContainer from './formContainer';
 import LabeledInput from './generic/labeledInput';
 import Button from './generic/button';
+import { checkUsernameExists, registerUser } from '@/lib/apiHelpers/auth';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 interface AuthFormProps {
@@ -14,12 +15,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const username = e.target.value;
-    const response = await fetch('/api/auth/checkUsername', {
-      method: 'POST',
-      body: JSON.stringify({ username }),
-      headers: { 'Content-Type': 'application/json' },
-    });
-    const exists = await response.json();
+    const exists = await checkUsernameExists(username);
     setUsernameExists(exists);
   };
 
@@ -33,15 +29,11 @@ export default function AuthForm({ onClose }: AuthFormProps) {
     if (usernameExists) {
       signIn('credentials', { username, password });
     } else {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({ username, password, action: 'register' }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (response.ok) {
+      const ok = await registerUser(username, password);
+      if (ok) {
         signIn('credentials', { username, password });
       } else {
-        throw new Error(await response.text());
+        throw new Error('Failed to register user');
       }
     }
   };

@@ -7,7 +7,8 @@ import LoadingSpinner from '@/components/generic/loadingSpinner';
 import NoteInput from '@/components/sheet/noteInput';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { blankFaction } from '@/schemas/consts/blankCampaignSheet';
-import { getCampaignById, updateCampaignAPI } from '@/lib/db/campaigns';
+import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
+import { getCampaignById, updateCampaignAPI } from '@/lib/apiHelpers/campaigns';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -31,11 +32,8 @@ const CampaignPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (session) {
-        const response = await fetch(`/api/sheets?id=${session.user._id}`);
-        if (response.status === 200) {
-          const data = await response.json();
-          setAllCharacters(data);
-        }
+        const data = await getCharacterSheetsByUserId(session.user._id);
+        setAllCharacters(data);
       }
     };
     fetchData();
