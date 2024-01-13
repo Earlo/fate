@@ -110,7 +110,7 @@ export const blankSheet: Omit<CampaignT, '_id'> = {
   notes: [],
   public: false,
   visibleTo: [],
-  controlledBy: '',
+  owner: '',
 };
 
 export const blankFaction: Omit<PopulatedCampaignT['factions'][0], '_id'> = {

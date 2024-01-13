@@ -9,7 +9,13 @@ export const getCampaignsByUserId = async (
 export const getCampaignById = async (
   id: string,
 ): Promise<PopulatedCampaignT> => {
-  return await fetch(`/api/campaigns/${id}`).then((res) => res.json());
+  const response = await fetch(`/api/campaigns/${id}`).then((res) =>
+    res.json(),
+  );
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  return response;
 };
 
 export const updateCampaignAPI = async (

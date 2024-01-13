@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     'visibleTo',
     'colorPalette',
     'icon',
-    'controlledBy',
+    'owner',
     'visible',
     'public',
     'visibleIn',

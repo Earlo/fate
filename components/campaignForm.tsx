@@ -38,7 +38,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
     setIsSubmitting(true);
     const submitData = {
       ...formState,
-      controlledBy: session?.user?._id,
+      owner: session?.user?._id,
     };
 
     try {

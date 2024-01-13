@@ -87,9 +87,7 @@ export default function Dashboard() {
             key={selectedCampaign._id}
             initialCampaign={selectedCampaign}
             state={
-              selectedCampaign.controlledBy === session?.user?._id
-                ? 'edit'
-                : 'view'
+              selectedCampaign.owner === session?.user?._id ? 'edit' : 'view'
             }
             setCampaigns={setCampaigns}
             onClose={() => setSelectedCampaign(null)}

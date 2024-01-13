@@ -22,7 +22,7 @@ const CampaignPage = () => {
   const [campaign, setCampaign] = useState<PopulatedCampaignT | null>(null);
   const [isLoading, setIsLoading] = useState(status === 'loading');
   const isAdmin =
-    !!session?.user.admin || campaign?.controlledBy === session?.user._id;
+    !!session?.user.admin || campaign?.owner === session?.user._id;
   const isPlayer =
     campaign &&
     session?.user._id &&
@@ -45,11 +45,7 @@ const CampaignPage = () => {
         setIsLoading(true);
         try {
           const data = await getCampaignById(id as string);
-          if (!('error' in data)) {
-            setCampaign(data);
-          } else {
-            router.push('/');
-          }
+          setCampaign(data);
         } catch (error) {
           console.error('Could not fetch campaign:', error);
           router.push('/');
@@ -89,9 +85,6 @@ const CampaignPage = () => {
       content: string;
     }[],
   ) => {
-    if (!isAdmin) {
-      console.log('User is not admin', notes);
-    }
     if (campaign && id && isAdmin) {
       const updatedCampaign = { ...campaign };
       updatedCampaign.notes = notes;
@@ -140,7 +133,7 @@ const CampaignPage = () => {
       <BaseLayout className="px-4 py-6">
         <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
           {campaign.name}
-          {session?.user._id && campaign.controlledBy !== session?.user._id && (
+          {session?.user._id && campaign.owner !== session?.user._id && (
             <Button
               label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
               onClick={() => joinLeaveCampaign()}

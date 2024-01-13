@@ -179,7 +179,7 @@ export const characterSheetSchema = new Schema({
       default: [],
     },
   ],
-  controlledBy: { type: String, ref: 'User', required: true },
+  owner: { type: String, ref: 'User', required: true },
 });
 export const CharacterSheet =
   mongoose.models.CharacterSheet ||
@@ -218,5 +218,5 @@ export async function deleteCharacterSheet(sheetId: string) {
 }
 
 export async function getCharacterSheets(userId: string) {
-  return await CharacterSheet.find({ controlledBy: userId });
+  return await CharacterSheet.find({ owner: userId });
 }

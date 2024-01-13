@@ -9,10 +9,7 @@ interface CampaignSheetProps {
   setCampaign?: React.Dispatch<React.SetStateAction<Partial<CampaignT>>>;
 }
 
-type editableFields = Omit<
-  CampaignT,
-  'controlledBy' | '_id' | 'public' | 'visibleTo'
->;
+type editableFields = Omit<CampaignT, 'owner' | '_id' | 'public' | 'visibleTo'>;
 
 const CampaignSheet: React.FC<CampaignSheetProps> = ({
   campaign,

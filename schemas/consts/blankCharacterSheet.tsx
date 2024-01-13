@@ -66,5 +66,5 @@ export const blankSheet: Omit<CharacterSheetT, '_id'> = {
   notes: [],
   public: false,
   visibleTo: [],
-  controlledBy: '',
+  owner: '',
 };

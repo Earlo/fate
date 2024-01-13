@@ -40,7 +40,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     setIsSubmitting(true);
     const submitData = {
       ...formState,
-      ...(isCreateMode && { controlledBy: session?.user?._id }),
+      ...(isCreateMode && { owner: session?.user?._id }),
     };
     try {
       const data = isEditMode

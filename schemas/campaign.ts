@@ -90,7 +90,7 @@ export const campaignSchema = new Schema({
     ],
     default: [],
   },
-  controlledBy: { type: String, ref: 'User', required: true },
+  owner: { type: String, ref: 'User', required: true },
 });
 
 export const Campaign =
@@ -138,7 +138,7 @@ export const getCampaigns = async (
     $or: [
       { public: true },
       { visibleTo: { $in: [userId] } },
-      { controlledBy: userId },
+      { owner: userId },
     ],
   }).populate({
     path: 'factions.characters',

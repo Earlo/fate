@@ -32,7 +32,6 @@ const NoteInput: React.FC<NoteInputProps> = ({
     ) => {
       const updatedNotes = [...notes];
       updatedNotes[index] = value;
-      console.log('updatedNotes', updatedNotes);
       setNotes(updatedNotes);
     },
     [notes, setNotes],

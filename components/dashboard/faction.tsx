@@ -149,7 +149,7 @@ const Faction: React.FC<FactionProps> = ({
           state={
             isAdmin
               ? 'toggle'
-              : selectedCharacter.controlledBy === session?.user._id
+              : selectedCharacter.owner === session?.user._id
                 ? 'play'
                 : 'view'
           }
