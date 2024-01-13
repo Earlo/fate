@@ -40,6 +40,9 @@ const Note: React.FC<NoteProps> = ({
     api: '/api/writeNote',
   });
   const isDisabled = disabled || isLoading;
+  const visible = visibleIn.includes(campaignId || '');
+  const toggle = state === 'toggle';
+  const anyWidgets = !(!isDisabled || (toggle && campaignId));
 
   const callOpenAi = async (title: string) => {
     if (!campaignId) {
@@ -56,7 +59,6 @@ const Note: React.FC<NoteProps> = ({
     }
     setContent(response);
   };
-
   useEffect(() => {
     setNote({
       name: debouncedName,
@@ -65,19 +67,12 @@ const Note: React.FC<NoteProps> = ({
     });
   }, [debouncedName, debouncedContent, visibleIn]);
 
-  const anyWidgets = !(!isDisabled || (state === 'toggle' && campaignId));
   return (
     <div className="flex grow flex-col pb-1">
       <div className="flex h-10 min-w-[50%] items-center align-middle">
         <Input
           name={`${name}-name`}
-          value={
-            state === 'toggle'
-              ? visibleIn.includes(campaignId || '')
-                ? name
-                : '???'
-              : name
-          }
+          value={toggle ? (visible ? name : '???') : name}
           placeholder={`${name} Name`}
           required
           disabled={isDisabled}
@@ -92,19 +87,19 @@ const Note: React.FC<NoteProps> = ({
         {!isDisabled && (
           <IconButton
             className="mb-1 p-1"
-            onClick={async () => await callOpenAi(debouncedName)}
+            onClick={async () => await callOpenAi(name)}
           />
         )}
         {!isDisabled && (
           <CloseButton className="mb-1 ml-1 p-1" onClick={deleteNote} />
         )}
-        {state === 'toggle' && campaignId && (
+        {toggle && campaignId && (
           <VisibilityToggle
-            visible={visibleIn.includes(campaignId)}
+            visible={visible}
             onChange={(visible) =>
               setNote({
-                name: debouncedName,
-                content: debouncedContent,
+                name: name,
+                content: content,
                 visibleIn: visible
                   ? [...visibleIn, campaignId]
                   : visibleIn.filter((id) => id !== campaignId),
@@ -116,8 +111,8 @@ const Note: React.FC<NoteProps> = ({
       <Input
         name={`${name}-content`}
         value={
-          state === 'toggle'
-            ? visibleIn.includes(campaignId || '')
+          toggle
+            ? visible
               ? content
               : '???'
             : isLoading

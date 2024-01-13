@@ -62,7 +62,6 @@ export const campaignSchema = new Schema({
           visible: { type: Boolean, required: true, default: false },
         },
       ],
-
       visible: { type: Boolean, required: true, default: false },
       public: { type: Boolean, required: true, default: false },
     },
@@ -82,12 +81,7 @@ export const campaignSchema = new Schema({
     default: [],
   },
   visibleTo: {
-    type: [
-      {
-        type: String,
-        ref: 'User',
-      },
-    ],
+    type: [{ type: String, ref: 'User' }],
     default: [],
   },
   owner: { type: String, ref: 'User', required: true },

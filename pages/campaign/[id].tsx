@@ -1,4 +1,4 @@
-import { PopulatedCampaignT, PopulatedFaction } from '@/schemas/campaign';
+import { PopulatedFaction } from '@/schemas/campaign';
 import Button from '@/components/generic/button';
 import Faction from '@/components/dashboard/faction';
 import AspectInput from '@/components/sheet/aspectInput';
@@ -6,21 +6,20 @@ import BaseLayout from '@/components/layout/baseLayout';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
 import NoteInput from '@/components/sheet/noteInput';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { blankFaction } from '@/schemas/consts/blankCampaignSheet';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
-import { getCampaignById, updateCampaignAPI } from '@/lib/apiHelpers/campaigns';
+import { useCampaign } from '@/hooks/useFate';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
-
 const CampaignPage = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const { id } = router.query;
-  const [campaign, setCampaign] = useState<PopulatedCampaignT | null>(null);
-  const [isLoading, setIsLoading] = useState(status === 'loading');
+  const { campaign, isLoading, updateCampaign, addFaction, joinLeaveCampaign } =
+    useCampaign(id as string, status === 'loading');
+
   const isAdmin =
     !!session?.user.admin || campaign?.owner === session?.user._id;
   const isPlayer =
@@ -40,32 +39,11 @@ const CampaignPage = () => {
   }, [session]);
 
   useEffect(() => {
-    const fetchCampaign = async () => {
-      if (id) {
-        setIsLoading(true);
-        try {
-          const data = await getCampaignById(id as string);
-          setCampaign(data);
-        } catch (error) {
-          console.error('Could not fetch campaign:', error);
-          router.push('/');
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-    fetchCampaign();
-  }, [id, router]);
-
-  const handleAddFaction = async () => {
-    if (campaign && id) {
-      const newFaction = { ...blankFaction };
-      const updatedCampaign = { ...campaign };
-      updatedCampaign.factions.push(newFaction);
-      await updateCampaignAPI(id as string, updatedCampaign);
-      setCampaign(updatedCampaign);
+    if (!isLoading && !campaign) {
+      router.push('/');
     }
-  };
+  }, [isLoading, campaign, router]);
+
   const updateFaction = async (
     factionIndex: number,
     updatedFaction: PopulatedFaction,
@@ -73,12 +51,11 @@ const CampaignPage = () => {
     if (campaign && id) {
       const updatedCampaign = { ...campaign };
       updatedCampaign.factions[factionIndex] = updatedFaction;
-      await updateCampaignAPI(id as string, updatedCampaign);
-      setCampaign(updatedCampaign);
+      updateCampaign(updatedCampaign);
     }
   };
   //TODO maybe handle this inside the noteInput component?
-  const handleSetNotes = async (
+  const setNotes = async (
     notes: {
       name: string;
       visibleIn: string[];
@@ -88,24 +65,7 @@ const CampaignPage = () => {
     if (campaign && id && isAdmin) {
       const updatedCampaign = { ...campaign };
       updatedCampaign.notes = notes;
-      await updateCampaignAPI(id as string, updatedCampaign);
-      setCampaign(updatedCampaign);
-    }
-  };
-
-  const joinLeaveCampaign = async () => {
-    if (campaign && id && session?.user._id) {
-      const updatedCampaign = { ...campaign };
-      const userId = session?.user._id;
-      if (updatedCampaign.visibleTo.includes(userId)) {
-        updatedCampaign.visibleTo = updatedCampaign.visibleTo.filter(
-          (id) => id !== userId,
-        );
-      } else {
-        updatedCampaign.visibleTo.push(userId);
-      }
-      await updateCampaignAPI(id as string, updatedCampaign);
-      setCampaign(updatedCampaign);
+      updateCampaign(updatedCampaign);
     }
   };
 
@@ -136,7 +96,7 @@ const CampaignPage = () => {
           {session?.user._id && campaign.owner !== session?.user._id && (
             <Button
               label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
-              onClick={() => joinLeaveCampaign()}
+              onClick={() => joinLeaveCampaign(session?.user._id)}
               className="ml-4"
             />
           )}
@@ -163,17 +123,13 @@ const CampaignPage = () => {
           <NoteInput
             notes={campaign?.notes || []}
             disabled={!isAdmin}
-            setNotes={handleSetNotes}
+            setNotes={setNotes}
             campaignId={campaign?._id}
             className="w-full sm:w-8/12"
           />
         </div>
         {isAdmin && (
-          <Button
-            label="Add Faction"
-            onClick={handleAddFaction}
-            className="mb-6"
-          />
+          <Button label="Add Faction" onClick={addFaction} className="mb-6" />
         )}
         {campaign?.factions && campaign.factions.length > 0 && (
           <>
