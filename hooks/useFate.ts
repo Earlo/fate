@@ -5,9 +5,9 @@ import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { useState, useEffect } from 'react';
 
-export const useCampaign = (campaignId: string, loadding: boolean) => {
+export const useCampaign = (campaignId: string) => {
   const [campaign, setCampaign] = useState<PopulatedCampaignT>();
-  const [isLoading, setIsLoading] = useState(loadding);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -18,7 +18,6 @@ export const useCampaign = (campaignId: string, loadding: boolean) => {
           setCampaign(data);
         } catch (error) {
           console.error('Could not fetch campaign:', error);
-          // Redirect or handle error
         } finally {
           setIsLoading(false);
         }

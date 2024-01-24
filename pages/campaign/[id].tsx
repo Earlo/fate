@@ -18,7 +18,7 @@ const CampaignPage = () => {
   const { data: session, status } = useSession();
   const { id } = router.query;
   const { campaign, isLoading, updateCampaign, addFaction, joinLeaveCampaign } =
-    useCampaign(id as string, status === 'loading');
+    useCampaign(id as string);
 
   const isAdmin =
     !!session?.user.admin || campaign?.owner === session?.user._id;
@@ -40,6 +40,7 @@ const CampaignPage = () => {
 
   useEffect(() => {
     if (!isLoading && !campaign) {
+      console.log('redirecting', isLoading, campaign, status);
       router.push('/');
     }
   }, [isLoading, campaign, router]);
