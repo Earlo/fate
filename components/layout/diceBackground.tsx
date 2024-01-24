@@ -1,3 +1,4 @@
+'use client';
 import BaseLayout from '@/components/layout/baseLayout';
 import { useEffect, useRef } from 'react';
 

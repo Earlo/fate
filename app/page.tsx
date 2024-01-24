@@ -1,14 +1,13 @@
+'use client';
 import BaseLayout from '@/components/layout/baseLayout';
 import DiceBackground from '@/components/layout/diceBackground';
 import Dashboard from '@/components/dashboard/board';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
-import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import Head from 'next/head';
+import Link from 'next/link';
 
 export default function Home() {
   const { data: session, status } = useSession();
-  const router = useRouter();
 
   const LandingPage = () => (
     <DiceBackground>
@@ -30,11 +29,8 @@ export default function Home() {
               Beginner instructions coming soon
             </div>
           </div>
-          <button
-            onClick={() => router.push('/about')}
-            className="rounded-full border border-white bg-transparent px-4 py-2"
-          >
-            Learn More
+          <button className="rounded-full border border-white bg-transparent px-4 py-2">
+            <Link href="/about">Learn More</Link>
           </button>
         </div>
       </div>
@@ -43,9 +39,6 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Fate Core character sheet tool</title>
-      </Head>
       {status === 'loading' && (
         <BaseLayout className="items-center justify-center">
           <LoadingSpinner />

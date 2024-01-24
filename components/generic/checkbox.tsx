@@ -1,3 +1,4 @@
+'use client';
 import Label from './label';
 import { cn } from '@/lib/helpers';
 import { useRef } from 'react';

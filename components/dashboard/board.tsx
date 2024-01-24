@@ -1,3 +1,4 @@
+'use client';
 import Button from '@/components/generic/button';
 import { CharacterSheetT } from '@/schemas/sheet';
 import CampaignForm from '@/components/campaignForm';

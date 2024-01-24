@@ -1,3 +1,4 @@
+'use client';
 import CharacterButton from './characterButton';
 import LabeledInput from '../generic/labeledInput';
 import CharacterForm from '../characterForm';

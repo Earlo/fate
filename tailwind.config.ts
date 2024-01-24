@@ -15,6 +15,8 @@ const config: Config = {
       },
       fontFamily: {
         fate: ['FateCoreFont', 'sans-serif'],
+        archivo: ['var(--font-archivo)'],
+        'archivo-black': ['var(--font-archivo-black)'],
       },
     },
   },

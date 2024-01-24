@@ -1,3 +1,4 @@
+'use client';
 import Button from './generic/button';
 import FormContainer from './formContainer';
 import Checkbox from './generic/checkbox';

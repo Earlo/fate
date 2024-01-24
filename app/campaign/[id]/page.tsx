@@ -1,3 +1,4 @@
+'use client';
 import { PopulatedFaction } from '@/schemas/campaign';
 import Button from '@/components/generic/button';
 import Faction from '@/components/dashboard/faction';
@@ -8,18 +9,18 @@ import NoteInput from '@/components/sheet/noteInput';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { useCampaign } from '@/hooks/useFate';
-import { useRouter } from 'next/router';
+import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
+
 const CampaignPage = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
-  const { id } = router.query;
+  const { data: session } = useSession();
+  const { id } = useParams();
   const { campaign, isLoading, updateCampaign, addFaction, joinLeaveCampaign } =
     useCampaign(id as string);
-
   const isAdmin =
     !!session?.user.admin || campaign?.owner === session?.user._id;
   const isPlayer =
@@ -40,7 +41,6 @@ const CampaignPage = () => {
 
   useEffect(() => {
     if (!isLoading && !campaign) {
-      console.log('redirecting', isLoading, campaign, status);
       router.push('/');
     }
   }, [isLoading, campaign, router]);
@@ -110,7 +110,9 @@ const CampaignPage = () => {
             height={128}
             className="w-full sm:h-32 sm:w-32"
           />
-          <p className="pl-4 text-lg sm:text-xl">{campaign.description}</p>
+          <p className="font-archivo pl-4 text-lg sm:text-xl">
+            {campaign.description}
+          </p>
         </div>
         <div className="flex flex-col sm:flex-row">
           <AspectInput

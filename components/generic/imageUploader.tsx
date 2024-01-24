@@ -1,3 +1,4 @@
+'use client';
 import LoadingSpinner from './loadingSpinner';
 import { handleUpload } from '@/lib/cloudinary';
 import { cn } from '@/lib/helpers';

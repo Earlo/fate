@@ -23,7 +23,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
   campaignId,
   hints = ['High Concept', 'Trouble'],
   className,
-  title = 'Aspect',
+  title = 'Aspects',
 }) => {
   const handleAspectChange = (
     index: number,

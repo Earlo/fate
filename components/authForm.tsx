@@ -1,3 +1,4 @@
+'use client';
 import FormContainer from './formContainer';
 import LabeledInput from './generic/labeledInput';
 import Button from './generic/button';

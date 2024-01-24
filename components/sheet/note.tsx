@@ -1,3 +1,4 @@
+'use client';
 import VisibilityToggle from './visibilityToggle';
 import Input from '../generic/input';
 import CloseButton from '../generic/closeButton';

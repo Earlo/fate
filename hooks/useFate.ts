@@ -1,3 +1,4 @@
+'use client';
 import { getCampaignById, updateCampaignAPI } from '@/lib/apiHelpers/campaigns';
 import { PopulatedCampaignT } from '@/schemas/campaign';
 import { blankFaction } from '@/schemas/consts/blankCampaignSheet';
@@ -8,7 +9,6 @@ import { useState, useEffect } from 'react';
 export const useCampaign = (campaignId: string) => {
   const [campaign, setCampaign] = useState<PopulatedCampaignT>();
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     const fetchCampaign = async () => {
       if (campaignId) {

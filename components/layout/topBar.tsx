@@ -1,3 +1,4 @@
+'use client';
 import AuthForm from '../authForm';
 import Button from '@/components/generic/button';
 import Link from 'next/link';

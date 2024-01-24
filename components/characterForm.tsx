@@ -1,3 +1,4 @@
+'use client';
 import Button from './generic/button';
 import CharacterSheet from './characterSheet';
 import FormContainer from './formContainer';

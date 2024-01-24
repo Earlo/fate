@@ -1,3 +1,4 @@
+'use client';
 import SkillInput from './skillInput';
 import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
