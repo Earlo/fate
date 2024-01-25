@@ -29,7 +29,7 @@ const CampaignPage = ({ params }: Props) => {
   const isPlayer =
     campaign &&
     session?.user._id &&
-    campaign.visibleTo.includes(session?.user._id);
+    campaign.visibleTo.includes(session.user._id);
   const [allCharacters, setAllCharacters] = useState<CharacterSheetT[]>([]);
 
   useEffect(() => {
@@ -93,10 +93,10 @@ const CampaignPage = ({ params }: Props) => {
     <BaseLayout className="px-4 py-6">
       <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
         {campaign.name}
-        {session?.user._id && campaign.owner !== session?.user._id && (
+        {session && !isAdmin && (
           <Button
             label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
-            onClick={() => joinLeaveCampaign(session?.user._id)}
+            onClick={() => joinLeaveCampaign(session.user._id)}
             className="ml-4"
           />
         )}
@@ -115,25 +115,25 @@ const CampaignPage = ({ params }: Props) => {
       </div>
       <div className="flex flex-col sm:flex-row">
         <AspectInput
-          aspects={campaign?.aspects || []}
+          aspects={campaign.aspects || []}
           setAspects={(aspects) => null}
           disabled={true}
-          campaignId={campaign?._id}
+          campaignId={campaign._id}
           hints={['Current Issues', 'Impeding Issues']}
           title="Issues"
         />
         <NoteInput
-          notes={campaign?.notes || []}
+          notes={campaign.notes || []}
           disabled={!isAdmin}
           setNotes={setNotes}
-          campaignId={campaign?._id}
+          campaignId={campaign._id}
           className="w-full sm:w-8/12"
         />
       </div>
       {isAdmin && (
         <Button label="Add Faction" onClick={addFaction} className="mb-6" />
       )}
-      {campaign?.factions && campaign.factions.length > 0 && (
+      {campaign.factions.length > 0 && (
         <>
           <h2 className="mb-4 text-2xl font-semibold">Factions</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

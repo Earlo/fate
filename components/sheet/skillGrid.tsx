@@ -114,12 +114,12 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     } else {
       updatedSkills[level][slotIndex] = { name, visibleIn };
     }
-    if (replacedSkill?.name === 'Physique' || replacedSkill?.name === 'Will') {
+    if (replacedSkill.name === 'Physique' || replacedSkill.name === 'Will') {
       const boxCount = 2;
       const boxes = Array.from({ length: boxCount }).map(() => false);
       setStress({
         ...stress,
-        [replacedSkill?.name === 'Physique' ? 'physical' : 'mental']: {
+        [replacedSkill.name === 'Physique' ? 'physical' : 'mental']: {
           boxes,
           visibleIn: [],
         },

@@ -57,7 +57,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
             )}
             {state === 'toggle' && campaignId && (
               <VisibilityToggle
-                visible={stunt?.visibleIn.includes(campaignId)}
+                visible={stunt.visibleIn.includes(campaignId)}
                 onChange={(visible) =>
                   setStunts([
                     ...stunts.slice(0, index),
@@ -77,7 +77,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
               name={`${title}-${index}-name`}
               value={
                 state === 'toggle'
-                  ? stunt?.visibleIn.includes(campaignId || '')
+                  ? stunt.visibleIn.includes(campaignId || '')
                     ? stunt.name
                     : '???'
                   : stunt.name
@@ -108,7 +108,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
             name={`${title}-${index}-description`}
             value={
               state === 'toggle'
-                ? stunt?.visibleIn.includes(campaignId || '')
+                ? stunt.visibleIn.includes(campaignId || '')
                   ? stunt.description
                   : '???'
                 : stunt.description

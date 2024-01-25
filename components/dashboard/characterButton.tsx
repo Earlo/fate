@@ -18,7 +18,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
   >
     <Image
       src={character.icon?.url || '/drowsee_128.png'}
-      alt={character.name.text || 'Character icon'}
+      alt={character.name.text}
       width={64}
       height={64}
       className={cn('flex-shrink-0 rounded-full', {
@@ -48,10 +48,10 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
           }}
         >
           {campaignId
-            ? character.aspects[0]?.visibleIn.includes(campaignId)
-              ? character.aspects[0]?.name
+            ? character.aspects[0].visibleIn.includes(campaignId)
+              ? character.aspects[0].name
               : '???'
-            : character.aspects[0]?.name || 'No aspects available'}
+            : character.aspects[0].name || '-'}
         </p>
       </div>
     </div>

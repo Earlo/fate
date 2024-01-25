@@ -45,7 +45,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     };
     try {
       const data = isEditMode
-        ? await updateCharacterSheet(initialSheet?._id, submitData)
+        ? await updateCharacterSheet(initialSheet._id, submitData)
         : await createCharacterSheet(submitData);
       if (setCharacters) {
         setCharacters((prevCharacters) => {

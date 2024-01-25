@@ -25,7 +25,7 @@ const handler = NextAuth({
           });
           if (
             user &&
-            user?.password &&
+            user.password &&
             (await compare(credentials.password, user.password))
           ) {
             return {
@@ -50,7 +50,7 @@ const handler = NextAuth({
             return true;
           } else {
             await UserModel.create({
-              username: profile?.email,
+              username: profile.email,
               admin: false,
             });
             return true;

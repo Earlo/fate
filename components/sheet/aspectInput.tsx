@@ -60,12 +60,12 @@ const AspectInput: React.FC<AspectInputProps> = ({
                   state === 'view' &&
                   !aspect.visibleIn.includes(campaignId || '')
                     ? '???'
-                    : aspect?.name || ''
+                    : aspect.name
                 }
                 onChange={(e) =>
                   handleAspectChange(index, {
                     name: e.target.value,
-                    visibleIn: aspect?.visibleIn || [],
+                    visibleIn: aspect.visibleIn || [],
                   })
                 }
                 disabled={disabled}
