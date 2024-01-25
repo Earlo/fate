@@ -9,18 +9,21 @@ import NoteInput from '@/components/sheet/noteInput';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { useCampaign } from '@/hooks/useFate';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import Head from 'next/head';
 
-const CampaignPage = () => {
+type Props = {
+  params: { id: string };
+};
+
+const CampaignPage = ({ params }: Props) => {
   const router = useRouter();
   const { data: session } = useSession();
-  const { id } = useParams();
+  const { id } = params;
   const { campaign, isLoading, updateCampaign, addFaction, joinLeaveCampaign } =
-    useCampaign(id as string);
+    useCampaign(id);
   const isAdmin =
     !!session?.user.admin || campaign?.owner === session?.user._id;
   const isPlayer =
@@ -87,77 +90,92 @@ const CampaignPage = () => {
   }
 
   return (
-    <>
-      <Head>
-        <title>Fate Core Campaign: {campaign.name}</title>
-      </Head>
-      <BaseLayout className="px-4 py-6">
-        <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
-          {campaign.name}
-          {session?.user._id && campaign.owner !== session?.user._id && (
-            <Button
-              label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
-              onClick={() => joinLeaveCampaign(session?.user._id)}
-              className="ml-4"
-            />
-          )}
-        </h1>
-        <div className="flex flex-col items-center pb-6 sm:flex-row">
-          <Image
-            src={campaign.icon || '/drowsee_128.png'}
-            alt={campaign.name}
-            width={128}
-            height={128}
-            className="w-full sm:h-32 sm:w-32"
+    <BaseLayout className="px-4 py-6">
+      <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
+        {campaign.name}
+        {session?.user._id && campaign.owner !== session?.user._id && (
+          <Button
+            label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
+            onClick={() => joinLeaveCampaign(session?.user._id)}
+            className="ml-4"
           />
-          <p className="font-archivo pl-4 text-lg sm:text-xl">
-            {campaign.description}
-          </p>
-        </div>
-        <div className="flex flex-col sm:flex-row">
-          <AspectInput
-            aspects={campaign?.aspects || []}
-            setAspects={(aspects) => null}
-            disabled={true}
-            campaignId={campaign?._id}
-            hints={['Current Issues', 'Impeding Issues']}
-            title="Issues"
-          />
-          <NoteInput
-            notes={campaign?.notes || []}
-            disabled={!isAdmin}
-            setNotes={setNotes}
-            campaignId={campaign?._id}
-            className="w-full sm:w-8/12"
-          />
-        </div>
-        {isAdmin && (
-          <Button label="Add Faction" onClick={addFaction} className="mb-6" />
         )}
-        {campaign?.factions && campaign.factions.length > 0 && (
-          <>
-            <h2 className="mb-4 text-2xl font-semibold">Factions</h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {campaign.factions.map(
-                (faction, index) =>
-                  (faction.visible || isAdmin) && (
-                    <Faction
-                      key={index}
-                      faction={faction}
-                      state={isAdmin ? 'admin' : isPlayer ? 'player' : 'view'}
-                      onChange={(faction) => updateFaction(index, faction)}
-                      campaignId={id as string}
-                      allCharacters={allCharacters}
-                      setAllCharacters={setAllCharacters}
-                    />
-                  ),
-              )}
-            </div>
-          </>
-        )}
-      </BaseLayout>
-    </>
+      </h1>
+      <div className="flex flex-col items-center pb-6 sm:flex-row">
+        <Image
+          src={campaign.icon || '/drowsee_128.png'}
+          alt={campaign.name}
+          width={128}
+          height={128}
+          className="w-full sm:h-32 sm:w-32"
+        />
+        <p className="pl-4 font-archivo text-lg sm:text-xl">
+          {campaign.description}
+        </p>
+      </div>
+      <div className="flex flex-col sm:flex-row">
+        <AspectInput
+          aspects={campaign?.aspects || []}
+          setAspects={(aspects) => null}
+          disabled={true}
+          campaignId={campaign?._id}
+          hints={['Current Issues', 'Impeding Issues']}
+          title="Issues"
+        />
+        <NoteInput
+          notes={campaign?.notes || []}
+          disabled={!isAdmin}
+          setNotes={setNotes}
+          campaignId={campaign?._id}
+          className="w-full sm:w-8/12"
+        />
+      </div>
+      {isAdmin && (
+        <Button label="Add Faction" onClick={addFaction} className="mb-6" />
+      )}
+      {campaign?.factions && campaign.factions.length > 0 && (
+        <>
+          <h2 className="mb-4 text-2xl font-semibold">Factions</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {campaign.factions.map(
+              (faction, index) =>
+                (faction.visible || isAdmin) && (
+                  <Faction
+                    key={index}
+                    faction={faction}
+                    state={isAdmin ? 'admin' : isPlayer ? 'player' : 'view'}
+                    onChange={(faction) => updateFaction(index, faction)}
+                    campaignId={id as string}
+                    allCharacters={allCharacters}
+                    setAllCharacters={setAllCharacters}
+                  />
+                ),
+            )}
+          </div>
+        </>
+      )}
+    </BaseLayout>
   );
 };
+/*
+import { getCampaignById } from '@/lib/apiHelpers/campaigns';
+import type { Metadata, ResolvingMetadata } from 'next';
 
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const id = params.id;
+  const campaign = await getCampaignById(id);
+  const previousImages = (await parent).openGraph?.images || [];
+  return {
+    title: 'Fate Core campaign:' + campaign.name,
+    openGraph: {
+      images: campaign.icon
+        ? [campaign.icon, ...previousImages]
+        : previousImages,
+    },
+  };
+}
+*/
 export default CampaignPage;

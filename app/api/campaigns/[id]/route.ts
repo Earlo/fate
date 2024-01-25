@@ -3,10 +3,11 @@ import connect from '@/lib/mongo';
 import { NextResponse } from 'next/server';
 connect();
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+type Props = {
+  params: { id: string };
+};
+
+export async function GET(req: Request, { params }: Props) {
   const { id } = params;
   try {
     const sheet = await getCampaign(id);
@@ -19,10 +20,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+export async function PUT(req: Request, { params }: Props) {
   const { id } = params;
   try {
     const updates = await req.json();
