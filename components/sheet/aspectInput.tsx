@@ -65,7 +65,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
                 onChange={(e) =>
                   handleAspectChange(index, {
                     name: e.target.value,
-                    visibleIn: aspect.visibleIn || [],
+                    visibleIn: aspect.visibleIn,
                   })
                 }
                 disabled={disabled}
@@ -82,7 +82,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
                     handleAspectChange(index, {
                       name: aspect.name,
                       visibleIn: visible
-                        ? [...(aspect.visibleIn || []), campaignId]
+                        ? [...aspect.visibleIn, campaignId]
                         : aspect.visibleIn.filter((id) => id !== campaignId),
                     })
                   }

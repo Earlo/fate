@@ -54,7 +54,7 @@ const Select: FC<SelectProps> = ({
     <button
       type="button"
       className={cn(
-        'font-archivo flex h-10 w-full rounded border-2 border-black bg-white p-2 text-left text-gray-700',
+        'flex h-10 w-full rounded border-2 border-black bg-white p-2 text-left font-archivo text-gray-700',
         !value ? 'text-gray-400' : 'text-gray-700',
         disabled && !value ? 'bg-gray-200' : 'bg-white',
         { 'z-[2] border-2 border-blue-700': customValue !== null },
@@ -71,14 +71,14 @@ const Select: FC<SelectProps> = ({
           ref={inputRef}
           type="text"
           placeholder="Fill your own"
-          value={customValue || ''}
+          value={customValue}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setCustomValue(e.target.value);
-            onChange(e.target.value || '');
+            onChange(e.target.value);
           }}
           className="block w-full text-left text-gray-700 focus:outline-none"
           onBlur={() => {
-            onChange(customValue || '');
+            onChange(customValue);
             setCustomValue(null);
           }}
         />

@@ -42,7 +42,6 @@ const Consequences: React.FC<ConsequencesProps> = ({
             onChange={(e) => handleChange('mild', e.target.value)}
             disabled={disabled}
           />
-
           <ConsequenceInput
             name="Moderate"
             rank="4"
@@ -50,7 +49,6 @@ const Consequences: React.FC<ConsequencesProps> = ({
             onChange={(e) => handleChange('moderate', e.target.value)}
             disabled={disabled}
           />
-
           <ConsequenceInput
             name="Severe"
             rank="6"

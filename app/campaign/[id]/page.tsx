@@ -115,7 +115,7 @@ const CampaignPage = ({ params }: Props) => {
       </div>
       <div className="flex flex-col sm:flex-row">
         <AspectInput
-          aspects={campaign.aspects || []}
+          aspects={campaign.aspects}
           setAspects={(aspects) => null}
           disabled={true}
           campaignId={campaign._id}
@@ -123,7 +123,7 @@ const CampaignPage = ({ params }: Props) => {
           title="Issues"
         />
         <NoteInput
-          notes={campaign.notes || []}
+          notes={campaign.notes}
           disabled={!isAdmin}
           setNotes={setNotes}
           campaignId={campaign._id}

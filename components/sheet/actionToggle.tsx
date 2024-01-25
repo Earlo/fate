@@ -1,4 +1,4 @@
-import { cn } from '@/lib/helpers';
+import ActionButton from './actionButton';
 interface ActionToggleProps {
   actions: ('overcome' | 'advantage' | 'attack' | 'defend')[];
   onChange: (
@@ -12,98 +12,50 @@ const ActionToggle: React.FC<ActionToggleProps> = ({
   actions,
   onChange,
   className,
-  disabled,
-}) => (
-  <>
-    {!(actions.indexOf('overcome') !== -1 && disabled) && (
-      <span
-        aria-hidden="true"
-        className={cn(
-          'cursor-pointer font-fate text-2xl text-green-400 hover:text-green-500',
-          {
-            'text-gray-400 hover:text-gray-500':
-              actions.indexOf('overcome') === -1,
-          },
-          className,
-        )}
-        onClick={() => {
-          if (actions.indexOf('overcome') === -1) {
-            onChange([...actions, 'overcome']);
-          } else {
-            onChange(actions.filter((action) => action !== 'overcome'));
-          }
-        }}
-      >
-        O
-      </span>
-    )}
-    {!(actions.indexOf('advantage') !== -1 && disabled) && (
-      <span
-        aria-hidden="true"
-        className={cn(
-          'cursor-pointer font-fate text-2xl text-green-400 hover:text-green-500',
-          {
-            'text-gray-400 hover:text-gray-500':
-              actions.indexOf('advantage') === -1,
-          },
-          className,
-        )}
-        onClick={() => {
-          if (actions.indexOf('advantage') === -1) {
-            onChange([...actions, 'advantage']);
-          } else {
-            onChange(actions.filter((action) => action !== 'advantage'));
-          }
-        }}
-      >
-        C
-      </span>
-    )}
-    {!(actions.indexOf('attack') !== -1 && disabled) && (
-      <span
-        aria-hidden="true"
-        className={cn(
-          'cursor-pointer font-fate text-2xl text-green-400 hover:text-green-500',
-          {
-            'text-gray-400 hover:text-gray-500':
-              actions.indexOf('attack') === -1,
-          },
-          className,
-        )}
-        onClick={() => {
-          if (actions.indexOf('attack') === -1) {
-            onChange([...actions, 'attack']);
-          } else {
-            onChange(actions.filter((action) => action !== 'attack'));
-          }
-        }}
-      >
-        A
-      </span>
-    )}
-    {!(actions.indexOf('defend') !== -1 && disabled) && (
-      <span
-        aria-hidden="true"
-        className={cn(
-          'cursor-pointer font-fate text-2xl text-green-400 hover:text-green-500',
-          {
-            'text-gray-400 hover:text-gray-500':
-              actions.indexOf('defend') === -1,
-          },
-          className,
-        )}
-        onClick={() => {
-          if (actions.indexOf('defend') === -1) {
-            onChange([...actions, 'defend']);
-          } else {
-            onChange(actions.filter((action) => action !== 'defend'));
-          }
-        }}
-      >
-        D
-      </span>
-    )}
-  </>
-);
+  disabled = false,
+}) => {
+  const toggleAction = (
+    action: 'overcome' | 'advantage' | 'attack' | 'defend',
+  ) => {
+    if (disabled) return;
+    if (actions.indexOf(action) === -1) {
+      onChange([...actions, action]);
+    } else {
+      onChange(actions.filter((a) => a !== action));
+    }
+  };
+  return (
+    <>
+      <ActionButton
+        action="overcome"
+        onClick={() => toggleAction('overcome')}
+        className={className}
+        toggled={actions.indexOf('overcome') !== -1}
+        disabled={disabled}
+      />
+      <ActionButton
+        action="advantage"
+        onClick={() => toggleAction('advantage')}
+        className={className}
+        toggled={actions.indexOf('advantage') !== -1}
+        disabled={disabled}
+      />
+      <ActionButton
+        action="attack"
+        onClick={() => toggleAction('attack')}
+        className={className}
+        toggled={actions.indexOf('attack') !== -1}
+        disabled={disabled}
+      />
+      <ActionButton
+        action="defend"
+        onClick={() => toggleAction('defend')}
+        className={className}
+        toggled={actions.indexOf('defend') !== -1}
+        disabled={disabled}
+      />
+    </>
+  );
+};
 
 export default ActionToggle;
