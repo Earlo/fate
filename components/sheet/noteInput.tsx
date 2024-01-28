@@ -32,7 +32,11 @@ const NoteInput: React.FC<NoteInputProps> = ({
     ) => {
       const updatedNotes = [...notes];
       updatedNotes[index] = value;
-      setNotes(updatedNotes);
+      console.log('callback', index);
+      // make sure it's different, fix this by not passing state down TODO
+      if (JSON.stringify(updatedNotes) !== JSON.stringify(notes)) {
+        setNotes(updatedNotes);
+      }
     },
     [notes, setNotes],
   );

@@ -9,13 +9,13 @@ import {
   createCharacterSheet,
   updateCharacterSheet,
 } from '@/lib/apiHelpers/sheets';
-import { FormEvent, useState } from 'react';
+import { userContext } from '@/app/userProvider';
+import { FormEvent, useState, useContext } from 'react';
 import { useSession } from 'next-auth/react';
 interface CharacterFormProps {
   onClose?: () => void;
   initialSheet?: CharacterSheetT;
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
-  setCharacters?: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
   campaignId?: string;
   skills?: string[];
 }
@@ -24,7 +24,6 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   onClose,
   initialSheet,
   state = 'create',
-  setCharacters,
   campaignId,
   skills = defaultSkills.map((skill) => skill.name),
 }) => {
@@ -35,7 +34,8 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
   );
   const isEditMode = state === 'edit' && initialSheet;
   const isCreateMode = state === 'create' && !initialSheet;
-
+  const canSave = isEditMode || isCreateMode;
+  const { setSheets } = useContext(userContext);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -47,22 +47,18 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
       const data = isEditMode
         ? await updateCharacterSheet(initialSheet._id, submitData)
         : await createCharacterSheet(submitData);
-      if (setCharacters) {
-        setCharacters((prevCharacters) => {
-          const index = prevCharacters.findIndex(
-            (char) => char._id === data._id,
-          );
-          if (index !== -1) {
-            return [
-              ...prevCharacters.slice(0, index),
-              data,
-              ...prevCharacters.slice(index + 1),
-            ];
-          } else {
-            return [...prevCharacters, data];
-          }
-        });
-      }
+      setSheets((prevCharacters) => {
+        const index = prevCharacters.findIndex((char) => char._id === data._id);
+        if (index !== -1) {
+          return [
+            ...prevCharacters.slice(0, index),
+            data,
+            ...prevCharacters.slice(index + 1),
+          ];
+        } else {
+          return [...prevCharacters, data];
+        }
+      });
       if (onClose) {
         onClose();
       }
@@ -76,12 +72,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     <FormContainer onSubmit={handleSubmit} onClose={onClose}>
       <CharacterSheet
         character={formState}
-        setCharacter={setCharacters ? setFormState : undefined}
+        setCharacter={canSave ? setFormState : undefined}
         state={state}
         campaignId={campaignId}
         skills={skills}
       />
-      {setCharacters && (
+      {canSave && (
         <Button
           label={isEditMode ? 'Save Changes' : 'Create Character'}
           disabled={isSubmitting}

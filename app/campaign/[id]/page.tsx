@@ -6,11 +6,10 @@ import AspectInput from '@/components/sheet/aspectInput';
 import BaseLayout from '@/components/layout/baseLayout';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
 import NoteInput from '@/components/sheet/noteInput';
-import { CharacterSheetT } from '@/schemas/sheet';
-import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { useCampaign } from '@/hooks/useFate';
+import { userContext } from '@/app/userProvider';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useContext } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
@@ -30,17 +29,8 @@ const CampaignPage = ({ params }: Props) => {
     campaign &&
     session?.user._id &&
     campaign.visibleTo.includes(session.user._id);
-  const [allCharacters, setAllCharacters] = useState<CharacterSheetT[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (session) {
-        const data = await getCharacterSheetsByUserId(session.user._id);
-        setAllCharacters(data);
-      }
-    };
-    fetchData();
-  }, [session]);
+  const { sheets } = useContext(userContext);
 
   useEffect(() => {
     if (!isLoading && !campaign) {
@@ -55,6 +45,7 @@ const CampaignPage = ({ params }: Props) => {
     if (campaign && id) {
       const updatedCampaign = { ...campaign };
       updatedCampaign.factions[factionIndex] = updatedFaction;
+      console.log('set factions');
       updateCampaign(updatedCampaign);
     }
   };
@@ -69,6 +60,7 @@ const CampaignPage = ({ params }: Props) => {
     if (campaign && id && isAdmin) {
       const updatedCampaign = { ...campaign };
       updatedCampaign.notes = notes;
+      console.log('setNotes');
       updateCampaign(updatedCampaign);
     }
   };
@@ -146,8 +138,7 @@ const CampaignPage = ({ params }: Props) => {
                     state={isAdmin ? 'admin' : isPlayer ? 'player' : 'view'}
                     onChange={(faction) => updateFaction(index, faction)}
                     campaignId={id as string}
-                    allCharacters={allCharacters}
-                    setAllCharacters={setAllCharacters}
+                    sheets={sheets}
                   />
                 ),
             )}

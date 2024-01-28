@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
 import Provider from './providers';
+import UserProvider from './userProvider';
 import TopBar from '@/components/layout/topBar';
 import Footer from '@/components/layout/footer';
 import { Archivo, Archivo_Black } from 'next/font/google';
@@ -31,11 +32,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={`${archivo.variable} ${archivoBlack.className}`}>
       <body className="min-h-[100dvh]">
         <Provider>
-          <div className="flex min-h-[100dvh] flex-col">
-            <TopBar />
-            {children}
-            <Footer />
-          </div>
+          <UserProvider>
+            <div className="flex min-h-[100dvh] flex-col">
+              <TopBar />
+              {children}
+              <Footer />
+            </div>
+          </UserProvider>
         </Provider>
       </body>
     </html>

@@ -8,16 +8,17 @@ import CharacterButton from '@/components/dashboard/characterButton';
 import CharacterForm from '@/components/characterForm';
 import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
 import { getCampaignsByUserId } from '@/lib/apiHelpers/campaigns';
-import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
-import { useState, useEffect } from 'react';
+import { userContext } from '@/app/userProvider';
+import { useState, useEffect, useContext } from 'react';
 import { useSession } from 'next-auth/react';
 
 export default function Dashboard() {
   const { data: session } = useSession();
   const [showSheetForm, setShowSheetForm] = useState(false);
-  const [characters, setCharacters] = useState<CharacterSheetT[]>([]);
-  const [selectedCharacter, setSelectedCharacter] =
-    useState<CharacterSheetT | null>(null);
+  const { sheets } = useContext(userContext);
+  const [selectedSheet, setSelectedSheet] = useState<CharacterSheetT | null>(
+    null,
+  );
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [campaigns, setCampaigns] = useState<CampaignT[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<CampaignT | null>(
@@ -42,26 +43,16 @@ export default function Dashboard() {
     fetchData();
   }, [session]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (session) {
-        const data = await getCharacterSheetsByUserId(session.user._id);
-        setCharacters(data);
-      }
-    };
-    fetchData();
-  }, [session]);
-
   return (
     <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
       <div className="col-span-1">
         <h2 className="mb-2 text-xl font-bold">Your Character Sheets:</h2>
         <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
-          {characters.map((sheet) => (
+          {sheets.map((sheet) => (
             <CharacterButton
               key={sheet._id}
               character={sheet}
-              onClick={() => setSelectedCharacter(sheet)}
+              onClick={() => setSelectedSheet(sheet)}
             />
           ))}
         </div>
@@ -106,22 +97,18 @@ export default function Dashboard() {
           setCampaigns={setCampaigns}
         />
       )}
-      {selectedCharacter && (
+      {selectedSheet && (
         <CharacterForm
-          key={selectedCharacter._id}
-          initialSheet={characters.find(
-            (sheet) => sheet._id === selectedCharacter._id,
-          )}
+          key={selectedSheet._id}
+          initialSheet={sheets.find((sheet) => sheet._id === selectedSheet._id)}
           state="edit"
-          setCharacters={setCharacters}
-          onClose={() => setSelectedCharacter(null)}
+          onClose={() => setSelectedSheet(null)}
           skills={allSkills}
         />
       )}
       {showSheetForm && (
         <CharacterForm
           onClose={() => setShowSheetForm(false)}
-          setCharacters={setCharacters}
           skills={allSkills}
         />
       )}

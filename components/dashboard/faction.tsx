@@ -13,8 +13,7 @@ interface FactionProps {
   state: 'admin' | 'player' | 'view';
   onChange: (updatedFaction: PopulatedFaction) => void;
   campaignId: string;
-  allCharacters: CharacterSheetT[];
-  setAllCharacters: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
+  sheets: CharacterSheetT[];
 }
 
 const Faction: React.FC<FactionProps> = ({
@@ -22,8 +21,7 @@ const Faction: React.FC<FactionProps> = ({
   state,
   onChange,
   campaignId,
-  allCharacters = [],
-  setAllCharacters,
+  sheets = [],
 }) => {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
@@ -58,7 +56,7 @@ const Faction: React.FC<FactionProps> = ({
     if (charIndex > -1) {
       updatedCharacters.splice(charIndex, 1);
     } else {
-      const character = allCharacters.find((c) => c._id === characterId);
+      const character = sheets.find((c) => c._id === characterId);
       if (character) {
         updatedCharacters.push({ sheet: character, visible: true });
       }
@@ -127,8 +125,8 @@ const Faction: React.FC<FactionProps> = ({
       )}
       {isDropdownOpen && (
         <div className="flex flex-col gap-2 rounded bg-gray-700 p-2">
-          {allCharacters.length > 0
-            ? allCharacters.map((character) => (
+          {sheets.length > 0
+            ? sheets.map((character) => (
                 <div key={character._id} className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -154,8 +152,6 @@ const Faction: React.FC<FactionProps> = ({
                 ? 'play'
                 : 'view'
           }
-          // Ugly passing down set. List of characters user owns should be part of context
-          setCharacters={isAdmin ? setAllCharacters : undefined}
           onClose={() => setSelectedCharacter(null)}
           campaignId={campaignId}
         />
