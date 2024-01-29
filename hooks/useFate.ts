@@ -1,10 +1,10 @@
 'use client';
 import { getCampaignById, updateCampaignAPI } from '@/lib/apiHelpers/campaigns';
-import { PopulatedCampaignT } from '@/schemas/campaign';
+import { PopulatedCampaignT, PopulatedFaction } from '@/schemas/campaign';
 import { blankFaction } from '@/schemas/consts/blankCampaignSheet';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export const useCampaign = (campaignId: string) => {
   const [campaign, setCampaign] = useState<PopulatedCampaignT>();
@@ -26,23 +26,16 @@ export const useCampaign = (campaignId: string) => {
     fetchCampaign();
   }, [campaignId]);
 
-  const updateCampaign = async (updatedCampaign: PopulatedCampaignT) => {
-    await updateCampaignAPI(campaignId, updatedCampaign);
-    setCampaign(updatedCampaign);
-  };
+  const updateCampaign = useCallback(
+    async (updatedCampaign: PopulatedCampaignT) => {
+      setCampaign(updatedCampaign);
+      await updateCampaignAPI(campaignId, updatedCampaign);
+      // TODO maybe update campaign in state to match the response, in case backend does something
+    },
+    [campaignId],
+  );
 
-  const addFaction = async () => {
-    if (campaign) {
-      const newFaction = { ...blankFaction };
-      const updatedCampaign = { ...campaign };
-      updatedCampaign.factions.push(newFaction);
-      await updateCampaign(updatedCampaign);
-    } else {
-      console.error('Campaign not found');
-    }
-  };
-
-  const joinLeaveCampaign = async (userId: string) => {
+  const toggleCampaign = async (userId: string) => {
     if (campaign) {
       const updatedCampaign = { ...campaign };
       if (updatedCampaign.visibleTo.includes(userId)) {
@@ -57,7 +50,74 @@ export const useCampaign = (campaignId: string) => {
     }
   };
 
-  return { campaign, isLoading, updateCampaign, addFaction, joinLeaveCampaign };
+  const addFaction = async () => {
+    if (campaign) {
+      const newFaction = { ...blankFaction };
+      const updatedCampaign = { ...campaign };
+      updatedCampaign.factions.push(newFaction);
+      await updateCampaign(updatedCampaign);
+    } else {
+      console.error('Campaign not found');
+    }
+  };
+
+  const updateFaction = async (
+    factionIndex: number,
+    updatedFaction: PopulatedFaction,
+  ) => {
+    if (campaign) {
+      const updatedCampaign = { ...campaign };
+      updatedCampaign.factions[factionIndex] = updatedFaction;
+      updateCampaign(updatedCampaign);
+    }
+  };
+
+  const addNote = async () => {
+    if (campaign) {
+      const updatedCampaign = { ...campaign };
+      updatedCampaign.notes.push({
+        name: 'New Note',
+        content: '',
+        visibleIn: [],
+      });
+      updateCampaign(updatedCampaign);
+    }
+  };
+
+  const updateNote = async (
+    updatedNote: {
+      name: string;
+      visibleIn: string[];
+      content: string;
+    },
+    index: number,
+  ) => {
+    if (campaign) {
+      const updatedCampaign = { ...campaign };
+      updatedCampaign.notes[index] = updatedNote;
+      updateCampaign(updatedCampaign);
+    }
+  };
+
+  const deleteNote = async (index: number) => {
+    if (campaign) {
+      const updatedCampaign = { ...campaign };
+      updatedCampaign.notes.splice(index, 1);
+      updateCampaign(updatedCampaign);
+    }
+  };
+
+  return {
+    campaign,
+    isLoading,
+    updateCampaign,
+    toggleCampaign,
+    addFaction,
+    updateFaction,
+    addNote,
+    deleteNote,
+    updateNote,
+  };
 };
 
 export const useCharacterSheets = (userId: string) => {

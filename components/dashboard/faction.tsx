@@ -5,7 +5,8 @@ import CharacterForm from '../characterForm';
 import Button from '@/components/generic/button';
 import { PopulatedFaction } from '@/schemas/campaign';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { useState } from 'react';
+import { userContext } from '@/app/userProvider';
+import { useState, useContext } from 'react';
 import { useSession } from 'next-auth/react';
 
 interface FactionProps {
@@ -13,7 +14,6 @@ interface FactionProps {
   state: 'admin' | 'player' | 'view';
   onChange: (updatedFaction: PopulatedFaction) => void;
   campaignId: string;
-  sheets: CharacterSheetT[];
 }
 
 const Faction: React.FC<FactionProps> = ({
@@ -21,7 +21,6 @@ const Faction: React.FC<FactionProps> = ({
   state,
   onChange,
   campaignId,
-  sheets = [],
 }) => {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
@@ -29,6 +28,7 @@ const Faction: React.FC<FactionProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCharacter, setSelectedCharacter] =
     useState<CharacterSheetT | null>(null);
+  const { sheets } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
 

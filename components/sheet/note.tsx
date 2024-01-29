@@ -9,39 +9,39 @@ import { useState, useEffect } from 'react';
 import { useCompletion } from 'ai/react';
 
 interface NoteProps {
-  initialName: string;
-  initialContent: string;
-  visibleIn: string[];
-  setNote: (value: {
+  note: {
+    name: string;
+    content: string;
+    visibleIn: string[];
+  };
+  disabled?: boolean;
+  campaignId: string;
+  state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
+  deleteNote: () => void;
+  updateNote: (note: {
     name: string;
     content: string;
     visibleIn: string[];
   }) => void;
-  deleteNote: () => void;
-  disabled?: boolean;
-  campaignId?: string;
-  state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
 }
 
 const Note: React.FC<NoteProps> = ({
-  initialName,
-  initialContent,
-  visibleIn,
-  setNote,
-  deleteNote,
+  note,
   disabled = false,
   campaignId,
   state,
+  deleteNote,
+  updateNote,
 }) => {
-  const [name, setName] = useState(initialName);
-  const [content, setContent] = useState(initialContent);
+  const [name, setName] = useState(note.name);
+  const [content, setContent] = useState(note.content);
   const debouncedName = useDebounce(name, 300);
   const debouncedContent = useDebounce(content, 300);
   const { completion, complete, isLoading } = useCompletion({
     api: '/api/writeNote',
   });
   const isDisabled = disabled || isLoading;
-  const visible = visibleIn.includes(campaignId || '');
+  const visible = note.visibleIn.includes(campaignId);
   const toggle = state === 'toggle';
   const anyWidgets = !(!isDisabled || (toggle && campaignId));
 
@@ -61,12 +61,14 @@ const Note: React.FC<NoteProps> = ({
     setContent(response);
   };
   useEffect(() => {
-    setNote({
-      name: debouncedName,
-      content: debouncedContent,
-      visibleIn,
-    });
-  }, [debouncedName, debouncedContent, visibleIn]);
+    if (note.name !== debouncedName || note.content !== debouncedContent) {
+      updateNote({
+        ...note,
+        name: debouncedName,
+        content: debouncedContent,
+      });
+    }
+  }, [debouncedName, debouncedContent, note, updateNote]);
 
   return (
     <div className="flex grow flex-col pb-1">
@@ -98,12 +100,11 @@ const Note: React.FC<NoteProps> = ({
           <VisibilityToggle
             visible={visible}
             onChange={(visible) =>
-              setNote({
-                name: name,
-                content: content,
+              updateNote({
+                ...note,
                 visibleIn: visible
-                  ? [...visibleIn, campaignId]
-                  : visibleIn.filter((id) => id !== campaignId),
+                  ? [...note.visibleIn, campaignId]
+                  : note.visibleIn.filter((id) => id !== campaignId),
               })
             }
           />

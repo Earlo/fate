@@ -34,7 +34,7 @@ const SkillInput: React.FC<SkillInputProps> = ({
   return (
     <Select
       options={options}
-      onChange={(value) => onChange(value as string)}
+      onChange={(value) => onChange(value)}
       value={value}
       disabled={disabled}
       className={className}

@@ -27,7 +27,6 @@ export default function UserProvider({ children }: { children: ReactNode }) {
       }
     };
     fetchData();
-    console.log('fetching data', session);
   }, [session, setSheets]);
 
   return (

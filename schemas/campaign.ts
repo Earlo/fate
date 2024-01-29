@@ -70,6 +70,7 @@ export const campaignSchema = new Schema({
   notes: {
     type: [
       {
+        _id: false,
         name: { type: String, required: true },
         content: { type: String, required: true },
         visibleIn: {
@@ -111,6 +112,7 @@ export async function createCampaign(campaign: CampaignT) {
 }
 
 export async function getCampaign(id: string) {
+  // remove _id from subdocuments
   return await Campaign.findById(id).populate('factions.characters.sheet');
 }
 

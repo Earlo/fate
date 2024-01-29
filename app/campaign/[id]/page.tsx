@@ -1,5 +1,4 @@
 'use client';
-import { PopulatedFaction } from '@/schemas/campaign';
 import Button from '@/components/generic/button';
 import Faction from '@/components/dashboard/faction';
 import AspectInput from '@/components/sheet/aspectInput';
@@ -7,9 +6,8 @@ import BaseLayout from '@/components/layout/baseLayout';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
 import NoteInput from '@/components/sheet/noteInput';
 import { useCampaign } from '@/hooks/useFate';
-import { userContext } from '@/app/userProvider';
 import { useRouter } from 'next/navigation';
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
@@ -21,8 +19,17 @@ const CampaignPage = ({ params }: Props) => {
   const router = useRouter();
   const { data: session } = useSession();
   const { id } = params;
-  const { campaign, isLoading, updateCampaign, addFaction, joinLeaveCampaign } =
-    useCampaign(id);
+  const {
+    campaign,
+    isLoading,
+    toggleCampaign,
+    addFaction,
+    updateFaction,
+    addNote,
+    deleteNote,
+    updateNote,
+  } = useCampaign(id);
+
   const isAdmin =
     !!session?.user.admin || campaign?.owner === session?.user._id;
   const isPlayer =
@@ -30,40 +37,11 @@ const CampaignPage = ({ params }: Props) => {
     session?.user._id &&
     campaign.visibleTo.includes(session.user._id);
 
-  const { sheets } = useContext(userContext);
-
   useEffect(() => {
     if (!isLoading && !campaign) {
       router.push('/');
     }
   }, [isLoading, campaign, router]);
-
-  const updateFaction = async (
-    factionIndex: number,
-    updatedFaction: PopulatedFaction,
-  ) => {
-    if (campaign && id) {
-      const updatedCampaign = { ...campaign };
-      updatedCampaign.factions[factionIndex] = updatedFaction;
-      console.log('set factions');
-      updateCampaign(updatedCampaign);
-    }
-  };
-  //TODO maybe handle this inside the noteInput component?
-  const setNotes = async (
-    notes: {
-      name: string;
-      visibleIn: string[];
-      content: string;
-    }[],
-  ) => {
-    if (campaign && id && isAdmin) {
-      const updatedCampaign = { ...campaign };
-      updatedCampaign.notes = notes;
-      console.log('setNotes');
-      updateCampaign(updatedCampaign);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -80,7 +58,6 @@ const CampaignPage = ({ params }: Props) => {
       </div>
     );
   }
-
   return (
     <BaseLayout className="px-4 py-6">
       <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
@@ -88,7 +65,7 @@ const CampaignPage = ({ params }: Props) => {
         {session && !isAdmin && (
           <Button
             label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
-            onClick={() => joinLeaveCampaign(session.user._id)}
+            onClick={() => toggleCampaign(session.user._id)}
             className="ml-4"
           />
         )}
@@ -115,10 +92,12 @@ const CampaignPage = ({ params }: Props) => {
           title="Issues"
         />
         <NoteInput
-          notes={campaign.notes}
           disabled={!isAdmin}
-          setNotes={setNotes}
           campaignId={campaign._id}
+          notes={campaign.notes}
+          addNote={() => addNote()}
+          deleteNote={(index) => deleteNote(index)}
+          updateNote={(note, index) => updateNote(note, index)}
           className="w-full sm:w-8/12"
         />
       </div>
@@ -138,7 +117,6 @@ const CampaignPage = ({ params }: Props) => {
                     state={isAdmin ? 'admin' : isPlayer ? 'player' : 'view'}
                     onChange={(faction) => updateFaction(index, faction)}
                     campaignId={id as string}
-                    sheets={sheets}
                   />
                 ),
             )}
