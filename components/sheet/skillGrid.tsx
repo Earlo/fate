@@ -219,9 +219,8 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                   (skills[tier.level] || [])[slotIndex]?.visibleIn || [];
                 const isVisible = visibleIn.includes(campaignId || '');
                 return state == 'toggle' && campaignId ? (
-                  <div className="relative">
+                  <div className="relative" key={tier.label + slotIndex}>
                     <Input
-                      key={tier.label + slotIndex}
                       name={`skill-${tier.label}-${index}`}
                       placeholder="???"
                       value={name}
