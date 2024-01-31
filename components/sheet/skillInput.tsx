@@ -1,6 +1,5 @@
 import Select from '../generic/select';
 interface SkillInputProps {
-  level: number;
   onChange: (value: string) => void;
   value: string | '';
   disabled?: boolean;

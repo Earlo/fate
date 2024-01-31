@@ -65,7 +65,7 @@ const Select: FC<SelectProps> = ({
       disabled={disabled}
       ref={ref}
     >
-      {customValue === null && (value || 'Select')}
+      {customValue === null && (value || (!disabled ? 'Select' : ''))}
       {customValue !== null && (
         <input
           ref={inputRef}
