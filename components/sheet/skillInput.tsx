@@ -6,6 +6,7 @@ interface SkillInputProps {
   className?: string;
   selectedSkills?: string[];
   skillOptions: string[];
+  children?: React.ReactNode;
 }
 
 const SkillInput: React.FC<SkillInputProps> = ({
@@ -15,6 +16,7 @@ const SkillInput: React.FC<SkillInputProps> = ({
   className,
   selectedSkills = [],
   skillOptions,
+  children,
 }) => {
   const options = skillOptions
     .sort((a, b) => {
@@ -38,7 +40,9 @@ const SkillInput: React.FC<SkillInputProps> = ({
       disabled={disabled}
       className={className}
       removeText="Remove Skill"
-    />
+    >
+      {children}
+    </Select>
   );
 };
 

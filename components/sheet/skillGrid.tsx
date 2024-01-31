@@ -2,7 +2,6 @@
 import SkillInput from './skillInput';
 import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
-import Input from '../generic/input';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
 import AddButton from '@/components/generic/addButton';
@@ -106,7 +105,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
         : [];
     });
     updatedSkills[level] = updatedSkills[level] || [];
-    const replacedSkill = updatedSkills[level][slotIndex];
+    const oldSkill = updatedSkills[level][slotIndex];
     if (name === '') {
       updatedSkills[level] = updatedSkills[level].filter(
         (_, i) => i !== slotIndex,
@@ -114,12 +113,15 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     } else {
       updatedSkills[level][slotIndex] = { name, visibleIn };
     }
-    if (replacedSkill.name === 'Physique' || replacedSkill.name === 'Will') {
+    if (
+      oldSkill &&
+      (oldSkill.name === 'Physique' || oldSkill.name === 'Will')
+    ) {
       const boxCount = 2;
       const boxes = Array.from({ length: boxCount }).map(() => false);
       setStress({
         ...stress,
-        [replacedSkill.name === 'Physique' ? 'physical' : 'mental']: {
+        [oldSkill.name === 'Physique' ? 'physical' : 'mental']: {
           boxes,
           visibleIn: [],
         },
@@ -129,11 +131,8 @@ const SkillGrid: React.FC<SkillGridProps> = ({
         moderate: consequences?.moderate || { name: '', visibleIn: [] },
         severe: consequences?.severe || { name: '', visibleIn: [] },
         physical:
-          replacedSkill?.name === 'Physique'
-            ? undefined
-            : consequences?.physical,
-        mental:
-          replacedSkill?.name === 'Will' ? undefined : consequences?.mental,
+          oldSkill?.name === 'Physique' ? undefined : consequences?.physical,
+        mental: oldSkill?.name === 'Will' ? undefined : consequences?.mental,
       });
     }
     if (name === 'Physique') {
@@ -210,7 +209,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
             >
               {`${tier.label} ${tier.level > 0 ? '+' : ''}${tier.level}`}
             </span>
-            <div className="flex flex-grow flex-col sm:flex-row">
+            <div className="flex flex-grow flex-col sm:flex-row lg:max-w-[80%] lg:pl-[1%]">
               <SkillRow
                 skills={skills[tier.level]}
                 handleChange={(slotIndex, name, visibleIn) =>
@@ -259,39 +258,7 @@ const SkillRow = ({
     const isVisible = visibleIn.includes(campaignId);
     const firstSlot = index === 0;
     const lastSlot = index === 4;
-    return state == 'toggle' && campaignId ? (
-      <div className="relative" key={index}>
-        <Input
-          name={`skill-${index}`}
-          placeholder="???"
-          value={name}
-          disabled={true}
-          className={cn(
-            'top-[0px] rounded-none border-t-0 sm:border-l-0 sm:border-t-2',
-            {
-              'rounded-t border-t-2 sm:rounded-bl sm:rounded-tr-none sm:border-l-2':
-                firstSlot,
-            },
-            { 'lg:rounded-tl-none': firstSlot && topRow },
-            { 'rounded-b sm:rounded-bl-none sm:rounded-tr': lastSlot },
-          )}
-        />
-        <div className="absolute right-0 top-0 m-2">
-          <VisibilityToggle
-            visible={isVisible}
-            onChange={(visible) =>
-              handleChange(
-                index,
-                name,
-                visible
-                  ? [...visibleIn, campaignId]
-                  : visibleIn.filter((id) => id !== campaignId),
-              )
-            }
-          />
-        </div>
-      </div>
-    ) : (
+    return (
       <SkillInput
         skillOptions={skillsList}
         key={index}
@@ -309,7 +276,23 @@ const SkillRow = ({
           { 'sm:rounded-br sm:rounded-tr': lastSlot },
         )}
         selectedSkills={selectedSkills}
-      />
+      >
+        {state === 'toggle' && (
+          <VisibilityToggle
+            visible={isVisible}
+            onChange={(visible) =>
+              handleChange(
+                index,
+                name,
+                visible
+                  ? [...visibleIn, campaignId]
+                  : visibleIn.filter((id) => id !== campaignId),
+              )
+            }
+            className="z-100 m-0 p-0"
+          />
+        )}
+      </SkillInput>
     );
   });
 };

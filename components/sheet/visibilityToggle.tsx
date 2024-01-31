@@ -14,7 +14,10 @@ const VisibilityToggle: React.FC<VisibilityToggleProps> = ({
 }) => (
   <button
     type="button"
-    onClick={() => onChange(!visible)}
+    onClick={(event) => {
+      event.stopPropagation();
+      onChange(!visible);
+    }}
     className={cn('focus:outline-none', className)}
   >
     {visible ? (

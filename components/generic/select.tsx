@@ -15,6 +15,7 @@ interface SelectProps {
   disabled?: boolean;
   className?: string;
   removeText?: string;
+  children?: React.ReactNode;
 }
 
 const Select: FC<SelectProps> = ({
@@ -24,9 +25,10 @@ const Select: FC<SelectProps> = ({
   disabled,
   className,
   removeText,
+  children,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLButtonElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [customValue, setCustomValue] = useState<string | null>(null);
   useEffect(() => {
@@ -51,20 +53,20 @@ const Select: FC<SelectProps> = ({
     }
   }, [isOpen, customValue]);
   return (
-    <button
-      type="button"
+    <div
       className={cn(
-        'flex h-8 w-full items-center justify-between rounded border-2 border-black bg-white pl-1 text-left align-middle font-archivo text-gray-700',
+        'flex h-8 min-w-[20%] flex-grow items-center overflow-hidden rounded border-2 border-black bg-white pl-1 text-left align-middle font-archivo text-gray-700',
         !value ? 'text-gray-400' : 'text-gray-700',
         disabled && !value ? 'bg-gray-200' : 'bg-white',
         { 'z-[2] border-2 border-blue-700': customValue !== null },
         { 'hidden sm:flex': disabled && !value },
+        { 'cursor-pointer': !disabled },
         className,
       )}
-      onClick={() => setIsOpen(!isOpen)}
-      disabled={disabled}
+      onClick={() => (!disabled ? setIsOpen(!isOpen) : null)}
       ref={ref}
     >
+      {children}
       {customValue === null && (value || (!disabled ? 'Select' : ''))}
       {customValue !== null && (
         <input
@@ -114,7 +116,7 @@ const Select: FC<SelectProps> = ({
           ))}
         </div>
       )}
-    </button>
+    </div>
   );
 };
 
