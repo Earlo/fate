@@ -53,7 +53,7 @@ const StressBox: React.FC<StressBoxProps> = ({
         />
         <div
           onClick={handleClick}
-          className={`size-10 cursor-pointer rounded border-2 bg-white ${
+          className={`size-8 cursor-pointer rounded border-2 bg-white ${
             available ? 'border-black' : 'border-gray-300'
           } ${disabled ? 'cursor-not-allowed' : ''}`}
         >

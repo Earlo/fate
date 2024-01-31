@@ -204,7 +204,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
           >
             <span
               className={cn(
-                'flex h-8 w-full flex-shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black lg:h-10 lg:w-[7rem]',
+                'flex h-8 w-full flex-shrink-0 items-center whitespace-nowrap font-black uppercase text-black lg:h-8 lg:w-[7rem]',
                 { 'lg:w-fit': tier.level > 5 || tier.level < -5 }, //You aren't meant to go here. You can, but it won't look good.
               )}
             >

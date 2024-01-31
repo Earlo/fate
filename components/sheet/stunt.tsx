@@ -37,7 +37,7 @@ const Stunt: React.FC<StuntProps> = ({
   const anyWidgets = toggle || !disabled;
   return (
     <div className="flex grow flex-col pb-2 sm:flex-row">
-      <div className="flex h-10 min-w-[50%] flex-row-reverse items-center sm:flex-row">
+      <div className="flex h-8 min-w-[50%] flex-row-reverse items-center sm:flex-row">
         {!disabled && (
           <CloseButton className="" onClick={() => deleteStunt()} />
         )}

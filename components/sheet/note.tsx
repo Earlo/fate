@@ -72,7 +72,7 @@ const Note: React.FC<NoteProps> = ({
 
   return (
     <div className="flex grow flex-col pb-1">
-      <div className="flex h-10 min-w-[50%] items-center align-middle">
+      <div className="flex h-8 min-w-[50%] items-center align-middle">
         <Input
           name={`${name}-name`}
           value={toggle ? (visible ? name : '???') : name}
@@ -89,12 +89,12 @@ const Note: React.FC<NoteProps> = ({
         />
         {!isDisabled && (
           <IconButton
-            className="mb-1 p-1"
+            className="mb-1"
             onClick={async () => await callOpenAi(name)}
           />
         )}
         {!isDisabled && (
-          <CloseButton className="mb-1 ml-1 p-1" onClick={deleteNote} />
+          <CloseButton className="mb-1 ml-1" onClick={deleteNote} />
         )}
         {toggle && campaignId && (
           <VisibilityToggle
