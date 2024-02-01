@@ -265,17 +265,10 @@ const SkillRow = ({
         value={state === 'view' && !isVisible ? '' : name}
         disabled={disabled || (!firstSlot && !skills[index - 1] && !skill)}
         onChange={(name) => handleChange(index, name, visibleIn)}
-        className={cn(
-          'rounded-none border-t-0 sm:border-l-0 sm:border-t-2',
-          { 'rounded-b sm:rounded-b-none': nextName === '' && disabled },
-          {
-            'rounded-t border-t-2 sm:rounded-bl sm:rounded-tr-none sm:border-l-2':
-              firstSlot,
-          },
-          { 'lg:rounded-tl-none': firstSlot && topRow },
-          { 'sm:rounded-br sm:rounded-tr': lastSlot },
-        )}
         selectedSkills={selectedSkills}
+        topRow={topRow}
+        position={firstSlot ? 'first' : lastSlot ? 'last' : 'middle'}
+        lastShown={!nextName}
       >
         {state === 'toggle' && (
           <VisibilityToggle

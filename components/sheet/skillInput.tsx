@@ -1,4 +1,5 @@
 import Select from '../generic/select';
+import { cn } from '@/lib/helpers';
 interface SkillInputProps {
   onChange: (value: string) => void;
   value: string | '';
@@ -6,6 +7,9 @@ interface SkillInputProps {
   className?: string;
   selectedSkills?: string[];
   skillOptions: string[];
+  position?: 'first' | 'middle' | 'last';
+  topRow?: boolean;
+  lastShown?: boolean;
   children?: React.ReactNode;
 }
 
@@ -16,6 +20,9 @@ const SkillInput: React.FC<SkillInputProps> = ({
   className,
   selectedSkills = [],
   skillOptions,
+  position = 'middle',
+  topRow = false,
+  lastShown = false,
   children,
 }) => {
   const options = skillOptions
@@ -32,14 +39,26 @@ const SkillInput: React.FC<SkillInputProps> = ({
         ? 'bg-gray-200 text-gray-400'
         : '',
     }));
+  const firstSlot = position === 'first';
+  const lastSlot = position === 'last';
   return (
     <Select
       options={options}
       onChange={(value) => onChange(value)}
       value={value}
       disabled={disabled}
-      className={className}
       removeText="Remove Skill"
+      className={cn(
+        'rounded-none border-t-0 sm:border-l-0 sm:border-t-2',
+        { 'rounded-b sm:rounded-b-none': lastShown && disabled },
+        {
+          'rounded-t border-t-2 sm:rounded-bl sm:rounded-tr-none sm:border-l-2':
+            firstSlot,
+        },
+        { 'lg:rounded-tl-none': firstSlot && topRow },
+        { 'sm:rounded-br sm:rounded-tr': lastSlot },
+        className,
+      )}
     >
       {children}
     </Select>
