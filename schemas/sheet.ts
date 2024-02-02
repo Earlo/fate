@@ -33,6 +33,8 @@ export const characterSheetSchema = new Schema({
       visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
     },
   },
+  fate: { type: Number, required: true, default: 4 },
+  refresh: { type: Number, required: true, default: 4 },
   aspects: [
     {
       name: { type: String, default: '' },

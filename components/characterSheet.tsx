@@ -33,7 +33,14 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
     field: keyof editableFields,
     value: editableFields[keyof editableFields],
   ) => {
-    const newValue = { ...character[field], ...value };
+    const oldValue = character[field];
+    const newValue =
+      typeof oldValue === 'object' &&
+      oldValue !== null &&
+      typeof value === 'object'
+        ? { ...oldValue, ...value }
+        : value; // If not an object, just use the new value directly.
+
     if (setCharacter) {
       console.log('setting value', newValue, 'for field', field);
       setCharacter((prev) => ({ ...prev, [field]: newValue }));

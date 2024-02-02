@@ -14,6 +14,8 @@ export const blankSheet: Omit<CharacterSheetT, '_id'> = {
     text: '',
     visibleIn: [],
   },
+  fate: 3,
+  refresh: 3,
   aspects: [
     {
       name: '',
