@@ -1,11 +1,9 @@
 'use client';
 import Button from '@/components/generic/button';
-import { CharacterSheetT } from '@/schemas/sheet';
 import CampaignForm from '@/components/campaignForm';
 import { CampaignT } from '@/schemas/campaign';
 import CampaignButton from '@/components/dashboard/campaignButton';
 import CharacterButton from '@/components/dashboard/characterButton';
-import CharacterForm from '@/components/characterForm';
 import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
 import { getCampaignsByUserId } from '@/lib/apiHelpers/campaigns';
 import { userContext } from '@/app/userProvider';
@@ -14,11 +12,7 @@ import { useSession } from 'next-auth/react';
 
 export default function Dashboard() {
   const { data: session } = useSession();
-  const [showSheetForm, setShowSheetForm] = useState(false);
-  const { sheets } = useContext(userContext);
-  const [selectedSheet, setSelectedSheet] = useState<CharacterSheetT | null>(
-    null,
-  );
+  const { sheets, setBigSheet } = useContext(userContext);
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [campaigns, setCampaigns] = useState<CampaignT[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<CampaignT | null>(
@@ -52,14 +46,16 @@ export default function Dashboard() {
             <CharacterButton
               key={sheet._id}
               character={sheet}
-              onClick={() => setSelectedSheet(sheet)}
+              onClick={() =>
+                setBigSheet({ sheet, state: 'edit', skills: allSkills })
+              }
             />
           ))}
         </div>
         <Button
           className="w-full bg-green-500 pt-4 hover:bg-green-700"
           label="Create New Character Sheet"
-          onClick={() => setShowSheetForm(true)}
+          onClick={() => setBigSheet({ state: 'create', skills: allSkills })}
         />
       </div>
       <div className="col-span-1">
@@ -95,21 +91,6 @@ export default function Dashboard() {
         <CampaignForm
           onClose={() => setShowCampaignForm(false)}
           setCampaigns={setCampaigns}
-        />
-      )}
-      {selectedSheet && (
-        <CharacterForm
-          key={selectedSheet._id}
-          initialSheet={sheets.find((sheet) => sheet._id === selectedSheet._id)}
-          state="edit"
-          onClose={() => setSelectedSheet(null)}
-          skills={allSkills}
-        />
-      )}
-      {showSheetForm && (
-        <CharacterForm
-          onClose={() => setShowSheetForm(false)}
-          skills={allSkills}
         />
       )}
     </div>

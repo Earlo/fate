@@ -69,6 +69,28 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
       setIsSubmitting(false);
     }
   };
+  const handleDelete = async () => {
+    setIsSubmitting(true);
+    const deletedId = initialSheet?._id;
+    if (!deletedId) {
+      return;
+    }
+    try {
+      await fetch(`/api/sheets/${deletedId}`, {
+        method: 'DELETE',
+      });
+      setSheets((prevCharacters) =>
+        prevCharacters.filter((char) => char._id !== deletedId),
+      );
+      if (onClose) {
+        onClose();
+      }
+    } catch (error) {
+      console.error('An error occurred while deleting the character', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <FormContainer onSubmit={handleSubmit} onClose={onClose}>
       <CharacterSheet
@@ -83,6 +105,15 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
           label={isEditMode ? 'Save Changes' : 'Create Character'}
           disabled={isSubmitting}
           type="submit"
+        />
+      )}
+      {isEditMode && (
+        <Button
+          label="Delete"
+          disabled={isSubmitting}
+          type="button"
+          onClick={handleDelete}
+          className="bg-red-500 hover:bg-red-700"
         />
       )}
     </FormContainer>

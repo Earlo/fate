@@ -209,7 +209,8 @@ export type CharacterSheetT = {
   'skills'
 >;
 
-export async function createCharacterSheet(sheet: CharacterSheetT) {
+export async function createCharacterSheet(sheet: Partial<CharacterSheetT>) {
+  delete sheet?._id;
   return await CharacterSheet.create(sheet);
 }
 

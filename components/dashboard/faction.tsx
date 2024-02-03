@@ -1,10 +1,8 @@
 'use client';
 import CharacterButton from './characterButton';
 import LabeledInput from '../generic/labeledInput';
-import CharacterForm from '../characterForm';
 import Button from '@/components/generic/button';
 import { PopulatedFaction } from '@/schemas/campaign';
-import { CharacterSheetT } from '@/schemas/sheet';
 import { userContext } from '@/app/userProvider';
 import { useState, useContext } from 'react';
 import { useSession } from 'next-auth/react';
@@ -26,9 +24,7 @@ const Faction: React.FC<FactionProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(faction.name);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] =
-    useState<CharacterSheetT | null>(null);
-  const { sheets } = useContext(userContext);
+  const { sheets, setBigSheet } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
 
@@ -111,7 +107,15 @@ const Faction: React.FC<FactionProps> = ({
             key={character.sheet._id}
             character={character.sheet}
             onClick={() => {
-              setSelectedCharacter(character.sheet);
+              setBigSheet({
+                sheet: character.sheet,
+                state: isAdmin
+                  ? 'toggle'
+                  : character.sheet.owner === session?.user._id
+                    ? 'play'
+                    : 'view',
+                campaignId,
+              });
             }}
             campaignId={faction.public ? undefined : campaignId}
           />
@@ -141,20 +145,6 @@ const Faction: React.FC<FactionProps> = ({
               ))
             : "You haven't created any characters yet"}
         </div>
-      )}
-      {selectedCharacter && (
-        <CharacterForm
-          initialSheet={selectedCharacter}
-          state={
-            isAdmin
-              ? 'toggle'
-              : selectedCharacter.owner === session?.user._id
-                ? 'play'
-                : 'view'
-          }
-          onClose={() => setSelectedCharacter(null)}
-          campaignId={campaignId}
-        />
       )}
     </div>
   );
