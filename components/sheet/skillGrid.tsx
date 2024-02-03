@@ -250,6 +250,7 @@ const SkillRow = ({
   skillsList,
   topRow = false,
 }: SkillRowProps) => {
+  //return [...skills, [{}, {}, {}, {}, {}]].map((skill, index) => {
   return Array.from({ length: 5 }).map((_, index) => {
     const skill = skills[index];
     const name = skill?.name || '';

@@ -10,6 +10,7 @@ interface ImageUploaderProps {
   path?: string;
   disabled?: boolean;
   className?: string;
+  children?: React.ReactNode;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -18,6 +19,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   path,
   disabled = false,
   className,
+  children,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +34,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     setIsLoading(false);
   };
   return (
-    <>
+    <div className="flex">
       <input
         type="file"
         name="icon"
@@ -66,7 +68,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           }}
         />
       )}
-    </>
+      {children}
+    </div>
   );
 };
 

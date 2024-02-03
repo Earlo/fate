@@ -6,13 +6,14 @@ import SkillGrid from './sheet/skillGrid';
 import VisibilityToggle from './sheet/visibilityToggle';
 import Stress from './sheet/stress';
 import Consequences from './sheet/consequences';
+import FateInput from './sheet/fateInput';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
 import { SparklesIcon } from '@heroicons/react/24/solid';
 import { useCompletion } from 'ai/react';
 interface CharacterSheetProps {
-  character: Partial<CharacterSheetT>;
-  setCharacter?: React.Dispatch<React.SetStateAction<Partial<CharacterSheetT>>>;
+  character: CharacterSheetT;
+  setCharacter?: React.Dispatch<React.SetStateAction<CharacterSheetT>>;
   campaignId?: string;
   skills: string[];
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
@@ -74,38 +75,51 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
   return (
     <>
-      <div className="flex flex-col items-center md:flex-row">
-        <ImageUploader
-          icon={character?.icon?.url}
-          path={'character'}
-          setIcon={(icon) =>
-            updateField('icon', {
-              url: icon,
-            })
-          }
-          disabled={!setCharacter}
-          className={cn('pb-2', {
-            blur:
-              state === 'view' &&
-              !character?.icon?.visibleIn?.includes(campaignId),
-          })}
-        />
-        {state === 'toggle' && (
-          <VisibilityToggle
-            visible={character?.icon?.visibleIn?.includes(campaignId) || false}
-            onChange={(visible) =>
+      <div className="flex flex-col items-center  md:flex-row-reverse">
+        <div className="ml-2 flex w-full flex-grow content-around items-center justify-evenly  align-middle md:w-fit md:flex-col">
+          <ImageUploader
+            icon={character?.icon?.url}
+            path={'character'}
+            setIcon={(icon) =>
               updateField('icon', {
-                visibleIn: visible
-                  ? [...(character?.icon?.visibleIn || []), campaignId]
-                  : character?.icon?.visibleIn?.filter(
-                      (id) => id !== campaignId,
-                    ),
+                url: icon,
               })
             }
-            className="pr-2"
+            disabled={!setCharacter}
+            className={cn('pb-1', {
+              blur:
+                state === 'view' &&
+                !character?.icon?.visibleIn?.includes(campaignId),
+            })}
+          >
+            {state === 'toggle' && (
+              <VisibilityToggle
+                visible={
+                  character?.icon?.visibleIn?.includes(campaignId) || false
+                }
+                onChange={(visible) =>
+                  updateField('icon', {
+                    visibleIn: visible
+                      ? [...(character?.icon?.visibleIn || []), campaignId]
+                      : character?.icon?.visibleIn?.filter(
+                          (id) => id !== campaignId,
+                        ),
+                  })
+                }
+                className="relative right-5 top-1 z-20 h-0 w-0"
+              />
+            )}
+          </ImageUploader>
+          <FateInput
+            fate={character.fate}
+            setFate={(fate) => updateField('fate', fate)}
+            state={state}
+            disabled={!setCharacter}
+            campaignId={campaignId}
+            className="self-center"
           />
-        )}
-        <div className="flex w-full flex-grow flex-col md:ml-4">
+        </div>
+        <div className="flex w-full flex-grow flex-col ">
           <LabeledInput
             name="Name"
             onChange={(e) =>

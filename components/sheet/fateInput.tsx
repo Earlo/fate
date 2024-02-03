@@ -1,0 +1,102 @@
+import VisibilityToggle from './visibilityToggle';
+import Label from '../generic/label';
+import Input from '../generic/input';
+import { cn } from '@/lib/helpers';
+interface FateInputProps {
+  fate: { points: number; refresh: number; visibleIn: string[] };
+  setFate: (aspects: {
+    points: number;
+    refresh: number;
+    visibleIn: string[];
+  }) => void;
+  disabled?: boolean;
+  state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
+  campaignId?: string;
+  className?: string;
+}
+
+const FateInput: React.FC<FateInputProps> = ({
+  fate,
+  setFate,
+  state,
+  disabled,
+  campaignId,
+  className,
+}) => {
+  const handleAspectChange = (value: {
+    points: number;
+    refresh: number;
+    visibleIn: string[];
+  }) => {
+    setFate(value);
+  };
+  const showVisibility = state === 'toggle' && campaignId;
+  return (
+    <div
+      className={cn(
+        'flex h-full flex-col items-stretch self-stretch md:ml-2',
+        className,
+      )}
+    >
+      <Label name="Fate" className="w-32">
+        {showVisibility && (
+          <VisibilityToggle
+            visible={fate.visibleIn.includes(campaignId)}
+            onChange={(visible) =>
+              handleAspectChange({
+                points: fate.points,
+                refresh: fate.refresh,
+                visibleIn: visible
+                  ? [...fate.visibleIn, campaignId]
+                  : fate.visibleIn.filter((id) => id !== campaignId),
+              })
+            }
+            className="pr-2"
+          />
+        )}
+      </Label>
+      <div className="flex flex-grow justify-end pb-2">
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-30 flex pl-1 text-xs">
+            <span className="select-none text-gray-500">Points</span>
+          </div>
+          <Input
+            name="fate-points"
+            value={fate.points.toString()}
+            onChange={(e) =>
+              handleAspectChange({
+                points: parseInt(e.target.value),
+                refresh: fate.refresh,
+                visibleIn: fate.visibleIn,
+              })
+            }
+            disabled={disabled}
+            required
+            className="h-10 w-16 justify-center rounded-none pt-4 text-center font-archivo-black text-xl"
+          />
+        </div>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-30 flex pl-1 text-xs">
+            <span className="select-none text-gray-500">Refresh</span>
+          </div>
+          <Input
+            name="fate-refresh"
+            value={fate.refresh.toString()}
+            onChange={(e) =>
+              handleAspectChange({
+                points: fate.points,
+                refresh: parseInt(e.target.value),
+                visibleIn: fate.visibleIn,
+              })
+            }
+            disabled={disabled}
+            required
+            className="h-10 w-16 justify-center rounded-none rounded-tr border-l-0 pt-4 text-center font-archivo-black text-xl"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default FateInput;

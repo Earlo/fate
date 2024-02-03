@@ -29,9 +29,10 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
 }) => {
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formState, setFormState] = useState<Partial<CharacterSheetT>>(
-    initialSheet || { ...blankSheet },
-  );
+  const [formState, setFormState] = useState<CharacterSheetT>({
+    ...blankSheet,
+    ...initialSheet,
+  });
   const isEditMode = initialSheet && (state === 'edit' || state === 'toggle');
   const isCreateMode = state === 'create' && !initialSheet;
   const canSave = isEditMode || isCreateMode;

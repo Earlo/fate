@@ -1,6 +1,6 @@
 import { CharacterSheetT } from '@/schemas/sheet';
 
-export const blankSheet: Omit<CharacterSheetT, '_id'> = {
+export const blankSheet: CharacterSheetT = {
   colorPalette: {
     primary: '209 213 219',
     secondary: '156 163 175',
@@ -14,8 +14,11 @@ export const blankSheet: Omit<CharacterSheetT, '_id'> = {
     text: '',
     visibleIn: [],
   },
-  fate: 3,
-  refresh: 3,
+  fate: {
+    points: 3,
+    refresh: 3,
+    visibleIn: [],
+  },
   aspects: [
     {
       name: '',
@@ -69,4 +72,5 @@ export const blankSheet: Omit<CharacterSheetT, '_id'> = {
   public: false,
   visibleTo: [],
   owner: '',
+  _id: '',
 };

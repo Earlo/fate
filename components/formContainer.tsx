@@ -22,11 +22,11 @@ const FormContainer: React.FC<FormContainerProps> = ({
       )}
     >
       {onClose && (
-        <div className="absolute left-0 top-0 z-20">
+        <div className="absolute right-0 top-0 z-20">
           <CloseButton onClick={onClose} />
         </div>
       )}
-      <div className={cn('p-3', className)}>{children}</div>
+      <div className={cn('pt-6', className)}>{children}</div>
     </form>
   </div>
 );
