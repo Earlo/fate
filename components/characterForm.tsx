@@ -14,6 +14,7 @@ import { FormEvent, useState, useContext } from 'react';
 import { useSession } from 'next-auth/react';
 interface CharacterFormProps {
   onClose?: () => void;
+  onMinimize?: () => void;
   initialSheet?: CharacterSheetT;
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   campaignId?: string;
@@ -22,6 +23,7 @@ interface CharacterFormProps {
 
 const CharacterForm: React.FC<CharacterFormProps> = ({
   onClose,
+  onMinimize,
   initialSheet,
   state = 'create',
   campaignId,
@@ -92,7 +94,11 @@ const CharacterForm: React.FC<CharacterFormProps> = ({
     }
   };
   return (
-    <FormContainer onSubmit={handleSubmit} onClose={onClose}>
+    <FormContainer
+      onSubmit={handleSubmit}
+      onClose={onClose}
+      onMinimize={onMinimize}
+    >
       <CharacterSheet
         character={formState}
         setCharacter={canSave ? setFormState : undefined}

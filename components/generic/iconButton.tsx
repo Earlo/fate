@@ -1,5 +1,9 @@
 import { cn } from '@/lib/helpers';
-import { SparklesIcon } from '@heroicons/react/24/solid';
+import {
+  SparklesIcon,
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
+} from '@heroicons/react/24/solid';
 
 interface IconButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -22,6 +26,18 @@ const IconButton: React.FC<IconButtonProps> = ({
   >
     {icon === 'sparkles' && (
       <SparklesIcon
+        aria-hidden="true"
+        className="size-6 cursor-pointer text-gray-400 hover:text-gray-500"
+      />
+    )}
+    {icon === 'reduce' && (
+      <ArrowsPointingInIcon
+        aria-hidden="true"
+        className="size-6 cursor-pointer text-gray-400 hover:text-gray-500"
+      />
+    )}
+    {icon === 'grow' && (
+      <ArrowsPointingOutIcon
         aria-hidden="true"
         className="size-6 cursor-pointer text-gray-400 hover:text-gray-500"
       />

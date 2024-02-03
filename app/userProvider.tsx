@@ -2,6 +2,7 @@
 import { CharacterSheetT } from '@/schemas/sheet';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import CharacterForm from '@/components/characterForm';
+import CharacterCard from '@/components/characterCard';
 import { useSession } from 'next-auth/react';
 import { ReactNode, createContext, useState, useEffect } from 'react';
 
@@ -64,8 +65,30 @@ export default function UserProvider({ children }: { children: ReactNode }) {
             state={bigSheet.state}
             campaignId={bigSheet.campaignId}
             skills={bigSheet.skills}
+            onMinimize={() => {
+              if (bigSheet.sheet !== undefined) {
+                setSmallSheets((prev) => [...prev, bigSheet.sheet!]);
+              }
+              setBigSheet(undefined);
+            }}
           />
         )}
+        {smallSheets.map((sheet) => (
+          <CharacterCard
+            key={sheet._id}
+            character={sheet}
+            onClose={() =>
+              setSmallSheets((prev) => prev.filter((s) => s._id !== sheet._id))
+            }
+            onMaximize={() => {
+              setBigSheet({
+                sheet,
+                state: 'view',
+              });
+              setSmallSheets((prev) => prev.filter((s) => s._id !== sheet._id));
+            }}
+          />
+        ))}
       </div>
       {children}
     </userContext.Provider>

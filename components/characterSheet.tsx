@@ -75,8 +75,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
 
   return (
     <>
-      <div className="flex flex-col items-center  md:flex-row-reverse">
-        <div className="ml-2 flex w-full flex-grow content-around items-center justify-evenly  align-middle md:w-fit md:flex-col">
+      <div className="flex flex-col items-center md:flex-row-reverse">
+        <div className="ml-2 flex w-full flex-grow content-around items-center justify-evenly align-middle md:w-fit md:flex-col">
           <ImageUploader
             icon={character?.icon?.url}
             path={'character'}
