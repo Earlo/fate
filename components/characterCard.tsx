@@ -27,52 +27,47 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   onMaximize,
 }) => {
   return (
-    <>
+    <div className="z-10 h-fit max-h-[100dvh] max-w-fit overflow-y-auto rounded bg-white p-1 pt-6 shadow-md">
       <ControlBar onClose={onClose} onMaximize={onMaximize} />
-
       <div className="flex flex-col items-center md:flex-row-reverse">
-        <div className="ml-2 flex w-full flex-grow content-around items-center justify-evenly align-middle md:w-fit md:flex-col">
+        <div className="ml-2 flex w-full flex-grow content-around items-center justify-evenly align-middle md:w-fit md:flex-col"></div>
+        <div className="flex w-full flex-grow ">
           <ImageUploader
             icon={character.icon?.url}
             path={'character'}
             disabled
             setIcon={() => null}
-            className={cn('pb-1', {
+            className={cn('size-28 mr-1', {
               blur:
                 state === 'view' &&
                 !character.icon?.visibleIn?.includes(campaignId),
             })}
           />
-          <FateInput
-            fate={character.fate}
-            state={state}
-            disabled
-            campaignId={campaignId}
-            className="self-center"
-            setFate={() => null}
-          />
-        </div>
-        <div className="flex w-full flex-grow flex-col ">
-          <LabeledInput
-            name="Name"
-            value={
-              state === 'view' &&
-              !character.name?.visibleIn?.includes(campaignId)
-                ? '???'
-                : character.name?.text
-            }
-            disabled
-          />
-          <LabeledInput
-            name="Description"
-            multiline
-            value={
-              state === 'view' &&
-              !character.description?.visibleIn?.includes(campaignId)
-                ? '???'
-                : character.description?.text
-            }
-            disabled
+          <div className="flex flex-col pr-2">
+            <LabeledInput
+              name="ID"
+              value={
+                state === 'view' &&
+                !character.name?.visibleIn?.includes(campaignId)
+                  ? '???'
+                  : character.name?.text
+              }
+              disabled
+            />
+            <FateInput
+              fate={character.fate}
+              state={state}
+              disabled
+              campaignId={campaignId}
+              className="self-center"
+              setFate={() => null}
+            />
+          </div>
+          <Stress
+            stress={character.stress}
+            disabled={state === 'view'}
+            setStress={() => null}
+            tight
           />
         </div>
       </div>
@@ -88,6 +83,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           campaignId={campaignId}
           state={state}
           className="md:pr-4"
+          tight
         />
         <SkillGrid
           skills={character.skills || {}}
@@ -100,39 +96,29 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           setStress={(stress) => null}
           setConsequences={(consequences) => null}
           skillsList={[]}
+          tight
         />
       </div>
       <div className="flex flex-col pb-2 md:flex-row">
-        <StuntInput
-          stunts={character.extras || []}
-          disabled
-          campaignId={campaignId}
-          state={state}
-          title="Extra"
-          className="md:pr-4"
-          setStunts={() => null}
-        />
-        <StuntInput
-          stunts={character.stunts || []}
-          disabled
-          campaignId={campaignId}
-          state={state}
-          setStunts={() => null}
-        />
-      </div>
-      <div className="flex flex-col pb-2 md:flex-row">
-        <Stress
-          stress={character.stress}
-          disabled={state === 'view'}
-          setStress={() => null}
-        />
         <Consequences
           consequences={character.consequences}
           disabled={state === 'view'}
           setConsequences={() => null}
+          tight
+        />
+
+        <StuntInput
+          stunts={[...character.stunts, ...character.extras] || []}
+          disabled
+          campaignId={campaignId}
+          state={state}
+          title="Stunts and Extra"
+          setStunts={() => null}
+          tight
         />
       </div>
-    </>
+      <div className="flex flex-col pb-2 md:flex-row"></div>
+    </div>
   );
 };
 

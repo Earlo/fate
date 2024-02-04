@@ -13,6 +13,7 @@ interface StuntInputProps {
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   title?: string;
   className?: string;
+  tight?: boolean;
 }
 
 const StuntInput: React.FC<StuntInputProps> = ({
@@ -23,6 +24,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
   state,
   title = 'Stunt',
   className,
+  tight,
 }) => {
   return (
     <div className={cn('w-full', className)}>
@@ -57,6 +59,7 @@ const StuntInput: React.FC<StuntInputProps> = ({
           campaignId={campaignId}
           state={state}
           title={title}
+          tight={tight}
         />
       ))}
     </div>

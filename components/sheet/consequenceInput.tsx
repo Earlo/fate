@@ -1,4 +1,5 @@
 import Input from '../generic/input';
+import { cn } from '@/lib/helpers';
 interface ConsequenceInputProps {
   rank: string;
   name: string;
@@ -9,6 +10,8 @@ interface ConsequenceInputProps {
   ) => void;
   disabled?: boolean;
   available?: boolean;
+  tight?: boolean;
+  first?: boolean;
 }
 
 const ConsequenceInput: React.FC<ConsequenceInputProps> = ({
@@ -18,12 +21,16 @@ const ConsequenceInput: React.FC<ConsequenceInputProps> = ({
   onChange,
   disabled,
   available = true,
+  tight = false,
+  first = false,
 }) => {
   return (
     <div
-      className={`flex items-center justify-center pb-2 ${
-        disabled ? 'cursor-not-allowed' : ''
-      }`}
+      className={cn('flex items-center justify-center pb-2', {
+        'cursor-not-allowed': disabled,
+        'pb-0': tight,
+        hidden: !available && tight,
+      })}
     >
       <label
         className={`relative bottom-2 left-1 z-10 flex flex-grow items-end justify-between text-2xl font-black uppercase ${
@@ -39,6 +46,10 @@ const ConsequenceInput: React.FC<ConsequenceInputProps> = ({
         value={value}
         onChange={onChange}
         disabled={disabled || !available}
+        className={cn(
+          { 'rounded-t-none border-t-0': tight && !first },
+          { 'rounded-b-none': tight },
+        )}
       />
     </div>
   );

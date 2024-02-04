@@ -13,6 +13,7 @@ interface AspectInputProps {
   hints?: string[];
   className?: string;
   title?: string;
+  tight?: boolean;
 }
 
 const AspectInput: React.FC<AspectInputProps> = ({
@@ -24,6 +25,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
   hints = ['High Concept', 'Trouble'],
   className,
   title = 'Aspects',
+  tight = false,
 }) => {
   const handleAspectChange = (
     index: number,
@@ -50,7 +52,12 @@ const AspectInput: React.FC<AspectInputProps> = ({
       <div className="flex flex-col">
         {aspects.map((aspect, index) =>
           !aspect && disabled ? null : (
-            <div key={index} className="mb-2 flex items-center">
+            <div
+              key={index}
+              className={cn('flex items-center', {
+                'mb-2': !tight,
+              })}
+            >
               <Input
                 name={`aspect-${index}`}
                 placeholder={
@@ -73,6 +80,8 @@ const AspectInput: React.FC<AspectInputProps> = ({
                   'rounded-tl-none': index === 0,
                   'rounded-tr-none':
                     index === 0 && (showVisibility || !disabled),
+                  'rounded-t-none border-t-0': tight && index !== 0,
+                  'rounded-b-none': tight && index < aspects.length - 1,
                 })}
               />
               {showVisibility && aspect && (

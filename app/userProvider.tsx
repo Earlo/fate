@@ -5,9 +5,10 @@ import CharacterForm from '@/components/characterForm';
 import CharacterCard from '@/components/characterCard';
 import { useSession } from 'next-auth/react';
 import { ReactNode, createContext, useState, useEffect } from 'react';
+import Draggable from 'react-draggable';
 
-interface bigSheetT {
-  sheet?: CharacterSheetT;
+interface sheetWithContext {
+  sheet: CharacterSheetT;
   state: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   campaignId?: string;
   skills?: string[];
@@ -15,10 +16,12 @@ interface bigSheetT {
 interface UserContextT {
   sheets: CharacterSheetT[];
   setSheets: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
-  bigSheet?: bigSheetT;
-  smallSheets: CharacterSheetT[];
-  setSmallSheets: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
-  setBigSheet: React.Dispatch<React.SetStateAction<bigSheetT | undefined>>;
+  bigSheet?: sheetWithContext;
+  smallSheets: sheetWithContext[];
+  setSmallSheets: React.Dispatch<React.SetStateAction<sheetWithContext[]>>;
+  setBigSheet: React.Dispatch<
+    React.SetStateAction<sheetWithContext | undefined>
+  >;
 }
 export const userContext = createContext<UserContextT>({
   sheets: [],
@@ -33,8 +36,8 @@ export default function UserProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
 
   const [sheets, setSheets] = useState<CharacterSheetT[]>([]);
-  const [bigSheet, setBigSheet] = useState<bigSheetT>();
-  const [smallSheets, setSmallSheets] = useState<CharacterSheetT[]>([]);
+  const [bigSheet, setBigSheet] = useState<sheetWithContext>();
+  const [smallSheets, setSmallSheets] = useState<sheetWithContext[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,27 +70,33 @@ export default function UserProvider({ children }: { children: ReactNode }) {
             skills={bigSheet.skills}
             onMinimize={() => {
               if (bigSheet.sheet !== undefined) {
-                setSmallSheets((prev) => [...prev, bigSheet.sheet!]);
+                setSmallSheets((prev) => [...prev, bigSheet]);
               }
               setBigSheet(undefined);
             }}
           />
         )}
         {smallSheets.map((sheet) => (
-          <CharacterCard
-            key={sheet._id}
-            character={sheet}
-            onClose={() =>
-              setSmallSheets((prev) => prev.filter((s) => s._id !== sheet._id))
-            }
-            onMaximize={() => {
-              setBigSheet({
-                sheet,
-                state: 'view',
-              });
-              setSmallSheets((prev) => prev.filter((s) => s._id !== sheet._id));
-            }}
-          />
+          <Draggable key={sheet.sheet._id}>
+            <div>
+              <CharacterCard
+                character={sheet.sheet}
+                state={'view'}
+                campaignId={sheet.campaignId}
+                onClose={() =>
+                  setSmallSheets((prev) =>
+                    prev.filter((s) => s.sheet._id !== sheet.sheet._id),
+                  )
+                }
+                onMaximize={() => {
+                  setBigSheet(sheet);
+                  setSmallSheets((prev) =>
+                    prev.filter((s) => s.sheet._id !== sheet.sheet._id),
+                  );
+                }}
+              />
+            </div>
+          </Draggable>
         ))}
       </div>
       {children}

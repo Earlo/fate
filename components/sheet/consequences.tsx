@@ -1,17 +1,20 @@
 import ConsequenceInput from './consequenceInput';
 import Label from '../generic/label';
 import { CharacterSheetT } from '@/schemas/sheet';
+import { cn } from '@/lib/helpers';
 
 interface ConsequencesProps {
   consequences?: CharacterSheetT['consequences'];
   setConsequences: (value: CharacterSheetT['consequences']) => void;
   disabled: boolean;
+  tight?: boolean;
 }
 
 const Consequences: React.FC<ConsequencesProps> = ({
   consequences,
   setConsequences,
   disabled,
+  tight = false,
 }) => {
   const handleChange = (
     field: keyof CharacterSheetT['consequences'],
@@ -31,9 +34,9 @@ const Consequences: React.FC<ConsequencesProps> = ({
   };
 
   return (
-    <div className="flex w-full flex-col">
+    <div className={cn('flex w-full flex-col', { 'pr-2': tight })}>
       <Label name="Consequences" />
-      <div className="flex flex-row pt-2">
+      <div className={cn('flex flex-row pt-2', { 'flex-col pt-0': tight })}>
         <div className="flex grow flex-col">
           <ConsequenceInput
             name="Mild"
@@ -41,6 +44,8 @@ const Consequences: React.FC<ConsequencesProps> = ({
             value={consequences?.mild?.name || ''}
             onChange={(e) => handleChange('mild', e.target.value)}
             disabled={disabled}
+            tight={tight}
+            first
           />
           <ConsequenceInput
             name="Moderate"
@@ -48,6 +53,7 @@ const Consequences: React.FC<ConsequencesProps> = ({
             value={consequences?.moderate?.name || ''}
             onChange={(e) => handleChange('moderate', e.target.value)}
             disabled={disabled}
+            tight={tight}
           />
           <ConsequenceInput
             name="Severe"
@@ -55,6 +61,7 @@ const Consequences: React.FC<ConsequencesProps> = ({
             value={consequences?.severe?.name || ''}
             onChange={(e) => handleChange('severe', e.target.value)}
             disabled={disabled}
+            tight={tight}
           />
         </div>
         <div className="flex grow flex-col">
@@ -64,6 +71,7 @@ const Consequences: React.FC<ConsequencesProps> = ({
             value={consequences?.physical?.name || ''}
             onChange={(e) => handleChange('physical', e.target.value)}
             disabled={disabled}
+            tight={tight}
             available={!!consequences?.physical}
           />
           <ConsequenceInput
@@ -72,6 +80,7 @@ const Consequences: React.FC<ConsequencesProps> = ({
             value={consequences?.mental?.name || ''}
             onChange={(e) => handleChange('mental', e.target.value)}
             disabled={disabled}
+            tight={tight}
             available={!!consequences?.mental}
           />
         </div>

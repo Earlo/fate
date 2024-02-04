@@ -72,7 +72,7 @@ const FateInput: React.FC<FateInputProps> = ({
             }
             disabled={disabled}
             required
-            className="h-10 w-16 justify-center rounded-none pt-4 text-center font-archivo-black text-xl"
+            className="h-10 w-16 justify-center rounded-none rounded-bl pt-4 text-center font-archivo-black text-xl"
           />
         </div>
         <div className="relative">
@@ -91,7 +91,7 @@ const FateInput: React.FC<FateInputProps> = ({
             }
             disabled={disabled}
             required
-            className="h-10 w-16 justify-center rounded-none rounded-tr border-l-0 pt-4 text-center font-archivo-black text-xl"
+            className="h-10 w-16 justify-center rounded-none rounded-r border-l-0 pt-4 text-center font-archivo-black text-xl"
           />
         </div>
       </div>

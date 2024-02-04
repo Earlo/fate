@@ -52,6 +52,7 @@ interface SkillGridProps {
   setConsequences: (value: CharacterSheetT['consequences']) => void;
   consequences?: CharacterSheetT['consequences'];
   skillsList: string[];
+  tight?: boolean;
 }
 
 const SkillGrid: React.FC<SkillGridProps> = ({
@@ -65,6 +66,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
   setConsequences,
   consequences,
   skillsList,
+  tight = false,
 }) => {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [maxDisplayedTier, setMaxDisplayedTier] = useState(5);
@@ -193,23 +195,31 @@ const SkillGrid: React.FC<SkillGridProps> = ({
           <div
             key={index}
             className={cn(
-              'relative flex w-full flex-col lg:top-[-2px] lg:flex-row lg:pb-2',
+              'relative flex w-full  lg:top-[-2px] lg:flex-row ',
               {
                 'hidden sm:flex':
                   (!skills[tier.level] || skills[tier.level].length === 0) &&
                   state === 'view',
               },
+              { 'flex-col lg:pb-2': !tight },
             )}
           >
             <span
               className={cn(
-                'flex h-8 w-full flex-shrink-0 items-center whitespace-nowrap font-black uppercase text-black lg:h-8 lg:w-[7rem]',
-                { 'lg:w-fit': tier.level > 5 || tier.level < -5 }, //You aren't meant to go here. You can, but it won't look good.
+                'flex h-8 flex-shrink-0 items-center whitespace-nowrap font-black uppercase text-black ',
+                { 'lg:w-fit': tier.level > 5 || tier.level < -5 },
+                { 'w-full lg:w-[7rem]': !tight },
               )}
             >
-              {`${tier.label} ${tier.level > 0 ? '+' : ''}${tier.level}`}
+              {tight
+                ? `+${tier.level} `
+                : `${tier.label} ${tier.level > 0 ? '+' : ''}${tier.level}`}
             </span>
-            <div className="flex flex-grow flex-col sm:flex-row lg:max-w-[80%] lg:pl-[1%]">
+            <div
+              className={cn('flex flex-grow flex-col sm:flex-row  lg:pl-[1%]', {
+                'lg:max-w-[80%]': !tight,
+              })}
+            >
               <SkillRow
                 skills={skills[tier.level]}
                 handleChange={(slotIndex, name, visibleIn) =>
@@ -221,6 +231,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                 selectedSkills={selectedSkills}
                 skillsList={skillsList}
                 topRow={index === 0}
+                tight={tight}
               />
             </div>
           </div>
@@ -238,6 +249,7 @@ interface SkillRowProps {
   selectedSkills: string[];
   skillsList: string[];
   topRow?: boolean;
+  tight?: boolean;
 }
 
 const SkillRow = ({
@@ -249,6 +261,7 @@ const SkillRow = ({
   selectedSkills,
   skillsList,
   topRow = false,
+  tight = false,
 }: SkillRowProps) => {
   //return [...skills, [{}, {}, {}, {}, {}]].map((skill, index) => {
   return Array.from({ length: 5 }).map((_, index) => {
@@ -270,6 +283,10 @@ const SkillRow = ({
         topRow={topRow}
         position={firstSlot ? 'first' : lastSlot ? 'last' : 'middle'}
         lastShown={!nextName}
+        className={cn(
+          //{ 'rounded-b-none border-b-0': tight && !topRow },
+          { 'rounded-b-none sm:border-t-0': tight && !topRow },
+        )}
       >
         {state === 'toggle' && (
           <VisibilityToggle

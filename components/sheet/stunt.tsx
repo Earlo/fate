@@ -16,6 +16,7 @@ interface StuntProps {
   campaignId?: string;
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   title?: string;
+  tight?: boolean;
 }
 
 const Stunt: React.FC<StuntProps> = ({
@@ -27,6 +28,7 @@ const Stunt: React.FC<StuntProps> = ({
   campaignId,
   state,
   title = 'Stunt',
+  tight = false,
 }) => {
   const toggle = state === 'toggle' && campaignId;
   const visible =
@@ -36,8 +38,16 @@ const Stunt: React.FC<StuntProps> = ({
     state === 'edit';
   const anyWidgets = toggle || !disabled;
   return (
-    <div className="flex grow flex-col pb-2 sm:flex-row">
-      <div className="flex h-8 min-w-[50%] flex-row-reverse items-center sm:flex-row">
+    <div
+      className={cn('flex grow flex-col pb-2 sm:flex-row', {
+        'pb-1 sm:flex-col': tight,
+      })}
+    >
+      <div
+        className={cn(
+          'flex h-8 min-w-[50%] flex-row-reverse items-center sm:flex-row',
+        )}
+      >
         {!disabled && (
           <CloseButton className="" onClick={() => deleteStunt()} />
         )}
@@ -71,6 +81,8 @@ const Stunt: React.FC<StuntProps> = ({
             {
               'rounded-tl-none sm:rounded-t-none': index === 0,
               'rounded-tr-none': anyWidgets && index === 0,
+              'sm:rounded-bl-none sm:border-b-0 sm:border-r-2': tight,
+              'sm:rounded-tr': tight && index === 0,
             },
           )}
         />
@@ -92,6 +104,7 @@ const Stunt: React.FC<StuntProps> = ({
         }
         className={cn('grow rounded-tl-none sm:rounded-tr', {
           'rounded-tr-none': !anyWidgets,
+          'h-12 sm:rounded-tr-none': tight,
         })}
       />
     </div>
