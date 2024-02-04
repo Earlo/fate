@@ -276,7 +276,7 @@ const SkillRow = ({
       <SkillInput
         skillOptions={skillsList}
         key={index}
-        value={state === 'view' && !isVisible ? '' : name}
+        value={state === 'play' && !isVisible ? '' : name}
         disabled={disabled || (!firstSlot && !skills[index - 1] && !skill)}
         onChange={(name) => handleChange(index, name, visibleIn)}
         selectedSkills={selectedSkills}

@@ -37,18 +37,18 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             path={'character'}
             disabled
             setIcon={() => null}
-            className={cn('size-28 mr-1', {
+            className={cn('mr-1 size-28', {
               blur:
-                state === 'view' &&
-                !character.icon?.visibleIn?.includes(campaignId),
+                state === 'play' &&
+                !character.icon?.visibleIn.includes(campaignId),
             })}
           />
           <div className="flex flex-col pr-2">
             <LabeledInput
               name="ID"
               value={
-                state === 'view' &&
-                !character.name?.visibleIn?.includes(campaignId)
+                state === 'play' &&
+                !character.name.visibleIn.includes(campaignId)
                   ? '???'
                   : character.name?.text
               }
@@ -59,7 +59,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
               state={state}
               disabled
               campaignId={campaignId}
-              className="self-center"
               setFate={() => null}
             />
           </div>
@@ -102,11 +101,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
       <div className="flex flex-col pb-2 md:flex-row">
         <Consequences
           consequences={character.consequences}
-          disabled={state === 'view'}
+          disabled={state === 'play'}
           setConsequences={() => null}
           tight
         />
-
         <StuntInput
           stunts={[...character.stunts, ...character.extras] || []}
           disabled

@@ -64,7 +64,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
                   index < hints.length ? hints[index] : 'Additional Aspect'
                 }
                 value={
-                  state === 'view' &&
+                  state === 'play' &&
                   !aspect.visibleIn.includes(campaignId || '')
                     ? '???'
                     : aspect.name

@@ -33,10 +33,7 @@ const FateInput: React.FC<FateInputProps> = ({
   const showVisibility = state === 'toggle' && campaignId;
   return (
     <div
-      className={cn(
-        'flex h-full flex-col items-stretch self-stretch md:ml-2',
-        className,
-      )}
+      className={cn('flex h-full flex-col items-stretch self-start', className)}
     >
       <Label name="Fate" className="w-32">
         {showVisibility && (
