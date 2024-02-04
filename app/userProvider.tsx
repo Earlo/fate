@@ -8,7 +8,7 @@ import { ReactNode, createContext, useState, useEffect } from 'react';
 import Draggable from 'react-draggable';
 
 interface sheetWithContext {
-  sheet: CharacterSheetT;
+  sheet?: CharacterSheetT;
   state: 'create' | 'edit' | 'toggle' | 'view' | 'play';
   campaignId?: string;
   skills?: string[];
@@ -77,21 +77,21 @@ export default function UserProvider({ children }: { children: ReactNode }) {
           />
         )}
         {smallSheets.map((sheet) => (
-          <Draggable key={sheet.sheet._id}>
+          <Draggable key={sheet?.sheet?._id}>
             <div>
               <CharacterCard
-                character={sheet.sheet}
+                character={sheet?.sheet as CharacterSheetT}
                 state={'view'}
                 campaignId={sheet.campaignId}
                 onClose={() =>
                   setSmallSheets((prev) =>
-                    prev.filter((s) => s.sheet._id !== sheet.sheet._id),
+                    prev.filter((s) => s.sheet?._id !== sheet?.sheet?._id),
                   )
                 }
                 onMaximize={() => {
                   setBigSheet(sheet);
                   setSmallSheets((prev) =>
-                    prev.filter((s) => s.sheet._id !== sheet.sheet._id),
+                    prev.filter((s) => s.sheet?._id !== sheet?.sheet?._id),
                   );
                 }}
               />

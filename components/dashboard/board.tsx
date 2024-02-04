@@ -55,7 +55,12 @@ export default function Dashboard() {
         <Button
           className="w-full bg-green-500 pt-4 hover:bg-green-700"
           label="Create New Character Sheet"
-          onClick={() => setBigSheet({ state: 'create', skills: allSkills })}
+          onClick={() =>
+            setBigSheet({
+              state: 'create',
+              skills: allSkills,
+            })
+          }
         />
       </div>
       <div className="col-span-1">
