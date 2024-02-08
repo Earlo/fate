@@ -30,7 +30,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
     <div className="z-10 h-fit max-h-[100dvh] max-w-fit overflow-y-auto rounded bg-white p-1 pt-6 shadow-md">
       <ControlBar onClose={onClose} onMaximize={onMaximize} />
       <div className="flex flex-col items-center md:flex-row-reverse">
-        <div className="ml-2 flex w-full flex-grow content-around items-center justify-evenly align-middle md:w-fit md:flex-col"></div>
         <div className="flex w-full flex-grow ">
           <ImageUploader
             icon={character.icon?.url}
@@ -115,7 +114,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           tight
         />
       </div>
-      <div className="flex flex-col pb-2 md:flex-row"></div>
     </div>
   );
 };
