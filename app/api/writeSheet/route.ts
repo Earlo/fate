@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     cleanSheet,
   )}. The key of the skill indicates the level of bonus character has, the higher the better. Anything under 3 isn't really worth talking about.`;
   const response = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo-1106',
+    model: 'gpt-3.5-turbo-0125',
     stream: true,
     messages: [
       {

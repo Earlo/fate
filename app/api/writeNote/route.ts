@@ -47,7 +47,7 @@ export async function POST(req: Request) {
         },
         { role: 'user', content: prompt },
       ],
-      model: 'gpt-3.5-turbo-1106',
+      model: 'gpt-3.5-turbo-0125',
       stream: true,
     };
     const chatCompletion = await openai.chat.completions.create(params);
