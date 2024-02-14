@@ -71,17 +71,17 @@ const Faction: React.FC<FactionProps> = ({
           disabled={!isEditing}
         />
         {isAdmin && (
-          <div className="flex items-center">
+          <div className="flex items-center pl-1">
             {isEditing ? (
-              <>
+              <div className="flex flex-col">
                 <Button label="Save" onClick={handleSave} />
                 <Button label="Cancel" onClick={handleCancel} />
-              </>
+              </div>
             ) : (
               <Button label="Edit" onClick={() => setIsEditing(true)} />
             )}
-            <div className="flex items-center">
-              <label className="flex items-center">
+            <div className="flex flex-col pl-1">
+              <label className="flex items-center ">
                 <input
                   type="checkbox"
                   checked={faction.visible}

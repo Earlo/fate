@@ -34,7 +34,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     setIsLoading(false);
   };
   return (
-    <div className="flex">
+    <>
       <input
         type="file"
         name="icon"
@@ -43,6 +43,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         className="hidden"
         disabled={disabled}
       />
+      {children}
       {isLoading ? (
         <div className="flex size-32 items-center justify-center">
           <LoadingSpinner />
@@ -68,8 +69,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           }}
         />
       )}
-      {children}
-    </div>
+    </>
   );
 };
 

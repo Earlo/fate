@@ -106,7 +106,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
-                className="relative right-5 top-1 z-20 h-0 w-0"
+                className="relative left-10 top-1 z-20 h-0 w-0"
               />
             )}
           </ImageUploader>
@@ -231,7 +231,12 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           consequences={character.consequences}
         />
       </div>
-      <div className="flex flex-col pb-2 md:flex-row">
+      <div
+        className={cn('flex flex-col md:flex-row', {
+          'pb-2':
+            character?.extras.length === 0 && character?.stunts.length === 0,
+        })}
+      >
         <StuntInput
           stunts={character?.extras || []}
           setStunts={(extras) =>
