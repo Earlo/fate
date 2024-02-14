@@ -30,14 +30,12 @@ const archivoBlack = Archivo_Black({
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${archivo.variable} ${archivoBlack.className}`}>
-      <body className="min-h-[100dvh]">
+      <body className="flex min-h-[100dvh] flex-col">
         <Provider>
           <UserProvider>
-            <div className="flex min-h-[100dvh] flex-col">
-              <TopBar />
-              {children}
-              <Footer />
-            </div>
+            <TopBar />
+            {children}
+            <Footer />
           </UserProvider>
         </Provider>
       </body>

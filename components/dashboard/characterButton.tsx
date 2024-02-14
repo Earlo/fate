@@ -28,32 +28,20 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
       })}
     />
     <div className="flex min-w-0 grow flex-col pl-4">
-      <div className="flex flex-col justify-end">
-        <h3 className="line-clamp-2 overflow-hidden text-lg font-semibold leading-6 group-hover:underline">
-          {campaignId
-            ? character.name.visibleIn.includes(campaignId)
-              ? character.name.text
-              : '???'
-            : character.name.text || 'Unnamed Character'}
-        </h3>
-      </div>
-      <div className="flex flex-col">
-        <p
-          className="overflow-hidden text-sm leading-4 text-gray-600"
-          style={{
-            display: '-webkit-box',
-            WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: 2,
-            overflow: 'hidden',
-          }}
-        >
-          {campaignId
-            ? character.aspects[0].visibleIn.includes(campaignId)
-              ? character.aspects[0].name
-              : '???'
-            : character.aspects[0].name || '-'}
-        </p>
-      </div>
+      <h3 className="line-clamp-2 overflow-hidden text-lg font-semibold leading-6 group-hover:underline">
+        {campaignId
+          ? character.name.visibleIn.includes(campaignId)
+            ? character.name.text
+            : '???'
+          : character.name.text || 'Unnamed Character'}
+      </h3>
+      <p className="line-clamp-2 overflow-hidden text-sm leading-4 text-gray-600">
+        {campaignId
+          ? character.aspects[0].visibleIn.includes(campaignId)
+            ? character.aspects[0].name
+            : '???'
+          : character.aspects[0].name || '-'}
+      </p>
     </div>
   </div>
 );
