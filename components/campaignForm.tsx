@@ -88,7 +88,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
           setFormState((prev) => ({ ...prev, public: e.target.checked }))
         }
       />
-      <div className="space-between flex">
+      <div className="flex">
         {!isViewMode && (
           <Button
             label={isEditMode ? 'Save Changes' : 'Create'}
