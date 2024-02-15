@@ -106,7 +106,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
-                className="relative left-10 top-1 z-20 h-0 w-0"
               />
             )}
           </ImageUploader>

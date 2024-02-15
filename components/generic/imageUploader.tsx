@@ -4,6 +4,8 @@ import { handleUpload } from '@/lib/cloudinary';
 import { cn } from '@/lib/helpers';
 import { ChangeEvent, useRef, useState } from 'react';
 import Image from 'next/image';
+import { SparklesIcon, ArrowUpOnSquareIcon } from '@heroicons/react/24/solid';
+
 interface ImageUploaderProps {
   setIcon: (icon: string) => void;
   icon?: string;
@@ -33,43 +35,65 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
     setIsLoading(false);
   };
+
+  const onGenerateImage = () => {
+    console.log('Generate Image');
+  };
+
   return (
-    <>
+    <div className="relative inline-block">
       <input
         type="file"
-        name="icon"
         onChange={handleFileChange}
         ref={fileInputRef}
         className="hidden"
         disabled={disabled}
       />
-      {children}
       {isLoading ? (
         <div className="flex size-32 items-center justify-center">
           <LoadingSpinner />
         </div>
       ) : (
-        <Image
-          src={icon ? icon : '/blank_user.png'}
-          alt={'Upload Image'}
-          width={128}
-          height={128}
-          className={cn(
-            'rounded-full',
-            {
-              'cursor-pointer transition-opacity duration-200 hover:opacity-80':
-                !disabled,
-            },
-            className,
+        <div
+          className={`relative h-32 w-32 ${className}`}
+          onMouseEnter={() => {}}
+          onMouseLeave={() => {}}
+        >
+          <Image
+            src={icon || '/blank_user.png'}
+            alt="Upload Image"
+            layout="fill"
+            className={cn('rounded-full object-cover', {
+              'cursor-pointer': !disabled,
+            })}
+          />
+          {children ? (
+            <div className="absolute inset-0 flex items-center justify-between opacity-0 transition-opacity duration-200 hover:opacity-100">
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-black bg-opacity-40 hover:bg-opacity-20">
+                {children}
+              </div>
+            </div>
+          ) : (
+            !disabled && (
+              <div className="absolute inset-0 flex items-center justify-between opacity-0 transition-opacity duration-200 hover:opacity-100">
+                <div
+                  className="flex h-full w-1/2 items-center justify-center rounded-l-full bg-black bg-opacity-40 transition-opacity hover:bg-opacity-20"
+                  onClick={() => !disabled && fileInputRef.current?.click()}
+                >
+                  <ArrowUpOnSquareIcon className="h-6 w-6" />
+                </div>
+                <div
+                  className="flex h-full w-1/2 items-center justify-center rounded-r-full bg-black bg-opacity-40 transition-opacity hover:bg-opacity-20"
+                  onClick={() => !disabled && onGenerateImage()}
+                >
+                  <SparklesIcon className="h-6 w-6" />
+                </div>
+              </div>
+            )
           )}
-          onClick={() => {
-            if (!disabled) {
-              fileInputRef.current?.click();
-            }
-          }}
-        />
+        </div>
       )}
-    </>
+    </div>
   );
 };
 
