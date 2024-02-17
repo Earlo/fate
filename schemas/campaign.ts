@@ -1,4 +1,5 @@
 import { CharacterSheetT } from './sheet';
+import { UserModel } from './user';
 import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
@@ -130,6 +131,17 @@ export async function updateCampaign(
 export const getCampaigns = async (
   userId: string,
 ): Promise<PopulatedCampaignT[]> => {
+  //check if userId is admin
+  const isAdmin = await UserModel.findById(userId).select('admin');
+  if (isAdmin?.admin) {
+    return await Campaign.find().populate({
+      path: 'factions.characters',
+      populate: {
+        path: 'player',
+        select: 'name',
+      },
+    });
+  }
   return await Campaign.find({
     $or: [
       { public: true },

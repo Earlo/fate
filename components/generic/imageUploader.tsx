@@ -13,6 +13,7 @@ interface ImageUploaderProps {
   disabled?: boolean;
   className?: string;
   children?: React.ReactNode;
+  context?: object;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -22,6 +23,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   disabled = false,
   className,
   children,
+  context = null,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +38,19 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     setIsLoading(false);
   };
 
-  const onGenerateImage = () => {
-    console.log('Generate Image');
+  const onGenerateImage = async () => {
+    console.log('Generating image');
+    if (isLoading || !context) return;
+    console.log(context);
+    setIsLoading(true);
+    const response = await fetch('/api/createImage', {
+      method: 'POST',
+      body: JSON.stringify({ sheet: context }),
+    });
+    const data = await response.json();
+    console.log(data);
+    setIcon(data);
+    setIsLoading(false);
   };
 
   return (
@@ -62,7 +75,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           <Image
             src={icon || '/blank_user.png'}
             alt="Upload Image"
-            layout="fill"
+            height={128}
+            width={128}
             className={cn('rounded-full object-cover', {
               'cursor-pointer': !disabled,
             })}

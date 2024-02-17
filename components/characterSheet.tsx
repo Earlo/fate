@@ -91,6 +91,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                 state === 'view' &&
                 !character?.icon?.visibleIn?.includes(campaignId),
             })}
+            context={character}
           >
             {state === 'toggle' && (
               <VisibilityToggle

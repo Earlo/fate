@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     'public',
     'visibleIn',
   ]);
-  const systemContent = `You're helping user to play a fate Core campaign by filling character sheet. Sheet context JSON: ${JSON.stringify(
+  const systemContent = `You're helping user to play a fate Core campaign by filling character sheet. Sheet is currently as follows: ${JSON.stringify(
     cleanSheet,
   )}. The key of the skill indicates the level of bonus character has, the higher the better. Anything under 3 isn't really worth talking about.`;
   const response = await openai.chat.completions.create({

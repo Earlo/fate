@@ -17,7 +17,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
     className="group flex h-24 min-h-0 w-full cursor-pointer items-center justify-around rounded-lg border border-gray-300 pl-4 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 active:bg-gray-300"
   >
     <Image
-      src={character.icon?.url || '/drowsee_128.png'}
+      src={character.icon?.url || '/blank_user.png'}
       alt={character.name.text}
       width={64}
       height={64}

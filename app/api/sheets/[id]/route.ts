@@ -38,6 +38,7 @@ export async function PUT(req: Request, { params }: Props) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: 'Failed to update character sheet' },
       { status: 400 },

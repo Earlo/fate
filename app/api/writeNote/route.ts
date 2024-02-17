@@ -38,6 +38,8 @@ export async function POST(req: Request) {
   }
   try {
     const params: OpenAIClient.Chat.ChatCompletionCreateParams = {
+      model: 'gpt-3.5-turbo-0125',
+      stream: true,
       messages: [
         {
           role: 'system',
@@ -47,11 +49,8 @@ export async function POST(req: Request) {
         },
         { role: 'user', content: prompt },
       ],
-      model: 'gpt-3.5-turbo-0125',
-      stream: true,
     };
     const chatCompletion = await openai.chat.completions.create(params);
-    //return res.status(200).json(chatCompletion.choices[0].message.content);
     const stream = OpenAIStream(chatCompletion);
     return new StreamingTextResponse(stream);
   } catch (error) {

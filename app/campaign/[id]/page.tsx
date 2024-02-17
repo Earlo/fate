@@ -72,7 +72,7 @@ const CampaignPage = ({ params }: Props) => {
       </h1>
       <div className="flex flex-col items-center pb-6 sm:flex-row">
         <Image
-          src={campaign.icon || '/drowsee_128.png'}
+          src={campaign.icon || '/campaign.png'}
           alt={campaign.name}
           width={128}
           height={128}
