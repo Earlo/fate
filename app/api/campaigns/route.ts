@@ -1,7 +1,6 @@
 import { getCampaigns, createCampaign } from '@/schemas/campaign';
 import connect from '@/lib/mongo';
 import { NextResponse } from 'next/server';
-
 connect();
 
 export async function POST(req: Request) {

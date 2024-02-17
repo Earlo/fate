@@ -34,7 +34,6 @@ export const userContext = createContext<UserContextT>({
 
 export default function UserProvider({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
-
   const [sheets, setSheets] = useState<CharacterSheetT[]>([]);
   const [bigSheet, setBigSheet] = useState<sheetWithContext>();
   const [smallSheets, setSmallSheets] = useState<sheetWithContext[]>([]);

@@ -41,7 +41,6 @@ const CampaignForm: React.FC<CampaignFormProps> = ({
       ...formState,
       owner: session?.user?._id,
     };
-
     try {
       const data = isEditMode
         ? await updateCampaignAPI(initialCampaign._id, submitData)

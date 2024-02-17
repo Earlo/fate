@@ -129,7 +129,6 @@ const CampaignPage = ({ params }: Props) => {
 /*
 import { getCampaignById } from '@/lib/apiHelpers/campaigns';
 import type { Metadata, ResolvingMetadata } from 'next';
-
 export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata,

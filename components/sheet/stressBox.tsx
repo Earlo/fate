@@ -19,7 +19,6 @@ const StressBox: React.FC<StressBoxProps> = ({
   available,
 }) => {
   const checkboxRef = useRef<HTMLInputElement>(null);
-
   const handleClick = () => {
     if (checkboxRef.current && !disabled) {
       checkboxRef.current.click();

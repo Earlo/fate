@@ -9,7 +9,6 @@ export default function connect() {
 }
 
 // Mongoose was a mistake.
-
 export type ReplaceMongooseDocumentArrayByArray<
   // typescript allow any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

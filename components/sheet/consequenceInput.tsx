@@ -3,7 +3,6 @@ import { cn } from '@/lib/helpers';
 interface ConsequenceInputProps {
   rank: string;
   name: string;
-
   value: string;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

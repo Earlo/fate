@@ -8,7 +8,6 @@ import Link from 'next/link';
 
 export default function Home() {
   const { data: session, status } = useSession();
-
   const LandingPage = () => (
     <DiceBackground>
       <div className="container mx-auto pt-20 text-center">
