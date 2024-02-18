@@ -116,7 +116,10 @@ export const blankSheet: Omit<CampaignT, '_id'> = {
 export const blankFaction: Omit<PopulatedCampaignT['factions'][0], '_id'> = {
   name: 'New Faction',
   description: '',
-  icon: '',
+  icon: {
+    url: '',
+    note: '',
+  },
   colorPalette: {
     primary: '209 213 219',
     secondary: '156 163 175',
