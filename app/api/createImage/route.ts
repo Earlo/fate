@@ -21,8 +21,9 @@ export async function POST(req: Request) {
     'visible',
     'public',
     'visibleIn',
+    'fate',
   ]);
-  const systemContent = `You're helping user to play a fate Core campaign by filling character sheet. Write a description of a portrait of this characterr. Only focus on visual details. Only face/bust. No names. Also do note the plausible setting the characterr exists in. Theme. Genre. Artstyle especially! Don't create real people!"`;
+  const systemContent = `You're helping user to play a fate Core campaign by filling character sheet. Write a description of a portrait of this character. Pay attention to aspects, and possible consequences Only focus on visual details. Something that works in a rounded picture frame. No names. Also do note the plausible setting the characterr exists in. Theme. Genre. Artstyle especially! Don't create real people!"`;
   const userContent = `Sheet is currently as follows: ${JSON.stringify(
     cleanSheet,
   )}`;
