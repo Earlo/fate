@@ -97,6 +97,8 @@ export const campaignSchema = new Schema({
     default: [],
   },
   owner: { type: String, ref: 'User', required: true },
+  created: { type: Date, required: false, default: Date.now },
+  updated: { type: Date, required: false, default: Date.now },
 });
 
 export const Campaign =
