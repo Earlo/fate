@@ -5,7 +5,12 @@ import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const campaignSchema = new Schema({
   name: { type: String, required: true },
-  icon: String,
+  icon: {
+    type: {
+      url: { type: String, required: true },
+      note: { type: String, required: false, default: '' },
+    },
+  },
   description: String,
   colorPalette: {
     type: {
@@ -40,7 +45,12 @@ export const campaignSchema = new Schema({
     {
       name: { type: String, required: true },
       description: { type: String, required: true, default: '' },
-      icon: String,
+      icon: {
+        type: {
+          url: { type: String, required: true },
+          note: { type: String, required: false, default: '' },
+        },
+      },
       colorPalette: {
         type: {
           primary: { type: String, required: true },

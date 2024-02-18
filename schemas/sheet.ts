@@ -6,6 +6,7 @@ export const characterSheetSchema = new Schema({
     type: {
       url: { type: String, required: true },
       visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] },
+      note: { type: String, required: false, default: '' },
     },
   },
   colorPalette: {

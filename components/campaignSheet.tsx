@@ -28,9 +28,9 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
     <div className="flex w-full grow flex-col">
       <div className="flex flex-col items-center md:flex-row">
         <ImageUploader
-          icon={campaign?.icon ?? undefined}
+          icon={campaign?.icon?.url ?? undefined}
           path={'campaign'}
-          setIcon={(icon) => updateField('icon', icon)}
+          setIcon={(icon) => updateField('icon', { url: icon })}
           disabled={!setCampaign}
           className="pb-2"
         />

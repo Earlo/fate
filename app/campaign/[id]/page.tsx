@@ -72,7 +72,7 @@ const CampaignPage = ({ params }: Props) => {
       </h1>
       <div className="flex flex-col items-center pb-6 sm:flex-row">
         <Image
-          src={campaign.icon || '/campaign.png'}
+          src={campaign.icon?.url || '/campaign.png'}
           alt={campaign.name}
           width={128}
           height={128}
@@ -140,7 +140,7 @@ export async function generateMetadata(
     title: 'Fate Core campaign:' + campaign.name,
     openGraph: {
       images: campaign.icon
-        ? [campaign.icon, ...previousImages]
+        ? [campaign.icon.url, ...previousImages]
         : previousImages,
     },
   };
