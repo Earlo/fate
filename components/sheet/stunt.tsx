@@ -48,9 +48,7 @@ const Stunt: React.FC<StuntProps> = ({
           'flex h-8 min-w-[50%] flex-row-reverse items-center sm:flex-row',
         )}
       >
-        {!disabled && (
-          <CloseButton className="" onClick={() => deleteStunt()} />
-        )}
+        {!disabled && <CloseButton onClick={() => deleteStunt()} />}
         {toggle && (
           <VisibilityToggle
             visible={stunt.visibleIn.includes(campaignId)}
