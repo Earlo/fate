@@ -16,7 +16,7 @@
     "@heroicons/react": "2.1.1",
     "ai": "3.0.4",
     "bcrypt": "5.1.1",
-    "mongoose": "8.2.0",
+    "mongoose": "8.2.1",
     "next": "14.1.1",
     "next-auth": "4.24.6",
     "openai": "4.28.4",
