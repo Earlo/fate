@@ -61,7 +61,7 @@ const Group: React.FC<GroupProps> = ({
     onChange(updatedGroup);
   };
   return (
-    <div className="mx-auto flex w-full flex-col rounded-lg bg-gray-800 p-4 text-white shadow-lg">
+    <div className="mx-auto flex w-full flex-col rounded-lg bg-gray-800 p-2 text-white shadow-lg">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <LabeledInput
           type="text"
@@ -123,7 +123,7 @@ const Group: React.FC<GroupProps> = ({
       </div>
       {((group.public && isPlayer) || isAdmin) && (
         <Button
-          label="Toggle your characters"
+          label="+ Sheet"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         />
       )}
