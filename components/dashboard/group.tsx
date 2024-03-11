@@ -2,27 +2,27 @@
 import CharacterButton from './characterButton';
 import LabeledInput from '../generic/labeledInput';
 import Button from '@/components/generic/button';
-import { PopulatedFaction } from '@/schemas/campaign';
+import { PopulatedGroup } from '@/schemas/campaign';
 import { userContext } from '@/app/userProvider';
 import { useState, useContext } from 'react';
 import { useSession } from 'next-auth/react';
 
-interface FactionProps {
-  faction: PopulatedFaction;
+interface GroupProps {
+  group: PopulatedGroup;
   state: 'admin' | 'player' | 'view';
-  onChange: (updatedFaction: PopulatedFaction) => void;
+  onChange: (updatedGroup: PopulatedGroup) => void;
   campaignId: string;
 }
 
-const Faction: React.FC<FactionProps> = ({
-  faction,
+const Group: React.FC<GroupProps> = ({
+  group,
   state,
   onChange,
   campaignId,
 }) => {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
-  const [newName, setNewName] = useState(faction.name);
+  const [newName, setNewName] = useState(group.name);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { sheets, setBigSheet } = useContext(userContext);
   const isAdmin = state === 'admin';
@@ -30,25 +30,25 @@ const Faction: React.FC<FactionProps> = ({
 
   const handleSave = () => {
     setIsEditing(false);
-    const updatedFaction = { ...faction, name: newName };
-    onChange(updatedFaction);
+    const updatedGroup = { ...group, name: newName };
+    onChange(updatedGroup);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setNewName(faction.name);
+    setNewName(group.name);
   };
 
   const toggleProperty = (property: 'public' | 'visible') => {
-    const updatedFaction = { ...faction, [property]: !faction[property] };
-    onChange(updatedFaction);
+    const updatedGroup = { ...group, [property]: !group[property] };
+    onChange(updatedGroup);
   };
 
   const toggleCharacter = (characterId: string) => {
-    const charIndex = faction.characters.findIndex(
+    const charIndex = group.characters.findIndex(
       (c) => c.sheet._id === characterId,
     );
-    const updatedCharacters = [...faction.characters];
+    const updatedCharacters = [...group.characters];
     if (charIndex > -1) {
       updatedCharacters.splice(charIndex, 1);
     } else {
@@ -57,8 +57,8 @@ const Faction: React.FC<FactionProps> = ({
         updatedCharacters.push({ sheet: character, visible: true });
       }
     }
-    const updatedFaction = { ...faction, characters: updatedCharacters };
-    onChange(updatedFaction);
+    const updatedGroup = { ...group, characters: updatedCharacters };
+    onChange(updatedGroup);
   };
   return (
     <div className="mx-auto flex w-full flex-col rounded-lg bg-gray-800 p-4 text-white shadow-lg">
@@ -84,7 +84,7 @@ const Faction: React.FC<FactionProps> = ({
               <label className="flex items-center ">
                 <input
                   type="checkbox"
-                  checked={faction.visible}
+                  checked={group.visible}
                   onChange={() => toggleProperty('visible')}
                 />
                 <span>Visible</span>
@@ -92,7 +92,7 @@ const Faction: React.FC<FactionProps> = ({
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  checked={faction.public}
+                  checked={group.public}
                   onChange={() => toggleProperty('public')}
                 />
                 <span>Public</span>
@@ -102,7 +102,7 @@ const Faction: React.FC<FactionProps> = ({
         )}
       </div>
       <div className="grid grid-cols-1 gap-2">
-        {faction.characters.map((character) => (
+        {group.characters.map((character) => (
           <CharacterButton
             key={character.sheet._id}
             character={character.sheet}
@@ -117,11 +117,11 @@ const Faction: React.FC<FactionProps> = ({
                 campaignId,
               });
             }}
-            campaignId={faction.public ? undefined : campaignId}
+            campaignId={group.public ? undefined : campaignId}
           />
         ))}
       </div>
-      {((faction.public && isPlayer) || isAdmin) && (
+      {((group.public && isPlayer) || isAdmin) && (
         <Button
           label="Toggle your characters"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -134,9 +134,9 @@ const Faction: React.FC<FactionProps> = ({
                 <div key={character._id} className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    checked={faction.characters.some(
-                      (factionCharacter) =>
-                        factionCharacter.sheet._id === character._id,
+                    checked={group.characters.some(
+                      (groupCharacter) =>
+                        groupCharacter.sheet._id === character._id,
                     )}
                     onChange={() => toggleCharacter(character._id)}
                   />
@@ -150,4 +150,4 @@ const Faction: React.FC<FactionProps> = ({
   );
 };
 
-export default Faction;
+export default Group;

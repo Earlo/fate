@@ -16,12 +16,12 @@ This software isn't meant to be a virtual table top simulator or an online RPG p
 - Create Campaigns
   - Define Skills used in campaign
   - Define aspects of the campaign
-  - Group characters by "faction"
+  - Group characters
   - Reveal partial character sheets to players as GM
 
 ![Example sheet form the app](/readme/example_sheet.png?raw=true 'Example sheet form the app')
 
-![Example of factions](/readme/faction_view.png?raw=true 'Example of factions')
+![Example of group](/readme/faction_view.png?raw=true 'Example of groups')
 
 ## Using the software
 

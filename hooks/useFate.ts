@@ -1,7 +1,7 @@
 'use client';
 import { getCampaignById, updateCampaignAPI } from '@/lib/apiHelpers/campaigns';
-import { PopulatedCampaignT, PopulatedFaction } from '@/schemas/campaign';
-import { blankFaction } from '@/schemas/consts/blankCampaignSheet';
+import { PopulatedCampaignT, PopulatedGroup } from '@/schemas/campaign';
+import { blankGroup } from '@/schemas/consts/blankCampaignSheet';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { useState, useEffect, useCallback } from 'react';
@@ -50,24 +50,24 @@ export const useCampaign = (campaignId: string) => {
     }
   };
 
-  const addFaction = async () => {
+  const addGroup = async () => {
     if (campaign) {
-      const newFaction = { ...blankFaction };
+      const newGroup = { ...blankGroup };
       const updatedCampaign = { ...campaign };
-      updatedCampaign.factions.push(newFaction);
+      updatedCampaign.groups.push(newGroup);
       await updateCampaign(updatedCampaign);
     } else {
       console.error('Campaign not found');
     }
   };
 
-  const updateFaction = async (
-    factionIndex: number,
-    updatedFaction: PopulatedFaction,
+  const updateGroup = async (
+    groupIndex: number,
+    updatedGroup: PopulatedGroup,
   ) => {
     if (campaign) {
       const updatedCampaign = { ...campaign };
-      updatedCampaign.factions[factionIndex] = updatedFaction;
+      updatedCampaign.groups[groupIndex] = updatedGroup;
       updateCampaign(updatedCampaign);
     }
   };
@@ -112,8 +112,8 @@ export const useCampaign = (campaignId: string) => {
     isLoading,
     updateCampaign,
     toggleCampaign,
-    addFaction,
-    updateFaction,
+    addGroup,
+    updateGroup,
     addNote,
     deleteNote,
     updateNote,

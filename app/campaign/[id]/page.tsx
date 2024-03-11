@@ -1,6 +1,5 @@
 'use client';
 import Button from '@/components/generic/button';
-import Faction from '@/components/dashboard/faction';
 import AspectInput from '@/components/sheet/aspectInput';
 import BaseLayout from '@/components/layout/baseLayout';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
@@ -10,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
+import Group from '@/components/dashboard/group';
 
 type Props = {
   params: { id: string };
@@ -23,8 +23,8 @@ const CampaignPage = ({ params }: Props) => {
     campaign,
     isLoading,
     toggleCampaign,
-    addFaction,
-    updateFaction,
+    addGroup,
+    updateGroup,
     addNote,
     deleteNote,
     updateNote,
@@ -102,20 +102,20 @@ const CampaignPage = ({ params }: Props) => {
         />
       </div>
       {isAdmin && (
-        <Button label="Add Faction" onClick={addFaction} className="mb-6" />
+        <Button label="Add Group" onClick={addGroup} className="mb-6" />
       )}
-      {campaign.factions.length > 0 && (
+      {campaign.groups.length > 0 && (
         <>
-          <h2 className="mb-4 text-2xl font-semibold">Factions</h2>
+          <h2 className="mb-4 text-2xl font-semibold">Groups</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {campaign.factions.map(
-              (faction, index) =>
-                (faction.visible || isAdmin) && (
-                  <Faction
+            {campaign.groups.map(
+              (group, index) =>
+                (group.visible || isAdmin) && (
+                  <Group
                     key={index}
-                    faction={faction}
+                    group={group}
                     state={isAdmin ? 'admin' : isPlayer ? 'player' : 'view'}
-                    onChange={(faction) => updateFaction(index, faction)}
+                    onChange={(group) => updateGroup(index, group)}
                     campaignId={id as string}
                   />
                 ),

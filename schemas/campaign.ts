@@ -3,6 +3,56 @@ import { UserModel } from './user';
 import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
 import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
+export const groupSchema = new Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true, default: '' },
+  icon: {
+    type: {
+      url: { type: String, required: true },
+      note: { type: String, required: false, default: '' },
+    },
+  },
+  colorPalette: {
+    type: {
+      primary: { type: String, required: true },
+      secondary: { type: String, required: true },
+      tertiary: { type: String, required: true },
+    },
+    default: {
+      primary: '209 213 219',
+      secondary: '156 163 175',
+      tertiary: '107 114 128',
+    },
+  },
+  characters: [
+    {
+      sheet: {
+        type: String,
+        ref: 'CharacterSheet',
+        required: true,
+      },
+      visible: { type: Boolean, required: true, default: false },
+    },
+  ],
+  layout: {
+    type: String,
+    enum: ['grid', 'list'],
+    dimensions: {
+      type: {
+        w: { type: Number, required: true, default: 3 },
+        h: { type: Number, required: true, default: 3 },
+      },
+    },
+    default: 'grid',
+  },
+  children: {
+    type: [this],
+    default: [],
+  },
+  visible: { type: Boolean, required: true, default: false },
+  public: { type: Boolean, required: true, default: false },
+});
+
 export const campaignSchema = new Schema({
   name: { type: String, required: true },
   icon: {
@@ -41,42 +91,10 @@ export const campaignSchema = new Schema({
       ],
     },
   ],
-  factions: [
-    {
-      name: { type: String, required: true },
-      description: { type: String, required: true, default: '' },
-      icon: {
-        type: {
-          url: { type: String, required: true },
-          note: { type: String, required: false, default: '' },
-        },
-      },
-      colorPalette: {
-        type: {
-          primary: { type: String, required: true },
-          secondary: { type: String, required: true },
-          tertiary: { type: String, required: true },
-        },
-        default: {
-          primary: '209 213 219',
-          secondary: '156 163 175',
-          tertiary: '107 114 128',
-        },
-      },
-      characters: [
-        {
-          sheet: {
-            type: String,
-            ref: 'CharacterSheet',
-            required: true,
-          },
-          visible: { type: Boolean, required: true, default: false },
-        },
-      ],
-      visible: { type: Boolean, required: true, default: false },
-      public: { type: Boolean, required: true, default: false },
-    },
-  ],
+  groups: {
+    type: [groupSchema],
+    default: [],
+  },
   public: { type: Boolean, required: true, default: false },
   notes: {
     type: [
@@ -108,16 +126,16 @@ export type CampaignT = {
   _id: string;
 } & ReplaceMongooseDocumentArrayByArray<InferSchemaType<typeof campaignSchema>>;
 
-export type PopulatedFaction = Omit<CampaignT['factions'][0], 'characters'> & {
+export type PopulatedGroup = Omit<CampaignT['groups'][0], 'characters'> & {
   characters: { sheet: CharacterSheetT; visible: boolean }[];
 };
 
 export type PopulatedCampaignT = {
   _id: string;
-  factions: PopulatedFaction[];
+  groups: PopulatedGroup[];
 } & Omit<
   ReplaceMongooseDocumentArrayByArray<InferSchemaType<typeof campaignSchema>>,
-  'factions'
+  'groups'
 >;
 
 export async function createCampaign(campaign: CampaignT) {
@@ -126,7 +144,7 @@ export async function createCampaign(campaign: CampaignT) {
 
 export async function getCampaign(id: string) {
   // remove _id from subdocuments
-  return await Campaign.findById(id).populate('factions.characters.sheet');
+  return await Campaign.findById(id).populate('groups.characters.sheet');
 }
 
 export async function updateCampaign(
@@ -147,7 +165,7 @@ export const getCampaigns = async (
   const isAdmin = await UserModel.findById(userId).select('admin');
   if (isAdmin?.admin) {
     return await Campaign.find().populate({
-      path: 'factions.characters',
+      path: 'groups.characters',
       populate: {
         path: 'player',
         select: 'name',
@@ -161,7 +179,7 @@ export const getCampaigns = async (
       { owner: userId },
     ],
   }).populate({
-    path: 'factions.characters',
+    path: 'groups.characters',
     populate: {
       path: 'player',
       select: 'name',

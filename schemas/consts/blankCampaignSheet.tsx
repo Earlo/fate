@@ -106,15 +106,15 @@ export const blankSheet: Omit<CampaignT, '_id'> = {
     },
   ],
   skills: defaultSkills,
-  factions: [],
+  groups: [],
   notes: [],
   public: false,
   visibleTo: [],
   owner: '',
 };
 
-export const blankFaction: Omit<PopulatedCampaignT['factions'][0], '_id'> = {
-  name: 'New Faction',
+export const blankGroup: Omit<PopulatedCampaignT['groups'][0], '_id'> = {
+  name: 'New Group',
   description: '',
   icon: {
     url: '',
@@ -127,5 +127,7 @@ export const blankFaction: Omit<PopulatedCampaignT['factions'][0], '_id'> = {
   },
   public: false,
   visible: true,
+  layout: 'grid',
   characters: [],
+  children: [],
 };
