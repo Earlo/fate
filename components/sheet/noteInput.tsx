@@ -1,7 +1,7 @@
 'use client';
 import Note from './note';
 import Label from '../generic/label';
-import AddButton from '../generic/addButton';
+import Icon from '../generic/icon/icon';
 import { cn } from '@/lib/helpers';
 
 interface NoteInputProps {
@@ -37,7 +37,7 @@ const NoteInput: React.FC<NoteInputProps> = ({
   return (
     <div className={cn(className)}>
       <Label name={title + 's'} className="pb-0">
-        {!disabled && <AddButton onClick={addNote} />}
+        {!disabled && <Icon icon="plus" className="mr-2" onClick={addNote} />}
       </Label>
       {notes.map((note, index) => (
         <Note

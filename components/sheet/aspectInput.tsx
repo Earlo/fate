@@ -1,9 +1,10 @@
 import VisibilityToggle from './visibilityToggle';
+import IconButton from '../generic/icon/iconButton';
 import Label from '../generic/label';
 import Input from '../generic/input';
-import AddButton from '../generic/addButton';
-import CloseButton from '../generic/closeButton';
+import Icon from '../generic/icon/icon';
 import { cn } from '@/lib/helpers';
+
 interface AspectInputProps {
   aspects: { name: string; visibleIn: string[] }[];
   setAspects: (aspects: { name: string; visibleIn: string[] }[]) => void;
@@ -42,7 +43,9 @@ const AspectInput: React.FC<AspectInputProps> = ({
     <div className={cn('flex grow flex-col', className)}>
       <Label name={title}>
         {!disabled && (
-          <AddButton
+          <Icon
+            icon="plus"
+            className="mr-2"
             onClick={() =>
               setAspects([...aspects, { name: '', visibleIn: [] }])
             }
@@ -95,7 +98,8 @@ const AspectInput: React.FC<AspectInputProps> = ({
               />
             )}
             {!disabled && (
-              <CloseButton
+              <IconButton
+                icon="close"
                 onClick={() =>
                   setAspects(aspects.filter((_, i) => i !== index))
                 }

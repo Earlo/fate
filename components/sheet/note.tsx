@@ -1,8 +1,7 @@
 'use client';
 import VisibilityToggle from './visibilityToggle';
 import Input from '../generic/input';
-import CloseButton from '../generic/closeButton';
-import IconButton from '../generic/iconButton';
+import IconButton from '../generic/icon/iconButton';
 import { cn } from '@/lib/helpers';
 import useDebounce from '@/hooks/debounce';
 import { useState, useEffect } from 'react';
@@ -94,7 +93,7 @@ const Note: React.FC<NoteProps> = ({
           />
         )}
         {!isDisabled && (
-          <CloseButton className="mb-1 ml-1" onClick={deleteNote} />
+          <IconButton className="mb-1 ml-1" onClick={deleteNote} icon="close" />
         )}
         {toggle && campaignId && (
           <VisibilityToggle

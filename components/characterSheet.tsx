@@ -7,9 +7,9 @@ import VisibilityToggle from './sheet/visibilityToggle';
 import Stress from './sheet/stress';
 import Consequences from './sheet/consequences';
 import FateInput from './sheet/fateInput';
+import Icon from './generic/icon/icon';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
-import { SparklesIcon } from '@heroicons/react/24/solid';
 import { useCompletion } from 'ai/react';
 interface CharacterSheetProps {
   character: CharacterSheetT;
@@ -150,7 +150,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
-                className="pr-2"
+                className="mr-2"
               />
             )}
           </LabeledInput>
@@ -174,9 +174,10 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             required
           >
             {(state === 'create' || state === 'edit') && (
-              <SparklesIcon
-                className="mr-2 size-6 cursor-pointer text-white duration-200 hover:text-gray-400"
+              <Icon
+                className="mr-2 text-white duration-200 hover:text-gray-400"
                 onClick={async () => callOpenAi('description')}
+                icon="sparkles"
               />
             )}
             {state === 'toggle' && (
@@ -197,7 +198,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
-                className="pr-2"
+                className="mr-2"
               />
             )}
           </LabeledInput>

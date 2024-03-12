@@ -1,4 +1,4 @@
-import CloseButton from './closeButton';
+import IconButton from './icon/iconButton';
 import { cn } from '@/lib/helpers';
 
 interface ModalProps {
@@ -17,9 +17,10 @@ const Modal: React.FC<ModalProps> = ({ onClose, className, children }) => {
     >
       <div className="relative w-3/4 overflow-hidden rounded-lg bg-white shadow-lg md:w-1/2">
         {onClose && (
-          <CloseButton
+          <IconButton
             onClick={onClose}
             className="absolute right-2 top-2 z-10"
+            icon="close"
           />
         )}
         <div className="p-4">{children}</div>

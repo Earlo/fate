@@ -1,6 +1,6 @@
 import VisibilityToggle from './visibilityToggle';
 import Input from '../generic/input';
-import CloseButton from '../generic/closeButton';
+import IconButton from '../generic/icon/iconButton';
 import { cn } from '@/lib/helpers';
 
 interface StuntProps {
@@ -48,7 +48,7 @@ const Stunt: React.FC<StuntProps> = ({
           'flex h-8 min-w-[50%] flex-row-reverse items-center sm:flex-row',
         )}
       >
-        {!disabled && <CloseButton onClick={() => deleteStunt()} />}
+        {!disabled && <IconButton icon="close" onClick={() => deleteStunt()} />}
         {toggle && (
           <VisibilityToggle
             visible={stunt.visibleIn.includes(campaignId)}

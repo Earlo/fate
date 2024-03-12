@@ -4,9 +4,10 @@ import LabeledInput from '../generic/labeledInput';
 import Button from '@/components/generic/button';
 import { PopulatedGroup } from '@/schemas/campaign';
 import { userContext } from '@/app/userProvider';
+//import Icon from '@/components/generic/icon/icon';
+
 import { useState, useContext } from 'react';
 import { useSession } from 'next-auth/react';
-
 interface GroupProps {
   group: PopulatedGroup;
   state: 'admin' | 'player' | 'view';
@@ -63,6 +64,15 @@ const Group: React.FC<GroupProps> = ({
   return (
     <div className="mx-auto flex w-full flex-col rounded-lg bg-gray-800 p-2 text-white shadow-lg">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        {/***
+        <h1 className="text-xl font-bold">{group.name}</h1>
+        <Icon
+          onClick={() => {
+            console.log('clicked');
+          }}
+          icon="ellipsis"
+        />    
+         */}
         <LabeledInput
           type="text"
           name={'name'}

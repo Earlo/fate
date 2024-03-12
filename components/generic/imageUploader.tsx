@@ -1,10 +1,10 @@
 'use client';
 import LoadingSpinner from './loadingSpinner';
+import Icon from './icon/icon';
 import { handleUpload } from '@/lib/cloudinary';
 import { cn } from '@/lib/helpers';
 import { ChangeEvent, useRef, useState } from 'react';
 import Image from 'next/image';
-import { SparklesIcon, ArrowUpOnSquareIcon } from '@heroicons/react/24/solid';
 
 interface ImageUploaderProps {
   setIcon: (icon: string) => void;
@@ -94,13 +94,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                   className="flex h-full w-1/2 items-center justify-center rounded-l-full bg-black bg-opacity-40 transition-opacity hover:bg-opacity-20"
                   onClick={() => !disabled && fileInputRef.current?.click()}
                 >
-                  <ArrowUpOnSquareIcon className="h-6 w-6" />
+                  <Icon icon="upload" />
                 </div>
                 <div
                   className="flex h-full w-1/2 items-center justify-center rounded-r-full bg-black bg-opacity-40 transition-opacity hover:bg-opacity-20"
                   onClick={() => !disabled && onGenerateImage()}
                 >
-                  <SparklesIcon className="h-6 w-6" />
+                  <Icon icon="sparkles" />
                 </div>
               </div>
             )

@@ -1,5 +1,5 @@
+import Icon from '../generic/icon/icon';
 import { cn } from '@/lib/helpers';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 
 interface VisibilityToggleProps {
   visible: boolean;
@@ -12,26 +12,14 @@ const VisibilityToggle: React.FC<VisibilityToggleProps> = ({
   onChange,
   className,
 }) => (
-  <button
-    type="button"
+  <Icon
+    icon={visible ? 'eye' : 'noEye'}
     onClick={(event) => {
       event.stopPropagation();
       onChange(!visible);
     }}
-    className={cn('focus:outline-none', className)}
-  >
-    {visible ? (
-      <EyeIcon
-        aria-hidden="true"
-        className="size-6 cursor-pointer text-gray-400 duration-200 hover:text-gray-600"
-      />
-    ) : (
-      <EyeSlashIcon
-        aria-hidden="true"
-        className="size-6 cursor-pointer text-gray-400 duration-200 hover:text-gray-600"
-      />
-    )}
-  </button>
+    className={cn('text-gray-400 hover:text-gray-600', className)}
+  />
 );
 
 export default VisibilityToggle;

@@ -4,7 +4,7 @@ import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/helpers';
-import AddButton from '@/components/generic/addButton';
+import Icon from '@/components/generic/icon/icon';
 import { useState, useCallback, useEffect } from 'react';
 
 export const tiers = [
@@ -176,7 +176,9 @@ const SkillGrid: React.FC<SkillGridProps> = ({
     <div className="w-full min-w-[66.666667%] pb-2 md:w-fit lg:w-8/12 lg:pb-0">
       <Label name="Skills">
         {!disabled && (
-          <AddButton
+          <Icon
+            icon="plus"
+            className="mr-2"
             onClick={() =>
               maxDisplayedTier < 18
                 ? setMaxDisplayedTier(maxDisplayedTier + 1)
@@ -283,10 +285,7 @@ const SkillRow = ({
         topRow={topRow}
         position={firstSlot ? 'first' : lastSlot ? 'last' : 'middle'}
         lastShown={!nextName}
-        className={cn(
-          //{ 'rounded-b-none border-b-0': tight && !topRow },
-          { 'rounded-b-none sm:border-t-0': tight && !topRow },
-        )}
+        className={cn({ 'rounded-b-none sm:border-t-0': tight && !topRow })}
       >
         {state === 'toggle' && (
           <VisibilityToggle

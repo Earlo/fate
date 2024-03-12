@@ -1,5 +1,4 @@
-import CloseButton from '../generic/closeButton';
-import IconButton from '../generic/iconButton';
+import IconButton from '../generic/icon/iconButton';
 
 interface ControlBarProps {
   onClose?: () => void;
@@ -18,7 +17,6 @@ const ControlBar: React.FC<ControlBarProps> = ({
         <IconButton onClick={onMaximize} icon="grow" />
       </div>
     )}
-
     {onMinimize && (
       <div className="absolute right-6 top-0 z-20">
         <IconButton onClick={onMinimize} icon="reduce" />
@@ -26,7 +24,7 @@ const ControlBar: React.FC<ControlBarProps> = ({
     )}
     {onClose && (
       <div className="absolute right-0 top-0 z-20">
-        <CloseButton onClick={onClose} />
+        <IconButton onClick={onClose} icon="close" />
       </div>
     )}
   </>

@@ -1,6 +1,6 @@
 import Stunt from './stunt';
 import Label from '../generic/label';
-import AddButton from '../generic/addButton';
+import Icon from '../generic/icon/icon';
 import { cn } from '@/lib/helpers';
 
 interface StuntInputProps {
@@ -30,7 +30,9 @@ const StuntInput: React.FC<StuntInputProps> = ({
     <div className={cn('w-full', className)}>
       <Label name={title + 's'}>
         {!disabled && (
-          <AddButton
+          <Icon
+            icon="plus"
+            className="mr-2"
             onClick={() =>
               setStunts([
                 ...stunts,

@@ -1,8 +1,9 @@
 import ActionToggle from './actionToggle';
 import Label from '../generic/label';
 import Input from '../generic/input';
-import AddButton from '../generic/addButton';
-import CloseButton from '../generic/closeButton';
+import IconButton from '../generic/icon/iconButton';
+import Icon from '../generic/icon/icon';
+
 import { cn } from '@/lib/helpers';
 type actionOption = 'overcome' | 'advantage' | 'attack' | 'defend';
 interface SkillTypeInputProps {
@@ -43,7 +44,9 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
     <div className="flex flex-col">
       <Label name="Skills">
         {!disabled && (
-          <AddButton
+          <Icon
+            icon="plus"
+            className="mr-2"
             onClick={() => setSkills([...skills, { name: '', actions: [] }])}
           />
         )}
@@ -63,7 +66,8 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
             disabled={disabled}
           />
           {!disabled && (
-            <CloseButton
+            <IconButton
+              icon="close"
               onClick={() => setSkills(skills.filter((_, i) => i !== index))}
             />
           )}
