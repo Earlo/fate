@@ -1,5 +1,6 @@
 import Label from './label';
 import Input from './input';
+import { cn } from '@/lib/helpers';
 import { HTMLInputTypeAttribute } from 'react';
 interface LabeledInputProps {
   name: string;
@@ -13,6 +14,7 @@ interface LabeledInputProps {
   ) => void;
   disabled?: boolean;
   children?: React.ReactNode;
+  className?: string;
 }
 
 const LabeledInput: React.FC<LabeledInputProps> = ({
@@ -25,8 +27,9 @@ const LabeledInput: React.FC<LabeledInputProps> = ({
   onChange,
   disabled = false,
   children,
+  className,
 }) => (
-  <div className="pb-2">
+  <div className={cn('pb-2', className)}>
     <Label name={name}>{children}</Label>
     <Input
       name={name}

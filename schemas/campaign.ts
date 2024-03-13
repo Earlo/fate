@@ -43,7 +43,7 @@ export const groupSchema = new Schema({
         h: { type: Number, required: true, default: 3 },
       },
     },
-    default: 'grid',
+    default: 'list',
   },
   children: {
     type: [this],
