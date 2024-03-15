@@ -127,7 +127,13 @@ export const blankGroup: Omit<PopulatedCampaignT['groups'][0], '_id'> = {
   },
   public: false,
   visible: true,
-  layout: 'grid',
+  layout: {
+    mode: 'list',
+    dimensions: {
+      w: 3,
+      h: 3,
+    },
+  },
   characters: [],
   children: [],
 };

@@ -109,7 +109,7 @@ const Group: React.FC<GroupProps> = ({
     const updatedGroup = { ...group, characters: updatedCharacters };
     onChange(updatedGroup);
   };
-  const layout = group.layout || 'list';
+  const layout = group.layout?.mode || 'list';
   return (
     <div className="relative mx-auto flex w-full flex-col rounded-lg bg-gray-800 p-2 text-white shadow-lg">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">

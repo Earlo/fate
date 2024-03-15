@@ -35,15 +35,20 @@ export const groupSchema = new Schema({
     },
   ],
   layout: {
-    type: String,
-    enum: ['grid', 'list'],
-    dimensions: {
-      type: {
-        w: { type: Number, required: true, default: 3 },
-        h: { type: Number, required: true, default: 3 },
+    type: {
+      mode: {
+        type: String,
+        enum: ['grid', 'list'],
+        default: 'list',
       },
+      dimensions: {
+        type: {
+          w: { type: Number, required: true, default: 3 },
+          h: { type: Number, required: true, default: 3 },
+        },
+      },
+      default: { mode: 'list', dimensions: { w: 3, h: 3 } },
     },
-    default: 'list',
   },
   children: {
     type: [this],
