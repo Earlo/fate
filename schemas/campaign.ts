@@ -38,7 +38,7 @@ export const groupSchema = new Schema({
     type: {
       mode: {
         type: String,
-        enum: ['grid', 'list'],
+        enum: ['list', 'grid'],
         default: 'list',
       },
       dimensions: {
@@ -47,8 +47,8 @@ export const groupSchema = new Schema({
           h: { type: Number, required: true, default: 3 },
         },
       },
-      default: { mode: 'list', dimensions: { w: 3, h: 3 } },
     },
+    default: { mode: 'list', dimensions: { w: 3, h: 3 } },
   },
   children: {
     type: [this],
