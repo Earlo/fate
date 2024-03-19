@@ -2,7 +2,7 @@
 import LoadingSpinner from './loadingSpinner';
 import Icon from './icon/icon';
 import { handleUpload } from '@/lib/cloudinary';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 import { ChangeEvent, useRef, useState } from 'react';
 import Image from 'next/image';
 

@@ -5,11 +5,11 @@ import BaseLayout from '@/components/layout/baseLayout';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
 import NoteInput from '@/components/sheet/noteInput';
 import { useCampaign } from '@/hooks/useFate';
+import Group from '@/components/dashboard/group';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import Group from '@/components/dashboard/group';
 
 type Props = {
   params: { id: string };
@@ -78,7 +78,7 @@ const CampaignPage = ({ params }: Props) => {
           height={128}
           className="w-full sm:h-32 sm:w-32"
         />
-        <p className="pl-4 font-archivo text-lg sm:text-xl">
+        <p className="font-archivo pl-4 text-lg sm:text-xl">
           {campaign.description}
         </p>
       </div>

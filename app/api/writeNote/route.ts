@@ -1,4 +1,4 @@
-import { removeKey } from '@/lib/helpers';
+import { removeKey } from '@/lib/utils';
 import { getCampaign } from '@/schemas/campaign';
 import OpenAIClient from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';

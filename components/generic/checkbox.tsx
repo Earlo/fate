@@ -1,6 +1,6 @@
 'use client';
 import Label from './label';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 import { useRef } from 'react';
 interface CheckboxProps {
   id?: string;

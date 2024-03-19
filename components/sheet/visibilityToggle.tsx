@@ -1,5 +1,5 @@
 import Icon from '../generic/icon/icon';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 
 interface VisibilityToggleProps {
   visible: boolean;

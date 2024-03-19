@@ -3,7 +3,7 @@ import IconButton from '../generic/icon/iconButton';
 import Label from '../generic/label';
 import Input from '../generic/input';
 import Icon from '../generic/icon/icon';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 
 interface AspectInputProps {
   aspects: { name: string; visibleIn: string[] }[];

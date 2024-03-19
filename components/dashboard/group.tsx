@@ -8,6 +8,13 @@ import { PopulatedGroup } from '@/schemas/campaign';
 import { userContext } from '@/app/userProvider';
 import Icon from '@/components/generic/icon/icon';
 import Modal from '@/components/generic/modal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 import { useState, useContext } from 'react';
 import { useSession } from 'next-auth/react';
@@ -160,32 +167,46 @@ const Group: React.FC<GroupProps> = ({
           />
         ))}
       </div>
-      {((group.public && isPlayer) || isAdmin) && (
-        <Button
-          className="absolute bottom-2 right-2 size-12 rounded-full"
-          label={isDropdownOpen ? '-' : '+'}
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        />
-      )}
-      {isDropdownOpen && (
-        <div className="flex flex-col gap-2 rounded bg-gray-700 p-2">
-          {sheets.length > 0
-            ? sheets.map((character) => (
-                <div key={character._id} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={group.characters.some(
-                      (groupCharacter) =>
-                        groupCharacter.sheet._id === character._id,
-                    )}
-                    onChange={() => toggleCharacter(character._id)}
-                  />
-                  {character.name.text}
-                </div>
-              ))
-            : "You haven't created any characters yet"}
-        </div>
-      )}
+      <DropdownMenu
+        open={isDropdownOpen}
+        onOpenChange={(isOpen) => setIsDropdownOpen(isOpen)}
+      >
+        {((group.public && isPlayer) || isAdmin) && (
+          <Button
+            className="absolute bottom-2 right-2 size-12 rounded-full"
+            label={isDropdownOpen ? '-' : '+'}
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            <DropdownMenuTrigger />
+          </Button>
+        )}
+        <DropdownMenuContent>
+          {sheets.length > 0 ? (
+            sheets.map((character) => (
+              <DropdownMenuItem
+                key={character._id}
+                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                  toggleCharacter(character._id);
+                  e.preventDefault();
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={group.characters.some(
+                    (groupCharacter) =>
+                      groupCharacter.sheet._id === character._id,
+                  )}
+                />
+                {character.name.text}
+              </DropdownMenuItem>
+            ))
+          ) : (
+            <DropdownMenuLabel>
+              {"You haven't created any characters yet"}
+            </DropdownMenuLabel>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

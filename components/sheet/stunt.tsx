@@ -1,7 +1,7 @@
 import VisibilityToggle from './visibilityToggle';
 import Input from '../generic/input';
 import IconButton from '../generic/icon/iconButton';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 
 interface StuntProps {
   stunt: { name: string; description: string; visibleIn: string[] };

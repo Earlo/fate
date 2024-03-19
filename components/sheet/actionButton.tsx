@@ -1,4 +1,4 @@
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 interface ActionButtonProps {
   action: 'overcome' | 'advantage' | 'attack' | 'defend';
   onClick: () => void;

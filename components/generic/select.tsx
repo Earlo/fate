@@ -1,4 +1,4 @@
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 import SelectOption from '@/components/generic/selectOption';
 import { useState, FC, useRef, useEffect, ChangeEvent } from 'react';
 
@@ -55,7 +55,7 @@ const Select: FC<SelectProps> = ({
   return (
     <div
       className={cn(
-        'flex h-8 min-w-[20%] flex-grow items-center overflow-hidden rounded border-2 border-black bg-white text-left align-middle font-archivo text-gray-700 md:w-[0px]',
+        'font-archivo flex h-8 min-w-[20%] flex-grow items-center overflow-hidden rounded border-2 border-black bg-white text-left align-middle text-gray-700 md:w-[0px]',
         !value ? 'text-gray-400' : 'text-gray-700',
         disabled && !value ? 'bg-gray-200' : 'bg-white',
         { 'z-[2] border-2 border-blue-700': customValue !== null },

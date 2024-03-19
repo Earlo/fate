@@ -9,7 +9,7 @@ import Consequences from './sheet/consequences';
 import FateInput from './sheet/fateInput';
 import Icon from './generic/icon/icon';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 import { useCompletion } from 'ai/react';
 interface CharacterSheetProps {
   character: CharacterSheetT;

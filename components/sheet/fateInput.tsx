@@ -1,7 +1,7 @@
 import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
 import Input from '../generic/input';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 interface FateInputProps {
   fate: { points: number; refresh: number; visibleIn: string[] };
   setFate: (aspects: {
@@ -69,7 +69,7 @@ const FateInput: React.FC<FateInputProps> = ({
             }
             disabled={disabled}
             required
-            className="h-10 w-16 justify-center rounded-none rounded-bl pt-4 text-center font-archivo-black text-xl"
+            className="font-archivo-black h-10 w-16 justify-center rounded-none rounded-bl pt-4 text-center text-xl"
           />
         </div>
         <div className="relative">
@@ -88,7 +88,7 @@ const FateInput: React.FC<FateInputProps> = ({
             }
             disabled={disabled}
             required
-            className="h-10 w-16 justify-center rounded-none rounded-r border-l-0 pt-4 text-center font-archivo-black text-xl"
+            className="font-archivo-black h-10 w-16 justify-center rounded-none rounded-r border-l-0 pt-4 text-center text-xl"
           />
         </div>
       </div>

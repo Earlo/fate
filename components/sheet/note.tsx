@@ -2,7 +2,7 @@
 import VisibilityToggle from './visibilityToggle';
 import Input from '../generic/input';
 import IconButton from '../generic/icon/iconButton';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 import useDebounce from '@/hooks/debounce';
 import { useState, useEffect } from 'react';
 import { useCompletion } from 'ai/react';

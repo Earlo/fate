@@ -1,4 +1,4 @@
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 
 interface ButtonProps {
   label: string;
@@ -6,6 +6,7 @@ interface ButtonProps {
   disabled?: boolean;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
+  children?: React.ReactNode;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,6 +15,7 @@ const Button: React.FC<ButtonProps> = ({
   disabled,
   onClick,
   className = '',
+  children,
 }) => (
   <button
     type={type}
@@ -25,6 +27,7 @@ const Button: React.FC<ButtonProps> = ({
     )}
   >
     {label}
+    {children}
   </button>
 );
 

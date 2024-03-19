@@ -4,7 +4,7 @@ import Input from '../generic/input';
 import IconButton from '../generic/icon/iconButton';
 import Icon from '../generic/icon/icon';
 
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 type actionOption = 'overcome' | 'advantage' | 'attack' | 'defend';
 interface SkillTypeInputProps {
   skills: {

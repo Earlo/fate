@@ -1,4 +1,4 @@
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 interface ToggleSwitchProps {
   checked: boolean;
   onChange: () => void;

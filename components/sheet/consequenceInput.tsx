@@ -1,5 +1,5 @@
 import Input from '../generic/input';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 interface ConsequenceInputProps {
   rank: string;
   name: string;

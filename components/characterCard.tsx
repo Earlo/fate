@@ -8,7 +8,7 @@ import Consequences from './sheet/consequences';
 import FateInput from './sheet/fateInput';
 import ControlBar from './sheet/controlBar';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 interface CharacterSheetProps {
   character: CharacterSheetT;
   setCharacter?: React.Dispatch<React.SetStateAction<CharacterSheetT>>;

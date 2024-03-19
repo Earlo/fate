@@ -3,7 +3,7 @@ import SkillInput from './skillInput';
 import VisibilityToggle from './visibilityToggle';
 import Label from '../generic/label';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { cn } from '@/lib/helpers';
+import { cn } from '@/lib/utils';
 import Icon from '@/components/generic/icon/icon';
 import { useState, useCallback, useEffect } from 'react';
 

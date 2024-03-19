@@ -1,4 +1,4 @@
-import { removeKey } from '@/lib/helpers';
+import { removeKey } from '@/lib/utils';
 import { handleUploadFromUrl } from '@/lib/cloudinary';
 import { NextResponse } from 'next/server';
 import OpenAIClient from 'openai';
