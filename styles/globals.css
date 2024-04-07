@@ -103,10 +103,14 @@
   src: url('/FateCoreFont.ttf') format('truetype');
 }
 
-.fate-font {
+.fateIconFont {
   font-family: 'FateCoreFont', sans-serif;
   font-weight: 400;
   font-size: 1.5rem;
+}
+
+.debugTest {
+  background-color: red;
 }
 
 body {

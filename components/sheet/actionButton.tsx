@@ -23,7 +23,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   <span
     aria-hidden="true"
     className={cn(
-      'font-fate text-2xl text-green-400 hover:text-green-500',
+      'fateIconFont text-2xl text-green-400 hover:text-green-500',
       {
         'text-gray-400 hover:text-gray-500': !toggled,
       },
