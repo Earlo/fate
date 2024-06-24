@@ -32,6 +32,13 @@ export const groupSchema = new Schema({
         required: true,
       },
       visible: { type: Boolean, required: true, default: false },
+      position: {
+        type: {
+          x: { type: Number, required: true, default: 0 },
+          y: { type: Number, required: true, default: 0 },
+        },
+        default: { x: 0, y: 0 },
+      },
     },
   ],
   layout: {
@@ -46,6 +53,7 @@ export const groupSchema = new Schema({
           w: { type: Number, required: true, default: 3 },
           h: { type: Number, required: true, default: 3 },
         },
+        default: { w: 3, h: 3 },
       },
     },
     default: { mode: 'list', dimensions: { w: 3, h: 3 } },
@@ -131,7 +139,10 @@ export type CampaignT = {
   _id: string;
 } & ReplaceMongooseDocumentArrayByArray<InferSchemaType<typeof campaignSchema>>;
 
-export type PopulatedGroup = Omit<CampaignT['groups'][0], 'characters'> & {
+export type GroupT = ReplaceMongooseDocumentArrayByArray<
+  InferSchemaType<typeof groupSchema>
+>;
+export type PopulatedGroup = Omit<GroupT, 'characters'> & {
   characters: { sheet: CharacterSheetT; visible: boolean }[];
 };
 

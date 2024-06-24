@@ -15,7 +15,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
+import { CharacterSheetT } from '@/schemas/sheet';
 import { useState, useContext } from 'react';
 import { useSession } from 'next-auth/react';
 
@@ -71,6 +71,20 @@ const GroupSettings: React.FC<{
             />
           </div>
         </div>
+        <ToggleSwitch
+          checked={group.layout?.mode === 'grid'}
+          onChange={() => {
+            const updatedGroup = {
+              ...group,
+              layout: {
+                ...group.layout,
+                mode: group.layout?.mode === 'grid' ? 'list' : 'grid',
+              },
+            };
+            onChange(updatedGroup);
+          }}
+          label="Grid Layout"
+        />
         <div className="flex justify-end space-x-2">
           <Button label="Cancel" onClick={handleCancel} />
           <Button label="Save" onClick={handleSave} />
@@ -96,7 +110,7 @@ const Group: React.FC<GroupProps> = ({
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { sheets, setBigSheet } = useContext(userContext);
+  const { sheets } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
 
@@ -110,7 +124,11 @@ const Group: React.FC<GroupProps> = ({
     } else {
       const character = sheets.find((c) => c._id === characterId);
       if (character) {
-        updatedCharacters.push({ sheet: character, visible: true });
+        updatedCharacters.push({
+          sheet: character,
+          visible: true,
+          position: { x: 0, y: updatedCharacters.length },
+        });
       }
     }
     const updatedGroup = { ...group, characters: updatedCharacters };
@@ -146,27 +164,20 @@ const Group: React.FC<GroupProps> = ({
           />
         )}
       </div>
-      <div className="grid grid-cols-1 gap-2">
-        {group.characters.map((character) => (
-          <CharacterButton
-            compact={layout === 'list'}
-            key={character.sheet._id}
-            character={character.sheet}
-            onClick={() => {
-              setBigSheet({
-                sheet: character.sheet,
-                state: isAdmin
-                  ? 'toggle'
-                  : character.sheet.owner === session?.user._id
-                    ? 'play'
-                    : 'view',
-                campaignId,
-              });
-            }}
-            campaignId={group.public ? undefined : campaignId}
-          />
-        ))}
-      </div>
+      {layout === 'list' ? (
+        <CharacterList
+          characters={group.characters}
+          campaignId={campaignId}
+          state={state}
+        />
+      ) : (
+        <CharacterGrid
+          characters={group.characters}
+          campaignId={campaignId}
+          state={state}
+          dimensions={group.layout.dimensions}
+        />
+      )}
       <DropdownMenu
         open={isDropdownOpen}
         onOpenChange={(isOpen) => setIsDropdownOpen(isOpen)}
@@ -207,6 +218,93 @@ const Group: React.FC<GroupProps> = ({
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+    </div>
+  );
+};
+
+const CharacterList: React.FC<{
+  characters: { sheet: CharacterSheetT; visible: boolean }[];
+  campaignId: string;
+  state: 'admin' | 'player' | 'view';
+}> = ({ characters, campaignId, state }) => {
+  const { setBigSheet } = useContext(userContext);
+  const isAdmin = state === 'admin';
+  const isPlayer = state === 'player';
+  return (
+    <div className="grid grid-cols-1 gap-2">
+      {characters.map((character) => (
+        <CharacterButton
+          key={character.sheet._id}
+          character={character.sheet}
+          onClick={() => {
+            setBigSheet({
+              sheet: character.sheet,
+              state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+              campaignId,
+            });
+          }}
+          campaignId={isAdmin || isPlayer ? undefined : campaignId}
+        />
+      ))}
+    </div>
+  );
+};
+
+const CharacterGrid: React.FC<{
+  characters: {
+    sheet: CharacterSheetT;
+    visible: boolean;
+    position: { x: number; y: number };
+  }[];
+  campaignId: string;
+  state: 'admin' | 'player' | 'view';
+  dimensions: { w: number; h: number };
+}> = ({ characters, campaignId, state, dimensions = { w: 3, h: 3 } }) => {
+  const { setBigSheet } = useContext(userContext);
+  const isAdmin = state === 'admin';
+  const isPlayer = state === 'player';
+  // Initialize the grid with placeholders
+  const grid = Array.from({ length: dimensions.h }, () =>
+    Array(dimensions.w).fill(null),
+  );
+
+  // Populate the grid with characters
+  characters.forEach((character) => {
+    if (
+      character.position.y < dimensions.h &&
+      character.position.x < dimensions.w
+    ) {
+      grid[character.position.y][character.position.x] = character;
+    }
+  });
+
+  console.log(grid, characters);
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {grid.map((row, y) =>
+        row.map((character, x) =>
+          character ? (
+            <CharacterButton
+              compact
+              key={character?.sheet._id}
+              character={character?.sheet}
+              onClick={() => {
+                setBigSheet({
+                  sheet: character.sheet,
+                  state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+                  campaignId,
+                });
+              }}
+              campaignId={isAdmin || isPlayer ? undefined : campaignId}
+            />
+          ) : (
+            <div
+              key={`${x}-${y}`}
+              className="h-16 w-16 rounded-lg bg-gray-700"
+            />
+          ),
+        ),
+      )}
     </div>
   );
 };
