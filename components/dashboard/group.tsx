@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { useState, useContext } from 'react';
-import { useSession } from 'next-auth/react';
 
 const GroupSettings: React.FC<{
   group: PopulatedGroup;
@@ -107,7 +106,6 @@ const Group: React.FC<GroupProps> = ({
   onChange,
   campaignId,
 }) => {
-  const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { sheets } = useContext(userContext);
