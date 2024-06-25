@@ -77,7 +77,10 @@ const GroupSettings: React.FC<{
               ...group,
               layout: {
                 ...group.layout,
-                mode: group.layout?.mode === 'grid' ? 'list' : 'grid',
+                mode:
+                  group.layout?.mode === 'grid'
+                    ? 'list'
+                    : ('grid' as 'list' | 'grid'),
               },
             };
             onChange(updatedGroup);

@@ -143,7 +143,11 @@ export type GroupT = ReplaceMongooseDocumentArrayByArray<
   InferSchemaType<typeof groupSchema>
 >;
 export type PopulatedGroup = Omit<GroupT, 'characters'> & {
-  characters: { sheet: CharacterSheetT; visible: boolean }[];
+  characters: {
+    sheet: CharacterSheetT;
+    visible: boolean;
+    position: { x: number; y: number };
+  }[];
 };
 
 export type PopulatedCampaignT = {
