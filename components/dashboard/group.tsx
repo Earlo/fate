@@ -261,12 +261,9 @@ const CharacterGrid: React.FC<{
   const { setBigSheet } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
-  // Initialize the grid with placeholders
   const grid = Array.from({ length: dimensions.h }, () =>
     Array(dimensions.w).fill(null),
   );
-
-  // Populate the grid with characters
   characters.forEach((character) => {
     if (
       character.position.y < dimensions.h &&
@@ -276,7 +273,6 @@ const CharacterGrid: React.FC<{
     }
   });
 
-  console.log(grid, characters);
   return (
     <div className="grid grid-cols-3 gap-2">
       {grid.map((row, y) =>

@@ -52,7 +52,6 @@ export async function POST(req: Request) {
     n: 1,
     prompt: `A Fate Core RPG character portrait. ${text}`,
   });
-  console.log(response.data);
   const imageUrl = response.data[0].url;
   if (!imageUrl) {
     return NextResponse.json({ error: 'No image generated' }, { status: 500 });
