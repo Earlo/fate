@@ -35,6 +35,11 @@ const GroupSettings: React.FC<{
     setNewName(group.name);
   };
 
+  const handleDelete = () => {
+    setIsEditing(false);
+    onChange(group);
+  };
+
   const toggleProperty = (property: 'public' | 'visible') => {
     const updatedGroup = { ...group, [property]: !group[property] };
     onChange(updatedGroup);
@@ -87,9 +92,48 @@ const GroupSettings: React.FC<{
           }}
           label="Grid Layout"
         />
+        {group.layout?.mode === 'grid' && (
+          <div className="grid grid-cols-2 gap-2">
+            <LabeledInput
+              type="number"
+              name="width"
+              value={group.layout.dimensions.w}
+              onChange={(e) =>
+                onChange({
+                  ...group,
+                  layout: {
+                    ...group.layout,
+                    dimensions: {
+                      ...group.layout.dimensions,
+                      w: parseInt(e.target.value),
+                    },
+                  },
+                })
+              }
+            />
+            <LabeledInput
+              type="number"
+              name="height"
+              value={group.layout.dimensions.h}
+              onChange={(e) =>
+                onChange({
+                  ...group,
+                  layout: {
+                    ...group.layout,
+                    dimensions: {
+                      ...group.layout.dimensions,
+                      h: parseInt(e.target.value),
+                    },
+                  },
+                })
+              }
+            />
+          </div>
+        )}
         <div className="flex justify-end space-x-2">
           <Button label="Cancel" onClick={handleCancel} />
           <Button label="Save" onClick={handleSave} />
+          <Button label="Delete" onClick={() => {}} />
         </div>
       </div>
     </Modal>
@@ -137,7 +181,7 @@ const Group: React.FC<GroupProps> = ({
   };
   const layout = group.layout?.mode || 'list';
   return (
-    <div className="relative mx-auto flex min-h-24 w-full flex-col rounded-lg bg-gray-800 p-2 text-white shadow-lg">
+    <div className="relative mx-auto flex min-h-24 w-full flex-grow flex-col rounded-lg bg-gray-800 p-2 text-white shadow-lg">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <h1 className="text-l font-bold">{group.name}</h1>
         {isAdmin && (
@@ -275,33 +319,34 @@ const CharacterGrid: React.FC<{
       grid[character.position.y][character.position.x] = character;
     }
   });
+  //create grid of characters
 
   return (
-    <div className="grid grid-cols-3 gap-2">
-      {grid.map((row, y) =>
-        row.map((character, x) =>
-          character ? (
-            <CharacterButton
-              compact
-              key={character?.sheet._id}
-              character={character?.sheet}
-              onClick={() => {
-                setBigSheet({
-                  sheet: character.sheet,
-                  state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-                  campaignId,
-                });
-              }}
-              campaignId={isAdmin || isPlayer ? undefined : campaignId}
-            />
-          ) : (
-            <div
-              key={`${x}-${y}`}
-              className="h-16 w-16 rounded-lg bg-gray-700"
-            />
-          ),
-        ),
-      )}
+    <div className="flex flex-col">
+      {grid.map((row, y) => (
+        <div key={y} className="flex">
+          {row.map((character, x) => (
+            <div key={x} className="flex-1">
+              {character ? (
+                <CharacterButton
+                  compact
+                  character={character.sheet}
+                  onClick={() => {
+                    setBigSheet({
+                      sheet: character.sheet,
+                      state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+                      campaignId,
+                    });
+                  }}
+                  campaignId={isAdmin || isPlayer ? undefined : campaignId}
+                />
+              ) : (
+                <div className="h-16 w-16 rounded-lg border-2 border-dashed bg-gray-600"></div>
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
