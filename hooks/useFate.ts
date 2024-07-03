@@ -63,12 +63,19 @@ export const useCampaign = (campaignId: string) => {
 
   const updateGroup = async (
     groupIndex: number,
-    updatedGroup: PopulatedGroup,
+    updatedGroup?: PopulatedGroup,
   ) => {
     if (campaign) {
-      const updatedCampaign = { ...campaign };
-      updatedCampaign.groups[groupIndex] = updatedGroup;
-      updateCampaign(updatedCampaign);
+      if (!updatedGroup) {
+        //delete group index
+        const updatedCampaign = { ...campaign };
+        updatedCampaign.groups.splice(groupIndex, 1);
+        updateCampaign(updatedCampaign);
+      } else {
+        const updatedCampaign = { ...campaign };
+        updatedCampaign.groups[groupIndex] = updatedGroup;
+        updateCampaign(updatedCampaign);
+      }
     }
   };
 

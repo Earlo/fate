@@ -5,7 +5,7 @@ import { HTMLInputTypeAttribute } from 'react';
 interface LabeledInputProps {
   name: string;
   type?: HTMLInputTypeAttribute;
-  value?: string;
+  value?: string | number;
   required?: boolean;
   multiline?: boolean;
   placeholder?: string;

@@ -20,7 +20,7 @@ import { useState, useContext } from 'react';
 
 const GroupSettings: React.FC<{
   group: PopulatedGroup;
-  onChange: (updatedGroup: PopulatedGroup) => void;
+  onChange: (updatedGroup?: PopulatedGroup) => void;
   setIsEditing: (isEditing: boolean) => void;
 }> = ({ group, onChange, setIsEditing }) => {
   const [newName, setNewName] = useState(group.name);
@@ -37,7 +37,7 @@ const GroupSettings: React.FC<{
 
   const handleDelete = () => {
     setIsEditing(false);
-    onChange(group);
+    onChange();
   };
 
   const toggleProperty = (property: 'public' | 'visible') => {
@@ -50,91 +50,89 @@ const GroupSettings: React.FC<{
       onClose={() => setIsEditing(false)}
       className="mx-auto max-w-md rounded-lg bg-white shadow"
     >
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Edit Group Settings
-        </h2>
-        <LabeledInput
-          type="text"
-          name="name"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-        />
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <ToggleSwitch
-              checked={group.visible}
-              onChange={() => toggleProperty('visible')}
-              label="Visible"
-            />
-            <ToggleSwitch
-              checked={group.public}
-              onChange={() => toggleProperty('public')}
-              label="Public"
-              className="ml-4"
-            />
-          </div>
+      <h2 className="text-lg font-semibold text-gray-900">
+        Edit Group Settings
+      </h2>
+      <LabeledInput
+        type="text"
+        name="name"
+        value={newName}
+        onChange={(e) => setNewName(e.target.value)}
+      />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <ToggleSwitch
+            checked={group.visible}
+            onChange={() => toggleProperty('visible')}
+            label="Visible"
+          />
+          <ToggleSwitch
+            checked={group.public}
+            onChange={() => toggleProperty('public')}
+            label="Public"
+            className="ml-4"
+          />
         </div>
-        <ToggleSwitch
-          checked={group.layout?.mode === 'grid'}
-          onChange={() => {
-            const updatedGroup = {
-              ...group,
-              layout: {
-                ...group.layout,
-                mode:
-                  group.layout?.mode === 'grid'
-                    ? 'list'
-                    : ('grid' as 'list' | 'grid'),
-              },
-            };
-            onChange(updatedGroup);
-          }}
-          label="Grid Layout"
-        />
-        {group.layout?.mode === 'grid' && (
-          <div className="grid grid-cols-2 gap-2">
-            <LabeledInput
-              type="number"
-              name="width"
-              value={group.layout.dimensions.w}
-              onChange={(e) =>
-                onChange({
-                  ...group,
-                  layout: {
-                    ...group.layout,
-                    dimensions: {
-                      ...group.layout.dimensions,
-                      w: parseInt(e.target.value),
-                    },
+      </div>
+      <ToggleSwitch
+        checked={group.layout?.mode === 'grid'}
+        onChange={() => {
+          const updatedGroup = {
+            ...group,
+            layout: {
+              ...group.layout,
+              mode:
+                group.layout?.mode === 'grid'
+                  ? 'list'
+                  : ('grid' as 'list' | 'grid'),
+            },
+          };
+          onChange(updatedGroup);
+        }}
+        label="Grid Layout"
+      />
+      {group.layout?.mode === 'grid' && (
+        <div className="grid grid-cols-2 gap-2">
+          <LabeledInput
+            type="number"
+            name="width"
+            value={group.layout.dimensions.w}
+            onChange={(e) =>
+              onChange({
+                ...group,
+                layout: {
+                  ...group.layout,
+                  dimensions: {
+                    ...group.layout.dimensions,
+                    w: parseInt(e.target.value),
                   },
-                })
-              }
-            />
-            <LabeledInput
-              type="number"
-              name="height"
-              value={group.layout.dimensions.h}
-              onChange={(e) =>
-                onChange({
-                  ...group,
-                  layout: {
-                    ...group.layout,
-                    dimensions: {
-                      ...group.layout.dimensions,
-                      h: parseInt(e.target.value),
-                    },
+                },
+              })
+            }
+          />
+          <LabeledInput
+            type="number"
+            name="height"
+            value={group.layout.dimensions.h}
+            onChange={(e) =>
+              onChange({
+                ...group,
+                layout: {
+                  ...group.layout,
+                  dimensions: {
+                    ...group.layout.dimensions,
+                    h: parseInt(e.target.value),
                   },
-                })
-              }
-            />
-          </div>
-        )}
-        <div className="flex justify-end space-x-2">
-          <Button label="Cancel" onClick={handleCancel} />
-          <Button label="Save" onClick={handleSave} />
-          <Button label="Delete" onClick={() => {}} />
+                },
+              })
+            }
+          />
         </div>
+      )}
+      <div className="flex justify-end space-x-2">
+        <Button label="Cancel" onClick={handleCancel} />
+        <Button label="Save" onClick={handleSave} />
+        <Button label="Delete" onClick={handleDelete} />
       </div>
     </Modal>
   );
@@ -143,7 +141,7 @@ const GroupSettings: React.FC<{
 interface GroupProps {
   group: PopulatedGroup;
   state: 'admin' | 'player' | 'view';
-  onChange: (updatedGroup: PopulatedGroup) => void;
+  onChange: (updatedGroup?: PopulatedGroup) => void;
   campaignId: string;
 }
 

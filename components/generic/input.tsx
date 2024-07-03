@@ -3,7 +3,7 @@ import { HTMLInputTypeAttribute } from 'react';
 interface InputProps {
   name: string;
   type?: HTMLInputTypeAttribute;
-  value?: string;
+  value?: string | number;
   required?: boolean;
   placeholder?: string;
   onChange?: (
