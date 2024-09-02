@@ -19,7 +19,7 @@
     "ai": "3.3.20",
     "bcrypt": "5.1.1",
     "class-variance-authority": "^0.7.0",
-    "lucide-react": "^0.436.0",
+    "lucide-react": "^0.438.0",
     "mongoose": "8.6.0",
     "next": "14.2.7",
     "next-auth": "4.24.7",
