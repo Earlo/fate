@@ -43,7 +43,7 @@
     "eslint-config-prettier": "9.1.0",
     "eslint-import-resolver-typescript": "3.6.3",
     "eslint-plugin-import": "2.30.0",
-    "postcss": "8.4.44",
+    "postcss": "8.4.45",
     "prettier-plugin-organize-imports": "4.0.0",
     "prettier-plugin-tailwindcss": "0.6.6",
     "tailwind-merge": "2.5.2",
