@@ -39,7 +39,7 @@
     "autoprefixer": "10.4.20",
     "clsx": "2.1.1",
     "eslint": "9.10.0",
-    "eslint-config-next": "14.2.8",
+    "eslint-config-next": "14.2.9",
     "eslint-config-prettier": "9.1.0",
     "eslint-import-resolver-typescript": "3.6.3",
     "eslint-plugin-import": "2.30.0",
