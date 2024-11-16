@@ -1,11 +1,11 @@
 'use client';
+import Icon from '@/components/generic/icon/icon';
+import { cn } from '@/lib/utils';
+import { CharacterSheetT } from '@/schemas/sheet';
+import { useCallback, useEffect, useState } from 'react';
+import Label from '../generic/label';
 import SkillInput from './skillInput';
 import VisibilityToggle from './visibilityToggle';
-import Label from '../generic/label';
-import { CharacterSheetT } from '@/schemas/sheet';
-import { cn } from '@/lib/utils';
-import Icon from '@/components/generic/icon/icon';
-import { useState, useCallback, useEffect } from 'react';
 
 export const tiers = [
   { level: 18, label: 'Transcendent' },

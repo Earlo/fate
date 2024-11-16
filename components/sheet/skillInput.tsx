@@ -1,5 +1,5 @@
-import Select from '../generic/select';
 import { cn } from '@/lib/utils';
+import Select from '../generic/select';
 interface SkillInputProps {
   onChange: (value: string) => void;
   value: string | '';

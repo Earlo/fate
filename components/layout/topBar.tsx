@@ -1,9 +1,9 @@
 'use client';
-import AuthForm from '../authForm';
 import Button from '@/components/generic/button';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
 import { useState } from 'react';
+import AuthForm from '../authForm';
 
 const TopBar: React.FC = () => {
   const { data: session } = useSession();

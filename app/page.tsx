@@ -1,8 +1,8 @@
 'use client';
-import BaseLayout from '@/components/layout/baseLayout';
-import DiceBackground from '@/components/layout/diceBackground';
 import Dashboard from '@/components/dashboard/board';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
+import BaseLayout from '@/components/layout/baseLayout';
+import DiceBackground from '@/components/layout/diceBackground';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 

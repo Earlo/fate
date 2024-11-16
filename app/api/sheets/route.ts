@@ -1,13 +1,13 @@
+import connect from '@/lib/mongo';
 import {
   CharacterSheetT,
   createCharacterSheet,
   getCharacterSheets,
 } from '@/schemas/sheet';
-import connect from '@/lib/mongo';
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 connect();
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const sheet: CharacterSheetT = await req.json();
     const newSheet = await createCharacterSheet(sheet);
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     const userId = new URL(req.url).searchParams.get('id');
     if (!userId) {
@@ -31,7 +31,11 @@ export async function GET(req: Request) {
     return NextResponse.json(sheets, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to get character sheets' },
+      {
+        error: `Failed to get character sheets ${
+          error instanceof Error ? error.message : JSON.stringify(error)
+        }`,
+      },
       { status: 500 },
     );
   }

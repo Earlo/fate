@@ -1,11 +1,6 @@
 'use client';
-import CharacterButton from './characterButton';
-import LabeledInput from '../generic/labeledInput';
-import ToggleSwitch from '../generic/toggleSwitch';
-import VisibilityToggle from '../sheet/visibilityToggle';
-import Button from '@/components/generic/button';
-import { PopulatedGroup } from '@/schemas/campaign';
 import { userContext } from '@/app/userProvider';
+import Button from '@/components/generic/button';
 import Icon from '@/components/generic/icon/icon';
 import Modal from '@/components/generic/modal';
 import {
@@ -15,8 +10,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { PopulatedGroup } from '@/schemas/campaign';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { useState, useContext } from 'react';
+import { useContext, useState } from 'react';
+import LabeledInput from '../generic/labeledInput';
+import ToggleSwitch from '../generic/toggleSwitch';
+import VisibilityToggle from '../sheet/visibilityToggle';
+import CharacterButton from './characterButton';
 
 const GroupSettings: React.FC<{
   group: PopulatedGroup;

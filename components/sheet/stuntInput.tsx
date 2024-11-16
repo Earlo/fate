@@ -1,7 +1,7 @@
-import Stunt from './stunt';
-import Label from '../generic/label';
-import Icon from '../generic/icon/icon';
 import { cn } from '@/lib/utils';
+import Icon from '../generic/icon/icon';
+import Label from '../generic/label';
+import Stunt from './stunt';
 
 interface StuntInputProps {
   stunts: { name: string; description: string; visibleIn: string[] }[];

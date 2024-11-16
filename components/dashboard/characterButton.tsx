@@ -1,5 +1,5 @@
-import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/utils';
+import { CharacterSheetT } from '@/schemas/sheet';
 import Image from 'next/image';
 interface CharacterButtonProps {
   character: CharacterSheetT;

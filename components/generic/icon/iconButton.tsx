@@ -1,5 +1,5 @@
-import Icon, { supportedIcons } from './icon';
 import { cn } from '@/lib/utils';
+import Icon, { supportedIcons } from './icon';
 interface IconButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;

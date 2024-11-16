@@ -1,7 +1,7 @@
-import Label from './label';
-import Input from './input';
 import { cn } from '@/lib/utils';
 import { HTMLInputTypeAttribute } from 'react';
+import Input from './input';
+import Label from './label';
 interface LabeledInputProps {
   name: string;
   type?: HTMLInputTypeAttribute;

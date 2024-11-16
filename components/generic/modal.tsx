@@ -1,5 +1,5 @@
-import IconButton from './icon/iconButton';
 import { cn } from '@/lib/utils';
+import IconButton from './icon/iconButton';
 
 interface ModalProps {
   onClose?: () => void;

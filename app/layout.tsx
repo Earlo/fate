@@ -1,12 +1,12 @@
+import Footer from '@/components/layout/footer';
+import TopBar from '@/components/layout/topBar';
+import '@/schemas';
 import '@/styles/globals.css';
+import type { Metadata } from 'next';
+import { Archivo, Archivo_Black } from 'next/font/google';
+import type { ReactNode } from 'react';
 import Provider from './providers';
 import UserProvider from './userProvider';
-import TopBar from '@/components/layout/topBar';
-import Footer from '@/components/layout/footer';
-import { Archivo, Archivo_Black } from 'next/font/google';
-import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
-import '@/schemas';
 
 export const metadata: Metadata = {
   title: 'Fate Character Sheet Creator',

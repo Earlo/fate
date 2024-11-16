@@ -1,6 +1,6 @@
-import { removeKey } from '@/lib/utils';
 import { handleUploadFromUrl } from '@/lib/cloudinary';
-import { NextResponse } from 'next/server';
+import { removeKey } from '@/lib/utils';
+import { NextResponse, type NextRequest } from 'next/server';
 import OpenAIClient from 'openai';
 export const runtime = 'edge';
 
@@ -9,7 +9,7 @@ const openai = new OpenAIClient({
   apiKey: process.env.OPENAI_API_KEY || '',
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const { sheet } = await req.json();
   const cleanSheet = removeKey(sheet, [
     '_id',

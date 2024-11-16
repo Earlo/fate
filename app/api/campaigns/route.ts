@@ -1,9 +1,9 @@
-import { getCampaigns, createCampaign } from '@/schemas/campaign';
 import connect from '@/lib/mongo';
-import { NextResponse } from 'next/server';
+import { createCampaign, getCampaigns } from '@/schemas/campaign';
+import { NextResponse, type NextRequest } from 'next/server';
 connect();
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const newCampaign = await req.json();
     const createdCampaign = await createCampaign(newCampaign);
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     const userId = new URL(req.url).searchParams.get('id');
     if (!userId) {
@@ -27,7 +27,11 @@ export async function GET(req: Request) {
     return NextResponse.json(campaigns, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to get character campaigns' },
+      {
+        error: `Failed to get character campaigns ${
+          error instanceof Error ? error.message : JSON.stringify(error)
+        }`,
+      },
       { status: 500 },
     );
   }

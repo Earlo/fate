@@ -1,11 +1,11 @@
 'use client';
-import VisibilityToggle from './visibilityToggle';
-import Input from '../generic/input';
-import IconButton from '../generic/icon/iconButton';
-import { cn } from '@/lib/utils';
 import useDebounce from '@/hooks/debounce';
-import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 import { useCompletion } from 'ai/react';
+import { useEffect, useState } from 'react';
+import IconButton from '../generic/icon/iconButton';
+import Input from '../generic/input';
+import VisibilityToggle from './visibilityToggle';
 
 interface NoteProps {
   note: {

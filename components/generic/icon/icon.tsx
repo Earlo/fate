@@ -1,14 +1,14 @@
 import { cn } from '@/lib/utils';
 import {
-  SparklesIcon,
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
   ArrowUpOnSquareIcon,
   EllipsisVerticalIcon,
-  XMarkIcon,
-  PlusIcon,
   EyeIcon,
   EyeSlashIcon,
+  PlusIcon,
+  SparklesIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/solid';
 
 export type supportedIcons =

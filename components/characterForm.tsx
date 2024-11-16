@@ -1,17 +1,17 @@
 'use client';
-import Button from './generic/button';
-import CharacterSheet from './characterSheet';
-import FormContainer from './formContainer';
-import { CharacterSheetT } from '@/schemas/sheet';
-import { blankSheet } from '@/schemas/consts/blankCharacterSheet';
-import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
+import { userContext } from '@/app/userProvider';
 import {
   createCharacterSheet,
   updateCharacterSheet,
 } from '@/lib/apiHelpers/sheets';
-import { userContext } from '@/app/userProvider';
-import { FormEvent, useState, useContext } from 'react';
+import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
+import { blankSheet } from '@/schemas/consts/blankCharacterSheet';
+import { CharacterSheetT } from '@/schemas/sheet';
 import { useSession } from 'next-auth/react';
+import { FormEvent, useContext, useState } from 'react';
+import CharacterSheet from './characterSheet';
+import FormContainer from './formContainer';
+import Button from './generic/button';
 interface CharacterFormProps {
   onClose?: () => void;
   onMinimize?: () => void;

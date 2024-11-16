@@ -1,5 +1,5 @@
 import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
-import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
+import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
 
 export const userSchema = new Schema({
   username: { type: String, required: true },

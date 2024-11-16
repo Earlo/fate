@@ -1,8 +1,8 @@
-import LabeledInput from './generic/labeledInput';
+import { CampaignT } from '@/schemas/campaign';
 import ImageUploader from './generic/imageUploader';
+import LabeledInput from './generic/labeledInput';
 import AspectInput from './sheet/aspectInput';
 import SkillTypeInput from './sheet/skillTypeInput';
-import { CampaignT } from '@/schemas/campaign';
 
 interface CampaignSheetProps {
   campaign?: Partial<CampaignT>;

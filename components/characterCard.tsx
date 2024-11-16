@@ -1,14 +1,14 @@
-import LabeledInput from './generic/labeledInput';
+import { cn } from '@/lib/utils';
+import { CharacterSheetT } from '@/schemas/sheet';
 import ImageUploader from './generic/imageUploader';
+import LabeledInput from './generic/labeledInput';
 import AspectInput from './sheet/aspectInput';
-import StuntInput from './sheet/stuntInput';
+import Consequences from './sheet/consequences';
+import ControlBar from './sheet/controlBar';
+import FateInput from './sheet/fateInput';
 import SkillGrid from './sheet/skillGrid';
 import Stress from './sheet/stress';
-import Consequences from './sheet/consequences';
-import FateInput from './sheet/fateInput';
-import ControlBar from './sheet/controlBar';
-import { CharacterSheetT } from '@/schemas/sheet';
-import { cn } from '@/lib/utils';
+import StuntInput from './sheet/stuntInput';
 interface CharacterSheetProps {
   character: CharacterSheetT;
   setCharacter?: React.Dispatch<React.SetStateAction<CharacterSheetT>>;
@@ -105,7 +105,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           tight
         />
         <StuntInput
-          stunts={[...character.stunts, ...character.extras] || []}
+          stunts={[...character.stunts, ...character.extras]}
           disabled
           campaignId={campaignId}
           state={state}

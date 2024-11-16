@@ -1,8 +1,8 @@
 import { removeKey } from '@/lib/utils';
 import { getCampaign } from '@/schemas/campaign';
-import OpenAIClient from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
+import OpenAIClient from 'openai';
 //Shouldn't use edge on endpoints that use DB
 //export const runtime = 'edge';
 
@@ -11,7 +11,7 @@ const openai = new OpenAIClient({
   apiKey: process.env.OPENAI_API_KEY || '',
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const body = await req.json();
   const { campaignId, prompt } = JSON.parse(body.prompt);
   let campaign = await getCampaign(campaignId as string);

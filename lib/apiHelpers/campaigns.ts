@@ -1,4 +1,4 @@
-import { PopulatedCampaignT, CampaignT } from '@/schemas/campaign';
+import { CampaignT, PopulatedCampaignT } from '@/schemas/campaign';
 
 export const getCampaignsByUserId = async (
   id: string,

@@ -1,9 +1,9 @@
-import { UserModel } from '@/schemas/user';
 import connect from '@/lib/mongo';
-import { NextResponse } from 'next/server';
+import { UserModel } from '@/schemas/user';
+import { NextResponse, type NextRequest } from 'next/server';
 connect();
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const { username } = await req.json();
   const existingUser = await UserModel.findOne({ username });
   if (existingUser) {

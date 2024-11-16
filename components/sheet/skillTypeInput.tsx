@@ -1,8 +1,8 @@
-import ActionToggle from './actionToggle';
-import Label from '../generic/label';
-import Input from '../generic/input';
-import IconButton from '../generic/icon/iconButton';
 import Icon from '../generic/icon/icon';
+import IconButton from '../generic/icon/iconButton';
+import Input from '../generic/input';
+import Label from '../generic/label';
+import ActionToggle from './actionToggle';
 
 import { cn } from '@/lib/utils';
 type actionOption = 'overcome' | 'advantage' | 'attack' | 'defend';

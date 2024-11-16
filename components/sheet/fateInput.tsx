@@ -1,7 +1,7 @@
-import VisibilityToggle from './visibilityToggle';
-import Label from '../generic/label';
-import Input from '../generic/input';
 import { cn } from '@/lib/utils';
+import Input from '../generic/input';
+import Label from '../generic/label';
+import VisibilityToggle from './visibilityToggle';
 interface FateInputProps {
   fate: { points: number; refresh: number; visibleIn: string[] };
   setFate: (aspects: {

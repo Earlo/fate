@@ -1,7 +1,7 @@
-import ConsequenceInput from './consequenceInput';
-import Label from '../generic/label';
-import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/utils';
+import { CharacterSheetT } from '@/schemas/sheet';
+import Label from '../generic/label';
+import ConsequenceInput from './consequenceInput';
 
 interface ConsequencesProps {
   consequences?: CharacterSheetT['consequences'];

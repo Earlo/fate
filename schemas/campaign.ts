@@ -1,7 +1,7 @@
+import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
+import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
 import { CharacterSheetT } from './sheet';
 import { UserModel } from './user';
-import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
-import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
 
 export const groupSchema = new Schema({
   name: { type: String, required: true },

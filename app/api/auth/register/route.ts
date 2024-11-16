@@ -1,7 +1,7 @@
-import { UserModel, UserModelT } from '@/schemas/user';
 import connect from '@/lib/mongo';
+import { UserModel, UserModelT } from '@/schemas/user';
 import { hash } from 'bcrypt';
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 connect();
 
 interface RegistrationInput {
@@ -9,7 +9,7 @@ interface RegistrationInput {
   password: string;
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const { username, password }: RegistrationInput = await req.json();
   const hashedPassword = await hash(password, 10);
   const existingUser = await UserModel.findOne<UserModelT>({ username });

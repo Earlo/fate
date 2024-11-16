@@ -1,9 +1,9 @@
-import { UserModel, UserModelT } from '@/schemas/user';
 import connect from '@/lib/mongo';
+import { UserModel, UserModelT } from '@/schemas/user';
+import { compare } from 'bcrypt';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import { compare } from 'bcrypt';
 connect();
 
 const handler = NextAuth({

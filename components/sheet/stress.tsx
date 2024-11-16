@@ -1,7 +1,7 @@
-import StressBox from './stressBox';
-import Label from '../generic/label';
-import { CharacterSheetT } from '@/schemas/sheet';
 import { cn } from '@/lib/utils';
+import { CharacterSheetT } from '@/schemas/sheet';
+import Label from '../generic/label';
+import StressBox from './stressBox';
 
 interface StressProps {
   stress?: CharacterSheetT['stress'];

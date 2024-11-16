@@ -1,5 +1,5 @@
 import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
-import mongoose, { Schema, model, InferSchemaType } from 'mongoose';
+import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
 
 export const characterSheetSchema = new Schema({
   icon: {

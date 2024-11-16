@@ -1,19 +1,18 @@
+import connect from '@/lib/mongo';
 import {
   CharacterSheetT,
+  deleteCharacterSheet,
   getCharacterSheet,
   updateCharacterSheet,
-  deleteCharacterSheet,
 } from '@/schemas/sheet';
-import connect from '@/lib/mongo';
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 connect();
 
-type Props = {
-  params: { id: string };
-};
-
-export async function GET(req: Request, { params }: Props) {
-  const { id } = params;
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
   try {
     const sheet = await getCharacterSheet(id);
     return new Response(JSON.stringify(sheet), {
@@ -22,14 +21,21 @@ export async function GET(req: Request, { params }: Props) {
     });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Character sheet not found' },
+      {
+        error: `Character sheet not found ${
+          error instanceof Error ? error.message : JSON.stringify(error)
+        }`,
+      },
       { status: 404 },
     );
   }
 }
 
-export async function PUT(req: Request, { params }: Props) {
-  const { id } = params;
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
   try {
     const updates: Partial<CharacterSheetT> = await req.json();
     const updatedSheet = await updateCharacterSheet(id, updates);
@@ -38,22 +44,32 @@ export async function PUT(req: Request, { params }: Props) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
-      { error: 'Failed to update character sheet' },
+      {
+        error: `Failed to update character sheet ${
+          error instanceof Error ? error.message : JSON.stringify(error)
+        }`,
+      },
       { status: 400 },
     );
   }
 }
 
-export async function DELETE(req: Request, { params }: Props) {
-  const { id } = params;
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
   try {
     await deleteCharacterSheet(id);
     return new Response(null, { status: 204 });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to delete character sheet' },
+      {
+        error: `Failed to delete character sheet ${
+          error instanceof Error ? error.message : JSON.stringify(error)
+        }`,
+      },
       { status: 400 },
     );
   }

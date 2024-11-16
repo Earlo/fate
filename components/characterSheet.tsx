@@ -1,16 +1,16 @@
-import LabeledInput from './generic/labeledInput';
+import { cn } from '@/lib/utils';
+import { CharacterSheetT } from '@/schemas/sheet';
+import { useCompletion } from 'ai/react';
+import Icon from './generic/icon/icon';
 import ImageUploader from './generic/imageUploader';
+import LabeledInput from './generic/labeledInput';
 import AspectInput from './sheet/aspectInput';
-import StuntInput from './sheet/stuntInput';
-import SkillGrid from './sheet/skillGrid';
-import VisibilityToggle from './sheet/visibilityToggle';
-import Stress from './sheet/stress';
 import Consequences from './sheet/consequences';
 import FateInput from './sheet/fateInput';
-import Icon from './generic/icon/icon';
-import { CharacterSheetT } from '@/schemas/sheet';
-import { cn } from '@/lib/utils';
-import { useCompletion } from 'ai/react';
+import SkillGrid from './sheet/skillGrid';
+import Stress from './sheet/stress';
+import StuntInput from './sheet/stuntInput';
+import VisibilityToggle from './sheet/visibilityToggle';
 interface CharacterSheetProps {
   character: CharacterSheetT;
   setCharacter?: React.Dispatch<React.SetStateAction<CharacterSheetT>>;

@@ -1,10 +1,10 @@
 'use client';
-import FormContainer from './formContainer';
-import LabeledInput from './generic/labeledInput';
-import Button from './generic/button';
 import { checkUsernameExists, registerUser } from '@/lib/apiHelpers/auth';
-import { useState } from 'react';
 import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import FormContainer from './formContainer';
+import Button from './generic/button';
+import LabeledInput from './generic/labeledInput';
 interface AuthFormProps {
   onClose?: () => void;
 }

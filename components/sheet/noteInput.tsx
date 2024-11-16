@@ -1,8 +1,8 @@
 'use client';
-import Note from './note';
-import Label from '../generic/label';
-import Icon from '../generic/icon/icon';
 import { cn } from '@/lib/utils';
+import Icon from '../generic/icon/icon';
+import Label from '../generic/label';
+import Note from './note';
 
 interface NoteInputProps {
   notes: { name: string; content: string; visibleIn: string[] }[];

@@ -1,9 +1,9 @@
-import VisibilityToggle from './visibilityToggle';
-import IconButton from '../generic/icon/iconButton';
-import Label from '../generic/label';
-import Input from '../generic/input';
-import Icon from '../generic/icon/icon';
 import { cn } from '@/lib/utils';
+import Icon from '../generic/icon/icon';
+import IconButton from '../generic/icon/iconButton';
+import Input from '../generic/input';
+import Label from '../generic/label';
+import VisibilityToggle from './visibilityToggle';
 
 interface AspectInputProps {
   aspects: { name: string; visibleIn: string[] }[];
