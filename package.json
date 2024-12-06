@@ -22,7 +22,7 @@
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.468.0",
     "mongoose": "8.8.3",
-    "next": "15.0.3",
+    "next": "15.0.4",
     "next-auth": "4.24.10",
     "openai": "4.75.0",
     "react": "19.0.0",
