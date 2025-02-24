@@ -24,7 +24,7 @@
     "mongoose": "8.10.1",
     "next": "15.1.7",
     "next-auth": "4.24.11",
-    "openai": "4.85.3",
+    "openai": "4.85.4",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-draggable": "4.4.6",
