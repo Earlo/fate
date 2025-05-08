@@ -1,21 +1,13 @@
 import { removeKey } from '@/lib/utils';
 import { getCampaign } from '@/schemas/campaign';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { streamText } from 'ai';
 import { NextResponse, type NextRequest } from 'next/server';
-import OpenAIClient from 'openai';
-//Shouldn't use edge on endpoints that use DB
-//export const runtime = 'edge';
-
-const openai = new OpenAIClient({
-  organization: process.env.OPENAI_ORGANIZATION || '',
-  apiKey: process.env.OPENAI_API_KEY || '',
-});
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { campaignId, prompt } = JSON.parse(body.prompt);
-  let campaign = await getCampaign(campaignId as string);
-  campaign = removeKey(campaign, [
+  const campaign = removeKey(await getCampaign(campaignId), [
     '_id',
     '__v',
     'visibleTo',
@@ -26,41 +18,35 @@ export async function POST(req: NextRequest) {
     'public',
     'visibleIn',
   ]);
-  if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json(
-      {
-        error:
-          'No OpenAI API key, would had called with following context: ' +
-          JSON.stringify(campaign),
-      },
-      { status: 500 },
-    );
-  }
+
   try {
-    const params: OpenAIClient.Chat.ChatCompletionCreateParams = {
-      model: 'gpt-3.5-turbo-0125',
-      stream: true,
+    const result = await streamText({
+      model: openai.chat('gpt-3.5-turbo-0125'),
       messages: [
         {
           role: 'system',
-          content: `You're helping user to manage a fate Core campaign by writing notes. Campaign context JSON: ${JSON.stringify(
-            campaign,
-          )}`,
+          content: `You're helping user to manage a fate Core campaign by writing notes. Campaign context JSON: ${JSON.stringify(campaign)}`,
         },
-        { role: 'user', content: prompt },
+        {
+          role: 'user',
+          content: prompt,
+        },
       ],
-    };
-    const chatCompletion = await openai.chat.completions.create(params);
-    const stream = OpenAIStream(chatCompletion);
-    return new StreamingTextResponse(stream);
+    });
+
+    return new Response(result.toDataStream(), {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+      },
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       {
         error:
-          'Error' +
+          'Error: ' +
           JSON.stringify(error) +
-          ' with following context: ' +
+          ' with context: ' +
           JSON.stringify(campaign),
       },
       { status: 500 },
