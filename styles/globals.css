@@ -67,15 +67,6 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-@layer base {
   .font-outline-2 {
     -webkit-text-stroke: 2px black;
   }
