@@ -76,7 +76,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   return (
     <>
       <div className="flex flex-col items-center md:flex-row-reverse">
-        <div className="ml-2 flex w-full flex-grow content-around items-center justify-evenly align-middle md:w-fit md:flex-col">
+        <div className="ml-2 flex w-full grow content-around items-center justify-evenly align-middle md:w-fit md:flex-col">
           <ImageUploader
             icon={character?.icon?.url}
             path={'character'}
@@ -119,7 +119,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             className="self-center"
           />
         </div>
-        <div className="flex w-full flex-grow flex-col ">
+        <div className="flex w-full grow flex-col ">
           <LabeledInput
             name="Name"
             onChange={(e) =>

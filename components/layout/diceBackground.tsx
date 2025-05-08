@@ -119,7 +119,7 @@ const DiceBackground: React.FC<DiceBackgroundProps> = ({
   }, [backgrounDice]);
 
   return (
-    <BaseLayout className="relative overflow-hidden bg-gradient-to-r from-blue-400 to-purple-500 text-white">
+    <BaseLayout className="relative overflow-hidden bg-linear-to-r from-blue-400 to-purple-500 text-white">
       <div
         ref={containerRef}
         className="pointer-events-none absolute left-0 top-0 size-full"

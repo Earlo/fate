@@ -64,7 +64,7 @@ const Stunt: React.FC<StuntProps> = ({
         )}
         <Input
           name={`${title}-${index}-name`}
-          value={state === 'play' && !visible ? '???' : stunt.name}
+          value={state === 'play' && visible! ? '???' : stunt.name}
           placeholder={`${title} Name`}
           required
           disabled={disabled}
@@ -87,7 +87,7 @@ const Stunt: React.FC<StuntProps> = ({
       </div>
       <Input
         name={`${title}-${index}-description`}
-        value={state === 'play' && !visible ? '???' : stunt.description}
+        value={state === 'play' && visible! ? '???' : stunt.description}
         placeholder={
           stunt.name ? `Description for ${stunt.name}` : `${title} description`
         }

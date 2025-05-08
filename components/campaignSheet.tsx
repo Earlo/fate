@@ -34,7 +34,7 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
           disabled={!setCampaign}
           className="pb-2"
         />
-        <div className="flex w-full flex-grow flex-col md:ml-4">
+        <div className="flex w-full grow flex-col md:ml-4">
           <LabeledInput
             name="Campaign Name"
             onChange={(e) => updateField('name', e.target.value)}

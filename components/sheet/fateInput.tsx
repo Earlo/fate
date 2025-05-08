@@ -52,7 +52,7 @@ const FateInput: React.FC<FateInputProps> = ({
           />
         )}
       </Label>
-      <div className="flex flex-grow justify-end pb-2">
+      <div className="flex grow justify-end pb-2">
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 z-30 flex pl-1 text-xs">
             <span className="select-none text-gray-500">Points</span>

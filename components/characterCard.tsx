@@ -30,7 +30,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
     <div className="z-10 h-fit max-h-[100dvh] max-w-fit overflow-y-auto rounded bg-white p-1 pt-6 shadow-md">
       <ControlBar onClose={onClose} onMaximize={onMaximize} />
       <div className="flex flex-col items-center md:flex-row-reverse">
-        <div className="flex w-full flex-grow ">
+        <div className="flex w-full grow ">
           <ImageUploader
             icon={character.icon?.url}
             path={'character'}

@@ -53,7 +53,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
         )}
       </Label>
       {aspects.map((aspect, index) =>
-        !aspect && disabled ? null : (
+        aspect! && disabled ? null : (
           <div
             key={index}
             className={cn('flex items-center', {

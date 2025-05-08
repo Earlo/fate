@@ -208,7 +208,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
           >
             <span
               className={cn(
-                'flex h-8 flex-shrink-0 items-center whitespace-nowrap font-black uppercase text-black ',
+                'flex h-8 shrink-0 items-center whitespace-nowrap font-black uppercase text-black ',
                 { 'lg:w-fit': tier.level > 5 || tier.level < -5 },
                 { 'w-full lg:w-[7rem]': !tight },
               )}
@@ -218,7 +218,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                 : `${tier.label} ${tier.level > 0 ? '+' : ''}${tier.level}`}
             </span>
             <div
-              className={cn('flex flex-grow flex-col sm:flex-row  lg:pl-[1%]', {
+              className={cn('flex grow flex-col sm:flex-row  lg:pl-[1%]', {
                 'lg:max-w-[80%]': !tight,
               })}
             >

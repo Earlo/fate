@@ -24,7 +24,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
         alt={character.name.text}
         width={64}
         height={64}
-        className={cn('flex-shrink-0 rounded-full', {
+        className={cn('shrink-0 rounded-full', {
           'blur filter': campaignId
             ? !character.icon?.visibleIn?.includes(campaignId)
             : false,
@@ -55,7 +55,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
       width={64}
       height={64}
       className={cn(
-        'flex-shrink-0 rounded-full transition-colors duration-200 hover:scale-105 hover:cursor-pointer hover:border-2 hover:border-gray-400 hover:shadow-lg',
+        'shrink-0 rounded-full transition-colors duration-200 hover:scale-105 hover:cursor-pointer hover:border-2 hover:border-gray-400 hover:shadow-lg',
         {
           'blur filter': campaignId
             ? !character.icon?.visibleIn?.includes(campaignId)

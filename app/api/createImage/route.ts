@@ -52,10 +52,11 @@ export async function POST(req: NextRequest) {
     n: 1,
     prompt: `A Fate Core RPG character portrait. ${text}`,
   });
-  const imageUrl = response.data[0].url;
-  if (!imageUrl) {
+  if (!response.data || !response.data[0]?.url) {
     return NextResponse.json({ error: 'No image generated' }, { status: 500 });
   }
+
+  const imageUrl = response.data[0].url;
   const cloudinaryUrl = await handleUploadFromUrl(imageUrl, 'characters');
   console.log('cloudinary', cloudinaryUrl);
   return NextResponse.json(cloudinaryUrl, {

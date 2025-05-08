@@ -179,7 +179,7 @@ const Group: React.FC<GroupProps> = ({
   };
   const layout = group.layout?.mode || 'list';
   return (
-    <div className="relative mx-auto flex min-h-24 w-full flex-grow flex-col rounded-lg bg-gray-800 p-2 text-white shadow-lg">
+    <div className="relative mx-auto flex min-h-24 w-full grow flex-col rounded-lg bg-gray-800 p-2 text-white shadow-lg">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <h1 className="text-l font-bold">{group.name}</h1>
         {isAdmin && (

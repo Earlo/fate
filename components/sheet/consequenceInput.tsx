@@ -32,7 +32,7 @@ const ConsequenceInput: React.FC<ConsequenceInputProps> = ({
       })}
     >
       <label
-        className={`relative bottom-2 left-1 z-10 flex flex-grow items-end justify-between text-2xl font-black uppercase ${
+        className={`relative bottom-2 left-1 z-10 flex grow items-end justify-between text-2xl font-black uppercase ${
           !available ? 'font-outline-2 text-white' : 'text-black'
         }`}
         htmlFor={name}

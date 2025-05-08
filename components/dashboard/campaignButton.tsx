@@ -21,7 +21,7 @@ const CampaignButton: React.FC<CampaignButtonProps> = ({
         alt={name}
         width={64}
         height={64}
-        className="flex-shrink-0"
+        className="shrink-0"
       />
       <div className="flex min-w-0 grow flex-col pl-4">
         <h3 className="line-clamp-2 overflow-hidden text-lg font-semibold leading-6 group-hover:underline">
