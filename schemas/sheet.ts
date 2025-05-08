@@ -237,3 +237,11 @@ export async function deleteCharacterSheet(sheetId: string) {
 export async function getCharacterSheets(userId: string) {
   return await CharacterSheet.find({ owner: userId });
 }
+
+export interface sheetWithContext {
+  sheet?: CharacterSheetT;
+  state: 'create' | 'edit' | 'toggle' | 'view' | 'play';
+  campaignId?: string;
+  skills?: string[];
+  position?: { x: number; y: number };
+}

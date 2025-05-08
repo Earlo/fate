@@ -1,18 +1,12 @@
 'use client';
-import CharacterCard from '@/components/characterCard';
 import CharacterForm from '@/components/characterForm';
+import DraggableCard from '@/components/dashboard/draggableCard';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
-import { CharacterSheetT } from '@/schemas/sheet';
+import { CharacterSheetT, sheetWithContext } from '@/schemas/sheet';
+import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { useSession } from 'next-auth/react';
-import { ReactNode, createContext, useEffect, useState } from 'react';
-import Draggable from 'react-draggable';
+import React, { ReactNode, createContext, useEffect, useState } from 'react';
 
-interface sheetWithContext {
-  sheet?: CharacterSheetT;
-  state: 'create' | 'edit' | 'toggle' | 'view' | 'play';
-  campaignId?: string;
-  skills?: string[];
-}
 interface UserContextT {
   sheets: CharacterSheetT[];
   setSheets: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
@@ -48,6 +42,21 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     fetchData();
   }, [session, setSheets]);
 
+  const handleDragEnd = ({ delta, active }: DragEndEvent) => {
+    setSmallSheets((prev) =>
+      prev.map((s) =>
+        s.sheet?._id === active.id
+          ? {
+              ...s,
+              position: {
+                x: (s.position?.x ?? 0) + delta.x,
+                y: (s.position?.y ?? 0) + delta.y,
+              },
+            }
+          : s,
+      ),
+    );
+  };
   return (
     <userContext.Provider
       value={{
@@ -59,45 +68,46 @@ export default function UserProvider({ children }: { children: ReactNode }) {
         setBigSheet,
       }}
     >
-      <div className="absolute left-0 top-0 z-50">
-        {bigSheet && (
-          <CharacterForm
-            initialSheet={bigSheet.sheet}
-            onClose={() => setBigSheet(undefined)}
-            state={bigSheet.state}
-            campaignId={bigSheet.campaignId}
-            skills={bigSheet.skills}
-            onMinimize={() => {
-              if (bigSheet.sheet !== undefined) {
-                setSmallSheets((prev) => [...prev, bigSheet]);
-              }
-              setBigSheet(undefined);
-            }}
-          />
-        )}
-        {smallSheets.map((sheet) => (
-          <Draggable key={sheet?.sheet?._id}>
-            <div>
-              <CharacterCard
-                character={sheet?.sheet as CharacterSheetT}
-                state={'view'}
-                campaignId={sheet.campaignId}
-                onClose={() =>
-                  setSmallSheets((prev) =>
-                    prev.filter((s) => s.sheet?._id !== sheet?.sheet?._id),
-                  )
+      <DndContext onDragEnd={handleDragEnd}>
+        <div className="absolute left-0 top-0 z-50">
+          {bigSheet && (
+            <CharacterForm
+              initialSheet={bigSheet.sheet}
+              onClose={() => setBigSheet(undefined)}
+              state={bigSheet.state}
+              campaignId={bigSheet.campaignId}
+              skills={bigSheet.skills}
+              onMinimize={() => {
+                if (bigSheet.sheet) {
+                  setSmallSheets((prev) => [
+                    ...prev,
+                    { ...bigSheet, position: { x: 0, y: 0 } },
+                  ]);
                 }
-                onMaximize={() => {
-                  setBigSheet(sheet);
-                  setSmallSheets((prev) =>
-                    prev.filter((s) => s.sheet?._id !== sheet?.sheet?._id),
-                  );
-                }}
-              />
-            </div>
-          </Draggable>
-        ))}
-      </div>
+                setBigSheet(undefined);
+              }}
+            />
+          )}
+          {smallSheets.map((sheet) => (
+            <DraggableCard
+              key={sheet.sheet?._id}
+              id={sheet.sheet?._id!}
+              sheet={sheet}
+              onClose={() =>
+                setSmallSheets((prev) =>
+                  prev.filter((s) => s.sheet?._id !== sheet?.sheet?._id),
+                )
+              }
+              onMaximize={() => {
+                setBigSheet(sheet);
+                setSmallSheets((prev) =>
+                  prev.filter((s) => s.sheet?._id !== sheet?.sheet?._id),
+                );
+              }}
+            />
+          ))}
+        </div>
+      </DndContext>
       {children}
     </userContext.Provider>
   );

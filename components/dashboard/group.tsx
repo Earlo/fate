@@ -226,23 +226,25 @@ const Group: React.FC<GroupProps> = ({
         onOpenChange={(isOpen) => setIsDropdownOpen(isOpen)}
       >
         {((group.public && isPlayer) || isAdmin) && (
-          <Button
-            className="absolute bottom-2 right-2 size-12 rounded-full"
-            label={isDropdownOpen ? '-' : '+'}
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
-            <DropdownMenuTrigger />
-          </Button>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="absolute bottom-2 right-2 size-12 rounded-full bg-blue-600 text-white hover:bg-blue-700 font-bold"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              {isDropdownOpen ? '-' : '+'}
+            </button>
+          </DropdownMenuTrigger>
         )}
-        <DropdownMenuContent>
+        <DropdownMenuContent className="bg-slate-600">
           {sheets.length > 0 ? (
             sheets.map((character) => (
               <DropdownMenuItem
                 key={character._id}
-                onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-                  toggleCharacter(character._id);
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                   e.preventDefault();
+                  toggleCharacter(character._id);
                 }}
+                className="flex items-center px-2 py-1 hover:bg-slate-700 cursor-pointer"
               >
                 <input
                   type="checkbox"
@@ -250,6 +252,8 @@ const Group: React.FC<GroupProps> = ({
                     (groupCharacter) =>
                       groupCharacter.sheet._id === character._id,
                   )}
+                  readOnly
+                  className="mr-2"
                 />
                 {character.name.text}
               </DropdownMenuItem>
