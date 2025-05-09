@@ -2,10 +2,10 @@
 import Button from '@/components/generic/button';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import AuthForm from '../authForm';
 
-const TopBar: React.FC = () => {
+const TopBar: FC = () => {
   const { data: session } = useSession();
   const [showAuthForm, setShowAuthForm] = useState(false);
   return (

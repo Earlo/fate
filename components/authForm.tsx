@@ -1,7 +1,7 @@
 'use client';
 import { checkUsernameExists, registerUser } from '@/lib/apiHelpers/auth';
 import { signIn } from 'next-auth/react';
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import FormContainer from './formContainer';
 import Button from './generic/button';
 import LabeledInput from './generic/labeledInput';
@@ -13,14 +13,14 @@ export default function AuthForm({ onClose }: AuthFormProps) {
   const [usernameExists, setUsernameExists] = useState(false);
 
   const handleUsernameChange = async (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const username = e.target.value;
     const exists = await checkUsernameExists(username);
     setUsernameExists(exists);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const username = (form.elements.namedItem('username') as HTMLInputElement)

@@ -1,16 +1,16 @@
 'use client';
-import { useRef } from 'react';
+import { ChangeEvent, FC, useRef } from 'react';
 
 interface StressBoxProps {
   id: string;
   name: string;
   checked: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   available?: boolean;
 }
 
-const StressBox: React.FC<StressBoxProps> = ({
+const StressBox: FC<StressBoxProps> = ({
   id,
   name,
   checked,

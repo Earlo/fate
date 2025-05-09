@@ -1,20 +1,18 @@
 import { cn } from '@/lib/utils';
-import { HTMLInputTypeAttribute } from 'react';
+import { ChangeEvent, FC, HTMLInputTypeAttribute } from 'react';
 interface InputProps {
   name: string;
   type?: HTMLInputTypeAttribute;
   value?: string | number;
   required?: boolean;
   placeholder?: string;
-  onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   multiline?: boolean;
   disabled?: boolean;
   className?: string;
 }
 
-const Input: React.FC<InputProps> = ({
+const Input: FC<InputProps> = ({
   name,
   type = 'text',
   value,

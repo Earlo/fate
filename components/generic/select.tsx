@@ -1,6 +1,6 @@
 import SelectOption from '@/components/generic/selectOption';
 import { cn } from '@/lib/utils';
-import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FC, ReactNode, useEffect, useRef, useState } from 'react';
 
 interface Option {
   value: string;
@@ -15,7 +15,7 @@ interface SelectProps {
   disabled?: boolean;
   className?: string;
   removeText?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 const Select: FC<SelectProps> = ({

@@ -7,7 +7,7 @@ import { CampaignT } from '@/schemas/campaign';
 import { blankSheet } from '@/schemas/consts/blankCampaignSheet';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { FormEvent, useState } from 'react';
+import { Dispatch, FC, FormEvent, SetStateAction, useState } from 'react';
 import CampaignSheet from './campaignSheet';
 import FormContainer from './formContainer';
 import Button from './generic/button';
@@ -18,10 +18,10 @@ interface CampaignFormProps {
   onClose?: () => void;
   initialCampaign?: CampaignT;
   state?: 'create' | 'edit' | 'view';
-  setCampaigns?: React.Dispatch<React.SetStateAction<CampaignT[]>>;
+  setCampaigns?: Dispatch<SetStateAction<CampaignT[]>>;
 }
 
-const CampaignForm: React.FC<CampaignFormProps> = ({
+const CampaignForm: FC<CampaignFormProps> = ({
   onClose,
   initialCampaign,
   state = 'create',

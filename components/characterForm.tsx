@@ -8,7 +8,7 @@ import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
 import { blankSheet } from '@/schemas/consts/blankCharacterSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { useSession } from 'next-auth/react';
-import { FormEvent, useContext, useState } from 'react';
+import { FC, FormEvent, useContext, useState } from 'react';
 import CharacterSheet from './characterSheet';
 import FormContainer from './formContainer';
 import Button from './generic/button';
@@ -21,7 +21,7 @@ interface CharacterFormProps {
   skills?: string[];
 }
 
-const CharacterForm: React.FC<CharacterFormProps> = ({
+const CharacterForm: FC<CharacterFormProps> = ({
   onClose,
   onMinimize,
   initialSheet,

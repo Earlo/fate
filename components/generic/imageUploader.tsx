@@ -2,7 +2,7 @@
 import { handleUpload } from '@/lib/cloudinary';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, FC, ReactNode, useRef, useState } from 'react';
 import Icon from './icon/icon';
 import LoadingSpinner from './loadingSpinner';
 
@@ -12,11 +12,11 @@ interface ImageUploaderProps {
   path?: string;
   disabled?: boolean;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   context?: object;
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({
+const ImageUploader: FC<ImageUploaderProps> = ({
   setIcon,
   icon,
   path,

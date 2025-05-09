@@ -1,10 +1,9 @@
 // components/generic/icon/iconButton.tsx
 import { cn } from '@/lib/utils';
-import React from 'react';
+import { ButtonHTMLAttributes } from 'react';
 import Icon, { IconNameT } from './icon';
 
-interface IconButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: IconNameT;
 }
 

@@ -9,13 +9,13 @@ import { useCampaign } from '@/hooks/useFate';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 
 interface CampaignProps {
   id: string;
 }
 
-const Campaign: React.FC<CampaignProps> = ({ id }) => {
+const Campaign: FC<CampaignProps> = ({ id }) => {
   const router = useRouter();
   const { data: session } = useSession();
   const {

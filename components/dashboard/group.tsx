@@ -12,13 +12,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { PopulatedGroup } from '@/schemas/campaign';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { useContext, useState } from 'react';
+import { FC, MouseEvent, useContext, useState } from 'react';
 import LabeledInput from '../generic/labeledInput';
 import ToggleSwitch from '../generic/toggleSwitch';
 import VisibilityToggle from '../sheet/visibilityToggle';
 import CharacterButton from './characterButton';
 
-const GroupSettings: React.FC<{
+const GroupSettings: FC<{
   group: PopulatedGroup;
   onChange: (updatedGroup?: PopulatedGroup) => void;
   setIsEditing: (isEditing: boolean) => void;
@@ -145,12 +145,7 @@ interface GroupProps {
   campaignId: string;
 }
 
-const Group: React.FC<GroupProps> = ({
-  group,
-  state,
-  onChange,
-  campaignId,
-}) => {
+const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { sheets } = useContext(userContext);
@@ -240,7 +235,7 @@ const Group: React.FC<GroupProps> = ({
             sheets.map((character) => (
               <DropdownMenuItem
                 key={character._id}
-                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                onClick={(e: MouseEvent<HTMLDivElement>) => {
                   e.preventDefault();
                   toggleCharacter(character._id);
                 }}
@@ -269,7 +264,7 @@ const Group: React.FC<GroupProps> = ({
   );
 };
 
-const CharacterList: React.FC<{
+const CharacterList: FC<{
   characters: { sheet: CharacterSheetT; visible: boolean }[];
   campaignId: string;
   state: 'admin' | 'player' | 'view';
@@ -297,7 +292,7 @@ const CharacterList: React.FC<{
   );
 };
 
-const CharacterGrid: React.FC<{
+const CharacterGrid: FC<{
   characters: {
     sheet: CharacterSheetT;
     visible: boolean;

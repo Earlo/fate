@@ -5,17 +5,22 @@ import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { CharacterSheetT, sheetWithContext } from '@/schemas/sheet';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { useSession } from 'next-auth/react';
-import React, { ReactNode, createContext, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useEffect,
+  useState,
+} from 'react';
 
 interface UserContextT {
   sheets: CharacterSheetT[];
-  setSheets: React.Dispatch<React.SetStateAction<CharacterSheetT[]>>;
+  setSheets: Dispatch<SetStateAction<CharacterSheetT[]>>;
   bigSheet?: sheetWithContext;
   smallSheets: sheetWithContext[];
-  setSmallSheets: React.Dispatch<React.SetStateAction<sheetWithContext[]>>;
-  setBigSheet: React.Dispatch<
-    React.SetStateAction<sheetWithContext | undefined>
-  >;
+  setSmallSheets: Dispatch<SetStateAction<sheetWithContext[]>>;
+  setBigSheet: Dispatch<SetStateAction<sheetWithContext | undefined>>;
 }
 export const userContext = createContext<UserContextT>({
   sheets: [],
@@ -69,7 +74,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
       }}
     >
       <DndContext onDragEnd={handleDragEnd}>
-        <div className="absolute left-0 top-0 z-50">
+        <div className="absolute top-0 left-0 z-50">
           {bigSheet && (
             <CharacterForm
               initialSheet={bigSheet.sheet}

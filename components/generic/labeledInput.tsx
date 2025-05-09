@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { HTMLInputTypeAttribute } from 'react';
+import { ChangeEvent, FC, HTMLInputTypeAttribute, ReactNode } from 'react';
 import Input from './input';
 import Label from './label';
 interface LabeledInputProps {
@@ -9,15 +9,13 @@ interface LabeledInputProps {
   required?: boolean;
   multiline?: boolean;
   placeholder?: string;
-  onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   disabled?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 
-const LabeledInput: React.FC<LabeledInputProps> = ({
+const LabeledInput: FC<LabeledInputProps> = ({
   name,
   type = 'text',
   value,

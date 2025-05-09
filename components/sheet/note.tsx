@@ -2,7 +2,7 @@
 import useDebounce from '@/hooks/debounce';
 import { cn } from '@/lib/utils';
 import { useCompletion } from 'ai/react';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import IconButton from '../generic/icon/iconButton';
 import Input from '../generic/input';
 import VisibilityToggle from './visibilityToggle';
@@ -24,7 +24,7 @@ interface NoteProps {
   }) => void;
 }
 
-const Note: React.FC<NoteProps> = ({
+const Note: FC<NoteProps> = ({
   note,
   disabled = false,
   campaignId,

@@ -2,7 +2,7 @@
 import Icon from '@/components/generic/icon/icon';
 import { cn } from '@/lib/utils';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import Label from '../generic/label';
 import SkillInput from './skillInput';
 import VisibilityToggle from './visibilityToggle';
@@ -55,7 +55,7 @@ interface SkillGridProps {
   tight?: boolean;
 }
 
-const SkillGrid: React.FC<SkillGridProps> = ({
+const SkillGrid: FC<SkillGridProps> = ({
   skills,
   setSkills,
   disabled,

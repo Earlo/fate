@@ -1,17 +1,14 @@
 'use client';
 import BaseLayout from '@/components/layout/baseLayout';
-import { useEffect, useRef } from 'react';
+import { FC, ReactNode, useEffect, useRef } from 'react';
 
 interface DiceBackgroundProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }
 const diceSides = ['+', '-', ' '];
 
-const DiceBackground: React.FC<DiceBackgroundProps> = ({
-  children,
-  className,
-}) => {
+const DiceBackground: FC<DiceBackgroundProps> = ({ children, className }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const backgrounDice = Array.from(Array(4).keys()).map((_, i) => (
     <div

@@ -1,16 +1,16 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { useRef } from 'react';
+import { ChangeEvent, FC, useRef } from 'react';
 import Label from './label';
 interface CheckboxProps {
   id?: string;
   name: string;
   checked: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({
+const Checkbox: FC<CheckboxProps> = ({
   id,
   name,
   checked,

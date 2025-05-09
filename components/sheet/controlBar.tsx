@@ -1,11 +1,11 @@
-import React from 'react';
+import { HTMLAttributes } from 'react';
 import IconButton from '../generic/icon/iconButton';
 
 interface ControlBarProps {
   onClose?: () => void;
   onMinimize?: () => void;
   onMaximize?: () => void;
-  dragListeners?: React.HTMLAttributes<HTMLElement>;
+  dragListeners?: HTMLAttributes<HTMLElement>;
 }
 
 export default function ControlBar({

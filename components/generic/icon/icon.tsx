@@ -12,7 +12,7 @@ import {
   SparklesIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
-import React, { forwardRef } from 'react';
+import { forwardRef, MouseEventHandler, SVGAttributes } from 'react';
 
 const iconMap = {
   sparkles: SparklesIcon,
@@ -30,10 +30,10 @@ const iconMap = {
 export type IconNameT = keyof typeof iconMap;
 
 interface IconProps
-  extends Omit<React.SVGAttributes<SVGSVGElement>, 'onClick' | 'children'> {
+  extends Omit<SVGAttributes<SVGSVGElement>, 'onClick' | 'children'> {
   icon: IconNameT;
   label?: string;
-  onClick?: React.MouseEventHandler<SVGSVGElement>;
+  onClick?: MouseEventHandler<SVGSVGElement>;
 }
 
 const Icon = forwardRef<SVGSVGElement, IconProps>(

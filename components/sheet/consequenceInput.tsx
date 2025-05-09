@@ -1,19 +1,18 @@
 import { cn } from '@/lib/utils';
+import { ChangeEvent, FC } from 'react';
 import Input from '../generic/input';
 interface ConsequenceInputProps {
   rank: string;
   name: string;
   value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   disabled?: boolean;
   available?: boolean;
   tight?: boolean;
   first?: boolean;
 }
 
-const ConsequenceInput: React.FC<ConsequenceInputProps> = ({
+const ConsequenceInput: FC<ConsequenceInputProps> = ({
   rank,
   name,
   value,
