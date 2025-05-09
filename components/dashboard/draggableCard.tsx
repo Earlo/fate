@@ -27,16 +27,17 @@ export default function DraggableCard({
       scaleX: 0,
       scaleY: 0,
     }),
-    touchAction: 'none', // sujuvampi mobiilivedätys
+    touchAction: 'none',
   };
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+    <div ref={setNodeRef} style={style}>
       <CharacterCard
         character={sheet.sheet as CharacterSheetT}
         state="view"
         campaignId={sheet.campaignId}
         onClose={onClose}
         onMaximize={onMaximize}
+        dragListeners={{ ...listeners, ...attributes }}
       />
     </div>
   );

@@ -1,8 +1,10 @@
+// icon.tsx
 import { cn } from '@/lib/utils';
 import {
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
   ArrowUpOnSquareIcon,
+  EllipsisHorizontalIcon,
   EllipsisVerticalIcon,
   EyeIcon,
   EyeSlashIcon,
@@ -10,70 +12,51 @@ import {
   SparklesIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid';
+import React, { forwardRef } from 'react';
 
-export type supportedIcons =
-  | 'sparkles'
-  | 'reduce'
-  | 'grow'
-  | 'upload'
-  | 'ellipsis'
-  | 'close'
-  | 'plus'
-  | 'eye'
-  | 'noEye';
-
-interface IconProps {
-  onClick?: (e: React.MouseEvent<SVGSVGElement>) => void;
-  className?: string;
-  icon: supportedIcons;
-  explanation?: string;
-}
-
-const icons = {
+const iconMap = {
   sparkles: SparklesIcon,
   reduce: ArrowsPointingInIcon,
   grow: ArrowsPointingOutIcon,
   upload: ArrowUpOnSquareIcon,
   ellipsis: EllipsisVerticalIcon,
+  drag: EllipsisHorizontalIcon,
   close: XMarkIcon,
   plus: PlusIcon,
   eye: EyeIcon,
   noEye: EyeSlashIcon,
-};
+} as const;
 
-const defaultExplanation = {
-  close: 'Close',
-};
+export type IconNameT = keyof typeof iconMap;
 
-const Icon: React.FC<IconProps> = ({
-  onClick,
-  className = '',
-  icon = 'sparkles',
-  explanation,
-}) => {
-  const IconComponent = icons[icon];
-  const screenReader =
-    explanation ||
-    (defaultExplanation as Record<supportedIcons, string>)[icon] ||
-    '';
+interface IconProps
+  extends Omit<React.SVGAttributes<SVGSVGElement>, 'onClick' | 'children'> {
+  icon: IconNameT;
+  label?: string;
+  onClick?: React.MouseEventHandler<SVGSVGElement>;
+}
 
-  return (
-    <>
-      {screenReader && <span className="sr-only">{screenReader}</span>}
-      <IconComponent
+const Icon = forwardRef<SVGSVGElement, IconProps>(
+  ({ icon, label, className, onClick, ...rest }, ref) => {
+    const Component = iconMap[icon];
+
+    return (
+      <Component
+        ref={ref}
+        {...rest}
         onClick={onClick}
-        aria-hidden="true"
         className={cn(
-          'max-h-6 min-h-6 min-w-6 max-w-6',
-          {
-            'cursor-pointer text-white duration-200 hover:text-gray-400':
-              onClick,
-          },
+          'h-6 w-6 shrink-0',
+          onClick && 'cursor-pointer text-white hover:text-gray-400 transition',
           className,
         )}
+        role={label ? 'img' : 'presentation'}
+        aria-label={label}
+        aria-hidden={label ? undefined : true}
       />
-    </>
-  );
-};
+    );
+  },
+);
 
+Icon.displayName = 'Icon';
 export default Icon;

@@ -1,28 +1,28 @@
+// components/generic/icon/iconButton.tsx
 import { cn } from '@/lib/utils';
-import Icon, { supportedIcons } from './icon';
-interface IconButtonProps {
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  className?: string;
-  icon?: supportedIcons;
+import React from 'react';
+import Icon, { IconNameT } from './icon';
+
+interface IconButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  icon?: IconNameT;
 }
 
-const IconButton: React.FC<IconButtonProps> = ({
-  onClick,
-  className = '',
+export default function IconButton({
   icon = 'sparkles',
-}) => {
+  className = '',
+  ...props
+}: IconButtonProps) {
   return (
     <button
       type="button"
+      {...props}
       className={cn(
         'inline-flex h-fit cursor-pointer items-center justify-center rounded-md bg-white text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500',
         className,
       )}
-      onClick={onClick}
     >
       <Icon icon={icon} />
     </button>
   );
-};
-
-export default IconButton;
+}

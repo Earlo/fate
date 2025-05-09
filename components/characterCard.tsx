@@ -16,6 +16,7 @@ interface CharacterSheetProps {
   state?: 'view' | 'play';
   onClose?: () => void;
   onMaximize?: () => void;
+  dragListeners?: React.HTMLAttributes<HTMLElement>;
 }
 
 const CharacterSheet: React.FC<CharacterSheetProps> = ({
@@ -25,10 +26,15 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   state = 'view',
   onClose,
   onMaximize,
+  dragListeners,
 }) => {
   return (
-    <div className="z-10 h-fit max-h-[100dvh] max-w-fit overflow-y-auto rounded bg-white p-1 pt-6 shadow-md">
-      <ControlBar onClose={onClose} onMaximize={onMaximize} />
+    <div className="relative z-10 h-fit max-h-[100dvh] max-w-fit overflow-y-auto rounded bg-white p-1 pt-6 shadow-md">
+      <ControlBar
+        onClose={onClose}
+        onMaximize={onMaximize}
+        dragListeners={dragListeners}
+      />
       <div className="flex flex-col items-center md:flex-row-reverse">
         <div className="flex w-full grow ">
           <ImageUploader
