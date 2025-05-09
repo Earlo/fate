@@ -19,7 +19,7 @@ export default function ControlBar({
       {dragListeners && (
         <IconButton
           icon="drag"
-          className="cursor-grab active:cursor-grabbing bg-transparent hover:bg-transparent focus:outline-none focus:ring-0 text-gray-400"
+          className="cursor-grab bg-transparent text-gray-400 hover:bg-transparent focus:ring-0 focus:outline-none active:cursor-grabbing"
           {...dragListeners}
         />
       )}

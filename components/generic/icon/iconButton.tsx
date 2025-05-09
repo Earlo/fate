@@ -18,7 +18,7 @@ export default function IconButton({
       type="button"
       {...props}
       className={cn(
-        'inline-flex h-fit cursor-pointer items-center justify-center rounded-md bg-white text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500',
+        'inline-flex h-fit cursor-pointer items-center justify-center rounded-md bg-white text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none focus:ring-inset',
         className,
       )}
     >

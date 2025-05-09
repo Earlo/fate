@@ -57,7 +57,7 @@ const StressBox: React.FC<StressBoxProps> = ({
           } ${disabled ? 'cursor-not-allowed' : ''}`}
         >
           {checked && (
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-black">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform text-black">
               X
             </div>
           )}

@@ -52,7 +52,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
           )}
         >
           {checked && (
-            <div className="absolute left-5 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-black">
+            <div className="absolute top-1/2 left-5 -translate-x-1/2 -translate-y-1/2 transform text-black">
               ✓
             </div>
           )}

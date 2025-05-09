@@ -228,7 +228,7 @@ const Group: React.FC<GroupProps> = ({
         {((group.public && isPlayer) || isAdmin) && (
           <DropdownMenuTrigger asChild>
             <button
-              className="absolute bottom-2 right-2 size-12 rounded-full bg-blue-600 text-white hover:bg-blue-700 font-bold"
+              className="absolute right-2 bottom-2 size-12 rounded-full bg-blue-600 font-bold text-white hover:bg-blue-700"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               {isDropdownOpen ? '-' : '+'}
@@ -244,7 +244,7 @@ const Group: React.FC<GroupProps> = ({
                   e.preventDefault();
                   toggleCharacter(character._id);
                 }}
-                className="flex items-center px-2 py-1 hover:bg-slate-700 cursor-pointer"
+                className="flex cursor-pointer items-center px-2 py-1 hover:bg-slate-700"
               >
                 <input
                   type="checkbox"

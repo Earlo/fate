@@ -19,7 +19,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, className, children }) => {
         {onClose && (
           <IconButton
             onClick={onClose}
-            className="absolute right-0 top-0 z-10"
+            className="absolute top-0 right-0 z-10"
             icon="close"
           />
         )}

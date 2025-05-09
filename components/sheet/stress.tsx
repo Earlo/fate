@@ -57,13 +57,13 @@ const Stress: React.FC<StressProps> = ({
   const renderStressBar = (type: 'physical' | 'mental') => {
     return (
       <div
-        className={cn('flex flex-col pb-0 ', {
+        className={cn('flex flex-col pb-0', {
           'sm:flex-row sm:pb-2 md:flex-col md:pb-0 lg:flex-row lg:pb-2': !tight,
         })}
       >
         <span
           className={cn(
-            'flex h-8 w-[30%] shrink-0 items-center whitespace-nowrap text-lg font-black uppercase text-black',
+            'flex h-8 w-[30%] shrink-0 items-center text-lg font-black whitespace-nowrap text-black uppercase',
             { 'h-6': tight },
           )}
         >
@@ -74,10 +74,10 @@ const Stress: React.FC<StressProps> = ({
     );
   };
   return (
-    <div className={cn('flex flex-col pb-2 ', { 'sm:pb-0 md:pr-4': !tight })}>
+    <div className={cn('flex flex-col pb-2', { 'sm:pb-0 md:pr-4': !tight })}>
       <Label name="Stress" className={cn({ 'pb-0': tight })} />
       <div
-        className={cn('flex flex-col pt-0 ', {
+        className={cn('flex flex-col pt-0', {
           'sm:pt-2 md:pt-0 lg:pt-2': !tight,
         })}
       >

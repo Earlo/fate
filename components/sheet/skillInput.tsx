@@ -49,14 +49,14 @@ const SkillInput: React.FC<SkillInputProps> = ({
       disabled={disabled}
       removeText="Remove Skill"
       className={cn(
-        'rounded-none border-t-0 sm:border-l-0 sm:border-t-2',
+        'rounded-none border-t-0 sm:border-t-2 sm:border-l-0',
         { 'rounded-b sm:rounded-b-none': lastShown && disabled },
         {
-          'rounded-t border-t-2 sm:rounded-bl sm:rounded-tr-none sm:border-l-2':
+          'rounded-t border-t-2 sm:rounded-tr-none sm:rounded-bl sm:border-l-2':
             firstSlot,
         },
         { 'lg:rounded-tl-none': firstSlot && topRow },
-        { 'sm:rounded-br sm:rounded-tr': lastSlot },
+        { 'sm:rounded-tr sm:rounded-br': lastSlot },
         className,
       )}
     >

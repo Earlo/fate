@@ -17,7 +17,7 @@ const DiceBackground: React.FC<DiceBackgroundProps> = ({
     <div
       key={i}
       id={`dice-${i}`}
-      className="animate-float absolute flex size-24 items-center justify-center rounded border-2 border-slate-950 bg-transparent text-6xl font-bold leading-none text-black opacity-20"
+      className="animate-float absolute flex size-24 items-center justify-center rounded border-2 border-slate-950 bg-transparent text-6xl leading-none font-bold text-black opacity-20"
     >
       <div id={'face'} className="mt-[-13px]">
         {diceSides[Math.floor(Math.random() * diceSides.length)]}
@@ -122,7 +122,7 @@ const DiceBackground: React.FC<DiceBackgroundProps> = ({
     <BaseLayout className="relative overflow-hidden bg-linear-to-r from-blue-400 to-purple-500 text-white">
       <div
         ref={containerRef}
-        className="pointer-events-none absolute left-0 top-0 size-full"
+        className="pointer-events-none absolute top-0 left-0 size-full"
       >
         {backgrounDice}
       </div>

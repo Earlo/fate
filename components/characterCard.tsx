@@ -36,7 +36,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
         dragListeners={dragListeners}
       />
       <div className="flex flex-col items-center md:flex-row-reverse">
-        <div className="flex w-full grow ">
+        <div className="flex w-full grow">
           <ImageUploader
             icon={character.icon?.url}
             path={'character'}

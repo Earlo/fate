@@ -17,7 +17,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
   !compact ? (
     <div
       onClick={onClick}
-      className="group flex h-20 min-h-0 w-full cursor-pointer items-center justify-around rounded-lg border border-gray-300 pl-2 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 active:bg-gray-300"
+      className="group flex h-20 min-h-0 w-full cursor-pointer items-center justify-around rounded-lg border border-gray-300 pl-2 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:ring-2 focus:ring-gray-400 focus:outline-none active:bg-gray-300"
     >
       <Image
         src={character.icon?.url || '/blank_user.png'}
@@ -31,7 +31,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
         })}
       />
       <div className="flex min-w-0 grow flex-col pl-4">
-        <h3 className="line-clamp-2 overflow-hidden text-lg font-semibold leading-6 group-hover:underline">
+        <h3 className="line-clamp-2 overflow-hidden text-lg leading-6 font-semibold group-hover:underline">
           {campaignId
             ? character.name.visibleIn.includes(campaignId)
               ? character.name.text

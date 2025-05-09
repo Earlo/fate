@@ -144,7 +144,10 @@ const SkillGrid: React.FC<SkillGridProps> = ({
       if (level >= 5 && !consequences?.physical) {
         setConsequences({
           mild: consequences?.mild || { name: '', visibleIn: [] },
-          moderate: consequences?.moderate || { name: '', visibleIn: [] },
+          moderate: consequences?.moderate || {
+            name: '',
+            visibleIn: [],
+          },
           severe: consequences?.severe || { name: '', visibleIn: [] },
           physical: { name: '', visibleIn: visibleIn },
           mental: consequences?.mental,
@@ -158,7 +161,10 @@ const SkillGrid: React.FC<SkillGridProps> = ({
       if (level >= 5 && !consequences?.mental) {
         setConsequences({
           mild: consequences?.mild || { name: '', visibleIn: [] },
-          moderate: consequences?.moderate || { name: '', visibleIn: [] },
+          moderate: consequences?.moderate || {
+            name: '',
+            visibleIn: [],
+          },
           severe: consequences?.severe || { name: '', visibleIn: [] },
           physical: consequences?.physical,
           mental: { name: '', visibleIn: visibleIn },
@@ -197,7 +203,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
           <div
             key={index}
             className={cn(
-              'relative flex w-full  lg:top-[-2px] lg:flex-row ',
+              'relative flex w-full lg:top-[-2px] lg:flex-row',
               {
                 'hidden sm:flex':
                   (!skills[tier.level] || skills[tier.level].length === 0) &&
@@ -208,8 +214,10 @@ const SkillGrid: React.FC<SkillGridProps> = ({
           >
             <span
               className={cn(
-                'flex h-8 shrink-0 items-center whitespace-nowrap font-black uppercase text-black ',
-                { 'lg:w-fit': tier.level > 5 || tier.level < -5 },
+                'flex h-8 shrink-0 items-center font-black whitespace-nowrap text-black uppercase',
+                {
+                  'lg:w-fit': tier.level > 5 || tier.level < -5,
+                },
                 { 'w-full lg:w-[7rem]': !tight },
               )}
             >
@@ -218,7 +226,7 @@ const SkillGrid: React.FC<SkillGridProps> = ({
                 : `${tier.label} ${tier.level > 0 ? '+' : ''}${tier.level}`}
             </span>
             <div
-              className={cn('flex grow flex-col sm:flex-row  lg:pl-[1%]', {
+              className={cn('flex grow flex-col sm:flex-row lg:pl-[1%]', {
                 'lg:max-w-[80%]': !tight,
               })}
             >
@@ -285,7 +293,9 @@ const SkillRow = ({
         topRow={topRow}
         position={firstSlot ? 'first' : lastSlot ? 'last' : 'middle'}
         lastShown={!nextName}
-        className={cn({ 'rounded-b-none sm:border-t-0': tight && !topRow })}
+        className={cn({
+          'rounded-b-none sm:border-t-0': tight && !topRow,
+        })}
       >
         {state === 'toggle' && (
           <VisibilityToggle

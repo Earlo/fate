@@ -47,7 +47,7 @@ const Icon = forwardRef<SVGSVGElement, IconProps>(
         onClick={onClick}
         className={cn(
           'h-6 w-6 shrink-0',
-          onClick && 'cursor-pointer text-white hover:text-gray-400 transition',
+          onClick && 'cursor-pointer text-white transition hover:text-gray-400',
           className,
         )}
         role={label ? 'img' : 'presentation'}

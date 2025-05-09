@@ -40,7 +40,7 @@ const LabeledInput: React.FC<LabeledInputProps> = ({
       placeholder={placeholder}
       onChange={onChange}
       disabled={disabled}
-      className="rounded-tl-none focus:outline-none"
+      className="top-[-1px] rounded-tl-none focus:outline-none"
     />
   </div>
 );
