@@ -19,7 +19,7 @@
     "@heroicons/react": "2.2.0",
     "@radix-ui/react-dropdown-menu": "2.1.15",
     "@radix-ui/react-slot": "1.2.3",
-    "ai": "5.0.8",
+    "ai": "5.0.9",
     "bcrypt": "6.0.0",
     "class-variance-authority": "0.7.1",
     "lucide-react": "0.539.0",
