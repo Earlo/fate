@@ -37,7 +37,7 @@
     "@types/node": "24.7.2",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.1",
-    "@typescript-eslint/eslint-plugin": "8.46.0",
+    "@typescript-eslint/eslint-plugin": "8.46.1",
     "@typescript-eslint/parser": "8.46.0",
     "autoprefixer": "10.4.21",
     "clsx": "2.1.1",
