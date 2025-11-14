@@ -26,7 +26,7 @@
     "mongoose": "8.19.3",
     "next": "16.0.2",
     "next-auth": "4.24.13",
-    "openai": "6.8.1",
+    "openai": "6.9.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "tailwindcss-animate": "1.0.7"
