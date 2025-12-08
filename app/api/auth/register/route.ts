@@ -1,4 +1,4 @@
-import { createUser, getUserByUsername, UserModelT } from '@/schemas/user';
+import { createUser, getUserByUsername } from '@/schemas/user';
 import { hash } from 'bcrypt';
 import { NextResponse, type NextRequest } from 'next/server';
 

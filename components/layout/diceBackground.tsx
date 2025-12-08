@@ -1,6 +1,6 @@
 'use client';
 import BaseLayout from '@/components/layout/baseLayout';
-import { FC, ReactNode, useEffect, useRef } from 'react';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 
 interface DiceBackgroundProps {
   children: ReactNode;
@@ -10,17 +10,19 @@ const diceSides = ['+', '-', ' '];
 
 const DiceBackground: FC<DiceBackgroundProps> = ({ children, className }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const backgrounDice = Array.from(Array(4).keys()).map((_, i) => (
-    <div
-      key={i}
-      id={`dice-${i}`}
-      className="animate-float absolute flex size-24 items-center justify-center rounded border-2 border-slate-950 bg-transparent text-6xl leading-none font-bold text-black opacity-20"
-    >
-      <div id={'face'} className="mt-[-13px]">
-        {diceSides[Math.floor(Math.random() * diceSides.length)]}
+  const [backgrounDice] = useState(() =>
+    Array.from({ length: 4 }, (_, i) => (
+      <div
+        key={i}
+        id={`dice-${i}`}
+        className="animate-float absolute flex size-24 items-center justify-center rounded border-2 border-slate-950 bg-transparent text-6xl leading-none font-bold text-black opacity-20"
+      >
+        <div id={'face'} className="mt-[-13px]">
+          {diceSides[Math.floor(Math.random() * diceSides.length)]}
+        </div>
       </div>
-    </div>
-  ));
+    )),
+  );
 
   useEffect(() => {
     const container = containerRef.current;

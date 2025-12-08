@@ -1,4 +1,6 @@
-export const checkUsernameExists = async (username: string): Promise<boolean> =>
+export const checkUsernameExists = async (
+  username: string,
+): Promise<boolean> =>
   username
     ? fetch('/api/auth/checkUsername', {
         method: 'POST',

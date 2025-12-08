@@ -283,9 +283,7 @@ export async function getCampaign(id: string) {
 
   const sheetIds = collectCharacterIds(baseCampaign.groups);
   const sheets = await getCharacterSheetsByIds(sheetIds);
-  const sheetMap = new Map(
-    sheets.map((sheet) => [sheet._id, sheet] as const),
-  );
+  const sheetMap = new Map(sheets.map((sheet) => [sheet._id, sheet] as const));
 
   return {
     ...baseCampaign,

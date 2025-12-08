@@ -3,7 +3,8 @@ import CharacterForm from '@/components/characterForm';
 import DraggableCard from '@/components/dashboard/draggableCard';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { CharacterSheetT, sheetWithContext } from '@/schemas/sheet';
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { DndContext } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core/dist/types';
 import { useSession } from 'next-auth/react';
 import {
   Dispatch,
@@ -93,24 +94,28 @@ export default function UserProvider({ children }: { children: ReactNode }) {
               }}
             />
           )}
-          {smallSheets.map((sheet) => (
-            <DraggableCard
-              key={sheet.sheet?._id}
-              id={sheet.sheet?._id!}
-              sheet={sheet}
-              onClose={() =>
-                setSmallSheets((prev) =>
-                  prev.filter((s) => s.sheet?._id !== sheet?.sheet?._id),
-                )
-              }
-              onMaximize={() => {
-                setBigSheet(sheet);
-                setSmallSheets((prev) =>
-                  prev.filter((s) => s.sheet?._id !== sheet?.sheet?._id),
-                );
-              }}
-            />
-          ))}
+          {smallSheets.map((sheet) => {
+            const sheetId = sheet.sheet?._id;
+            if (!sheetId) return null;
+            return (
+              <DraggableCard
+                key={sheetId}
+                id={sheetId}
+                sheet={sheet}
+                onClose={() =>
+                  setSmallSheets((prev) =>
+                    prev.filter((s) => s.sheet?._id !== sheetId),
+                  )
+                }
+                onMaximize={() => {
+                  setBigSheet(sheet);
+                  setSmallSheets((prev) =>
+                    prev.filter((s) => s.sheet?._id !== sheetId),
+                  );
+                }}
+              />
+            );
+          })}
         </div>
       </DndContext>
       {children}

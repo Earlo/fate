@@ -1,8 +1,8 @@
-import { ClassValue, clsx } from 'clsx';
+import clsxModule, { type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...input: ClassValue[]) {
-  return twMerge(clsx(...input));
+  return twMerge(clsxModule(...input));
 }
 
 export function removeKey(obj: object, keyToRemove: string[]) {

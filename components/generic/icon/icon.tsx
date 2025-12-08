@@ -29,8 +29,10 @@ const iconMap = {
 
 export type IconNameT = keyof typeof iconMap;
 
-interface IconProps
-  extends Omit<SVGAttributes<SVGSVGElement>, 'onClick' | 'children'> {
+interface IconProps extends Omit<
+  SVGAttributes<SVGSVGElement>,
+  'onClick' | 'children'
+> {
   icon: IconNameT;
   label?: string;
   onClick?: MouseEventHandler<SVGSVGElement>;

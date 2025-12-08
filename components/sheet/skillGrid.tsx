@@ -2,7 +2,7 @@
 import Icon from '@/components/generic/icon/icon';
 import { cn } from '@/lib/utils';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import Label from '../generic/label';
 import SkillInput from './skillInput';
 import VisibilityToggle from './visibilityToggle';
@@ -68,11 +68,10 @@ const SkillGrid: FC<SkillGridProps> = ({
   skillsList,
   tight = false,
 }) => {
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [maxDisplayedTier, setMaxDisplayedTier] = useState(5);
   const [minDisplayedTier, setMinDisplayerTier] = useState(0);
 
-  const updateSelectedSkills = useCallback(() => {
+  const selectedSkills = useMemo(() => {
     const selected: string[] = [];
     Object.values(skills)
       .flat()
@@ -81,12 +80,8 @@ const SkillGrid: FC<SkillGridProps> = ({
           selected.push(skill.name);
         }
       });
-    setSelectedSkills(selected.sort((a, b) => (a > b ? 1 : -1)));
+    return selected.sort((a, b) => (a > b ? 1 : -1));
   }, [skills]);
-
-  useEffect(() => {
-    updateSelectedSkills();
-  }, [updateSelectedSkills]);
 
   const handleSkillChange = (
     level: number,
@@ -172,7 +167,6 @@ const SkillGrid: FC<SkillGridProps> = ({
       }
     }
     setSkills(updatedSkills);
-    updateSelectedSkills();
   };
 
   if (state === 'toggle' && !campaignId) {

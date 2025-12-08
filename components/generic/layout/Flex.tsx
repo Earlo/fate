@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { ClassValue } from 'clsx';
+import type { ClassValue } from 'clsx';
 
 interface FlexProps {
   className?: ClassValue;

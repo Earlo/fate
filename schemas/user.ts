@@ -20,8 +20,7 @@ type UserRow = {
 };
 
 const userFields =
-  'id, username, password, admin, created, updated' satisfies
-    keyof UserRow as string;
+  'id, username, password, admin, created, updated' satisfies keyof UserRow as string;
 
 const mapUser = (row?: UserRow | null): UserModelT | null =>
   row
@@ -35,9 +34,7 @@ const mapUser = (row?: UserRow | null): UserModelT | null =>
       }
     : null;
 
-export async function getUserById(
-  id: string,
-): Promise<UserModelT | null> {
+export async function getUserById(id: string): Promise<UserModelT | null> {
   const { rows } = await query<UserRow>(
     `SELECT ${userFields} FROM users WHERE id = $1`,
     [id],

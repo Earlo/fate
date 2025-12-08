@@ -99,7 +99,9 @@ const defaultConsequences = () => ({
 });
 
 const normalizeVisibleIn = (value: unknown): string[] =>
-  Array.isArray(value) ? value.filter((v): v is string => typeof v === 'string') : [];
+  Array.isArray(value)
+    ? value.filter((v): v is string => typeof v === 'string')
+    : [];
 
 const normalizeAspects = (
   aspects: unknown,
@@ -115,7 +117,7 @@ const normalizeAspects = (
     if (typeof aspect === 'string') {
       try {
         parsed = JSON.parse(aspect) as { name?: unknown; visibleIn?: unknown };
-      } catch (_err) {
+      } catch {
         parsed = { name: aspect };
       }
     }
@@ -131,7 +133,11 @@ const normalizeAspects = (
 };
 
 const defaultName = () => ({ text: '', visibleIn: [] as string[] });
-const defaultFate = () => ({ points: 0, refresh: 0, visibleIn: [] as string[] });
+const defaultFate = () => ({
+  points: 0,
+  refresh: 0,
+  visibleIn: [] as string[],
+});
 const toJsonText = (value: unknown) => JSON.stringify(value ?? null);
 
 const mapCharacterSheet = (
