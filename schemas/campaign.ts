@@ -1,208 +1,358 @@
-import { ReplaceMongooseDocumentArrayByArray } from '@/lib/mongo';
-import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
-import { CharacterSheetT } from './sheet';
-import { UserModel } from './user';
+import { query } from '@/lib/postgres';
+import { getCharacterSheetsByIds, type CharacterSheetT } from '@/schemas/sheet';
+import { getUserById } from '@/schemas/user';
+import { randomUUID } from 'crypto';
 
-export const groupSchema = new Schema({
-  name: { type: String, required: true },
-  description: { type: String, required: true, default: '' },
-  icon: {
-    type: {
-      url: { type: String, required: true },
-      note: { type: String, required: false, default: '' },
-    },
-  },
-  colorPalette: {
-    type: {
-      primary: { type: String, required: true },
-      secondary: { type: String, required: true },
-      tertiary: { type: String, required: true },
-    },
-    default: {
-      primary: '209 213 219',
-      secondary: '156 163 175',
-      tertiary: '107 114 128',
-    },
-  },
-  characters: [
-    {
-      sheet: {
-        type: String,
-        ref: 'CharacterSheet',
-        required: true,
-      },
-      visible: { type: Boolean, required: true, default: false },
-      position: {
-        type: {
-          x: { type: Number, required: true, default: 0 },
-          y: { type: Number, required: true, default: 0 },
-        },
-        default: { x: 0, y: 0 },
-      },
-    },
-  ],
-  layout: {
-    type: {
-      mode: {
-        type: String,
-        enum: ['list', 'grid'],
-        default: 'list',
-      },
-      dimensions: {
-        type: {
-          w: { type: Number, required: true, default: 3 },
-          h: { type: Number, required: true, default: 3 },
-        },
-        default: { w: 3, h: 3 },
-      },
-    },
-    default: { mode: 'list', dimensions: { w: 3, h: 3 } },
-  },
-  children: {
-    type: [this],
-    default: [],
-  },
-  visible: { type: Boolean, required: true, default: false },
-  public: { type: Boolean, required: true, default: false },
-});
+export type GroupCharacter =
+  | {
+      sheet: string;
+      visible: boolean;
+      position: { x: number; y: number };
+    }
+  | {
+      sheet: CharacterSheetT;
+      visible: boolean;
+      position: { x: number; y: number };
+    };
 
-export const campaignSchema = new Schema({
-  name: { type: String, required: true },
-  icon: {
-    type: {
-      url: { type: String, required: true },
-      note: { type: String, required: false, default: '' },
-    },
-  },
-  description: String,
-  colorPalette: {
-    type: {
-      primary: { type: String, required: true },
-      secondary: { type: String, required: true },
-      tertiary: { type: String, required: true },
-    },
-    default: {
-      primary: '209 213 219',
-      secondary: '156 163 175',
-      tertiary: '107 114 128',
-    },
-  },
-  aspects: [
-    {
-      name: { type: String, default: '' },
-      visibleIn: { type: [{ type: String, ref: 'Campaign' }], default: [] }, // Pointless. Maybe it could reference players instead.
-    },
-  ],
-  skills: [
-    {
-      name: { type: String, default: '' },
-      actions: [
-        {
-          type: String,
-          enum: ['overcome', 'advantage', 'attack', 'defend'], // is this something we want to hard code?
-        },
-      ],
-    },
-  ],
-  groups: {
-    type: [groupSchema],
-    default: [],
-  },
-  public: { type: Boolean, required: true, default: false },
-  notes: {
-    type: [
-      {
-        _id: false,
-        name: { type: String, required: true },
-        content: { type: String, required: true },
-        visibleIn: {
-          type: [{ type: String, ref: 'Campaign' }],
-          default: [],
-        },
-      },
-    ],
-    default: [],
-  },
-  visibleTo: {
-    type: [{ type: String, ref: 'User' }],
-    default: [],
-  },
-  owner: { type: String, ref: 'User', required: true },
-  created: { type: Date, required: false, default: Date.now },
-  updated: { type: Date, required: false, default: Date.now },
-});
-
-export const Campaign =
-  mongoose.models.Campaign || model('Campaign', campaignSchema);
+export type GroupT = {
+  _id?: string;
+  name: string;
+  description: string;
+  icon?: { url: string; note?: string };
+  colorPalette: { primary: string; secondary: string; tertiary: string };
+  characters: GroupCharacter[];
+  layout?: {
+    mode: 'list' | 'grid';
+    dimensions: { w: number; h: number };
+  };
+  children: GroupT[];
+  visible: boolean;
+  public: boolean;
+};
 
 export type CampaignT = {
   _id: string;
-} & ReplaceMongooseDocumentArrayByArray<InferSchemaType<typeof campaignSchema>>;
+  name: string;
+  icon?: { url: string; note?: string };
+  description?: string;
+  colorPalette: { primary: string; secondary: string; tertiary: string };
+  aspects: { name: string; visibleIn: string[] }[];
+  skills: { name: string; actions: string[] }[];
+  groups: GroupT[];
+  public: boolean;
+  notes: { name: string; content: string; visibleIn: string[] }[];
+  visibleTo: string[];
+  owner: string;
+  created?: Date;
+  updated?: Date;
+};
 
-export type GroupT = ReplaceMongooseDocumentArrayByArray<
-  InferSchemaType<typeof groupSchema>
->;
-export type PopulatedGroup = Omit<GroupT, 'characters'> & {
+export type PopulatedGroup = Omit<GroupT, 'characters' | 'children'> & {
+  _id?: string;
   characters: {
     sheet: CharacterSheetT;
     visible: boolean;
     position: { x: number; y: number };
   }[];
+  children: PopulatedGroup[];
 };
 
-export type PopulatedCampaignT = {
-  _id: string;
+export type PopulatedCampaignT = Omit<CampaignT, 'groups'> & {
   groups: PopulatedGroup[];
-} & Omit<
-  ReplaceMongooseDocumentArrayByArray<InferSchemaType<typeof campaignSchema>>,
-  'groups'
->;
+};
 
-export async function createCampaign(campaign: CampaignT) {
-  return await Campaign.create(campaign);
+type CampaignRow = {
+  id: string;
+  name: string;
+  icon: Record<string, unknown> | null;
+  description: string | null;
+  color_palette: Record<string, unknown> | null;
+  aspects: unknown[] | null;
+  skills: unknown[] | null;
+  groups: unknown[] | null;
+  public: boolean;
+  notes: unknown[] | null;
+  visible_to: string[] | null;
+  owner: string;
+  created: Date;
+  updated: Date;
+};
+
+const campaignFields = `
+  id,
+  name,
+  icon,
+  description,
+  color_palette,
+  aspects,
+  skills,
+  groups,
+  public,
+  notes,
+  visible_to,
+  owner,
+  created,
+  updated
+`;
+
+const defaultColorPalette = {
+  primary: '209 213 219',
+  secondary: '156 163 175',
+  tertiary: '107 114 128',
+};
+
+const mapCampaign = (row?: CampaignRow | null): CampaignT | null =>
+  row
+    ? {
+        _id: row.id,
+        name: row.name,
+        icon: (row.icon as CampaignT['icon']) ?? undefined,
+        description: row.description ?? undefined,
+        colorPalette:
+          (row.color_palette as CampaignT['colorPalette']) ??
+          defaultColorPalette,
+        aspects: (row.aspects as CampaignT['aspects']) ?? [],
+        skills: (row.skills as CampaignT['skills']) ?? [],
+        groups: (row.groups as CampaignT['groups']) ?? [],
+        public: row.public ?? false,
+        notes: (row.notes as CampaignT['notes']) ?? [],
+        visibleTo: row.visible_to ?? [],
+        owner: row.owner,
+        created: row.created,
+        updated: row.updated,
+      }
+    : null;
+
+const normalizeGroups = (
+  groups: (GroupT | PopulatedGroup)[] | null | undefined,
+): GroupT[] =>
+  (groups ?? []).map((group) => ({
+    _id: group._id ?? randomUUID(),
+    ...group,
+    characters:
+      group.characters?.map((character) => ({
+        ...character,
+        sheet:
+          typeof character.sheet === 'string'
+            ? character.sheet
+            : character.sheet._id,
+      })) ?? [],
+    children: normalizeGroups(group.children),
+  }));
+
+const collectCharacterIds = (groups: GroupT[]): string[] => {
+  const ids = new Set<string>();
+  const walk = (groupList: GroupT[]) => {
+    groupList.forEach((group) => {
+      group.characters?.forEach((character) => {
+        if (typeof character.sheet === 'string') {
+          ids.add(character.sheet);
+        }
+      });
+      if (group.children?.length) {
+        walk(group.children);
+      }
+    });
+  };
+  walk(groups);
+  return Array.from(ids);
+};
+
+const populateGroups = (
+  groups: GroupT[],
+  sheetMap: Map<string, CharacterSheetT>,
+): PopulatedGroup[] =>
+  groups.map((group) => ({
+    ...group,
+    characters:
+      group.characters
+        ?.map((character) => {
+          const sheetId =
+            typeof character.sheet === 'string'
+              ? character.sheet
+              : character.sheet._id;
+          const sheet = sheetMap.get(sheetId);
+          if (!sheet) return null;
+          return { ...character, sheet };
+        })
+        .filter(Boolean) ?? [],
+    children: populateGroups(group.children ?? [], sheetMap),
+  }));
+
+const buildCampaignUpdate = (updates: Partial<CampaignT>) => {
+  const columns: Partial<Record<keyof CampaignT, string>> = {
+    name: 'name',
+    icon: 'icon',
+    description: 'description',
+    colorPalette: 'color_palette',
+    aspects: 'aspects',
+    skills: 'skills',
+    groups: 'groups',
+    public: 'public',
+    notes: 'notes',
+    visibleTo: 'visible_to',
+    owner: 'owner',
+  };
+
+  const setStatements = ['updated = $1'];
+  const values: unknown[] = [new Date()];
+  let index = 2;
+
+  for (const [key, column] of Object.entries(columns)) {
+    const value = updates[key as keyof CampaignT];
+    if (value !== undefined) {
+      if (key === 'groups') {
+        setStatements.push(`${column} = $${index}`);
+        values.push(normalizeGroups(value as GroupT[]));
+      } else {
+        setStatements.push(`${column} = $${index}`);
+        values.push(value);
+      }
+      index += 1;
+    }
+  }
+
+  return { setStatements, values, nextIndex: index };
+};
+
+export async function createCampaign(
+  campaign: Partial<CampaignT> | Partial<PopulatedCampaignT>,
+) {
+  const now = new Date();
+  const id = campaign._id || randomUUID();
+
+  const groups = normalizeGroups(
+    (campaign as CampaignT | PopulatedCampaignT).groups ?? [],
+  );
+
+  const { rows } = await query<CampaignRow>(
+    `
+      INSERT INTO campaigns (
+        id,
+        name,
+        icon,
+        description,
+        color_palette,
+        aspects,
+        skills,
+        groups,
+        public,
+        notes,
+        visible_to,
+        owner,
+        created,
+        updated
+      )
+      VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, COALESCE($9, false),
+        $10, $11, $12, $13, $14
+      )
+      RETURNING ${campaignFields}
+    `,
+    [
+      id,
+      campaign.name,
+      campaign.icon ?? null,
+      campaign.description ?? null,
+      campaign.colorPalette ?? defaultColorPalette,
+      campaign.aspects ?? [],
+      campaign.skills ?? [],
+      groups,
+      campaign.public ?? false,
+      campaign.notes ?? [],
+      campaign.visibleTo ?? [],
+      campaign.owner,
+      campaign.created ?? now,
+      campaign.updated ?? now,
+    ],
+  );
+
+  const mapped = mapCampaign(rows[0]);
+  if (!mapped) return null;
+  return getCampaign(mapped._id);
 }
 
 export async function getCampaign(id: string) {
-  // remove _id from subdocuments
-  return await Campaign.findById(id).populate('groups.characters.sheet');
+  const { rows } = await query<CampaignRow>(
+    `SELECT ${campaignFields} FROM campaigns WHERE id = $1`,
+    [id],
+  );
+  const baseCampaign = mapCampaign(rows[0]);
+  if (!baseCampaign) return null;
+
+  const sheetIds = collectCharacterIds(baseCampaign.groups);
+  const sheets = await getCharacterSheetsByIds(sheetIds);
+  const sheetMap = new Map(
+    sheets.map((sheet) => [sheet._id, sheet] as const),
+  );
+
+  return {
+    ...baseCampaign,
+    groups: populateGroups(baseCampaign.groups ?? [], sheetMap),
+  } as PopulatedCampaignT;
 }
 
 export async function updateCampaign(
   id: string,
   updates: Partial<CampaignT>,
 ): Promise<CampaignT | null> {
-  // Remove _id and __v to avoid updating these fields
-  delete updates._id;
-  //delete updates?.__v;
-  return await Campaign.findByIdAndUpdate(id, updates, {
-    new: true,
-  });
+  const normalizedUpdates: Partial<CampaignT> = { ...updates };
+  if ((updates as CampaignT | PopulatedCampaignT).groups !== undefined) {
+    normalizedUpdates.groups = normalizeGroups(
+      (updates as CampaignT | PopulatedCampaignT).groups,
+    );
+  }
+
+  const { setStatements, values, nextIndex } =
+    buildCampaignUpdate(normalizedUpdates);
+
+  const { rows } = await query<CampaignRow>(
+    `
+      UPDATE campaigns
+      SET ${setStatements.join(', ')}
+      WHERE id = $${nextIndex}
+      RETURNING ${campaignFields}
+    `,
+    [...values, id],
+  );
+
+  const mapped = mapCampaign(rows[0]);
+  if (!mapped) return null;
+  return mapped;
 }
+
 export const getCampaigns = async (
   userId: string,
 ): Promise<PopulatedCampaignT[]> => {
-  //check if userId is admin
-  const isAdmin = await UserModel.findById(userId).select('admin');
-  if (isAdmin?.admin) {
-    return await Campaign.find().populate({
-      path: 'groups.characters',
-      populate: {
-        path: 'player',
-        select: 'name',
-      },
-    });
-  }
-  return await Campaign.find({
-    $or: [
-      { public: true },
-      { visibleTo: { $in: [userId] } },
-      { owner: userId },
-    ],
-  }).populate({
-    path: 'groups.characters',
-    populate: {
-      path: 'player',
-      select: 'name',
-    },
-  });
+  const user = await getUserById(userId);
+  const isAdmin = user?.admin ?? false;
+
+  const visibilityFilter = isAdmin
+    ? ''
+    : `WHERE public = true OR $1 = ANY(visible_to) OR owner = $1`;
+
+  const { rows } = await query<CampaignRow>(
+    `SELECT ${campaignFields} FROM campaigns ${visibilityFilter}`,
+    isAdmin ? [] : [userId],
+  );
+
+  const campaigns = rows
+    .map((row) => mapCampaign(row))
+    .filter(Boolean) as CampaignT[];
+
+  const allSheetIds = campaigns.flatMap((campaign) =>
+    collectCharacterIds(campaign.groups),
+  );
+  const uniqueSheetIds = Array.from(new Set(allSheetIds));
+  const sheets = await getCharacterSheetsByIds(uniqueSheetIds);
+  const sheetMap = new Map(sheets.map((sheet) => [sheet._id, sheet] as const));
+
+  return campaigns.map(
+    (campaign) =>
+      ({
+        ...campaign,
+        groups: populateGroups(campaign.groups ?? [], sheetMap),
+      }) as PopulatedCampaignT,
+  );
 };

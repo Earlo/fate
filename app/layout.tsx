@@ -1,6 +1,5 @@
 import Footer from '@/components/layout/footer';
 import TopBar from '@/components/layout/topBar';
-import '@/schemas';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Archivo, Archivo_Black } from 'next/font/google';

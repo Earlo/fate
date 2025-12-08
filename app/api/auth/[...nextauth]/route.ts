@@ -1,10 +1,8 @@
-import connect from '@/lib/mongo';
-import { UserModel, UserModelT } from '@/schemas/user';
+import { createUser, getUserById, getUserByUsername } from '@/schemas/user';
 import { compare } from 'bcrypt';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-connect();
 
 const handler = NextAuth({
   providers: [
@@ -20,9 +18,7 @@ const handler = NextAuth({
       },
       async authorize(credentials, req) {
         if (credentials && credentials.username && credentials.password) {
-          const user = await UserModel.findOne({
-            username: credentials.username,
-          });
+          const user = await getUserByUsername(credentials.username);
           if (
             user &&
             user.password &&
@@ -43,29 +39,24 @@ const handler = NextAuth({
     async signIn({ account, profile }) {
       if (account?.provider === 'google') {
         if (profile?.email && profile?.sub) {
-          const user = await UserModel.findOne({
-            username: profile.email,
-          });
-          if (user) {
-            return true;
-          } else {
-            await UserModel.create({
+          const user = await getUserByUsername(profile.email);
+          if (!user) {
+            await createUser({
               username: profile.email,
               admin: false,
             });
-            return true;
           }
+          return true;
         }
       }
       return true; // Do different verification for other providers that don't have `email_verified`
     },
-    async session({ session, token, user }) {
-      const query = token.email
-        ? { username: token.email }
-        : { _id: token.sub };
-      const found = await UserModel.findOne<UserModelT & { _id: string }>(
-        query,
-      );
+    async session({ session, token }) {
+      const found = token.email
+        ? await getUserByUsername(token.email)
+        : token.sub
+          ? await getUserById(token.sub)
+          : null;
       if (!found) {
         throw new Error('User not found');
       }

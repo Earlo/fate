@@ -1,7 +1,7 @@
 'use client';
 import useDebounce from '@/hooks/debounce';
 import { cn } from '@/lib/utils';
-import { useCompletion } from 'ai/react';
+import { useCompletion } from '@ai-sdk/react';
 import { FC, useEffect, useState } from 'react';
 import IconButton from '../generic/icon/iconButton';
 import Input from '../generic/input';

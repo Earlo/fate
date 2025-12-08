@@ -1,12 +1,16 @@
-import connect from '@/lib/mongo';
 import { createCampaign, getCampaigns } from '@/schemas/campaign';
 import { NextResponse, type NextRequest } from 'next/server';
-connect();
 
 export async function POST(req: NextRequest) {
   try {
     const newCampaign = await req.json();
     const createdCampaign = await createCampaign(newCampaign);
+    if (!createdCampaign) {
+      return NextResponse.json(
+        { error: 'Failed to create campaign' },
+        { status: 500 },
+      );
+    }
     return NextResponse.json(createdCampaign, { status: 200 });
   } catch (error) {
     console.log(error);

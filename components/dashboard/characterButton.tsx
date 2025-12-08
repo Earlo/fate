@@ -21,7 +21,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
     >
       <Image
         src={character.icon?.url || '/blank_user.png'}
-        alt={character.name.text}
+        alt={character.name?.text || 'Character'}
         width={64}
         height={64}
         className={cn('shrink-0 rounded-full', {
@@ -33,17 +33,17 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
       <div className="flex min-w-0 grow flex-col pl-4">
         <h3 className="line-clamp-2 overflow-hidden text-lg leading-6 font-semibold group-hover:underline">
           {campaignId
-            ? character.name.visibleIn.includes(campaignId)
-              ? character.name.text
+            ? character.name?.visibleIn?.includes(campaignId)
+              ? character.name?.text
               : '???'
-            : character.name.text || 'Unnamed Character'}
+            : character.name?.text || 'Unnamed Character'}
         </h3>
         <p className="line-clamp-2 overflow-hidden text-sm leading-4 text-gray-600">
           {campaignId
-            ? character.aspects[0].visibleIn.includes(campaignId)
-              ? character.aspects[0].name
+            ? character.aspects[0]?.visibleIn?.includes(campaignId)
+              ? character.aspects[0]?.name
               : '???'
-            : character.aspects[0].name || '-'}
+            : character.aspects?.[0]?.name || '-'}
         </p>
       </div>
     </div>
@@ -51,7 +51,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
     <Image
       onClick={onClick}
       src={character.icon?.url || '/blank_user.png'}
-      alt={character.name.text}
+      alt={character.name?.text || 'Character'}
       width={64}
       height={64}
       className={cn(

@@ -1,7 +1,5 @@
-import connect from '@/lib/mongo';
 import { getCampaign, updateCampaign } from '@/schemas/campaign';
 import { NextResponse, type NextRequest } from 'next/server';
-connect();
 
 export async function GET(
   req: NextRequest,

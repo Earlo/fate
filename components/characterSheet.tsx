@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { useCompletion } from 'ai/react';
+import { useCompletion } from '@ai-sdk/react';
 import Icon from './generic/icon/icon';
 import ImageUploader from './generic/imageUploader';
 import LabeledInput from './generic/labeledInput';

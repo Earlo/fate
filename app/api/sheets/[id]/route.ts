@@ -1,4 +1,3 @@
-import connect from '@/lib/mongo';
 import {
   CharacterSheetT,
   deleteCharacterSheet,
@@ -6,7 +5,6 @@ import {
   updateCharacterSheet,
 } from '@/schemas/sheet';
 import { NextResponse, type NextRequest } from 'next/server';
-connect();
 
 export async function GET(
   req: NextRequest,

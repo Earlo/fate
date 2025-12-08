@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fate
+      POSTGRES_PASSWORD: fate
+      POSTGRES_DB: fate
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    ports:
+      - '5432:5432'
+
+  app:
+    build:
+      context: .
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      DATABASE_URL: postgresql://fate:fate@db:5432/fate
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: devsecret
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    volumes:
+      - .:/app:cached
+    command: ['npm', 'run', 'dev', '--', '-H', '0.0.0.0', '-p', '3000']
+
+volumes:
+  postgres-data:

@@ -42,9 +42,9 @@ export default function Dashboard() {
       <div className="col-span-1">
         <h2 className="mb-2 text-xl font-bold">Your Character Sheets:</h2>
         <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
-          {sheets.map((sheet) => (
+          {sheets.map((sheet, index) => (
             <CharacterButton
-              key={sheet._id}
+              key={sheet._id || `${sheet.name?.text || 'sheet'}-${index}`}
               character={sheet}
               onClick={() =>
                 setBigSheet({ sheet, state: 'edit', skills: allSkills })

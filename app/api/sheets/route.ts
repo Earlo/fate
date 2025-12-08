@@ -1,16 +1,20 @@
-import connect from '@/lib/mongo';
 import {
   CharacterSheetT,
   createCharacterSheet,
   getCharacterSheets,
 } from '@/schemas/sheet';
 import { NextResponse, type NextRequest } from 'next/server';
-connect();
 
 export async function POST(req: NextRequest) {
   try {
     const sheet: CharacterSheetT = await req.json();
     const newSheet = await createCharacterSheet(sheet);
+    if (!newSheet) {
+      return NextResponse.json(
+        { error: 'Failed to create character sheet' },
+        { status: 500 },
+      );
+    }
     return NextResponse.json(newSheet, { status: 200 });
   } catch (error) {
     console.log(error);

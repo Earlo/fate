@@ -13,7 +13,7 @@ help with development.
 The Fate Character Sheet Manager requires the following pieces of software be run locally.
 
 - Nodejs - Any version greater than or equal to 18.
-- MongoDB - Any modern version should work.
+- PostgreSQL 14+.
 
 ### Installation for Mac OS X Ventura on an M1 processor.
 
@@ -41,20 +41,16 @@ nvm install 20
 nvm use 20
 ```
 
-#### Mongodb
+#### PostgreSQL
 
-Use [Homebrew](https://docs.brew.sh) to install Mongodb Community Edition on your workstation. Follow [Homebrew's
-installation instructions](https://docs.brew.sh/Installation) to install it, then use these commands to install MongoDB Community
-Edition and the MongoDB Compass tool to troubleshoot data problems.
-
-```bash
-brew install mongodb-community mongodb-compass
-```
-
-Use this command to start the Mongodb Community Edition server, and to make sure it is started when you next login.
+Use [Homebrew](https://docs.brew.sh) to install PostgreSQL on your workstation. Follow [Homebrew's
+installation instructions](https://docs.brew.sh/Installation) to install it, then use these commands to install and start PostgreSQL:
 
 ```bash
-brew services start mongodb-community
+brew install postgresql@16
+brew services start postgresql@16
+createdb fate
+psql -d fate -f db/schema.sql
 ```
 
 ### Installation for other operating system environments.
@@ -79,10 +75,10 @@ In the same directory, make a copy of the file `.env.example` named `.env`
 cp .env.example .env
 ```
 
-Edit the `.env` file so the line for the`MONGO_URL` variable looks like this:
+Edit the `.env` file so the line for the `DATABASE_URL` variable looks like this:
 
 ```bash
-MONGO_URL=mongodb://127.0.0.1:27017/fate
+DATABASE_URL=postgresql://localhost:5432/fate
 ```
 
 All other variables can be left empty at this time.
