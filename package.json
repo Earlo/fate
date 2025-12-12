@@ -28,7 +28,7 @@
     "next-auth": "4.24.13",
     "openai": "6.10.0",
     "react": "19.2.3",
-    "react-dom": "19.2.1",
+    "react-dom": "19.2.3",
     "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
