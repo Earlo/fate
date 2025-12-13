@@ -1,4 +1,4 @@
-import { query } from '@/lib/postgres';
+import { prisma } from '@/lib/prisma';
 import { randomUUID } from 'crypto';
 
 export type UserModelT = {
@@ -19,8 +19,6 @@ type UserRow = {
   updated: Date;
 };
 
-const userFields = 'id, username, password, admin, created, updated';
-
 const mapUser = (row?: UserRow | null): UserModelT | null =>
   row
     ? {
@@ -34,21 +32,15 @@ const mapUser = (row?: UserRow | null): UserModelT | null =>
     : null;
 
 export async function getUserById(id: string): Promise<UserModelT | null> {
-  const { rows } = await query<UserRow>(
-    `SELECT ${userFields} FROM users WHERE id = $1`,
-    [id],
-  );
-  return mapUser(rows[0]);
+  const user = await prisma.user.findUnique({ where: { id } });
+  return mapUser(user as UserRow | null);
 }
 
 export async function getUserByUsername(
   username: string,
 ): Promise<UserModelT | null> {
-  const { rows } = await query<UserRow>(
-    `SELECT ${userFields} FROM users WHERE username = $1`,
-    [username],
-  );
-  return mapUser(rows[0]);
+  const user = await prisma.user.findUnique({ where: { username } });
+  return mapUser(user as UserRow | null);
 }
 
 export async function createUser(
@@ -56,13 +48,13 @@ export async function createUser(
     Partial<Pick<UserModelT, 'password' | 'admin'>>,
 ): Promise<UserModelT | null> {
   const id = randomUUID();
-  const { rows } = await query<UserRow>(
-    `
-    INSERT INTO users (id, username, password, admin)
-    VALUES ($1, $2, $3, COALESCE($4, false))
-    RETURNING ${userFields}
-  `,
-    [id, user.username, user.password ?? null, user.admin ?? false],
-  );
-  return mapUser(rows[0]);
+  const created = await prisma.user.create({
+    data: {
+      id,
+      username: user.username,
+      password: user.password ?? null,
+      admin: user.admin ?? false,
+    },
+  });
+  return mapUser(created as UserRow);
 }

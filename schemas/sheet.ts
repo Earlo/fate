@@ -1,4 +1,5 @@
-import { query } from '@/lib/postgres';
+import { Prisma } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { randomUUID } from 'crypto';
 
 export type CharacterSheetT = {
@@ -41,45 +42,24 @@ export interface sheetWithContext {
 
 type CharacterSheetRow = {
   id: string;
-  icon: Record<string, unknown> | null;
-  color_palette: Record<string, unknown> | null;
-  name: Record<string, unknown>;
-  description: Record<string, unknown> | null;
-  fate: Record<string, unknown> | null;
-  aspects: unknown[] | null;
-  skills: Record<string, unknown> | null;
-  stunts: unknown[] | null;
-  extras: unknown[] | null;
-  stress: Record<string, unknown> | null;
-  consequences: Record<string, unknown> | null;
+  icon: Prisma.JsonValue | null;
+  colorPalette: Prisma.JsonValue | null;
+  name: Prisma.JsonValue;
+  description: Prisma.JsonValue | null;
+  fate: Prisma.JsonValue | null;
+  aspects: Prisma.JsonValue | null;
+  skills: Prisma.JsonValue | null;
+  stunts: Prisma.JsonValue | null;
+  extras: Prisma.JsonValue | null;
+  stress: Prisma.JsonValue | null;
+  consequences: Prisma.JsonValue | null;
   notes: unknown[] | null;
   public: boolean;
-  visible_to: string[] | null;
-  owner: string;
+  visibleTo: string[] | null;
+  ownerId: string | null;
   created: Date;
   updated: Date;
 };
-
-const sheetFields = `
-  id,
-  icon,
-  color_palette,
-  name,
-  description,
-  fate,
-  aspects,
-  skills,
-  stunts,
-  extras,
-  stress,
-  consequences,
-  notes,
-  public,
-  visible_to,
-  owner,
-  created,
-  updated
-`;
 
 const defaultColorPalette = () => ({
   primary: '209 213 219',
@@ -138,7 +118,6 @@ const defaultFate = () => ({
   refresh: 0,
   visibleIn: [] as string[],
 });
-const toJsonText = (value: unknown) => JSON.stringify(value ?? null);
 
 const mapCharacterSheet = (
   row?: CharacterSheetRow | null,
@@ -148,7 +127,7 @@ const mapCharacterSheet = (
         _id: row.id,
         icon: (row.icon as CharacterSheetT['icon']) ?? undefined,
         colorPalette:
-          (row.color_palette as CharacterSheetT['colorPalette']) ??
+          (row.colorPalette as CharacterSheetT['colorPalette']) ??
           defaultColorPalette(),
         name: (row.name as CharacterSheetT['name']) ?? defaultName(),
         description:
@@ -164,8 +143,8 @@ const mapCharacterSheet = (
           defaultConsequences(),
         notes: (row.notes as CharacterSheetT['notes']) ?? [],
         public: row.public ?? false,
-        visibleTo: row.visible_to ?? [],
-        owner: row.owner,
+        visibleTo: row.visibleTo ?? [],
+        owner: row.ownerId ?? '',
         created: row.created,
         updated: row.updated,
       }
@@ -177,100 +156,57 @@ export async function createCharacterSheet(sheet: Partial<CharacterSheetT>) {
   const aspects = normalizeAspects(sheet.aspects);
   const visibleTo =
     sheet.visibleTo && Array.isArray(sheet.visibleTo) ? sheet.visibleTo : [];
-  const { rows } = await query<CharacterSheetRow>(
-    `
-      INSERT INTO character_sheets (
-        id,
-        icon,
-        color_palette,
-        name,
-        description,
-        fate,
-        aspects,
-        skills,
-        stunts,
-        extras,
-        stress,
-        consequences,
-        notes,
-        public,
-        visible_to,
-        owner,
-        created,
-        updated
-      )
-      VALUES (
-        $1,
-        CAST($2 AS jsonb),
-        CAST($3 AS jsonb),
-        CAST($4 AS jsonb),
-        CAST($5 AS jsonb),
-        CAST($6 AS jsonb),
-        CAST($7 AS jsonb),
-        CAST($8 AS jsonb),
-        CAST($9 AS jsonb),
-        CAST($10 AS jsonb),
-        CAST($11 AS jsonb),
-        CAST($12 AS jsonb),
-        CAST($13 AS jsonb),
-        COALESCE($14, false),
-        $15,
-        $16,
-        $17,
-        $18
-      )
-      RETURNING ${sheetFields}
-    `,
-    [
+  const created = await prisma.characterSheet.create({
+    data: {
       id,
-      toJsonText(sheet.icon ?? null),
-      toJsonText(sheet.colorPalette ?? defaultColorPalette()),
-      toJsonText(sheet.name ?? defaultName()),
-      toJsonText(sheet.description ?? null),
-      toJsonText(sheet.fate ?? defaultFate()),
-      toJsonText(aspects),
-      toJsonText(sheet.skills ?? {}),
-      toJsonText(sheet.stunts ?? []),
-      toJsonText(sheet.extras ?? []),
-      toJsonText(sheet.stress ?? defaultStress()),
-      toJsonText(sheet.consequences ?? defaultConsequences()),
-      toJsonText(sheet.notes ?? []),
-      sheet.public ?? false,
+      icon: (sheet.icon as Prisma.InputJsonValue) ?? null,
+      colorPalette:
+        (sheet.colorPalette as Prisma.InputJsonValue) ??
+        defaultColorPalette(),
+      name: (sheet.name as Prisma.InputJsonValue) ?? defaultName(),
+      description: (sheet.description as Prisma.InputJsonValue) ?? null,
+      fate: (sheet.fate as Prisma.InputJsonValue) ?? defaultFate(),
+      aspects: aspects as Prisma.InputJsonValue,
+      skills: (sheet.skills as Prisma.InputJsonValue) ?? {},
+      stunts: (sheet.stunts as Prisma.InputJsonValue) ?? [],
+      extras: (sheet.extras as Prisma.InputJsonValue) ?? [],
+      stress: (sheet.stress as Prisma.InputJsonValue) ?? defaultStress(),
+      consequences:
+        (sheet.consequences as Prisma.InputJsonValue) ?? defaultConsequences(),
+      notes: (sheet.notes as Prisma.InputJsonValue) ?? [],
+      public: sheet.public ?? false,
       visibleTo,
-      sheet.owner,
-      sheet.created ?? now,
-      sheet.updated ?? now,
-    ],
-  );
-  return mapCharacterSheet(rows[0]);
+      ownerId: sheet.owner ?? null,
+      created: sheet.created ?? now,
+      updated: sheet.updated ?? now,
+    },
+  });
+  return mapCharacterSheet(created as CharacterSheetRow);
 }
 
 export async function getCharacterSheet(sheetId: string) {
-  const { rows } = await query<CharacterSheetRow>(
-    `SELECT ${sheetFields} FROM character_sheets WHERE id = $1`,
-    [sheetId],
-  );
-  return mapCharacterSheet(rows[0]);
+  const sheet = await prisma.characterSheet.findUnique({
+    where: { id: sheetId },
+  });
+  return mapCharacterSheet(sheet as CharacterSheetRow | null);
 }
 
 export async function getCharacterSheets(userId: string) {
-  const { rows } = await query<CharacterSheetRow>(
-    `SELECT ${sheetFields} FROM character_sheets WHERE owner = $1`,
-    [userId],
-  );
+  const rows = await prisma.characterSheet.findMany({
+    where: { ownerId: userId },
+  });
   return rows
-    .map((row) => mapCharacterSheet(row))
+    .map((row) => mapCharacterSheet(row as CharacterSheetRow))
     .filter(Boolean) as CharacterSheetT[];
 }
 
 export async function getCharacterSheetsByIds(ids: string[]) {
   if (!ids.length) return [];
-  const { rows } = await query<CharacterSheetRow>(
-    `SELECT ${sheetFields} FROM character_sheets WHERE id = ANY($1::text[])`,
-    [ids],
-  );
+  const rows = await prisma.characterSheet.findMany({
+    where: { id: { in: ids } },
+  });
   return rows
-    .map((row) => mapCharacterSheet(row))
+    .map((row) => mapCharacterSheet(row as CharacterSheetRow))
     .filter(Boolean) as CharacterSheetT[];
 }
 
@@ -278,72 +214,46 @@ export async function updateCharacterSheet(
   sheetId: string,
   updates: Partial<CharacterSheetT>,
 ) {
-  const columns: Partial<Record<keyof CharacterSheetT, string>> = {
-    icon: 'icon',
-    colorPalette: 'color_palette',
-    name: 'name',
-    description: 'description',
-    fate: 'fate',
-    aspects: 'aspects',
-    skills: 'skills',
-    stunts: 'stunts',
-    extras: 'extras',
-    stress: 'stress',
-    consequences: 'consequences',
-    notes: 'notes',
-    public: 'public',
-    visibleTo: 'visible_to',
-    owner: 'owner',
+  const data: Prisma.CharacterSheetUncheckedUpdateInput = {
+    updated: new Date(),
   };
 
-  const values: unknown[] = [new Date()];
-  const setStatements = ['updated = $1'];
-  let index = 2;
-  for (const [key, column] of Object.entries(columns)) {
-    const updateValue = updates[key as keyof CharacterSheetT];
-    if (updateValue !== undefined) {
-      const valueToUse =
-        column === 'visible_to' && !Array.isArray(updateValue)
-          ? []
-          : column === 'aspects'
-            ? normalizeAspects(updateValue)
-            : updateValue;
-      const needsJsonCast =
-        column &&
-        [
-          'icon',
-          'color_palette',
-          'name',
-          'description',
-          'fate',
-          'aspects',
-          'skills',
-          'stunts',
-          'extras',
-          'stress',
-          'consequences',
-          'notes',
-        ].includes(column);
-      setStatements.push(
-        `${column} = ${needsJsonCast ? `CAST($${index} AS jsonb)` : `$${index}`}`,
-      );
-      values.push(needsJsonCast ? toJsonText(valueToUse) : valueToUse);
-      index += 1;
-    }
-  }
+  if (updates.icon !== undefined)
+    data.icon = updates.icon as Prisma.InputJsonValue;
+  if (updates.colorPalette !== undefined)
+    data.colorPalette = updates.colorPalette as Prisma.InputJsonValue;
+  if (updates.name !== undefined)
+    data.name = updates.name as Prisma.InputJsonValue;
+  if (updates.description !== undefined)
+    data.description = updates.description as Prisma.InputJsonValue;
+  if (updates.fate !== undefined)
+    data.fate = updates.fate as Prisma.InputJsonValue;
+  if (updates.aspects !== undefined)
+    data.aspects = normalizeAspects(updates.aspects) as Prisma.InputJsonValue;
+  if (updates.skills !== undefined)
+    data.skills = updates.skills as Prisma.InputJsonValue;
+  if (updates.stunts !== undefined)
+    data.stunts = updates.stunts as Prisma.InputJsonValue;
+  if (updates.extras !== undefined)
+    data.extras = updates.extras as Prisma.InputJsonValue;
+  if (updates.stress !== undefined)
+    data.stress = updates.stress as Prisma.InputJsonValue;
+  if (updates.consequences !== undefined)
+    data.consequences = updates.consequences as Prisma.InputJsonValue;
+  if (updates.notes !== undefined)
+    data.notes = updates.notes as Prisma.InputJsonValue;
+  if (updates.public !== undefined) data.public = updates.public;
+  if (updates.visibleTo !== undefined)
+    data.visibleTo = Array.isArray(updates.visibleTo) ? updates.visibleTo : [];
+  if (updates.owner !== undefined) data.ownerId = updates.owner;
 
-  const { rows } = await query<CharacterSheetRow>(
-    `
-      UPDATE character_sheets
-      SET ${setStatements.join(', ')}
-      WHERE id = $${index}
-      RETURNING ${sheetFields}
-    `,
-    [...values, sheetId],
-  );
-  return mapCharacterSheet(rows[0]);
+  const updatedSheet = await prisma.characterSheet.update({
+    where: { id: sheetId },
+    data,
+  });
+  return mapCharacterSheet(updatedSheet as CharacterSheetRow);
 }
 
 export async function deleteCharacterSheet(sheetId: string) {
-  await query(`DELETE FROM character_sheets WHERE id = $1`, [sheetId]);
+  await prisma.characterSheet.delete({ where: { id: sheetId } });
 }

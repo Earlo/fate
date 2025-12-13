@@ -19,6 +19,13 @@ This software isn't meant to be a virtual table top simulator or an online RPG p
   - Group characters
   - Reveal partial character sheets to players as GM
 
+## Database setup (Prisma)
+
+- Set `DATABASE_URL` in `.env` (Neon connection string for Vercel works here too) — Prisma CLI and the Prisma Client read it via `prisma.config.ts` / `lib/prisma.ts`.
+- Install deps if you have not already: `npm install` (updates `@prisma/client` and `prisma`).
+- Create tables in a new database with `npm run db:push` (or run the committed migration with `npm run db:deploy`).
+- Optional: open Prisma Studio to inspect data: `npm run db:studio`.
+
 ![Example sheet form the app](/readme/example_sheet.png?raw=true 'Example sheet form the app')
 
 ![Example of group](/readme/faction_view.png?raw=true 'Example of groups')

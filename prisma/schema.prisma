@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id       String   @id @db.Text
+  username String   @unique @db.Text
+  password String?  @db.Text
+  admin    Boolean  @default(false)
+  created  DateTime @default(now()) @db.Timestamptz(6)
+  updated  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  characterSheets CharacterSheet[]
+  campaigns       Campaign[]
+
+  @@map("users")
+}
+
+model CharacterSheet {
+  id            String   @id @db.Text
+  icon          Json?    @db.JsonB
+  colorPalette  Json?    @map("color_palette") @db.JsonB
+  name          Json     @db.JsonB
+  description   Json?    @db.JsonB
+  fate          Json?    @db.JsonB
+  aspects       Json?    @db.JsonB
+  skills        Json?    @db.JsonB
+  stunts        Json?    @db.JsonB
+  extras        Json?    @db.JsonB
+  stress        Json?    @db.JsonB
+  consequences  Json?    @db.JsonB
+  notes         Json?    @db.JsonB
+  public        Boolean  @default(false)
+  visibleTo     String[] @map("visible_to") @db.Text @default([])
+  ownerId       String?  @map("owner") @db.Text
+  created       DateTime @default(now()) @db.Timestamptz(6)
+  updated       DateTime @default(now()) @db.Timestamptz(6)
+
+  owner User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@map("character_sheets")
+}
+
+model Campaign {
+  id           String   @id @db.Text
+  name         String   @db.Text
+  icon         Json?    @db.JsonB
+  description  String?  @db.Text
+  colorPalette Json?    @map("color_palette") @db.JsonB
+  aspects      Json?    @db.JsonB
+  skills       Json?    @db.JsonB
+  groups       Json?    @db.JsonB
+  public       Boolean  @default(false)
+  notes        Json?    @db.JsonB
+  visibleTo    String[] @map("visible_to") @db.Text @default([])
+  ownerId      String?  @map("owner") @db.Text
+  created      DateTime @default(now()) @db.Timestamptz(6)
+  updated      DateTime @default(now()) @db.Timestamptz(6)
+
+  owner User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@map("campaigns")
+}

@@ -1,4 +1,5 @@
-import { query } from '@/lib/postgres';
+import { Prisma } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { getCharacterSheetsByIds, type CharacterSheetT } from '@/schemas/sheet';
 import { getUserById } from '@/schemas/user';
 import { randomUUID } from 'crypto';
@@ -67,44 +68,25 @@ export type PopulatedCampaignT = Omit<CampaignT, 'groups'> & {
 type CampaignRow = {
   id: string;
   name: string;
-  icon: Record<string, unknown> | null;
+  icon: Prisma.JsonValue | null;
   description: string | null;
-  color_palette: Record<string, unknown> | null;
-  aspects: unknown[] | null;
-  skills: unknown[] | null;
-  groups: unknown[] | null;
+  colorPalette: Prisma.JsonValue | null;
+  aspects: Prisma.JsonValue | null;
+  skills: Prisma.JsonValue | null;
+  groups: Prisma.JsonValue | null;
   public: boolean;
-  notes: unknown[] | null;
-  visible_to: string[] | null;
-  owner: string;
+  notes: Prisma.JsonValue | null;
+  visibleTo: string[] | null;
+  ownerId: string | null;
   created: Date;
   updated: Date;
 };
-
-const campaignFields = `
-  id,
-  name,
-  icon,
-  description,
-  color_palette,
-  aspects,
-  skills,
-  groups,
-  public,
-  notes,
-  visible_to,
-  owner,
-  created,
-  updated
-`;
 
 const defaultColorPalette = {
   primary: '209 213 219',
   secondary: '156 163 175',
   tertiary: '107 114 128',
 };
-
-const toJsonText = (value: unknown) => JSON.stringify(value ?? null);
 
 const mapCampaign = (row?: CampaignRow | null): CampaignT | null =>
   row
@@ -114,15 +96,15 @@ const mapCampaign = (row?: CampaignRow | null): CampaignT | null =>
         icon: (row.icon as CampaignT['icon']) ?? undefined,
         description: row.description ?? undefined,
         colorPalette:
-          (row.color_palette as CampaignT['colorPalette']) ??
+          (row.colorPalette as CampaignT['colorPalette']) ??
           defaultColorPalette,
         aspects: (row.aspects as CampaignT['aspects']) ?? [],
         skills: (row.skills as CampaignT['skills']) ?? [],
         groups: (row.groups as CampaignT['groups']) ?? [],
         public: row.public ?? false,
         notes: (row.notes as CampaignT['notes']) ?? [],
-        visibleTo: row.visible_to ?? [],
-        owner: row.owner,
+        visibleTo: row.visibleTo ?? [],
+        owner: row.ownerId ?? '',
         created: row.created,
         updated: row.updated,
       }
@@ -188,53 +170,32 @@ const populateGroups = (
   }));
 
 const buildCampaignUpdate = (updates: Partial<CampaignT>) => {
-  const columns: Partial<Record<keyof CampaignT, string>> = {
-    name: 'name',
-    icon: 'icon',
-    description: 'description',
-    colorPalette: 'color_palette',
-    aspects: 'aspects',
-    skills: 'skills',
-    groups: 'groups',
-    public: 'public',
-    notes: 'notes',
-    visibleTo: 'visible_to',
-    owner: 'owner',
+  const data: Prisma.CampaignUncheckedUpdateInput = {
+    updated: new Date(),
   };
 
-  const setStatements = ['updated = $1'];
-  const values: unknown[] = [new Date()];
-  let index = 2;
+  if (updates.name !== undefined) data.name = updates.name;
+  if (updates.icon !== undefined)
+    data.icon = updates.icon as Prisma.InputJsonValue;
+  if (updates.description !== undefined) data.description = updates.description;
+  if (updates.colorPalette !== undefined)
+    data.colorPalette = updates.colorPalette as Prisma.InputJsonValue;
+  if (updates.aspects !== undefined)
+    data.aspects = updates.aspects as Prisma.InputJsonValue;
+  if (updates.skills !== undefined)
+    data.skills = updates.skills as Prisma.InputJsonValue;
+  if (updates.groups !== undefined)
+    data.groups = normalizeGroups(
+      (updates as CampaignT | PopulatedCampaignT).groups ?? [],
+    ) as Prisma.InputJsonValue;
+  if (updates.public !== undefined) data.public = updates.public;
+  if (updates.notes !== undefined)
+    data.notes = updates.notes as Prisma.InputJsonValue;
+  if (updates.visibleTo !== undefined)
+    data.visibleTo = Array.isArray(updates.visibleTo) ? updates.visibleTo : [];
+  if (updates.owner !== undefined) data.ownerId = updates.owner;
 
-  const jsonColumns: (keyof CampaignT)[] = [
-    'icon',
-    'colorPalette',
-    'aspects',
-    'skills',
-    'groups',
-    'notes',
-  ];
-
-  for (const [key, column] of Object.entries(columns)) {
-    const value = updates[key as keyof CampaignT];
-    if (value !== undefined) {
-      const isJsonColumn = jsonColumns.includes(key as keyof CampaignT);
-      const normalizedValue =
-        key === 'groups' ? normalizeGroups(value as GroupT[]) : value;
-
-      setStatements.push(
-        `${column} = ${
-          isJsonColumn ? `CAST($${index} AS jsonb)` : `$${index}`
-        }`,
-      );
-      values.push(
-        isJsonColumn ? toJsonText(normalizedValue) : normalizedValue,
-      );
-      index += 1;
-    }
-  }
-
-  return { setStatements, values, nextIndex: index };
+  return data;
 };
 
 export async function createCampaign(
@@ -247,71 +208,35 @@ export async function createCampaign(
     (campaign as CampaignT | PopulatedCampaignT).groups ?? [],
   );
 
-  const { rows } = await query<CampaignRow>(
-    `
-      INSERT INTO campaigns (
-        id,
-        name,
-        icon,
-        description,
-        color_palette,
-        aspects,
-        skills,
-        groups,
-        public,
-        notes,
-        visible_to,
-        owner,
-        created,
-        updated
-      )
-      VALUES (
-        $1,
-        $2,
-        CAST($3 AS jsonb),
-        $4,
-        CAST($5 AS jsonb),
-        CAST($6 AS jsonb),
-        CAST($7 AS jsonb),
-        CAST($8 AS jsonb),
-        COALESCE($9, false),
-        CAST($10 AS jsonb),
-        $11,
-        $12,
-        $13,
-        $14
-      )
-      RETURNING ${campaignFields}
-    `,
-    [
+  const created = await prisma.campaign.create({
+    data: {
       id,
-      campaign.name,
-      toJsonText(campaign.icon ?? null),
-      campaign.description ?? null,
-      toJsonText(campaign.colorPalette ?? defaultColorPalette),
-      toJsonText(campaign.aspects ?? []),
-      toJsonText(campaign.skills ?? []),
-      toJsonText(groups),
-      campaign.public ?? false,
-      toJsonText(campaign.notes ?? []),
-      campaign.visibleTo ?? [],
-      campaign.owner,
-      campaign.created ?? now,
-      campaign.updated ?? now,
-    ],
-  );
+      name: campaign.name ?? '',
+      icon: (campaign.icon as Prisma.InputJsonValue) ?? null,
+      description: campaign.description ?? null,
+      colorPalette:
+        (campaign.colorPalette as Prisma.InputJsonValue) ??
+        defaultColorPalette,
+      aspects: (campaign.aspects as Prisma.InputJsonValue) ?? [],
+      skills: (campaign.skills as Prisma.InputJsonValue) ?? [],
+      groups: (groups as Prisma.InputJsonValue) ?? [],
+      public: campaign.public ?? false,
+      notes: (campaign.notes as Prisma.InputJsonValue) ?? [],
+      visibleTo: campaign.visibleTo ?? [],
+      ownerId: campaign.owner ?? null,
+      created: campaign.created ?? now,
+      updated: campaign.updated ?? now,
+    },
+  });
 
-  const mapped = mapCampaign(rows[0]);
+  const mapped = mapCampaign(created as CampaignRow);
   if (!mapped) return null;
   return getCampaign(mapped._id);
 }
 
 export async function getCampaign(id: string) {
-  const { rows } = await query<CampaignRow>(
-    `SELECT ${campaignFields} FROM campaigns WHERE id = $1`,
-    [id],
-  );
-  const baseCampaign = mapCampaign(rows[0]);
+  const row = await prisma.campaign.findUnique({ where: { id } });
+  const baseCampaign = mapCampaign(row as CampaignRow | null);
   if (!baseCampaign) return null;
 
   const sheetIds = collectCharacterIds(baseCampaign.groups);
@@ -328,27 +253,14 @@ export async function updateCampaign(
   id: string,
   updates: Partial<CampaignT>,
 ): Promise<CampaignT | null> {
-  const normalizedUpdates: Partial<CampaignT> = { ...updates };
-  if ((updates as CampaignT | PopulatedCampaignT).groups !== undefined) {
-    normalizedUpdates.groups = normalizeGroups(
-      (updates as CampaignT | PopulatedCampaignT).groups,
-    );
-  }
+  const data = buildCampaignUpdate(updates);
 
-  const { setStatements, values, nextIndex } =
-    buildCampaignUpdate(normalizedUpdates);
+  const row = await prisma.campaign.update({
+    where: { id },
+    data,
+  });
 
-  const { rows } = await query<CampaignRow>(
-    `
-      UPDATE campaigns
-      SET ${setStatements.join(', ')}
-      WHERE id = $${nextIndex}
-      RETURNING ${campaignFields}
-    `,
-    [...values, id],
-  );
-
-  const mapped = mapCampaign(rows[0]);
+  const mapped = mapCampaign(row as CampaignRow);
   if (!mapped) return null;
   return mapped;
 }
@@ -359,17 +271,20 @@ export const getCampaigns = async (
   const user = await getUserById(userId);
   const isAdmin = user?.admin ?? false;
 
-  const visibilityFilter = isAdmin
-    ? ''
-    : `WHERE public = true OR $1 = ANY(visible_to) OR owner = $1`;
-
-  const { rows } = await query<CampaignRow>(
-    `SELECT ${campaignFields} FROM campaigns ${visibilityFilter}`,
-    isAdmin ? [] : [userId],
-  );
+  const rows = await prisma.campaign.findMany({
+    where: isAdmin
+      ? undefined
+      : {
+          OR: [
+            { public: true },
+            { visibleTo: { has: userId } },
+            { ownerId: userId },
+          ],
+        },
+  });
 
   const campaigns = rows
-    .map((row) => mapCampaign(row))
+    .map((row) => mapCampaign(row as CampaignRow))
     .filter(Boolean) as CampaignT[];
 
   const allSheetIds = campaigns.flatMap((campaign) =>
