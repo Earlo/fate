@@ -1,5 +1,5 @@
-import { fetchJson } from './base';
 import { CampaignT, PopulatedCampaignT } from '@/schemas/campaign';
+import { fetchJson } from './base';
 
 export const getCampaignsByUserId = async (
   id: string,
