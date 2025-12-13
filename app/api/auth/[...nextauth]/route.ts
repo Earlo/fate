@@ -64,6 +64,8 @@ const handler = NextAuth({
         username: found.username,
         admin: found.admin,
         _id: found._id.toString(),
+        created: found.created,
+        updated: found.updated,
       };
       return session;
     },

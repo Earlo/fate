@@ -8,7 +8,6 @@ export const runtime = 'edge';
 const openai = createOpenAI({
   organization: process.env.OPENAI_ORGANIZATION || '',
   apiKey: process.env.OPENAI_API_KEY || '',
-  compatibility: 'strict', // Ensures we are using the correct compatibility mode for OpenAI API
 });
 
 export async function POST(req: NextRequest) {
@@ -32,10 +31,7 @@ export async function POST(req: NextRequest) {
   )}. The key of the skill indicates the level of bonus character has, the higher the better. Anything under 3 isn't really worth talking about.`;
 
   // Create the model instance with OpenAI SDK
-  const model = openai.chat('gpt-4-turbo', {
-    logitBias: {}, // Add specific tokens biases if needed
-    user: 'user-identifier', // Add unique user identifiers if you have any (optional)
-  });
+  const model = openai.chat('gpt-4-turbo');
 
   // Use `streamText` for streaming completion
   const stream = await streamText({
@@ -46,6 +42,6 @@ export async function POST(req: NextRequest) {
     ],
   });
 
-  // Return a data stream response for streamed data
-  return stream.toDataStreamResponse();
+  // Return a text stream response for streamed data
+  return stream.toTextStreamResponse();
 }

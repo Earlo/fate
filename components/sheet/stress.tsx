@@ -16,31 +16,28 @@ const Stress: React.FC<StressProps> = ({
   disabled,
   tight = false,
 }) => {
+  const baseStress =
+    stress ?? {
+      physical: { boxes: [false, false], visibleIn: [] as string[] },
+      mental: { boxes: [false, false], visibleIn: [] as string[] },
+    };
   const toggleStress = (index: number, type: 'physical' | 'mental') => {
-    const boxes = stress?.[type]?.boxes || [false, false];
-    const updatedStress =
-      type === 'physical'
-        ? {
-            ...stress,
-            physical: {
-              ...(stress?.physical || [false, false]),
-              boxes: boxes.map((val, idx) => (idx === index ? !val : val)),
-              visibleIn: stress?.physical?.visibleIn || [],
-            },
-          }
-        : {
-            ...stress,
-            mental: {
-              ...(stress?.mental || [false, false]),
-              boxes: boxes.map((val, idx) => (idx === index ? !val : val)),
-              visibleIn: stress?.mental?.visibleIn || [],
-            },
-          };
+    const boxes = baseStress[type].boxes.length
+      ? baseStress[type].boxes
+      : [false, false];
+    const updatedStress = {
+      ...baseStress,
+      [type]: {
+        ...baseStress[type],
+        boxes: boxes.map((val, idx) => (idx === index ? !val : val)),
+        visibleIn: baseStress[type].visibleIn || [],
+      },
+    };
     setStress(updatedStress);
   };
 
   const renderBoxes = (type: 'physical' | 'mental') => {
-    const boxes = stress?.[type]?.boxes;
+    const boxes = baseStress[type].boxes;
     return [0, 1, 2, 3].map((index) => (
       <StressBox
         name={(index + 1).toString()}

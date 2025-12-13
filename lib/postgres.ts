@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool, type QueryResultRow } from 'pg';
 
 declare global {
   var pgPool: Pool | undefined;
@@ -20,7 +20,10 @@ if (!global.pgPool) {
   global.pgPool = pool;
 }
 
-export const query = <T = unknown>(text: string, params?: unknown[]) =>
+export const query = <T extends QueryResultRow = QueryResultRow>(
+  text: string,
+  params?: unknown[],
+) =>
   pool.query<T>(text, params);
 
 export type Nullable<T> = T | null;

@@ -3,6 +3,8 @@ import { getCharacterSheetsByIds, type CharacterSheetT } from '@/schemas/sheet';
 import { getUserById } from '@/schemas/user';
 import { randomUUID } from 'crypto';
 
+export type SkillAction = 'overcome' | 'advantage' | 'attack' | 'defend';
+
 export type GroupCharacter =
   | {
       sheet: string;
@@ -38,7 +40,7 @@ export type CampaignT = {
   description?: string;
   colorPalette: { primary: string; secondary: string; tertiary: string };
   aspects: { name: string; visibleIn: string[] }[];
-  skills: { name: string; actions: string[] }[];
+  skills: { name: string; actions: SkillAction[] }[];
   groups: GroupT[];
   public: boolean;
   notes: { name: string; content: string; visibleIn: string[] }[];
@@ -178,7 +180,10 @@ const populateGroups = (
           if (!sheet) return null;
           return { ...character, sheet };
         })
-        .filter(Boolean) ?? [],
+        .filter(
+          (character): character is Exclude<typeof character, null> =>
+            character !== null,
+        ) ?? [],
     children: populateGroups(group.children ?? [], sheetMap),
   }));
 

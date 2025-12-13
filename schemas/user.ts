@@ -19,8 +19,7 @@ type UserRow = {
   updated: Date;
 };
 
-const userFields =
-  'id, username, password, admin, created, updated' satisfies keyof UserRow as string;
+const userFields = 'id, username, password, admin, created, updated';
 
 const mapUser = (row?: UserRow | null): UserModelT | null =>
   row

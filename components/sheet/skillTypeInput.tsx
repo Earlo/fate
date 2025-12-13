@@ -5,16 +5,16 @@ import Label from '../generic/label';
 import ActionToggle from './actionToggle';
 
 import { cn } from '@/lib/utils';
-type actionOption = 'overcome' | 'advantage' | 'attack' | 'defend';
+import { type SkillAction } from '@/schemas/campaign';
 interface SkillTypeInputProps {
   skills: {
     name: string;
-    actions: actionOption[];
+    actions: SkillAction[];
   }[];
   setSkills: (
     skills: {
       name: string;
-      actions: actionOption[];
+      actions: SkillAction[];
     }[],
   ) => void;
   disabled?: boolean;
@@ -28,7 +28,7 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
   const handleSkillChange = (
     index: number,
     field: string,
-    value: string | actionOption[],
+    value: string | SkillAction[],
   ) => {
     setSkills([
       ...skills.slice(0, index),

@@ -7,7 +7,11 @@ import { NextResponse, type NextRequest } from 'next/server';
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { campaignId, prompt } = JSON.parse(body.prompt);
-  const campaign = removeKey(await getCampaign(campaignId), [
+  const campaign = await getCampaign(campaignId);
+  if (!campaign) {
+    return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
+  }
+  const sanitizedCampaign = removeKey(campaign, [
     '_id',
     '__v',
     'visibleTo',
@@ -25,7 +29,7 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: `You're helping user to manage a fate Core campaign by writing notes. Campaign context JSON: ${JSON.stringify(campaign)}`,
+          content: `You're helping user to manage a fate Core campaign by writing notes. Campaign context JSON: ${JSON.stringify(sanitizedCampaign)}`,
         },
         {
           role: 'user',
@@ -34,11 +38,7 @@ export async function POST(req: NextRequest) {
       ],
     });
 
-    return new Response(result.toDataStream(), {
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-      },
-    });
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
           'Error: ' +
           JSON.stringify(error) +
           ' with context: ' +
-          JSON.stringify(campaign),
+          JSON.stringify(sanitizedCampaign),
       },
       { status: 500 },
     );

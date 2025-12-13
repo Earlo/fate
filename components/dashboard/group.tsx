@@ -32,6 +32,7 @@ const GroupSettings: FC<{
   setIsEditing: (isEditing: boolean) => void;
 }> = ({ group, onChange, setIsEditing }) => {
   const [newName, setNewName] = useState(group.name);
+  const layoutDimensions = group.layout?.dimensions ?? { w: 3, h: 3 };
   const handleSave = () => {
     setIsEditing(false);
     const updatedGroup = { ...group, name: newName };
@@ -85,17 +86,17 @@ const GroupSettings: FC<{
       <ToggleSwitch
         checked={group.layout?.mode === 'grid'}
         onChange={() => {
-          const updatedGroup = {
-            ...group,
-            layout: {
-              ...group.layout,
-              mode:
-                group.layout?.mode === 'grid'
-                  ? 'list'
-                  : ('grid' as 'list' | 'grid'),
-            },
-          };
-          onChange(updatedGroup);
+          const nextMode = group.layout?.mode === 'grid' ? 'list' : 'grid';
+          const nextLayout =
+            nextMode === 'grid'
+              ? {
+                  mode: 'grid' as const,
+                  dimensions: group.layout?.dimensions ?? { w: 3, h: 3 },
+                }
+              : group.layout?.dimensions
+                ? { mode: 'list' as const, dimensions: group.layout.dimensions }
+                : undefined;
+          onChange({ ...group, layout: nextLayout });
         }}
         label="Grid Layout"
       />
@@ -104,14 +105,14 @@ const GroupSettings: FC<{
           <LabeledInput
             type="number"
             name="width"
-            value={group.layout.dimensions.w}
+            value={layoutDimensions.w}
             onChange={(e) =>
               onChange({
                 ...group,
                 layout: {
-                  ...group.layout,
+                  mode: 'grid',
                   dimensions: {
-                    ...group.layout.dimensions,
+                    ...layoutDimensions,
                     w: parseInt(e.target.value),
                   },
                 },
@@ -121,14 +122,14 @@ const GroupSettings: FC<{
           <LabeledInput
             type="number"
             name="height"
-            value={group.layout.dimensions.h}
+            value={layoutDimensions.h}
             onChange={(e) =>
               onChange({
                 ...group,
                 layout: {
-                  ...group.layout,
+                  mode: 'grid',
                   dimensions: {
-                    ...group.layout.dimensions,
+                    ...layoutDimensions,
                     h: parseInt(e.target.value),
                   },
                 },

@@ -70,6 +70,8 @@ const SkillGrid: FC<SkillGridProps> = ({
 }) => {
   const [maxDisplayedTier, setMaxDisplayedTier] = useState(5);
   const [minDisplayedTier, setMinDisplayerTier] = useState(0);
+  const currentStress =
+    stress ?? { physical: { boxes: [], visibleIn: [] }, mental: { boxes: [], visibleIn: [] } };
 
   const selectedSkills = useMemo(() => {
     const selected: string[] = [];
@@ -117,7 +119,7 @@ const SkillGrid: FC<SkillGridProps> = ({
       const boxCount = 2;
       const boxes = Array.from({ length: boxCount }).map(() => false);
       setStress({
-        ...stress,
+        ...currentStress,
         [oldSkill.name === 'Physique' ? 'physical' : 'mental']: {
           boxes,
           visibleIn: [],
@@ -135,7 +137,7 @@ const SkillGrid: FC<SkillGridProps> = ({
     if (name === 'Physique') {
       const boxCount = level >= 3 ? 4 : level >= 1 ? 3 : 2;
       const boxes = Array.from({ length: boxCount }).map(() => false);
-      setStress({ ...stress, physical: { boxes, visibleIn: visibleIn } });
+      setStress({ ...currentStress, physical: { boxes, visibleIn: visibleIn } });
       if (level >= 5 && !consequences?.physical) {
         setConsequences({
           mild: consequences?.mild || { name: '', visibleIn: [] },
@@ -152,7 +154,7 @@ const SkillGrid: FC<SkillGridProps> = ({
     if (name === 'Will') {
       const boxCount = level >= 3 ? 4 : level >= 1 ? 3 : 2;
       const boxes = Array.from({ length: boxCount }).map(() => false);
-      setStress({ ...stress, mental: { boxes, visibleIn: visibleIn } });
+      setStress({ ...currentStress, mental: { boxes, visibleIn: visibleIn } });
       if (level >= 5 && !consequences?.mental) {
         setConsequences({
           mild: consequences?.mild || { name: '', visibleIn: [] },
