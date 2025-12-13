@@ -2,20 +2,17 @@
   "name": "fate",
   "version": "1.1.0",
   "private": true,
-  "engines": {
-    "node": ">=24.0.0"
-  },
   "scripts": {
-    "dev": "next dev",
     "build": "prisma migrate deploy --config prisma.config.ts && next build",
-    "start": "next start",
+    "db:deploy": "prisma migrate deploy --config prisma.config.ts",
+    "db:push": "prisma db push --config prisma.config.ts",
+    "db:studio": "prisma studio --config prisma.config.ts",
+    "dev": "next dev",
+    "postinstall": "npm run prisma:generate",
     "lint": "eslint .",
     "prettier": "prettier --write .",
-    "postinstall": "npm run prisma:generate",
     "prisma:generate": "prisma generate --config prisma.config.ts",
-    "db:push": "prisma db push --config prisma.config.ts",
-    "db:deploy": "prisma migrate deploy --config prisma.config.ts",
-    "db:studio": "prisma studio --config prisma.config.ts"
+    "start": "next start"
   },
   "dependencies": {
     "@ai-sdk/openai": "2.0.86",
@@ -51,11 +48,16 @@
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import": "2.32.0",
     "postcss": "8.5.6",
+    "prettier": "3.7.4",
     "prettier-plugin-organize-imports": "4.3.0",
+    "prettier-plugin-packagejson": "2.5.20",
     "prettier-plugin-tailwindcss": "0.7.2",
     "prisma": "7.1.0",
     "tailwind-merge": "3.4.0",
     "tailwindcss": "4.1.18",
     "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": "24.x || 25.x"
   }
 }

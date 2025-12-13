@@ -17,7 +17,7 @@ const DiceBackground: FC<DiceBackgroundProps> = ({ children, className }) => {
         id={`dice-${i}`}
         className="animate-float absolute flex size-24 items-center justify-center rounded border-2 border-slate-950 bg-transparent text-6xl leading-none font-bold text-black opacity-20"
       >
-        <div id={'face'} className="mt-[-13px]">
+        <div id={'face'} className="-mt-3.25">
           {diceSides[Math.floor(Math.random() * diceSides.length)]}
         </div>
       </div>

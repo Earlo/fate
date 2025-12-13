@@ -1,5 +1,5 @@
-import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
 export type CharacterSheetT = {
@@ -161,8 +161,7 @@ export async function createCharacterSheet(sheet: Partial<CharacterSheetT>) {
       id,
       icon: (sheet.icon as Prisma.InputJsonValue) ?? null,
       colorPalette:
-        (sheet.colorPalette as Prisma.InputJsonValue) ??
-        defaultColorPalette(),
+        (sheet.colorPalette as Prisma.InputJsonValue) ?? defaultColorPalette(),
       name: (sheet.name as Prisma.InputJsonValue) ?? defaultName(),
       description: (sheet.description as Prisma.InputJsonValue) ?? null,
       fate: (sheet.fate as Prisma.InputJsonValue) ?? defaultFate(),

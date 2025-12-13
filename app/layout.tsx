@@ -44,10 +44,7 @@ const archivoBlack = localFont({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${archivo.variable} ${archivoBlack.variable}`}
-    >
+    <html lang="en" className={`${archivo.variable} ${archivoBlack.variable}`}>
       <body className="font-archivo flex min-h-[100dvh] flex-col">
         <Provider>
           <UserProvider>

@@ -24,7 +24,7 @@ good to go with this dependency.
 
 ```bash
 node --version
-v20.6.1
+v24.x.x
 ```
 
 I like to use [Node Version Manager](https://github.com/nvm-sh/nvm) to manage Nodejs so that I can easily switch between
@@ -33,12 +33,11 @@ versions.
 If Nodejs is not installed, or if the version of your Nodejs installed on your workstation is lower than 18, then I recommend
 NVM to install Nodejs. Follow the documentation for NVM to install it and learn how to switch versions.
 
-Once NVM is installed, use these commands to install and use version the version of NodeJS you want to use. I am using the
-current version of Nodejs, 20.6.1.
+Once NVM is installed, use these commands to install and use version the version of NodeJS you want to use.
 
 ```bash
-nvm install 20
-nvm use 20
+nvm install 24
+nvm use 24
 ```
 
 #### PostgreSQL

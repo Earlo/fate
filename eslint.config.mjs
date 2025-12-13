@@ -39,7 +39,6 @@ const importTypescriptConfig = {
       ...(importTypescriptSettings['import/parsers'] ?? {}),
       '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
-    shouldfix: true,
   },
 };
 

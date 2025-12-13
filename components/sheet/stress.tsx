@@ -16,11 +16,10 @@ const Stress: React.FC<StressProps> = ({
   disabled,
   tight = false,
 }) => {
-  const baseStress =
-    stress ?? {
-      physical: { boxes: [false, false], visibleIn: [] as string[] },
-      mental: { boxes: [false, false], visibleIn: [] as string[] },
-    };
+  const baseStress = stress ?? {
+    physical: { boxes: [false, false], visibleIn: [] as string[] },
+    mental: { boxes: [false, false], visibleIn: [] as string[] },
+  };
   const toggleStress = (index: number, type: 'physical' | 'mental') => {
     const boxes = baseStress[type].boxes.length
       ? baseStress[type].boxes

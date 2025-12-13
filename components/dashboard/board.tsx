@@ -23,9 +23,7 @@ export default function Dashboard() {
     ...defaultSkills.map((skill) => skill.name),
     ...campaigns
       .flatMap((campaign) => campaign.skills ?? [])
-      .filter(
-        (skill): skill is CampaignT['skills'][number] => Boolean(skill),
-      )
+      .filter((skill): skill is CampaignT['skills'][number] => Boolean(skill))
       .map((skill) => skill.name),
   ].filter((skill, index, self) => self.indexOf(skill) === index);
 

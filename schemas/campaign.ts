@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { getCharacterSheetsByIds, type CharacterSheetT } from '@/schemas/sheet';
 import { getUserById } from '@/schemas/user';
+import { Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
 export type SkillAction = 'overcome' | 'advantage' | 'attack' | 'defend';
@@ -215,8 +215,7 @@ export async function createCampaign(
       icon: (campaign.icon as Prisma.InputJsonValue) ?? null,
       description: campaign.description ?? null,
       colorPalette:
-        (campaign.colorPalette as Prisma.InputJsonValue) ??
-        defaultColorPalette,
+        (campaign.colorPalette as Prisma.InputJsonValue) ?? defaultColorPalette,
       aspects: (campaign.aspects as Prisma.InputJsonValue) ?? [],
       skills: (campaign.skills as Prisma.InputJsonValue) ?? [],
       groups: (groups as Prisma.InputJsonValue) ?? [],

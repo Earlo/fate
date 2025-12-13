@@ -55,7 +55,7 @@ const Select: FC<SelectProps> = ({
   return (
     <div
       className={cn(
-        'font-archivo flex h-8 min-w-[20%] grow items-center overflow-hidden rounded border-2 border-black bg-white text-left align-middle text-gray-700 md:w-[0px]',
+        'font-archivo flex h-8 min-w-[20%] grow items-center overflow-hidden rounded border-2 border-black bg-white text-left align-middle text-gray-700 md:w-0',
         !value ? 'text-gray-400' : 'text-gray-700',
         disabled && !value ? 'bg-gray-200' : 'bg-white',
         { 'z-2 border-2 border-blue-700': customValue !== null },

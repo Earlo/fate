@@ -70,8 +70,10 @@ const SkillGrid: FC<SkillGridProps> = ({
 }) => {
   const [maxDisplayedTier, setMaxDisplayedTier] = useState(5);
   const [minDisplayedTier, setMinDisplayerTier] = useState(0);
-  const currentStress =
-    stress ?? { physical: { boxes: [], visibleIn: [] }, mental: { boxes: [], visibleIn: [] } };
+  const currentStress = stress ?? {
+    physical: { boxes: [], visibleIn: [] },
+    mental: { boxes: [], visibleIn: [] },
+  };
 
   const selectedSkills = useMemo(() => {
     const selected: string[] = [];
@@ -137,7 +139,10 @@ const SkillGrid: FC<SkillGridProps> = ({
     if (name === 'Physique') {
       const boxCount = level >= 3 ? 4 : level >= 1 ? 3 : 2;
       const boxes = Array.from({ length: boxCount }).map(() => false);
-      setStress({ ...currentStress, physical: { boxes, visibleIn: visibleIn } });
+      setStress({
+        ...currentStress,
+        physical: { boxes, visibleIn: visibleIn },
+      });
       if (level >= 5 && !consequences?.physical) {
         setConsequences({
           mild: consequences?.mild || { name: '', visibleIn: [] },
@@ -199,7 +204,7 @@ const SkillGrid: FC<SkillGridProps> = ({
           <div
             key={index}
             className={cn(
-              'relative flex w-full lg:top-[-2px] lg:flex-row',
+              'relative flex w-full lg:-top-0.5 lg:flex-row',
               {
                 'hidden sm:flex':
                   (!skills[tier.level] || skills[tier.level].length === 0) &&
@@ -214,7 +219,7 @@ const SkillGrid: FC<SkillGridProps> = ({
                 {
                   'lg:w-fit': tier.level > 5 || tier.level < -5,
                 },
-                { 'w-full lg:w-[7rem]': !tight },
+                { 'w-full lg:w-28': !tight },
               )}
             >
               {tight

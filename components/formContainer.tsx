@@ -21,7 +21,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
     <form
       onSubmit={onSubmit}
       className={cn(
-        'relative z-10 h-fit max-h-[100dvh] max-w-full overflow-y-auto rounded bg-white p-1 shadow-md lg:max-w-6xl',
+        'relative z-10 h-fit max-h-dvh max-w-full overflow-y-auto rounded bg-white p-1 shadow-md lg:max-w-6xl',
       )}
     >
       <ControlBar

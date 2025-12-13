@@ -5,7 +5,8 @@
   "trailingComma": "all",
   "plugins": [
     "prettier-plugin-organize-imports",
-    "prettier-plugin-tailwindcss"
+    "prettier-plugin-tailwindcss",
+    "prettier-plugin-packagejson"
   ],
   "tailwindAttributes": ["className"],
   "tailwindFunctions": ["cn", "twMerge", "clsx"],
