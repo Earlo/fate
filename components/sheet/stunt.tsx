@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, updateVisibilityList } from '@/lib/utils';
 import IconButton from '../generic/icon/iconButton';
 import Input from '../generic/input';
 import VisibilityToggle from './visibilityToggle';
@@ -55,9 +55,11 @@ const Stunt: React.FC<StuntProps> = ({
             onChange={(visible) =>
               setStunt({
                 ...stunt,
-                visibleIn: visible
-                  ? [...stunt.visibleIn, campaignId]
-                  : stunt.visibleIn.filter((id) => id !== campaignId),
+                visibleIn: updateVisibilityList(
+                  visible,
+                  stunt.visibleIn,
+                  campaignId,
+                ),
               })
             }
           />

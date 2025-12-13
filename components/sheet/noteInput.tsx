@@ -1,7 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
-import Icon from '../generic/icon/icon';
-import Label from '../generic/label';
+import EditableList from './editableList';
 import Note from './note';
 
 interface NoteInputProps {
@@ -35,11 +34,14 @@ const NoteInput: React.FC<NoteInputProps> = ({
   updateNote,
 }) => {
   return (
-    <div className={cn(className)}>
-      <Label name={title + 's'} className="pb-0">
-        {!disabled && <Icon icon="plus" className="mr-2" onClick={addNote} />}
-      </Label>
-      {notes.map((note, index) => (
+    <EditableList
+      title={title + 's'}
+      items={notes}
+      disabled={disabled}
+      className={cn(className)}
+      labelClassName="pb-0"
+      onAdd={!disabled && addNote ? addNote : undefined}
+      renderItem={(note, index) => (
         <Note
           key={index}
           note={note}
@@ -49,8 +51,8 @@ const NoteInput: React.FC<NoteInputProps> = ({
           deleteNote={() => deleteNote(index)}
           updateNote={(note) => updateNote(note, index)}
         />
-      ))}
-    </div>
+      )}
+    />
   );
 };
 

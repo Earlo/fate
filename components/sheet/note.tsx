@@ -1,6 +1,6 @@
 'use client';
 import useDebounce from '@/hooks/debounce';
-import { cn } from '@/lib/utils';
+import { cn, updateVisibilityList } from '@/lib/utils';
 import { useCompletion } from '@ai-sdk/react';
 import { FC, useEffect, useState } from 'react';
 import IconButton from '../generic/icon/iconButton';
@@ -101,9 +101,11 @@ const Note: FC<NoteProps> = ({
             onChange={(visible) =>
               updateNote({
                 ...note,
-                visibleIn: visible
-                  ? [...note.visibleIn, campaignId]
-                  : note.visibleIn.filter((id) => id !== campaignId),
+                visibleIn: updateVisibilityList(
+                  visible,
+                  note.visibleIn,
+                  campaignId,
+                ),
               })
             }
           />

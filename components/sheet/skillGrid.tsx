@@ -1,6 +1,6 @@
 'use client';
 import Icon from '@/components/generic/icon/icon';
-import { cn } from '@/lib/utils';
+import { cn, updateVisibilityList } from '@/lib/utils';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { FC, useMemo, useState } from 'react';
 import Label from '../generic/label';
@@ -181,7 +181,7 @@ const SkillGrid: FC<SkillGridProps> = ({
   }
   return (
     <div className="w-full min-w-[66.666667%] pb-2 md:w-fit lg:w-8/12 lg:pb-0">
-      <Label name="Skills">
+      <Label name="Skills" className="-mb-px">
         {!disabled && (
           <Icon
             icon="plus"
@@ -204,7 +204,7 @@ const SkillGrid: FC<SkillGridProps> = ({
           <div
             key={index}
             className={cn(
-              'relative flex w-full lg:-top-0.5 lg:flex-row',
+              'relative flex w-full lg:flex-row',
               {
                 'hidden sm:flex':
                   (!skills[tier.level] || skills[tier.level].length === 0) &&
@@ -305,9 +305,7 @@ const SkillRow = ({
               handleChange(
                 index,
                 name,
-                visible
-                  ? [...visibleIn, campaignId]
-                  : visibleIn.filter((id) => id !== campaignId),
+                updateVisibilityList(visible, visibleIn, campaignId),
               )
             }
             className="z-20 m-0 p-0"

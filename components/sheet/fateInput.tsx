@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, updateVisibilityList } from '@/lib/utils';
 import Input from '../generic/input';
 import Label from '../generic/label';
 import VisibilityToggle from './visibilityToggle';
@@ -35,7 +35,7 @@ const FateInput: React.FC<FateInputProps> = ({
     <div
       className={cn('flex h-full flex-col items-stretch self-start', className)}
     >
-      <Label name="Fate" className="w-32">
+      <Label name="Fate" className="-mb-px w-32">
         {showVisibility && (
           <VisibilityToggle
             visible={fate.visibleIn.includes(campaignId)}
@@ -43,9 +43,11 @@ const FateInput: React.FC<FateInputProps> = ({
               handleAspectChange({
                 points: fate.points,
                 refresh: fate.refresh,
-                visibleIn: visible
-                  ? [...fate.visibleIn, campaignId]
-                  : fate.visibleIn.filter((id) => id !== campaignId),
+                visibleIn: updateVisibilityList(
+                  visible,
+                  fate.visibleIn,
+                  campaignId,
+                ),
               })
             }
             className="mr-2 self-baseline"

@@ -1,8 +1,7 @@
-import { cn } from '@/lib/utils';
-import Icon from '../generic/icon/icon';
+import { cn, updateVisibilityList } from '@/lib/utils';
 import IconButton from '../generic/icon/iconButton';
 import Input from '../generic/input';
-import Label from '../generic/label';
+import EditableList from './editableList';
 import VisibilityToggle from './visibilityToggle';
 
 interface AspectInputProps {
@@ -40,19 +39,18 @@ const AspectInput: React.FC<AspectInputProps> = ({
   };
   const showVisibility = state === 'toggle' && campaignId;
   return (
-    <div className={cn('flex grow flex-col', className)}>
-      <Label name={title} className="-mb-0.5">
-        {!disabled && (
-          <Icon
-            icon="plus"
-            className="mr-2 self-baseline"
-            onClick={() =>
-              setAspects([...aspects, { name: '', visibleIn: [] }])
-            }
-          />
-        )}
-      </Label>
-      {aspects.map((aspect, index) =>
+    <EditableList
+      title={title}
+      items={aspects}
+      disabled={disabled}
+      className={cn('flex grow flex-col', className)}
+      labelClassName="-mb-0.5"
+      onAdd={
+        disabled
+          ? undefined
+          : () => setAspects([...aspects, { name: '', visibleIn: [] }])
+      }
+      renderItem={(aspect, index) =>
         aspect! && disabled ? null : (
           <div
             key={index}
@@ -90,9 +88,11 @@ const AspectInput: React.FC<AspectInputProps> = ({
                 onChange={(visible) =>
                   handleAspectChange(index, {
                     name: aspect.name,
-                    visibleIn: visible
-                      ? [...aspect.visibleIn, campaignId]
-                      : aspect.visibleIn.filter((id) => id !== campaignId),
+                    visibleIn: updateVisibilityList(
+                      visible,
+                      aspect.visibleIn,
+                      campaignId,
+                    ),
                   })
                 }
               />
@@ -106,9 +106,9 @@ const AspectInput: React.FC<AspectInputProps> = ({
               />
             )}
           </div>
-        ),
-      )}
-    </div>
+        )
+      }
+    />
   );
 };
 

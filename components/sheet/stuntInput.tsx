@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils';
-import Icon from '../generic/icon/icon';
-import Label from '../generic/label';
+import EditableList from './editableList';
 import Stunt from './stunt';
 
 interface StuntInputProps {
@@ -27,22 +26,22 @@ const StuntInput: React.FC<StuntInputProps> = ({
   tight,
 }) => {
   return (
-    <div className={cn('w-full', className)}>
-      <Label name={title + 's'} className="-mb-px">
-        {!disabled && (
-          <Icon
-            icon="plus"
-            className="mr-2 self-baseline"
-            onClick={() =>
+    <EditableList
+      title={title + 's'}
+      items={stunts}
+      disabled={disabled}
+      className={cn('w-full', className)}
+      labelClassName="-mb-px"
+      onAdd={
+        disabled
+          ? undefined
+          : () =>
               setStunts([
                 ...stunts,
                 { name: '', description: '', visibleIn: [] },
               ])
-            }
-          />
-        )}
-      </Label>
-      {stunts.map((stunt, index) => (
+      }
+      renderItem={(stunt, index) => (
         <Stunt
           key={index}
           index={index}
@@ -63,8 +62,8 @@ const StuntInput: React.FC<StuntInputProps> = ({
           title={title}
           tight={tight}
         />
-      ))}
-    </div>
+      )}
+    />
   );
 };
 

@@ -28,3 +28,16 @@ export function removeKey(obj: object, keyToRemove: string[]) {
   }
   return removeKey(newObj, keyToRemove);
 }
+
+export function updateVisibilityList(
+  visible: boolean,
+  visibleIn: string[],
+  campaignId?: string,
+) {
+  if (!campaignId) {
+    return visibleIn;
+  }
+  return visible
+    ? Array.from(new Set([...visibleIn, campaignId]))
+    : visibleIn.filter((id) => id !== campaignId);
+}

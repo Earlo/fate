@@ -1,16 +1,17 @@
+import { fetchJson } from './base';
 import { CampaignT, PopulatedCampaignT } from '@/schemas/campaign';
 
 export const getCampaignsByUserId = async (
   id: string,
 ): Promise<CampaignT[]> => {
-  return await fetch(`/api/campaigns?id=${id}`).then((res) => res.json());
+  return fetchJson<CampaignT[]>(`/api/campaigns?id=${id}`);
 };
 
 export const getCampaignById = async (
   id: string,
 ): Promise<PopulatedCampaignT> => {
-  const response = await fetch(`/api/campaigns/${id}`).then((res) =>
-    res.json(),
+  const response = await fetchJson<PopulatedCampaignT | { error: string }>(
+    `/api/campaigns/${id}`,
   );
   if (response.error) {
     throw new Error(response.error);
@@ -22,19 +23,19 @@ export const updateCampaignAPI = async (
   campaignId: string,
   updatedCampaign: PopulatedCampaignT | Partial<CampaignT>,
 ): Promise<CampaignT> => {
-  return await fetch(`/api/campaigns/${campaignId}`, {
+  return fetchJson<CampaignT>(`/api/campaigns/${campaignId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updatedCampaign),
-  }).then((res) => res.json());
+  });
 };
 
 export const createCampaignAPI = async (
   campaign: Partial<CampaignT>,
 ): Promise<CampaignT> => {
-  return await fetch(`/api/campaigns`, {
+  return fetchJson<CampaignT>(`/api/campaigns`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(campaign),
-  }).then((res) => res.json());
+  });
 };
