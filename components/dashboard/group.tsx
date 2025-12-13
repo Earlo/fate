@@ -2,6 +2,7 @@
 import { userContext } from '@/app/userProvider';
 import Button from '@/components/generic/button';
 import Icon from '@/components/generic/icon/icon';
+import IconButton from '@/components/generic/icon/iconButton';
 import Modal from '@/components/generic/modal';
 import {
   DropdownMenu,
@@ -12,7 +13,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { PopulatedGroup } from '@/schemas/campaign';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { FC, MouseEvent, useContext, useState } from 'react';
+import {
+  DragEvent,
+  FC,
+  Fragment,
+  MouseEvent,
+  useContext,
+  useState,
+} from 'react';
 import LabeledInput from '../generic/labeledInput';
 import ToggleSwitch from '../generic/toggleSwitch';
 import VisibilityToggle from '../sheet/visibilityToggle';
@@ -151,6 +159,32 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
   const { sheets } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
+  const layoutMode = group.layout?.mode || 'list';
+  const layoutDimensions = group.layout?.dimensions ?? { w: 3, h: 3 };
+
+  const findNextAvailablePosition = () => {
+    const occupied = new Set(
+      group.characters.map(
+        (character) => `${character.position.x},${character.position.y}`,
+      ),
+    );
+
+    for (let y = 0; ; y += 1) {
+      for (let x = 0; x < layoutDimensions.w; x += 1) {
+        const key = `${x},${y}`;
+        if (!occupied.has(key)) return { x, y };
+      }
+    }
+  };
+
+  const ensureLayoutFitsPosition = (x: number, y: number) => {
+    if (layoutMode !== 'grid') return group.layout;
+    const dimensions = { ...layoutDimensions };
+    if (y >= dimensions.h) {
+      dimensions.h = y + 1;
+    }
+    return { ...(group.layout ?? { mode: 'grid' }), dimensions };
+  };
 
   const toggleCharacter = (characterId: string) => {
     const charIndex = group.characters.findIndex(
@@ -162,17 +196,31 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
     } else {
       const character = sheets.find((c) => c._id === characterId);
       if (character) {
+        const nextPosition =
+          layoutMode === 'grid'
+            ? findNextAvailablePosition()
+            : { x: 0, y: updatedCharacters.length };
         updatedCharacters.push({
           sheet: character,
           visible: true,
-          position: { x: 0, y: updatedCharacters.length },
+          position: nextPosition,
         });
+        const updatedGroup = {
+          ...group,
+          characters: updatedCharacters,
+          layout:
+            layoutMode === 'grid'
+              ? ensureLayoutFitsPosition(nextPosition.x, nextPosition.y)
+              : group.layout,
+        };
+        onChange(updatedGroup);
+        return;
       }
     }
     const updatedGroup = { ...group, characters: updatedCharacters };
     onChange(updatedGroup);
   };
-  const layout = group.layout?.mode || 'list';
+  const layout = layoutMode;
   return (
     <div className="relative mx-auto flex min-h-24 w-full grow flex-col rounded-lg bg-gray-800 p-2 text-white shadow-lg">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -207,13 +255,19 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
           characters={group.characters}
           campaignId={campaignId}
           state={state}
+          onReorder={(updatedCharacters) =>
+            onChange({ ...group, characters: updatedCharacters })
+          }
         />
       ) : (
         <CharacterGrid
           characters={group.characters}
           campaignId={campaignId}
           state={state}
-          dimensions={group.layout.dimensions}
+          dimensions={group.layout?.dimensions ?? { w: 3, h: 3 }}
+          onReorder={(updatedCharacters) =>
+            onChange({ ...group, characters: updatedCharacters })
+          }
         />
       )}
       <DropdownMenu
@@ -265,29 +319,171 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
 };
 
 const CharacterList: FC<{
-  characters: { sheet: CharacterSheetT; visible: boolean }[];
+  characters: {
+    sheet: CharacterSheetT;
+    visible: boolean;
+    position: { x: number; y: number };
+  }[];
   campaignId: string;
   state: 'admin' | 'player' | 'view';
-}> = ({ characters, campaignId, state }) => {
+  onReorder: (
+    characters: {
+      sheet: CharacterSheetT;
+      visible: boolean;
+      position: { x: number; y: number };
+    }[],
+  ) => void;
+}> = ({ characters, campaignId, state, onReorder }) => {
   const { setBigSheet } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dropIndex, setDropIndex] = useState<number | null>(null);
+
+  const handleDragStart = (
+    event: DragEvent<HTMLButtonElement>,
+    characterId: string,
+  ) => {
+    if (!isAdmin) return;
+    event.dataTransfer.setData('text/plain', characterId);
+    event.dataTransfer.effectAllowed = 'move';
+    const card = event.currentTarget.closest(
+      '.character-card',
+    ) as HTMLElement | null;
+    if (card) {
+      const cardRect = card.getBoundingClientRect();
+      const handleRect = event.currentTarget.getBoundingClientRect();
+      const anchorX =
+        handleRect.left - cardRect.left + event.nativeEvent.offsetX;
+      const anchorY = handleRect.top - cardRect.top + event.nativeEvent.offsetY;
+      event.dataTransfer.setDragImage(card, anchorX, anchorY);
+    }
+    setDraggedId(characterId);
+  };
+
+  const handleDrop = (
+    event: DragEvent<HTMLDivElement>,
+    targetIndex: number,
+  ) => {
+    if (!isAdmin) return;
+    event.preventDefault();
+    const insertIndex = dropIndex ?? targetIndex;
+    const draggedCharacterId =
+      draggedId || event.dataTransfer.getData('text/plain');
+    if (!draggedCharacterId || insertIndex === null) return;
+
+    const sourceIndex = characters.findIndex(
+      (character) => character.sheet._id === draggedCharacterId,
+    );
+    if (sourceIndex === -1 || sourceIndex === insertIndex) return;
+
+    const updated = [...characters];
+    const [moved] = updated.splice(sourceIndex, 1);
+    updated.splice(insertIndex, 0, moved);
+
+    // Keep list positions in order so grid mode can reuse them later if needed.
+    const normalized = updated.map((character, index) => ({
+      ...character,
+      position: { x: 0, y: index },
+    }));
+    console.log('nor', normalized);
+    onReorder(normalized);
+    setDropIndex(null);
+    setDraggedId(null);
+  };
+
+  const handleDropContainer = (event: DragEvent<HTMLDivElement>) => {
+    if (!isAdmin) return;
+    event.preventDefault();
+    if (dropIndex === null) return;
+    handleDrop(event, dropIndex);
+  };
+
+  const handleDragOverRow = (
+    event: DragEvent<HTMLDivElement>,
+    index: number,
+  ) => {
+    if (!isAdmin) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    const rect = event.currentTarget.getBoundingClientRect();
+    const insertBefore = event.clientY - rect.top < rect.height / 2;
+    setDropIndex(insertBefore ? index : index + 1);
+  };
+
+  const handleDragOverEnd = (event: DragEvent<HTMLDivElement>) => {
+    if (!isAdmin) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    setDropIndex(characters.length);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedId(null);
+    setDropIndex(null);
+  };
+
   return (
-    <div className="grid grid-cols-1 gap-2">
-      {characters.map((character) => (
-        <CharacterButton
-          key={character.sheet._id}
-          character={character.sheet}
-          onClick={() => {
-            setBigSheet({
-              sheet: character.sheet,
-              state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-              campaignId,
-            });
-          }}
-          campaignId={isAdmin || isPlayer ? undefined : campaignId}
-        />
+    <div
+      className="grid h-full grid-cols-1 content-baseline items-baseline gap-2"
+      onDrop={handleDropContainer}
+      onDragOver={(event) => {
+        if (!isAdmin) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+        if (event.target === event.currentTarget) {
+          setDropIndex(characters.length);
+        }
+      }}
+    >
+      {characters.map((character, index) => (
+        <Fragment key={character.sheet._id}>
+          {dropIndex === index && (
+            <div className="my-1 h-1 w-full rounded bg-white" />
+          )}
+          <div
+            className="flex items-center gap-2"
+            onDragOver={(event) => handleDragOverRow(event, index)}
+            onDrop={(event) => handleDrop(event, index)}
+          >
+            <div className="flex-1">
+              <CharacterButton
+                character={character.sheet}
+                onClick={() => {
+                  setBigSheet({
+                    sheet: character.sheet,
+                    state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+                    campaignId,
+                  });
+                }}
+                campaignId={isAdmin || isPlayer ? undefined : campaignId}
+                dragHandle={
+                  isAdmin ? (
+                    <IconButton
+                      icon="drag"
+                      draggable
+                      onDragStart={(event) =>
+                        handleDragStart(event, character.sheet._id)
+                      }
+                      onDragEnd={handleDragEnd}
+                      className="cursor-grab bg-transparent text-gray-400 hover:bg-transparent focus:ring-0 focus:outline-none active:cursor-grabbing"
+                    />
+                  ) : undefined
+                }
+              />
+            </div>
+          </div>
+        </Fragment>
       ))}
+      <div
+        className="relative flex h-6 items-center"
+        onDragOver={handleDragOverEnd}
+        onDrop={(event) => handleDrop(event, characters.length)}
+      >
+        {dropIndex === characters.length && (
+          <div className="my-1 h-1 w-full rounded bg-white" />
+        )}
+      </div>
     </div>
   );
 };
@@ -301,7 +497,20 @@ const CharacterGrid: FC<{
   campaignId: string;
   state: 'admin' | 'player' | 'view';
   dimensions: { w: number; h: number };
-}> = ({ characters, campaignId, state, dimensions = { w: 3, h: 3 } }) => {
+  onReorder: (
+    characters: {
+      sheet: CharacterSheetT;
+      visible: boolean;
+      position: { x: number; y: number };
+    }[],
+  ) => void;
+}> = ({
+  characters,
+  campaignId,
+  state,
+  dimensions = { w: 3, h: 3 },
+  onReorder,
+}) => {
   const { setBigSheet } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
@@ -316,29 +525,93 @@ const CharacterGrid: FC<{
       grid[character.position.y][character.position.x] = character;
     }
   });
-  //create grid of characters
+
+  const handleDragStart = (
+    event: DragEvent<HTMLDivElement>,
+    characterId: string,
+  ) => {
+    if (!isAdmin) return;
+    event.dataTransfer.setData('text/plain', characterId);
+    event.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDrop = (
+    event: DragEvent<HTMLDivElement>,
+    targetX: number,
+    targetY: number,
+  ) => {
+    if (!isAdmin) return;
+    event.preventDefault();
+    const draggedId = event.dataTransfer.getData('text/plain');
+    if (!draggedId) return;
+
+    const sourceIndex = characters.findIndex(
+      (character) => character.sheet._id === draggedId,
+    );
+    if (sourceIndex === -1) return;
+
+    const targetIndex = characters.findIndex(
+      (character) =>
+        character.position.x === targetX && character.position.y === targetY,
+    );
+
+    // No change if dropped onto the same spot
+    if (targetIndex !== -1 && characters[targetIndex].sheet._id === draggedId) {
+      return;
+    }
+
+    const sourcePosition = characters[sourceIndex].position;
+    const updatedCharacters = characters.map((character, index) => {
+      if (index === sourceIndex) {
+        return { ...character, position: { x: targetX, y: targetY } };
+      }
+      if (targetIndex !== -1 && index === targetIndex) {
+        return { ...character, position: sourcePosition };
+      }
+      return character;
+    });
+
+    onReorder(updatedCharacters);
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    if (!isAdmin) return;
+    event.preventDefault();
+  };
 
   return (
     <div className="flex flex-col">
       {grid.map((row, y) => (
         <div key={y} className="flex">
           {row.map((character, x) => (
-            <div key={x} className="flex-1">
+            <div
+              key={x}
+              className="flex-1"
+              onDragOver={handleDragOver}
+              onDrop={(event) => handleDrop(event, x, y)}
+            >
               {character ? (
-                <CharacterButton
-                  compact
-                  character={character.sheet}
-                  onClick={() => {
-                    setBigSheet({
-                      sheet: character.sheet,
-                      state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-                      campaignId,
-                    });
-                  }}
-                  campaignId={isAdmin || isPlayer ? undefined : campaignId}
-                />
+                <div
+                  draggable={isAdmin}
+                  onDragStart={(event) =>
+                    handleDragStart(event, character.sheet._id)
+                  }
+                >
+                  <CharacterButton
+                    compact
+                    character={character.sheet}
+                    onClick={() => {
+                      setBigSheet({
+                        sheet: character.sheet,
+                        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+                        campaignId,
+                      });
+                    }}
+                    campaignId={isAdmin || isPlayer ? undefined : campaignId}
+                  />
+                </div>
               ) : (
-                <div className="h-16 w-16 rounded-lg border-2 border-dashed bg-gray-600"></div>
+                <div className="h-16 w-16 rounded-lg border-2 border-dashed bg-gray-600" />
               )}
             </div>
           ))}

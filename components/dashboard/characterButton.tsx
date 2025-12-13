@@ -1,11 +1,13 @@
 import { cn } from '@/lib/utils';
 import { CharacterSheetT } from '@/schemas/sheet';
 import Image from 'next/image';
+import { ReactNode } from 'react';
 interface CharacterButtonProps {
   character: CharacterSheetT;
   campaignId?: string;
   onClick?: () => void;
   compact?: boolean;
+  dragHandle?: ReactNode;
 }
 
 const CharacterButton: React.FC<CharacterButtonProps> = ({
@@ -13,11 +15,12 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
   campaignId,
   onClick,
   compact = false,
+  dragHandle,
 }) =>
   !compact ? (
     <div
       onClick={onClick}
-      className="group flex h-20 min-h-0 w-full cursor-pointer items-center justify-around rounded-lg border border-gray-300 pl-2 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:ring-2 focus:ring-gray-400 focus:outline-none active:bg-gray-300"
+      className="character-card group relative flex h-20 min-h-0 w-full cursor-pointer items-center justify-around rounded-lg border border-gray-300 pl-2 pr-10 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:ring-2 focus:ring-gray-400 focus:outline-none active:bg-gray-300"
     >
       <Image
         src={character.icon?.url || '/blank_user.png'}
@@ -46,6 +49,11 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
             : character.aspects?.[0]?.name || '-'}
         </p>
       </div>
+      {dragHandle && (
+        <div className="absolute right-2 top-1/2 -translate-y-1/2">
+          {dragHandle}
+        </div>
+      )}
     </div>
   ) : (
     <Image

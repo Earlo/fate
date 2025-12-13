@@ -22,8 +22,10 @@ export default function Dashboard() {
   const allSkills = [
     ...defaultSkills.map((skill) => skill.name),
     ...campaigns
-      .map((campaign) => campaign.skills)
-      .flat()
+      .flatMap((campaign) => campaign.skills ?? [])
+      .filter(
+        (skill): skill is CampaignT['skills'][number] => Boolean(skill),
+      )
       .map((skill) => skill.name),
   ].filter((skill, index, self) => self.indexOf(skill) === index);
 

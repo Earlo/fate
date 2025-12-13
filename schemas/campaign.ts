@@ -102,6 +102,8 @@ const defaultColorPalette = {
   tertiary: '107 114 128',
 };
 
+const toJsonText = (value: unknown) => JSON.stringify(value ?? null);
+
 const mapCampaign = (row?: CampaignRow | null): CampaignT | null =>
   row
     ? {
@@ -199,16 +201,30 @@ const buildCampaignUpdate = (updates: Partial<CampaignT>) => {
   const values: unknown[] = [new Date()];
   let index = 2;
 
+  const jsonColumns: (keyof CampaignT)[] = [
+    'icon',
+    'colorPalette',
+    'aspects',
+    'skills',
+    'groups',
+    'notes',
+  ];
+
   for (const [key, column] of Object.entries(columns)) {
     const value = updates[key as keyof CampaignT];
     if (value !== undefined) {
-      if (key === 'groups') {
-        setStatements.push(`${column} = $${index}`);
-        values.push(normalizeGroups(value as GroupT[]));
-      } else {
-        setStatements.push(`${column} = $${index}`);
-        values.push(value);
-      }
+      const isJsonColumn = jsonColumns.includes(key as keyof CampaignT);
+      const normalizedValue =
+        key === 'groups' ? normalizeGroups(value as GroupT[]) : value;
+
+      setStatements.push(
+        `${column} = ${
+          isJsonColumn ? `CAST($${index} AS jsonb)` : `$${index}`
+        }`,
+      );
+      values.push(
+        isJsonColumn ? toJsonText(normalizedValue) : normalizedValue,
+      );
       index += 1;
     }
   }
@@ -245,22 +261,34 @@ export async function createCampaign(
         updated
       )
       VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, COALESCE($9, false),
-        $10, $11, $12, $13, $14
+        $1,
+        $2,
+        CAST($3 AS jsonb),
+        $4,
+        CAST($5 AS jsonb),
+        CAST($6 AS jsonb),
+        CAST($7 AS jsonb),
+        CAST($8 AS jsonb),
+        COALESCE($9, false),
+        CAST($10 AS jsonb),
+        $11,
+        $12,
+        $13,
+        $14
       )
       RETURNING ${campaignFields}
     `,
     [
       id,
       campaign.name,
-      campaign.icon ?? null,
+      toJsonText(campaign.icon ?? null),
       campaign.description ?? null,
-      campaign.colorPalette ?? defaultColorPalette,
-      campaign.aspects ?? [],
-      campaign.skills ?? [],
-      groups,
+      toJsonText(campaign.colorPalette ?? defaultColorPalette),
+      toJsonText(campaign.aspects ?? []),
+      toJsonText(campaign.skills ?? []),
+      toJsonText(groups),
       campaign.public ?? false,
-      campaign.notes ?? [],
+      toJsonText(campaign.notes ?? []),
       campaign.visibleTo ?? [],
       campaign.owner,
       campaign.created ?? now,
