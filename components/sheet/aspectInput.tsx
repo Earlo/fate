@@ -41,11 +41,11 @@ const AspectInput: React.FC<AspectInputProps> = ({
   const showVisibility = state === 'toggle' && campaignId;
   return (
     <div className={cn('flex grow flex-col', className)}>
-      <Label name={title}>
+      <Label name={title} className="-mb-0.5">
         {!disabled && (
           <Icon
             icon="plus"
-            className="mr-2"
+            className="mr-2 self-baseline"
             onClick={() =>
               setAspects([...aspects, { name: '', visibleIn: [] }])
             }

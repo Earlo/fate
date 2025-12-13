@@ -46,7 +46,7 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
         {!disabled && (
           <Icon
             icon="plus"
-            className="mr-2"
+            className="mr-2 self-baseline"
             onClick={() => setSkills([...skills, { name: '', actions: [] }])}
           />
         )}

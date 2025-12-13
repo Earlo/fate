@@ -185,7 +185,7 @@ const SkillGrid: FC<SkillGridProps> = ({
         {!disabled && (
           <Icon
             icon="plus"
-            className="mr-2"
+            className="mr-2 self-baseline"
             onClick={() =>
               maxDisplayedTier < 18
                 ? setMaxDisplayedTier(maxDisplayedTier + 1)

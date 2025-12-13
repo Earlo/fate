@@ -28,11 +28,11 @@ const StuntInput: React.FC<StuntInputProps> = ({
 }) => {
   return (
     <div className={cn('w-full', className)}>
-      <Label name={title + 's'}>
+      <Label name={title + 's'} className="-mb-px">
         {!disabled && (
           <Icon
             icon="plus"
-            className="mr-2"
+            className="mr-2 self-baseline"
             onClick={() =>
               setStunts([
                 ...stunts,

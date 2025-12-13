@@ -48,7 +48,7 @@ const FateInput: React.FC<FateInputProps> = ({
                   : fate.visibleIn.filter((id) => id !== campaignId),
               })
             }
-            className="mr-2"
+            className="mr-2 self-baseline"
           />
         )}
       </Label>

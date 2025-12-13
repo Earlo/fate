@@ -150,7 +150,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
-                className="mr-2"
+                className="mr-2 self-baseline"
               />
             )}
           </LabeledInput>
@@ -198,7 +198,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
-                className="mr-2"
+                className="mr-2 self-baseline"
               />
             )}
           </LabeledInput>

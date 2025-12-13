@@ -75,12 +75,12 @@ const Stunt: React.FC<StuntProps> = ({
             })
           }
           className={cn(
-            'grow rounded-b-none border-b-0 sm:rounded-r-none sm:rounded-b sm:border-r-0 sm:border-b-2',
+            'grow rounded-b-none border-b-0 sm:rounded-r-none sm:rounded-bl sm:border-r-0 sm:border-b-2',
             {
               'rounded-tl-none sm:rounded-t-none': index === 0,
               'rounded-tr-none': anyWidgets && index === 0,
               'sm:rounded-bl-none sm:border-r-2 sm:border-b-0': tight,
-              'sm:rounded-tr': tight && index === 0,
+              'sm:rounded-tr': tight,
             },
           )}
         />
