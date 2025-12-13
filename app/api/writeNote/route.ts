@@ -1,7 +1,6 @@
-import { removeKey } from '@/lib/utils';
+import { sanitizeForPrompt, streamCompletion } from '@/app/api/helpers/ai';
 import { getCampaign } from '@/schemas/campaign';
 import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -11,34 +10,14 @@ export async function POST(req: NextRequest) {
   if (!campaign) {
     return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
   }
-  const sanitizedCampaign = removeKey(campaign, [
-    '_id',
-    '__v',
-    'visibleTo',
-    'colorPalette',
-    'icon',
-    'owner',
-    'visible',
-    'public',
-    'visibleIn',
-  ]);
+  const sanitizedCampaign = sanitizeForPrompt(campaign);
 
   try {
-    const result = await streamText({
+    return await streamCompletion({
       model: openai.chat('gpt-3.5-turbo-0125'),
-      messages: [
-        {
-          role: 'system',
-          content: `You're helping user to manage a fate Core campaign by writing notes. Campaign context JSON: ${JSON.stringify(sanitizedCampaign)}`,
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+      systemContent: `You're helping user to manage a fate Core campaign by writing notes. Campaign context JSON: ${JSON.stringify(sanitizedCampaign)}`,
+      userContent: prompt,
     });
-
-    return result.toTextStreamResponse();
   } catch (error) {
     console.error(error);
     return NextResponse.json(

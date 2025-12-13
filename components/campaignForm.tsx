@@ -3,6 +3,7 @@ import {
   createCampaignAPI,
   updateCampaignAPI,
 } from '@/lib/apiHelpers/campaigns';
+import { upsertById } from '@/lib/utils';
 import { CampaignT } from '@/schemas/campaign';
 import { blankSheet } from '@/schemas/consts/blankCampaignSheet';
 import { useSession } from 'next-auth/react';
@@ -47,18 +48,7 @@ const CampaignForm: FC<CampaignFormProps> = ({
         : await createCampaignAPI(submitData);
       if (setCampaigns) {
         setCampaigns((prevCampaigns) => {
-          const index = prevCampaigns.findIndex(
-            (campaign) => campaign._id === data._id,
-          );
-          if (index !== -1) {
-            return [
-              ...prevCampaigns.slice(0, index),
-              data,
-              ...prevCampaigns.slice(index + 1),
-            ];
-          } else {
-            return [...prevCampaigns, data];
-          }
+          return upsertById(prevCampaigns, data);
         });
       }
       if (onClose) {

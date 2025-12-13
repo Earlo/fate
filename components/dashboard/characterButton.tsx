@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { CharacterSheetT } from '@/schemas/sheet';
 import Image from 'next/image';
 import { ReactNode } from 'react';
+import TileButton from './tileButton';
 interface CharacterButtonProps {
   character: CharacterSheetT;
   campaignId?: string;
@@ -18,43 +19,31 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
   dragHandle,
 }) =>
   !compact ? (
-    <div
+    <TileButton
+      title={
+        campaignId
+          ? character.name?.visibleIn?.includes(campaignId)
+            ? character.name?.text || 'Unnamed Character'
+            : '???'
+          : character.name?.text || 'Unnamed Character'
+      }
+      subtitle={
+        campaignId
+          ? character.aspects[0]?.visibleIn?.includes(campaignId)
+            ? character.aspects[0]?.name
+            : '???'
+          : character.aspects?.[0]?.name || '-'
+      }
+      imageUrl={character.icon?.url || '/blank_user.png'}
+      imageClassName={cn('rounded-full', {
+        'blur filter': campaignId
+          ? !character.icon?.visibleIn?.includes(campaignId)
+          : false,
+      })}
       onClick={onClick}
-      className="character-card group relative flex h-20 min-h-0 w-full cursor-pointer items-center justify-around rounded-lg border border-gray-300 pr-10 pl-2 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:ring-2 focus:ring-gray-400 focus:outline-none active:bg-gray-300"
-    >
-      <Image
-        src={character.icon?.url || '/blank_user.png'}
-        alt={character.name?.text || 'Character'}
-        width={64}
-        height={64}
-        className={cn('shrink-0 rounded-full', {
-          'blur filter': campaignId
-            ? !character.icon?.visibleIn?.includes(campaignId)
-            : false,
-        })}
-      />
-      <div className="flex min-w-0 grow flex-col pl-4">
-        <h3 className="line-clamp-2 overflow-hidden text-lg leading-6 font-semibold group-hover:underline">
-          {campaignId
-            ? character.name?.visibleIn?.includes(campaignId)
-              ? character.name?.text
-              : '???'
-            : character.name?.text || 'Unnamed Character'}
-        </h3>
-        <p className="line-clamp-2 overflow-hidden text-sm leading-4 text-gray-600">
-          {campaignId
-            ? character.aspects[0]?.visibleIn?.includes(campaignId)
-              ? character.aspects[0]?.name
-              : '???'
-            : character.aspects?.[0]?.name || '-'}
-        </p>
-      </div>
-      {dragHandle && (
-        <div className="absolute top-1/2 right-2 -translate-y-1/2">
-          {dragHandle}
-        </div>
-      )}
-    </div>
+      className="character-card pr-10 pl-2"
+      rightContent={dragHandle}
+    />
   ) : (
     <Image
       onClick={onClick}

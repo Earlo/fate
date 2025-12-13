@@ -41,3 +41,15 @@ export function updateVisibilityList(
     ? Array.from(new Set([...visibleIn, campaignId]))
     : visibleIn.filter((id) => id !== campaignId);
 }
+
+export function upsertById<T extends { _id?: string }>(items: T[], item: T) {
+  const id = item?._id;
+  if (!id) {
+    return items;
+  }
+  const index = items.findIndex((existing) => existing?._id === id);
+  if (index === -1) {
+    return [...items, item];
+  }
+  return [...items.slice(0, index), item, ...items.slice(index + 1)];
+}

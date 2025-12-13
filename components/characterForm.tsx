@@ -4,6 +4,7 @@ import {
   createCharacterSheet,
   updateCharacterSheet,
 } from '@/lib/apiHelpers/sheets';
+import { upsertById } from '@/lib/utils';
 import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
 import { blankSheet } from '@/schemas/consts/blankCharacterSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
@@ -51,16 +52,7 @@ const CharacterForm: FC<CharacterFormProps> = ({
         ? await updateCharacterSheet(initialSheet._id, submitData)
         : await createCharacterSheet(submitData);
       setSheets((prevCharacters) => {
-        const index = prevCharacters.findIndex((char) => char._id === data._id);
-        if (index !== -1) {
-          return [
-            ...prevCharacters.slice(0, index),
-            data,
-            ...prevCharacters.slice(index + 1),
-          ];
-        } else {
-          return [...prevCharacters, data];
-        }
+        return upsertById(prevCharacters, data);
       });
       if (onClose) {
         onClose();
