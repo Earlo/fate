@@ -215,7 +215,7 @@ const SkillGrid: FC<SkillGridProps> = ({
           >
             <span
               className={cn(
-                'flex h-8 shrink-0 items-center font-black whitespace-nowrap text-black uppercase',
+                'font-archivo-black flex h-8 shrink-0 items-center whitespace-nowrap text-black uppercase',
                 {
                   'lg:w-fit': tier.level > 5 || tier.level < -5,
                 },
@@ -310,7 +310,7 @@ const SkillRow = ({
                   : visibleIn.filter((id) => id !== campaignId),
               )
             }
-            className="z-100 m-0 p-0"
+            className="z-20 m-0 p-0"
           />
         )}
       </SkillInput>

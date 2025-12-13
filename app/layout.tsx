@@ -26,7 +26,8 @@ const archivo = localFont({
       style: 'normal',
     },
   ],
-  display: 'optional',
+  // Ensure the font is rendered once it loads instead of staying on the fallback
+  display: 'swap',
   variable: '--font-archivo',
 });
 
@@ -34,7 +35,7 @@ const archivoBlack = localFont({
   src: [
     {
       path: '../public/fonts/archivo/Archivo-Black.ttf',
-      weight: '400',
+      weight: '900',
       style: 'normal',
     },
   ],
@@ -45,7 +46,7 @@ const archivoBlack = localFont({
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${archivo.variable} ${archivoBlack.variable}`}>
-      <body className="font-archivo flex min-h-[100dvh] flex-col">
+      <body className="font-archivo flex min-h-dvh flex-col">
         <Provider>
           <UserProvider>
             <TopBar />

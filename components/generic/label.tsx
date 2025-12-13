@@ -9,7 +9,7 @@ interface LabelProps {
 const Label: React.FC<LabelProps> = ({ label, name, children, className }) => (
   <label
     className={cn(
-      'relative z-1 flex w-full items-center justify-between bg-black pt-1 pl-4 text-xl font-black whitespace-nowrap text-white uppercase',
+      'relative z-1 flex w-full items-center justify-between bg-black pt-1 pl-4 text-xl font-archivo-black whitespace-nowrap text-white uppercase',
       className,
     )}
     style={{

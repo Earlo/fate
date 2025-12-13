@@ -1,30 +1,30 @@
 // icon.tsx
 import { cn } from '@/lib/utils';
 import {
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-  ArrowUpOnSquareIcon,
-  EllipsisHorizontalIcon,
-  EllipsisVerticalIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  PlusIcon,
-  SparklesIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/solid';
+  Ellipsis,
+  EllipsisVertical,
+  Eye,
+  EyeOff,
+  Maximize,
+  Minimize,
+  Plus,
+  Sparkles,
+  Upload,
+  X,
+} from 'lucide-react';
 import { forwardRef, MouseEventHandler, SVGAttributes } from 'react';
 
 const iconMap = {
-  sparkles: SparklesIcon,
-  reduce: ArrowsPointingInIcon,
-  grow: ArrowsPointingOutIcon,
-  upload: ArrowUpOnSquareIcon,
-  ellipsis: EllipsisVerticalIcon,
-  drag: EllipsisHorizontalIcon,
-  close: XMarkIcon,
-  plus: PlusIcon,
-  eye: EyeIcon,
-  noEye: EyeSlashIcon,
+  sparkles: Sparkles,
+  reduce: Minimize,
+  grow: Maximize,
+  upload: Upload,
+  ellipsis: EllipsisVertical,
+  drag: Ellipsis,
+  close: X,
+  plus: Plus,
+  eye: Eye,
+  noEye: EyeOff,
 } as const;
 
 export type IconNameT = keyof typeof iconMap;

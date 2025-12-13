@@ -91,6 +91,7 @@
       system-ui,
       -apple-system,
       sans-serif;
+    font-weight: 900;
   }
 }
 
@@ -111,6 +112,7 @@
 @font-face {
   font-family: 'FateCoreFont';
   src: url('/FateCoreFont.ttf') format('truetype');
+  font-display: swap;
 }
 
 .fateIconFont {

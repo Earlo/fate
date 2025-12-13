@@ -59,7 +59,7 @@ const Stress: React.FC<StressProps> = ({
       >
         <span
           className={cn(
-            'flex h-8 w-[30%] shrink-0 items-center text-lg font-black whitespace-nowrap text-black uppercase',
+            'flex h-8 w-[30%] shrink-0 items-center text-lg font-archivo-black whitespace-nowrap text-black uppercase',
             { 'h-6': tight },
           )}
         >
