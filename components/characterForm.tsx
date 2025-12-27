@@ -45,11 +45,11 @@ const CharacterForm: FC<CharacterFormProps> = ({
     setIsSubmitting(true);
     const submitData = {
       ...formState,
-      ...(creating && { owner: session?.user?._id }),
+      ...(creating && { owner: session?.user?.id }),
     };
     try {
       const data = editing
-        ? await updateCharacterSheet(initialSheet._id, submitData)
+        ? await updateCharacterSheet(initialSheet.id, submitData)
         : await createCharacterSheet(submitData);
       setSheets((prevCharacters) => {
         return upsertById(prevCharacters, data);
@@ -65,7 +65,7 @@ const CharacterForm: FC<CharacterFormProps> = ({
   };
   const handleDelete = async () => {
     setIsSubmitting(true);
-    const deletedId = initialSheet?._id;
+    const deletedId = initialSheet?.id;
     if (!deletedId) {
       return;
     }
@@ -74,7 +74,7 @@ const CharacterForm: FC<CharacterFormProps> = ({
         method: 'DELETE',
       });
       setSheets((prevCharacters) =>
-        prevCharacters.filter((char) => char._id !== deletedId),
+        prevCharacters.filter((char) => char.id !== deletedId),
       );
       if (onClose) {
         onClose();

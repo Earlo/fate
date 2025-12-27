@@ -30,7 +30,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       if (session) {
-        const data = await getCampaignsByUserId(session.user._id);
+        const data = await getCampaignsByUserId(session.user.id);
         setCampaigns(data);
       }
     };
@@ -44,7 +44,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
           {sheets.map((sheet, index) => (
             <CharacterButton
-              key={sheet._id || `${sheet.name?.text || 'sheet'}-${index}`}
+              key={sheet.id || `${sheet.name?.text || 'sheet'}-${index}`}
               character={sheet}
               onClick={() =>
                 setBigSheet({ sheet, state: 'edit', skills: allSkills })
@@ -68,7 +68,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
           {campaigns.map((campaign) => (
             <CampaignButton
-              key={campaign._id}
+              key={campaign.id}
               name={campaign.name}
               imageUrl={campaign.icon?.url ?? undefined}
               onClick={() => setSelectedCampaign(campaign)}
@@ -77,10 +77,10 @@ export default function Dashboard() {
         </div>
         {selectedCampaign && (
           <CampaignForm
-            key={selectedCampaign._id}
+            key={selectedCampaign.id}
             initialCampaign={selectedCampaign}
             state={
-              selectedCampaign.owner === session?.user?._id ? 'edit' : 'view'
+              selectedCampaign.owner === session?.user?.id ? 'edit' : 'view'
             }
             setCampaigns={setCampaigns}
             onClose={() => setSelectedCampaign(null)}

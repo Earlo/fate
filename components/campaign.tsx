@@ -29,12 +29,11 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     updateNote,
   } = useCampaign(id);
 
-  const isAdmin =
-    !!session?.user.admin || campaign?.owner === session?.user._id;
+  const isAdmin = !!session?.user.admin || campaign?.owner === session?.user.id;
   const isPlayer =
     campaign &&
-    session?.user._id &&
-    campaign.visibleTo.includes(session.user._id);
+    session?.user.id &&
+    campaign.visibleTo.includes(session.user.id);
 
   useEffect(() => {
     if (!isLoading && !campaign) {
@@ -64,7 +63,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
         {session && !isAdmin && (
           <Button
             label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
-            onClick={() => toggleCampaign(session.user._id)}
+            onClick={() => toggleCampaign(session.user.id)}
             className="ml-4"
           />
         )}
@@ -86,13 +85,13 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
           aspects={campaign.aspects}
           setAspects={(aspects) => null}
           disabled={true}
-          campaignId={campaign._id}
+          campaignId={campaign.id}
           hints={['Current Issues', 'Impeding Issues']}
           title="Issues"
         />
         <NoteInput
           disabled={!isAdmin}
-          campaignId={campaign._id}
+          campaignId={campaign.id}
           notes={campaign.notes}
           addNote={() => addNote()}
           deleteNote={(index) => deleteNote(index)}

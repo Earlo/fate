@@ -189,13 +189,13 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
 
   const toggleCharacter = (characterId: string) => {
     const charIndex = group.characters.findIndex(
-      (c) => c.sheet._id === characterId,
+      (c) => c.sheet.id === characterId,
     );
     const updatedCharacters = [...group.characters];
     if (charIndex > -1) {
       updatedCharacters.splice(charIndex, 1);
     } else {
-      const character = sheets.find((c) => c._id === characterId);
+      const character = sheets.find((c) => c.id === characterId);
       if (character) {
         const nextPosition =
           layout === 'grid'
@@ -288,10 +288,10 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
           {sheets.length > 0 ? (
             sheets.map((character) => (
               <DropdownMenuItem
-                key={character._id}
+                key={character.id}
                 onClick={(e: MouseEvent<HTMLDivElement>) => {
                   e.preventDefault();
-                  toggleCharacter(character._id);
+                  toggleCharacter(character.id);
                 }}
                 className="flex cursor-pointer items-center px-2 py-1 hover:bg-slate-700"
               >
@@ -299,7 +299,7 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
                   type="checkbox"
                   checked={group.characters.some(
                     (groupCharacter) =>
-                      groupCharacter.sheet._id === character._id,
+                      groupCharacter.sheet.id === character.id,
                   )}
                   readOnly
                   className="mr-2"
@@ -373,7 +373,7 @@ const CharacterList: FC<{
     if (!draggedCharacterId || insertIndex === null) return;
 
     const sourceIndex = characters.findIndex(
-      (character) => character.sheet._id === draggedCharacterId,
+      (character) => character.sheet.id === draggedCharacterId,
     );
     if (sourceIndex === -1 || sourceIndex === insertIndex) return;
 
@@ -437,7 +437,7 @@ const CharacterList: FC<{
       }}
     >
       {characters.map((character, index) => (
-        <Fragment key={character.sheet._id}>
+        <Fragment key={character.sheet.id}>
           {dropIndex === index && (
             <div className="my-1 h-1 w-full rounded bg-stone-100" />
           )}
@@ -463,7 +463,7 @@ const CharacterList: FC<{
                       icon="drag"
                       draggable
                       onDragStart={(event) =>
-                        handleDragStart(event, character.sheet._id)
+                        handleDragStart(event, character.sheet.id)
                       }
                       onDragEnd={handleDragEnd}
                       className="cursor-grab bg-transparent text-gray-400 hover:bg-transparent focus:ring-0 focus:outline-none active:cursor-grabbing"
@@ -546,7 +546,7 @@ const CharacterGrid: FC<{
     if (!draggedId) return;
 
     const sourceIndex = characters.findIndex(
-      (character) => character.sheet._id === draggedId,
+      (character) => character.sheet.id === draggedId,
     );
     if (sourceIndex === -1) return;
 
@@ -556,7 +556,7 @@ const CharacterGrid: FC<{
     );
 
     // No change if dropped onto the same spot
-    if (targetIndex !== -1 && characters[targetIndex].sheet._id === draggedId) {
+    if (targetIndex !== -1 && characters[targetIndex].sheet.id === draggedId) {
       return;
     }
 
@@ -594,7 +594,7 @@ const CharacterGrid: FC<{
                 <div
                   draggable={isAdmin}
                   onDragStart={(event) =>
-                    handleDragStart(event, character.sheet._id)
+                    handleDragStart(event, character.sheet.id)
                   }
                 >
                   <CharacterButton

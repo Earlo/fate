@@ -6,12 +6,12 @@ declare module 'next-auth' {
     user: Omit<UserModelT, 'password'>;
   }
   interface DefaultUser {
-    _id: string;
+    id: string;
     username: string;
   }
 
   interface User {
-    _id: string;
+    id: string;
     username: string;
   }
 }

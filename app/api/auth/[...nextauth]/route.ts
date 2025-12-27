@@ -25,8 +25,7 @@ const handler = NextAuth({
             (await compare(credentials.password, user.password))
           ) {
             return {
-              id: user._id,
-              _id: user._id,
+              id: user.id,
               username: user.username,
             };
           }
@@ -63,7 +62,7 @@ const handler = NextAuth({
       session.user = {
         username: found.username,
         admin: found.admin,
-        _id: found._id.toString(),
+        id: found.id.toString(),
         created: found.created,
         updated: found.updated,
       };

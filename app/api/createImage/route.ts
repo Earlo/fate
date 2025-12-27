@@ -12,8 +12,7 @@ const openai = new OpenAIClient({
 export async function POST(req: NextRequest) {
   const { sheet } = await req.json();
   const cleanSheet = removeKey(sheet, [
-    '_id',
-    '__v',
+    'id',
     'visibleTo',
     'colorPalette',
     'icon',

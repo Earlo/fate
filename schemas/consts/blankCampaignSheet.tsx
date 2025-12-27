@@ -75,7 +75,7 @@ export const defaultSkills: CampaignT['skills'] = [
   },
 ];
 
-export const blankSheet: Omit<CampaignT, '_id'> = {
+export const blankSheet: Omit<CampaignT, 'id'> = {
   name: '',
   description: '',
   colorPalette: {
@@ -113,7 +113,7 @@ export const blankSheet: Omit<CampaignT, '_id'> = {
   owner: '',
 };
 
-export const blankGroup: Omit<PopulatedCampaignT['groups'][0], '_id'> = {
+export const blankGroup: Omit<PopulatedCampaignT['groups'][0], 'id'> = {
   name: 'New Group',
   description: '',
   icon: {

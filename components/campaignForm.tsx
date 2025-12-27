@@ -40,11 +40,11 @@ const CampaignForm: FC<CampaignFormProps> = ({
     setIsSubmitting(true);
     const submitData = {
       ...formState,
-      owner: session?.user?._id,
+      owner: session?.user?.id,
     };
     try {
       const data = editing
-        ? await updateCampaignAPI(initialCampaign._id, submitData)
+        ? await updateCampaignAPI(initialCampaign.id, submitData)
         : await createCampaignAPI(submitData);
       if (setCampaigns) {
         setCampaigns((prevCampaigns) => {
@@ -86,7 +86,7 @@ const CampaignForm: FC<CampaignFormProps> = ({
           />
         )}
         {(editing || viewing) && initialCampaign && (
-          <Link href={`/campaign/${initialCampaign._id}`} passHref>
+          <Link href={`/campaign/${initialCampaign.id}`} passHref>
             <Button label="View Campaign" />
           </Link>
         )}
@@ -96,7 +96,7 @@ const CampaignForm: FC<CampaignFormProps> = ({
           <LabeledInput
             name="Campaign link"
             type="text"
-            value={`${process.env.NEXT_PUBLIC_URL}/campaign/${initialCampaign._id}`}
+            value={`${process.env.NEXT_PUBLIC_URL}/campaign/${initialCampaign.id}`}
             disabled
           />
         </div>

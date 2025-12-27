@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { randomUUID } from 'crypto';
 
 export type UserModelT = {
-  _id: string;
+  id: string;
   username: string;
   password?: string | null;
   admin: boolean;
@@ -22,7 +22,7 @@ type UserRow = {
 const mapUser = (row?: UserRow | null): UserModelT | null =>
   row
     ? {
-        _id: row.id,
+        id: row.id,
         username: row.username,
         password: row.password,
         admin: row.admin,

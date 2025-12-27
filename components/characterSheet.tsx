@@ -21,7 +21,7 @@ interface CharacterSheetProps {
 
 type editableFields = Omit<
   CharacterSheetT,
-  'owner' | '_id' | 'public' | 'visibleTo'
+  'owner' | 'id' | 'public' | 'visibleTo'
 >;
 const CharacterSheet: React.FC<CharacterSheetProps> = ({
   character,

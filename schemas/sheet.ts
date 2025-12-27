@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
 export type CharacterSheetT = {
-  _id: string;
+  id: string;
   icon?: { url: string; visibleIn: string[]; note?: string };
   colorPalette: { primary: string; secondary: string; tertiary: string };
   name: { text: string; visibleIn: string[] };
@@ -124,7 +124,7 @@ const mapCharacterSheet = (
 ): CharacterSheetT | null =>
   row
     ? {
-        _id: row.id,
+        id: row.id,
         icon: (row.icon as CharacterSheetT['icon']) ?? undefined,
         colorPalette:
           (row.colorPalette as CharacterSheetT['colorPalette']) ??
@@ -152,7 +152,7 @@ const mapCharacterSheet = (
 
 export async function createCharacterSheet(sheet: Partial<CharacterSheetT>) {
   const now = new Date();
-  const id = sheet._id || randomUUID();
+  const id = sheet.id || randomUUID();
   const aspects = normalizeAspects(sheet.aspects);
   const visibleTo =
     sheet.visibleTo && Array.isArray(sheet.visibleTo) ? sheet.visibleTo : [];

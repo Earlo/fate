@@ -42,12 +42,12 @@ export function updateVisibilityList(
     : visibleIn.filter((id) => id !== campaignId);
 }
 
-export function upsertById<T extends { _id?: string }>(items: T[], item: T) {
-  const id = item?._id;
+export function upsertById<T extends { id?: string }>(items: T[], item: T) {
+  const id = item?.id;
   if (!id) {
     return items;
   }
-  const index = items.findIndex((existing) => existing?._id === id);
+  const index = items.findIndex((existing) => existing?.id === id);
   if (index === -1) {
     return [...items, item];
   }

@@ -72,5 +72,5 @@ export const blankSheet: CharacterSheetT = {
   public: false,
   visibleTo: [],
   owner: '',
-  _id: '',
+  id: '',
 };

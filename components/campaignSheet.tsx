@@ -9,7 +9,7 @@ interface CampaignSheetProps {
   setCampaign?: React.Dispatch<React.SetStateAction<Partial<CampaignT>>>;
 }
 
-type editableFields = Omit<CampaignT, 'owner' | '_id' | 'public' | 'visibleTo'>;
+type editableFields = Omit<CampaignT, 'owner' | 'id' | 'public' | 'visibleTo'>;
 
 const CampaignSheet: React.FC<CampaignSheetProps> = ({
   campaign,
@@ -56,7 +56,7 @@ const CampaignSheet: React.FC<CampaignSheetProps> = ({
           aspects={campaign?.aspects || []}
           setAspects={(aspects) => updateField('aspects', aspects)}
           disabled={!setCampaign}
-          campaignId={campaign?._id}
+          campaignId={campaign?.id}
           hints={['Current Issues', 'Impeding Issues']}
           className="pr-2"
         />

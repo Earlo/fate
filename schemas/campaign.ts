@@ -19,7 +19,7 @@ export type GroupCharacter =
     };
 
 export type GroupT = {
-  _id?: string;
+  id?: string;
   name: string;
   description: string;
   icon?: { url: string; note?: string };
@@ -35,7 +35,7 @@ export type GroupT = {
 };
 
 export type CampaignT = {
-  _id: string;
+  id: string;
   name: string;
   icon?: { url: string; note?: string };
   description?: string;
@@ -52,7 +52,7 @@ export type CampaignT = {
 };
 
 export type PopulatedGroup = Omit<GroupT, 'characters' | 'children'> & {
-  _id?: string;
+  id?: string;
   characters: {
     sheet: CharacterSheetT;
     visible: boolean;
@@ -91,7 +91,7 @@ const defaultColorPalette = {
 const mapCampaign = (row?: CampaignRow | null): CampaignT | null =>
   row
     ? {
-        _id: row.id,
+        id: row.id,
         name: row.name,
         icon: (row.icon as CampaignT['icon']) ?? undefined,
         description: row.description ?? undefined,
@@ -114,7 +114,7 @@ const normalizeGroups = (
   groups: (GroupT | PopulatedGroup)[] | null | undefined,
 ): GroupT[] =>
   (groups ?? []).map((group) => ({
-    _id: group._id ?? randomUUID(),
+    id: group.id ?? randomUUID(),
     ...group,
     characters:
       group.characters?.map((character) => ({
@@ -122,7 +122,7 @@ const normalizeGroups = (
         sheet:
           typeof character.sheet === 'string'
             ? character.sheet
-            : character.sheet._id,
+            : character.sheet.id,
       })) ?? [],
     children: normalizeGroups(group.children),
   }));
@@ -157,7 +157,7 @@ const populateGroups = (
           const sheetId =
             typeof character.sheet === 'string'
               ? character.sheet
-              : character.sheet._id;
+              : character.sheet.id;
           const sheet = sheetMap.get(sheetId);
           if (!sheet) return null;
           return { ...character, sheet };
@@ -202,7 +202,7 @@ export async function createCampaign(
   campaign: Partial<CampaignT> | Partial<PopulatedCampaignT>,
 ) {
   const now = new Date();
-  const id = campaign._id || randomUUID();
+  const id = campaign.id || randomUUID();
 
   const groups = normalizeGroups(
     (campaign as CampaignT | PopulatedCampaignT).groups ?? [],
@@ -230,7 +230,7 @@ export async function createCampaign(
 
   const mapped = mapCampaign(created as CampaignRow);
   if (!mapped) return null;
-  return getCampaign(mapped._id);
+  return getCampaign(mapped.id);
 }
 
 export async function getCampaign(id: string) {
@@ -240,7 +240,7 @@ export async function getCampaign(id: string) {
 
   const sheetIds = collectCharacterIds(baseCampaign.groups);
   const sheets = await getCharacterSheetsByIds(sheetIds);
-  const sheetMap = new Map(sheets.map((sheet) => [sheet._id, sheet] as const));
+  const sheetMap = new Map(sheets.map((sheet) => [sheet.id, sheet] as const));
 
   return {
     ...baseCampaign,
@@ -291,7 +291,7 @@ export const getCampaigns = async (
   );
   const uniqueSheetIds = Array.from(new Set(allSheetIds));
   const sheets = await getCharacterSheetsByIds(uniqueSheetIds);
-  const sheetMap = new Map(sheets.map((sheet) => [sheet._id, sheet] as const));
+  const sheetMap = new Map(sheets.map((sheet) => [sheet.id, sheet] as const));
 
   return campaigns.map(
     (campaign) =>

@@ -50,8 +50,9 @@ const AspectInput: React.FC<AspectInputProps> = ({
           ? undefined
           : () => setAspects([...aspects, { name: '', visibleIn: [] }])
       }
-      renderItem={(aspect, index) =>
-        aspect! && disabled ? null : (
+      renderItem={(aspect, index) => {
+        if (!aspect) return null;
+        return (
           <div
             key={index}
             className={cn('flex items-center', {
@@ -82,7 +83,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
                 'rounded-b-none': tight && index < aspects.length - 1,
               })}
             />
-            {showVisibility && aspect && (
+            {showVisibility && (
               <VisibilityToggle
                 visible={aspect.visibleIn.includes(campaignId)}
                 onChange={(visible) =>
@@ -106,8 +107,8 @@ const AspectInput: React.FC<AspectInputProps> = ({
               />
             )}
           </div>
-        )
-      }
+        );
+      }}
     />
   );
 };

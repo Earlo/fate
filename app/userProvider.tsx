@@ -41,7 +41,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchData = async () => {
       if (session) {
-        const data = await getCharacterSheetsByUserId(session.user._id);
+        const data = await getCharacterSheetsByUserId(session.user.id);
         setSheets(data);
       }
     };
@@ -51,7 +51,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
   const handleDragEnd = ({ delta, active }: DragEndEvent) => {
     setSmallSheets((prev) =>
       prev.map((s) =>
-        s.sheet?._id === active.id
+        s.sheet?.id === active.id
           ? {
               ...s,
               position: {
@@ -95,7 +95,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
             />
           )}
           {smallSheets.map((sheet) => {
-            const sheetId = sheet.sheet?._id;
+            const sheetId = sheet.sheet?.id;
             if (!sheetId) return null;
             return (
               <DraggableCard
@@ -104,13 +104,13 @@ export default function UserProvider({ children }: { children: ReactNode }) {
                 sheet={sheet}
                 onClose={() =>
                   setSmallSheets((prev) =>
-                    prev.filter((s) => s.sheet?._id !== sheetId),
+                    prev.filter((s) => s.sheet?.id !== sheetId),
                   )
                 }
                 onMaximize={() => {
                   setBigSheet(sheet);
                   setSmallSheets((prev) =>
-                    prev.filter((s) => s.sheet?._id !== sheetId),
+                    prev.filter((s) => s.sheet?.id !== sheetId),
                   );
                 }}
               />

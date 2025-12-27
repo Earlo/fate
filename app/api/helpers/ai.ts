@@ -2,8 +2,7 @@ import { removeKey } from '@/lib/utils';
 import { streamText, type LanguageModel } from 'ai';
 
 const PRIVATE_KEYS = [
-  '_id',
-  '__v',
+  'id',
   'visibleTo',
   'colorPalette',
   'icon',

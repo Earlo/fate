@@ -21,11 +21,11 @@ export async function POST(req: NextRequest) {
     username,
     password: hashedPassword,
   });
-  if (!newUser?._id) {
+  if (!newUser?.id) {
     return NextResponse.json(
       { error: 'Failed to create user' },
       { status: 500 },
     );
   }
-  return NextResponse.json({ _id: newUser._id }, { status: 201 });
+  return NextResponse.json({ id: newUser.id }, { status: 201 });
 }
