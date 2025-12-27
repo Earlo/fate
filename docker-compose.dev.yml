@@ -16,7 +16,7 @@ services:
     build:
       context: .
       args:
-        SKIP_NPM_INSTALL: "true"
+        SKIP_NPM_INSTALL: 'true'
     restart: unless-stopped
     working_dir: /app
     environment:
