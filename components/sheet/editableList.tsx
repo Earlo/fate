@@ -26,9 +26,7 @@ const EditableList = <T,>({
   return (
     <div className={cn(className)}>
       <Label name={title} className={labelClassName}>
-        {!disabled && onAdd && (
-          <Icon icon="plus" className="mr-2 self-baseline" onClick={onAdd} />
-        )}
+        {!disabled && onAdd && <Icon icon="plus" onClick={onAdd} />}
       </Label>
       {items.map((item, index) => renderItem(item, index))}
     </div>

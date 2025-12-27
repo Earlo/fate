@@ -33,7 +33,7 @@ const StressBox: FC<StressBoxProps> = ({
     >
       <label
         className={`font-archivo-black relative bottom-2 left-1 z-10 flex grow items-end justify-between text-2xl uppercase ${
-          !available ? 'font-outline-2 text-white' : 'text-black'
+          !available ? 'font-outline-2 text-stone-100' : 'text-neutral-950'
         }`}
         htmlFor={id}
       >
@@ -52,12 +52,12 @@ const StressBox: FC<StressBoxProps> = ({
         />
         <div
           onClick={handleClick}
-          className={`size-8 cursor-pointer rounded border-2 bg-white ${
-            available ? 'border-black' : 'border-gray-300'
+          className={`size-8 cursor-pointer rounded border-2 bg-stone-100 ${
+            available ? 'border-neutral-950' : 'border-gray-300'
           } ${disabled ? 'cursor-not-allowed' : ''}`}
         >
           {checked && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform text-black">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform text-neutral-950">
               X
             </div>
           )}

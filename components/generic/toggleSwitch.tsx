@@ -27,7 +27,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
           })}
         />
         <div
-          className={`dot absolute top-1 left-1 h-6 w-6 rounded-full bg-white transition ${checked ? 'translate-x-full border-gray-600' : 'translate-x-0 border-gray-400'}`}
+          className={`dot absolute top-1 left-1 h-6 w-6 rounded-full bg-stone-100 transition ${checked ? 'translate-x-full border-gray-600' : 'translate-x-0 border-gray-400'}`}
         />
       </div>
       {label && (

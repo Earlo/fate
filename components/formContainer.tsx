@@ -17,11 +17,11 @@ const FormContainer: React.FC<FormContainerProps> = ({
   onMaximize,
   className,
 }) => (
-  <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+  <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-neutral-900">
     <form
       onSubmit={onSubmit}
       className={cn(
-        'relative z-10 h-fit max-h-dvh max-w-full overflow-y-auto rounded bg-white p-1 shadow-md lg:max-w-6xl',
+        'relative z-10 h-fit max-h-dvh max-w-full overflow-y-auto rounded bg-stone-100 p-1 shadow-md lg:max-w-6xl',
       )}
     >
       <ControlBar

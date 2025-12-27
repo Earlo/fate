@@ -150,7 +150,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
-                className="mr-2 self-baseline"
               />
             )}
           </LabeledInput>
@@ -175,7 +174,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           >
             {(state === 'create' || state === 'edit') && (
               <Icon
-                className="mr-2 text-white duration-200 hover:text-gray-400"
+                className="text-stone-100 duration-200 hover:text-gray-400"
                 onClick={async () => callOpenAi('description')}
                 icon="sparkles"
               />
@@ -198,7 +197,6 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                         ),
                   })
                 }
-                className="mr-2 self-baseline"
               />
             )}
           </LabeledInput>

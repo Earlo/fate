@@ -46,13 +46,13 @@ const Checkbox: FC<CheckboxProps> = ({
         <div
           onClick={handleClick}
           className={cn(
-            'size-8 cursor-pointer rounded border-2 bg-white',
-            checked ? 'border-black' : 'border-gray-300',
+            'size-8 cursor-pointer rounded border-2 bg-stone-50',
+            checked ? 'border-neutral-900' : 'border-gray-300',
             { 'cursor-not-allowed': disabled },
           )}
         >
           {checked && (
-            <div className="absolute top-1/2 left-5 -translate-x-1/2 -translate-y-1/2 transform text-black">
+            <div className="absolute top-1/2 left-5 -translate-x-1/2 -translate-y-1/2 transform text-neutral-900">
               ✓
             </div>
           )}

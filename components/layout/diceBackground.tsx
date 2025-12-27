@@ -15,7 +15,7 @@ const DiceBackground: FC<DiceBackgroundProps> = ({ children, className }) => {
       <div
         key={i}
         id={`dice-${i}`}
-        className="animate-float absolute flex size-24 items-center justify-center rounded border-2 border-slate-950 bg-transparent text-6xl leading-none font-bold text-black opacity-20"
+        className="animate-float absolute flex size-24 items-center justify-center rounded border-2 border-slate-950 bg-transparent text-6xl leading-none font-bold text-neutral-950 opacity-20"
       >
         <div id={'face'} className="-mt-3.25">
           {diceSides[Math.floor(Math.random() * diceSides.length)]}
@@ -118,7 +118,7 @@ const DiceBackground: FC<DiceBackgroundProps> = ({ children, className }) => {
   }, [backgrounDice]);
 
   return (
-    <BaseLayout className="relative overflow-hidden bg-linear-to-r from-blue-400 to-purple-500 text-white">
+    <BaseLayout className="relative overflow-hidden bg-linear-to-r from-blue-400 to-purple-500 text-stone-100">
       <div
         ref={containerRef}
         className="pointer-events-none absolute top-0 left-0 size-full"

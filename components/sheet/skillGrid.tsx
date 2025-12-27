@@ -185,7 +185,6 @@ const SkillGrid: FC<SkillGridProps> = ({
         {!disabled && (
           <Icon
             icon="plus"
-            className="mr-2 self-baseline"
             onClick={() =>
               maxDisplayedTier < 18
                 ? setMaxDisplayedTier(maxDisplayedTier + 1)
@@ -215,7 +214,7 @@ const SkillGrid: FC<SkillGridProps> = ({
           >
             <span
               className={cn(
-                'font-archivo-black flex h-8 shrink-0 items-center whitespace-nowrap text-black uppercase',
+                'font-archivo-black flex h-8 shrink-0 items-center whitespace-nowrap text-neutral-950 uppercase',
                 {
                   'lg:w-fit': tier.level > 5 || tier.level < -5,
                 },
@@ -308,7 +307,7 @@ const SkillRow = ({
                 updateVisibilityList(visible, visibleIn, campaignId),
               )
             }
-            className="z-20 m-0 p-0"
+            className="z-20"
           />
         )}
       </SkillInput>

@@ -36,19 +36,19 @@ const CharacterForm: FC<CharacterFormProps> = ({
     ...blankSheet,
     ...initialSheet,
   });
-  const isEditMode = initialSheet && (state === 'edit' || state === 'toggle');
-  const isCreateMode = state === 'create' && !initialSheet;
-  const canSave = isEditMode || isCreateMode;
+  const editing = initialSheet && (state === 'edit' || state === 'toggle');
+  const creating = state === 'create' && !initialSheet;
+  const canSave = editing || creating;
   const { setSheets } = useContext(userContext);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     const submitData = {
       ...formState,
-      ...(isCreateMode && { owner: session?.user?._id }),
+      ...(creating && { owner: session?.user?._id }),
     };
     try {
-      const data = isEditMode
+      const data = editing
         ? await updateCharacterSheet(initialSheet._id, submitData)
         : await createCharacterSheet(submitData);
       setSheets((prevCharacters) => {
@@ -100,12 +100,12 @@ const CharacterForm: FC<CharacterFormProps> = ({
       />
       {canSave && (
         <Button
-          label={isEditMode ? 'Save Changes' : 'Create Character'}
-          disabled={isSubmitting}
+          label={editing ? 'Save Changes' : 'Create'}
           type="submit"
+          disabled={isSubmitting}
         />
       )}
-      {isEditMode && (
+      {editing && (
         <Button
           label="Delete"
           disabled={isSubmitting}

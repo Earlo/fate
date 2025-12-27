@@ -29,23 +29,23 @@ import CharacterButton from './characterButton';
 const GroupSettings: FC<{
   group: PopulatedGroup;
   onChange: (updatedGroup?: PopulatedGroup) => void;
-  setIsEditing: (isEditing: boolean) => void;
-}> = ({ group, onChange, setIsEditing }) => {
+  setEditing: (editing: boolean) => void;
+}> = ({ group, onChange, setEditing }) => {
   const [newName, setNewName] = useState(group.name);
   const layoutDimensions = group.layout?.dimensions ?? { w: 3, h: 3 };
   const handleSave = () => {
-    setIsEditing(false);
+    setEditing(false);
     const updatedGroup = { ...group, name: newName };
     onChange(updatedGroup);
   };
 
   const handleCancel = () => {
-    setIsEditing(false);
+    setEditing(false);
     setNewName(group.name);
   };
 
   const handleDelete = () => {
-    setIsEditing(false);
+    setEditing(false);
     onChange();
   };
 
@@ -56,8 +56,8 @@ const GroupSettings: FC<{
 
   return (
     <Modal
-      onClose={() => setIsEditing(false)}
-      className="mx-auto max-w-md rounded-lg bg-white shadow"
+      onClose={() => setEditing(false)}
+      className="mx-auto max-w-md rounded-lg bg-stone-100 shadow"
     >
       <h2 className="text-lg font-semibold text-gray-900">
         Edit Group Settings
@@ -155,12 +155,12 @@ interface GroupProps {
 }
 
 const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { sheets } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
-  const layoutMode = group.layout?.mode || 'list';
+  const layout = group.layout?.mode || 'list';
   const layoutDimensions = group.layout?.dimensions ?? { w: 3, h: 3 };
 
   const findNextAvailablePosition = () => {
@@ -179,7 +179,7 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
   };
 
   const ensureLayoutFitsPosition = (x: number, y: number) => {
-    if (layoutMode !== 'grid') return group.layout;
+    if (layout !== 'grid') return group.layout;
     const dimensions = { ...layoutDimensions };
     if (y >= dimensions.h) {
       dimensions.h = y + 1;
@@ -198,7 +198,7 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
       const character = sheets.find((c) => c._id === characterId);
       if (character) {
         const nextPosition =
-          layoutMode === 'grid'
+          layout === 'grid'
             ? findNextAvailablePosition()
             : { x: 0, y: updatedCharacters.length };
         updatedCharacters.push({
@@ -210,7 +210,7 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
           ...group,
           characters: updatedCharacters,
           layout:
-            layoutMode === 'grid'
+            layout === 'grid'
               ? ensureLayoutFitsPosition(nextPosition.x, nextPosition.y)
               : group.layout,
         };
@@ -221,9 +221,8 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
     const updatedGroup = { ...group, characters: updatedCharacters };
     onChange(updatedGroup);
   };
-  const layout = layoutMode;
   return (
-    <div className="relative mx-auto flex min-h-24 w-full grow flex-col rounded-lg bg-gray-800 p-2 text-white shadow-lg">
+    <div className="relative mx-auto flex min-h-24 w-full grow flex-col rounded-lg bg-gray-800 p-2 text-stone-100 shadow-lg">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <h1 className="text-l font-bold">{group.name}</h1>
         {isAdmin && (
@@ -237,17 +236,17 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
             />
             <Icon
               onClick={() => {
-                setIsEditing(!isEditing);
+                setEditing(!editing);
               }}
               icon="ellipsis"
             />
           </div>
         )}
-        {isEditing && (
+        {editing && (
           <GroupSettings
             group={group}
             onChange={onChange}
-            setIsEditing={setIsEditing}
+            setEditing={setEditing}
           />
         )}
       </div>
@@ -278,7 +277,7 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
         {((group.public && isPlayer) || isAdmin) && (
           <DropdownMenuTrigger asChild>
             <button
-              className="absolute right-2 bottom-2 size-12 rounded-full bg-blue-600 font-bold text-white hover:bg-blue-700"
+              className="absolute right-2 bottom-2 size-12 rounded-full bg-blue-600 font-bold text-stone-100 hover:bg-blue-700"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               {isDropdownOpen ? '-' : '+'}
@@ -440,7 +439,7 @@ const CharacterList: FC<{
       {characters.map((character, index) => (
         <Fragment key={character.sheet._id}>
           {dropIndex === index && (
-            <div className="my-1 h-1 w-full rounded bg-white" />
+            <div className="my-1 h-1 w-full rounded bg-stone-100" />
           )}
           <div
             className="flex items-center gap-2"
@@ -482,7 +481,7 @@ const CharacterList: FC<{
         onDrop={(event) => handleDrop(event, characters.length)}
       >
         {dropIndex === characters.length && (
-          <div className="my-1 h-1 w-full rounded bg-white" />
+          <div className="my-1 h-1 w-full rounded bg-stone-100" />
         )}
       </div>
     </div>

@@ -100,9 +100,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
           className="w-full sm:w-8/12"
         />
       </div>
-      {isAdmin && (
-        <Button label="Add Group" onClick={addGroup} className="mb-6" />
-      )}
+      {isAdmin && <Button label="Add Group" onClick={addGroup} />}
       {campaign.groups.length > 0 && (
         <>
           <h2 className="mb-4 text-2xl font-semibold">Groups</h2>

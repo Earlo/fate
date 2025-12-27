@@ -12,7 +12,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, className, children }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         className={cn(
-          'relative w-3/4 overflow-hidden rounded-lg bg-white shadow-lg md:w-1/2',
+          'relative w-3/4 overflow-hidden rounded-lg bg-stone-100 shadow-lg md:w-1/2',
           className,
         )}
       >

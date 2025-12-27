@@ -29,7 +29,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   dragListeners,
 }) => {
   return (
-    <div className="relative z-10 h-fit max-h-dvh max-w-fit overflow-y-auto rounded bg-white p-1 pt-6 shadow-md">
+    <div className="relative z-10 h-fit max-h-dvh max-w-fit overflow-y-auto rounded bg-stone-100 p-1 pt-6 shadow-md">
       <ControlBar
         onClose={onClose}
         onMaximize={onMaximize}

@@ -33,8 +33,8 @@ const CampaignForm: FC<CampaignFormProps> = ({
   const [formState, setFormState] = useState<Partial<CampaignT>>(
     initialCampaign || { ...blankSheet },
   );
-  const isEditMode = state === 'edit' && initialCampaign;
-  const isViewMode = state === 'view' && initialCampaign;
+  const editing = state === 'edit' && initialCampaign;
+  const viewing = state === 'view' && initialCampaign;
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -43,7 +43,7 @@ const CampaignForm: FC<CampaignFormProps> = ({
       owner: session?.user?._id,
     };
     try {
-      const data = isEditMode
+      const data = editing
         ? await updateCampaignAPI(initialCampaign._id, submitData)
         : await createCampaignAPI(submitData);
       if (setCampaigns) {
@@ -63,7 +63,7 @@ const CampaignForm: FC<CampaignFormProps> = ({
 
   return (
     <FormContainer
-      onSubmit={!isViewMode ? handleSubmit : undefined}
+      onSubmit={!viewing ? handleSubmit : undefined}
       onClose={onClose}
     >
       <CampaignSheet
@@ -78,20 +78,20 @@ const CampaignForm: FC<CampaignFormProps> = ({
         }
       />
       <div className="flex">
-        {!isViewMode && (
+        {!viewing && (
           <Button
-            label={isEditMode ? 'Save Changes' : 'Create'}
+            label={editing ? 'Save Changes' : 'Create'}
             type="submit"
             disabled={isSubmitting}
           />
         )}
-        {(isEditMode || isViewMode) && initialCampaign && (
+        {(editing || viewing) && initialCampaign && (
           <Link href={`/campaign/${initialCampaign._id}`} passHref>
             <Button label="View Campaign" />
           </Link>
         )}
       </div>
-      {(isEditMode || isViewMode) && initialCampaign && (
+      {(editing || viewing) && initialCampaign && (
         <div className="pt-2">
           <LabeledInput
             name="Campaign link"

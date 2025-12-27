@@ -87,14 +87,9 @@ const Note: FC<NoteProps> = ({
           )}
         />
         {!isDisabled && (
-          <IconButton
-            className="mb-1"
-            onClick={async () => await callOpenAi(name)}
-          />
+          <IconButton onClick={async () => await callOpenAi(name)} />
         )}
-        {!isDisabled && (
-          <IconButton className="mb-1 ml-1" onClick={deleteNote} icon="close" />
-        )}
+        {!isDisabled && <IconButton onClick={deleteNote} icon="close" />}
         {toggle && campaignId && (
           <VisibilityToggle
             visible={visible}

@@ -50,7 +50,6 @@ const FateInput: React.FC<FateInputProps> = ({
                 ),
               })
             }
-            className="mr-2 self-baseline"
           />
         )}
       </Label>

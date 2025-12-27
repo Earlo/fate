@@ -53,7 +53,7 @@ export default function Dashboard() {
           ))}
         </div>
         <Button
-          className="w-full bg-green-500 pt-4 hover:bg-green-700"
+          className="w-full bg-green-500 hover:bg-green-700"
           label="Create New Character Sheet"
           onClick={() =>
             setBigSheet({
@@ -87,7 +87,7 @@ export default function Dashboard() {
           />
         )}
         <Button
-          className="w-full pt-4"
+          className="w-full bg-green-500 hover:bg-green-700"
           label="Create New Campaign"
           onClick={() => setShowCampaignForm(true)}
         />

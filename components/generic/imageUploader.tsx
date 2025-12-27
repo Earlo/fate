@@ -83,7 +83,7 @@ const ImageUploader: FC<ImageUploaderProps> = ({
           />
           {children ? (
             <div className="absolute inset-0 flex items-center justify-between opacity-0 transition-opacity duration-200 hover:opacity-100">
-              <div className="bg-opacity-40 hover:bg-opacity-20 flex h-full w-full items-center justify-center rounded-full bg-black">
+              <div className="bg-opacity-40 hover:bg-opacity-20 flex h-full w-full items-center justify-center rounded-full bg-neutral-900">
                 {children}
               </div>
             </div>
@@ -91,13 +91,13 @@ const ImageUploader: FC<ImageUploaderProps> = ({
             !disabled && (
               <div className="absolute inset-0 flex items-center justify-between opacity-0 transition-opacity duration-200 hover:opacity-100">
                 <div
-                  className="bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-l-full bg-black transition-opacity"
+                  className="bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-l-full bg-neutral-900 transition-opacity"
                   onClick={() => !disabled && fileInputRef.current?.click()}
                 >
                   <Icon icon="upload" />
                 </div>
                 <div
-                  className="bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-r-full bg-black transition-opacity"
+                  className="bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-r-full bg-neutral-900 transition-opacity"
                   onClick={() => !disabled && onGenerateImage()}
                 >
                   <Icon icon="sparkles" />

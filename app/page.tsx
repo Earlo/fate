@@ -18,15 +18,15 @@ const LandingPage = () => (
         <div className="group relative inline-block">
           <button
             disabled
-            className="mr-4 cursor-not-allowed rounded-full bg-white px-4 py-2 text-blue-500 opacity-50 hover:bg-blue-500 hover:text-white"
+            className="mr-4 cursor-not-allowed rounded-full bg-stone-100 px-4 py-2 text-blue-500 opacity-50 hover:bg-blue-500 hover:text-stone-100"
           >
             Get Started
           </button>
-          <div className="absolute -bottom-16 left-0 hidden rounded bg-black px-2 py-1 text-xs text-white group-hover:block">
+          <div className="absolute -bottom-16 left-0 hidden rounded bg-neutral-900 px-2 py-1 text-xs text-stone-100 group-hover:block">
             Beginner instructions coming soon
           </div>
         </div>
-        <button className="rounded-full border border-white bg-transparent px-4 py-2">
+        <button className="rounded-full border border-stone-100 bg-transparent px-4 py-2">
           <Link href="/about">Learn More</Link>
         </button>
       </div>

@@ -9,7 +9,7 @@ const TopBar: FC = () => {
   const { data: session } = useSession();
   const [showAuthForm, setShowAuthForm] = useState(false);
   return (
-    <div className="flex items-center justify-between bg-gray-800 p-4 text-white">
+    <div className="flex items-center justify-between bg-gray-800 p-4 text-stone-100">
       <Link className={'text-xl font-bold hover:opacity-20'} href="/">
         Home
       </Link>

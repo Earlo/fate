@@ -55,9 +55,9 @@ const Select: FC<SelectProps> = ({
   return (
     <div
       className={cn(
-        'font-archivo flex h-8 min-w-[20%] grow items-center overflow-hidden rounded border-2 border-black bg-white text-left align-middle text-gray-700 md:w-0',
+        'font-archivo flex h-8 min-w-[20%] grow items-center overflow-hidden rounded border-2 border-neutral-950 bg-stone-100 text-left align-middle text-gray-700 md:w-0',
         !value ? 'text-gray-400' : 'text-gray-700',
-        disabled && !value ? 'bg-gray-200' : 'bg-white',
+        disabled && !value ? 'bg-gray-200' : 'bg-stone-100',
         { 'z-2 border-2 border-blue-700': customValue !== null },
         { 'hidden sm:flex': disabled && !value },
         { 'cursor-pointer': !disabled },
@@ -87,7 +87,7 @@ const Select: FC<SelectProps> = ({
         />
       )}
       {isOpen && !customValue && (
-        <div className="absolute z-30 flex w-fit flex-col rounded border border-gray-200 bg-white text-gray-700 shadow-lg">
+        <div className="absolute z-30 flex w-fit flex-col rounded border border-gray-200 bg-stone-100 text-gray-700 shadow-lg">
           {value && (
             <SelectOption
               onClick={() => {
