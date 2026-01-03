@@ -119,3 +119,9 @@ https://next-auth.js.org/warnings#no_secret
 ```
 
 Open the URL `http://localhost:3000` in a browser on your workstation!
+
+## Image storage (Garage) setup for development
+
+The dev stack now ships a Garage v2.1.0 object storage service for hosting uploaded images. Follow the one-time setup in `garage/README.md` to initialize the Garage node, create an access key/secret, and add the bucket that the app expects. Then set the `GARAGE_*` variables in your `.env` before running `docker compose -f docker-compose.dev.yml up`.
+
+If you prefer Cloudinary, set `STORAGE_PROVIDER=cloudinary` and provide your `NEXT_PUBLIC_CLOUDINARY_*` values instead.
