@@ -283,10 +283,10 @@ export const getObjectFromGarage = async (key: string) => {
 
   const body = object.Body;
 
-  const stream =
+  const stream: globalThis.ReadableStream<Uint8Array> =
     body instanceof Readable
-      ? Readable.toWeb(body)
-      : (body as ReadableStream<Uint8Array>);
+      ? (Readable.toWeb(body) as unknown as globalThis.ReadableStream<Uint8Array>)
+      : (body as unknown as globalThis.ReadableStream<Uint8Array>);
 
   return {
     stream,
