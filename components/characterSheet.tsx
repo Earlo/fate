@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { LLM_FEATURES_ENABLED } from '@/lib/features';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { useCompletion } from '@ai-sdk/react';
 import Icon from './generic/icon/icon';
@@ -52,6 +53,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   const { completion, complete, isLoading } = useCompletion({
     api: '/api/writeSheet',
   });
+  const llmDisabled = !LLM_FEATURES_ENABLED;
   const callOpenAi = async (field: string) => {
     if (!field) {
       console.error('No field provided');
@@ -173,11 +175,24 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             required
           >
             {(state === 'create' || state === 'edit') && (
-              <Icon
-                className="text-stone-100 duration-200 hover:text-gray-400"
-                onClick={async () => callOpenAi('description')}
-                icon="sparkles"
-              />
+              <button
+                type="button"
+                onClick={
+                  llmDisabled ? undefined : async () => callOpenAi('description')
+                }
+                disabled={llmDisabled}
+                title={
+                  llmDisabled
+                    ? 'LLM features are temporarily disabled'
+                    : 'Generate description'
+                }
+                className={cn(
+                  'text-stone-100 duration-200 hover:text-gray-400',
+                  llmDisabled && 'cursor-not-allowed opacity-40 hover:text-stone-100',
+                )}
+              >
+                <Icon icon="sparkles" />
+              </button>
             )}
             {state === 'toggle' && (
               <VisibilityToggle

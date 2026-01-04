@@ -1,5 +1,6 @@
 'use client';
 import useDebounce from '@/hooks/debounce';
+import { LLM_FEATURES_ENABLED } from '@/lib/features';
 import { cn, updateVisibilityList } from '@/lib/utils';
 import { useCompletion } from '@ai-sdk/react';
 import { FC, useEffect, useState } from 'react';
@@ -40,6 +41,8 @@ const Note: FC<NoteProps> = ({
     api: '/api/writeNote',
   });
   const isDisabled = disabled || isLoading;
+  const llmDisabled = !LLM_FEATURES_ENABLED;
+  const aiButtonDisabled = llmDisabled || isLoading;
   const visible = note.visibleIn.includes(campaignId);
   const toggle = state === 'toggle';
   const anyWidgets = !(!isDisabled || (toggle && campaignId));
@@ -87,7 +90,15 @@ const Note: FC<NoteProps> = ({
           )}
         />
         {!isDisabled && (
-          <IconButton onClick={async () => await callOpenAi(name)} />
+          <IconButton
+            onClick={async () => await callOpenAi(name)}
+            disabled={aiButtonDisabled}
+            title={
+              llmDisabled
+                ? 'LLM features are temporarily disabled'
+                : 'Generate note content'
+            }
+          />
         )}
         {!isDisabled && <IconButton onClick={deleteNote} icon="close" />}
         {toggle && campaignId && (

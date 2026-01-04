@@ -1,6 +1,7 @@
 'use client';
 import { uploadImage } from '@/lib/storage/client';
 import { cn } from '@/lib/utils';
+import { LLM_FEATURES_ENABLED } from '@/lib/features';
 import Image from 'next/image';
 import { ChangeEvent, FC, ReactNode, useRef, useState } from 'react';
 import Icon from './icon/icon';
@@ -27,6 +28,7 @@ const ImageUploader: FC<ImageUploaderProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const llmDisabled = !LLM_FEATURES_ENABLED;
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setIsLoading(true);
@@ -102,10 +104,26 @@ const ImageUploader: FC<ImageUploaderProps> = ({
                   <Icon icon="upload" />
                 </div>
                 <div
-                  className="bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-r-full bg-neutral-900 transition-opacity"
-                  onClick={() => !disabled && onGenerateImage()}
+                  className={cn(
+                    'bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-r-full bg-neutral-900 transition-opacity',
+                    llmDisabled && 'cursor-not-allowed opacity-40 hover:bg-opacity-40',
+                  )}
+                  onClick={() => {
+                    if (llmDisabled || disabled) return;
+                    void onGenerateImage();
+                  }}
+                  title={
+                    llmDisabled
+                      ? 'LLM features are temporarily disabled'
+                      : 'Generate portrait'
+                  }
                 >
-                  <Icon icon="sparkles" />
+                  <Icon
+                    icon="sparkles"
+                    className={cn(
+                      llmDisabled && 'text-stone-400',
+                    )}
+                  />
                 </div>
               </div>
             )
