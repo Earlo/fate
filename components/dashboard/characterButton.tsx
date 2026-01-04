@@ -45,21 +45,22 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
       rightContent={dragHandle}
     />
   ) : (
-    <Image
+    <div
+      className={cn('relative h-full w-full', {
+        'blur filter': campaignId
+          ? !character.icon?.visibleIn?.includes(campaignId)
+          : false,
+      })}
       onClick={onClick}
-      src={character.icon?.url || '/blank_user.png'}
-      alt={character.name?.text || 'Character'}
-      width={64}
-      height={64}
-      className={cn(
-        'shrink-0 rounded-full transition-colors duration-200 hover:scale-105 hover:cursor-pointer hover:border-2 hover:border-gray-400 hover:shadow-lg',
-        {
-          'blur filter': campaignId
-            ? !character.icon?.visibleIn?.includes(campaignId)
-            : false,
-        },
-      )}
-    />
+    >
+      <Image
+        src={character.icon?.url || '/blank_user.png'}
+        alt={character.name?.text || 'Character'}
+        fill
+        sizes="100vw"
+        className="rounded-lg object-cover transition-transform duration-200 hover:scale-105 hover:cursor-pointer"
+      />
+    </div>
   );
 
 export default CharacterButton;

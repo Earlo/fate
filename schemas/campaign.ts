@@ -28,6 +28,7 @@ export type GroupT = {
   layout?: {
     mode: 'list' | 'grid';
     dimensions: { w: number; h: number };
+    backgroundImage?: string;
   };
   children: GroupT[];
   visible: boolean;

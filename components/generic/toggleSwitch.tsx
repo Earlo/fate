@@ -13,26 +13,25 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   className = '',
 }) => {
   return (
-    <label className={`flex cursor-pointer items-center ${className}`}>
+    <label
+      className={cn(
+        'flex cursor-pointer items-center justify-between gap-3',
+        className,
+      )}
+    >
+      <span className="font-archivo-black text-xs uppercase tracking-[0.08em] text-neutral-900">
+        {label}
+      </span>
       <div className="relative">
         <input
           type="checkbox"
-          className="sr-only"
+          className="peer sr-only"
           checked={checked}
           onChange={onChange}
         />
-        <div
-          className={cn('block h-8 w-14 rounded-full bg-gray-600', {
-            'bg-green-400': checked,
-          })}
-        />
-        <div
-          className={`dot absolute top-1 left-1 h-6 w-6 rounded-full bg-stone-100 transition ${checked ? 'translate-x-full border-gray-600' : 'translate-x-0 border-gray-400'}`}
-        />
+        <div className="block h-6 w-10 rounded-full bg-neutral-300 transition-colors peer-checked:bg-neutral-900" />
+        <div className="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-stone-100 transition-transform peer-checked:translate-x-4" />
       </div>
-      {label && (
-        <span className="ml-3 text-sm font-medium text-gray-900">{label}</span>
-      )}
     </label>
   );
 };

@@ -133,6 +133,7 @@ export const blankGroup: Omit<PopulatedCampaignT['groups'][0], 'id'> = {
       w: 3,
       h: 3,
     },
+    backgroundImage: '',
   },
   characters: [],
   children: [],

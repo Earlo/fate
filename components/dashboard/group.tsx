@@ -11,14 +11,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { uploadImage } from '@/lib/storage/client';
 import { PopulatedGroup } from '@/schemas/campaign';
 import { CharacterSheetT } from '@/schemas/sheet';
 import {
+  ChangeEvent,
   DragEvent,
   FC,
   Fragment,
   MouseEvent,
   useContext,
+  useRef,
   useState,
 } from 'react';
 import LabeledInput from '../generic/labeledInput';
@@ -33,6 +36,35 @@ const GroupSettings: FC<{
 }> = ({ group, onChange, setEditing }) => {
   const [newName, setNewName] = useState(group.name);
   const layoutDimensions = group.layout?.dimensions ?? { w: 3, h: 3 };
+  const [isBackgroundUploading, setIsBackgroundUploading] = useState(false);
+  const backgroundInputRef = useRef<HTMLInputElement>(null);
+
+  const updateLayout = (
+    updates: Partial<NonNullable<PopulatedGroup['layout']>>,
+  ) => {
+    const baseLayout =
+      group.layout?.mode === 'grid'
+        ? group.layout
+        : { mode: 'grid' as const, dimensions: layoutDimensions };
+    onChange({ ...group, layout: { ...baseLayout, ...updates } });
+  };
+
+  const handleBackgroundFileChange = async (
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setIsBackgroundUploading(true);
+    try {
+      const url = await uploadImage(file, 'groups');
+      updateLayout({ backgroundImage: url });
+    } catch (error) {
+      console.error('Group background upload failed', error);
+    } finally {
+      setIsBackgroundUploading(false);
+      event.target.value = '';
+    }
+  };
   const handleSave = () => {
     setEditing(false);
     const updatedGroup = { ...group, name: newName };
@@ -68,38 +100,44 @@ const GroupSettings: FC<{
         value={newName}
         onChange={(e) => setNewName(e.target.value)}
       />
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <ToggleSwitch
-            checked={group.visible}
-            onChange={() => toggleProperty('visible')}
-            label="Visible"
-          />
-          <ToggleSwitch
-            checked={group.public}
-            onChange={() => toggleProperty('public')}
-            label="Public"
-            className="ml-4"
-          />
-        </div>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <ToggleSwitch
+          checked={group.visible}
+          onChange={() => toggleProperty('visible')}
+          label="Visible"
+          className="px-1 py-1"
+        />
+        <ToggleSwitch
+          checked={group.public}
+          onChange={() => toggleProperty('public')}
+          label="Public"
+          className="px-1 py-1"
+        />
+        <ToggleSwitch
+          checked={group.layout?.mode === 'grid'}
+          onChange={() => {
+            const nextMode = group.layout?.mode === 'grid' ? 'list' : 'grid';
+            const backgroundImage = group.layout?.backgroundImage;
+            const nextLayout =
+              nextMode === 'grid'
+                ? {
+                    mode: 'grid' as const,
+                    dimensions: group.layout?.dimensions ?? { w: 3, h: 3 },
+                    backgroundImage,
+                  }
+                : group.layout?.dimensions
+                  ? {
+                      mode: 'list' as const,
+                      dimensions: group.layout.dimensions,
+                      backgroundImage,
+                    }
+                  : undefined;
+            onChange({ ...group, layout: nextLayout });
+          }}
+          label="Grid Layout"
+          className="px-1 py-1 sm:col-span-2"
+        />
       </div>
-      <ToggleSwitch
-        checked={group.layout?.mode === 'grid'}
-        onChange={() => {
-          const nextMode = group.layout?.mode === 'grid' ? 'list' : 'grid';
-          const nextLayout =
-            nextMode === 'grid'
-              ? {
-                  mode: 'grid' as const,
-                  dimensions: group.layout?.dimensions ?? { w: 3, h: 3 },
-                }
-              : group.layout?.dimensions
-                ? { mode: 'list' as const, dimensions: group.layout.dimensions }
-                : undefined;
-          onChange({ ...group, layout: nextLayout });
-        }}
-        label="Grid Layout"
-      />
       {group.layout?.mode === 'grid' && (
         <div className="grid grid-cols-2 gap-2">
           <LabeledInput
@@ -107,14 +145,10 @@ const GroupSettings: FC<{
             name="width"
             value={layoutDimensions.w}
             onChange={(e) =>
-              onChange({
-                ...group,
-                layout: {
-                  mode: 'grid',
-                  dimensions: {
-                    ...layoutDimensions,
-                    w: parseInt(e.target.value),
-                  },
+              updateLayout({
+                dimensions: {
+                  ...layoutDimensions,
+                  w: parseInt(e.target.value),
                 },
               })
             }
@@ -124,21 +158,47 @@ const GroupSettings: FC<{
             name="height"
             value={layoutDimensions.h}
             onChange={(e) =>
-              onChange({
-                ...group,
-                layout: {
-                  mode: 'grid',
-                  dimensions: {
-                    ...layoutDimensions,
-                    h: parseInt(e.target.value),
-                  },
+              updateLayout({
+                dimensions: {
+                  ...layoutDimensions,
+                  h: parseInt(e.target.value),
                 },
               })
             }
           />
+          <div className="col-span-2">
+            <LabeledInput
+              name="Background Image URL"
+              value={group.layout?.backgroundImage ?? ''}
+              onChange={(e) =>
+                updateLayout({ backgroundImage: e.target.value })
+              }
+              placeholder="Paste an image URL"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleBackgroundFileChange}
+              ref={backgroundInputRef}
+              className="hidden"
+              disabled={isBackgroundUploading}
+            />
+            <div className="mt-2 flex gap-2">
+              <Button
+                label={isBackgroundUploading ? 'Uploading...' : 'Upload Map'}
+                onClick={() => backgroundInputRef.current?.click()}
+                disabled={isBackgroundUploading}
+              />
+              <Button
+                label="Clear"
+                onClick={() => updateLayout({ backgroundImage: '' })}
+                disabled={!group.layout?.backgroundImage}
+              />
+            </div>
+          </div>
         </div>
       )}
-      <div className="flex justify-end space-x-2">
+      <div className="mt-3 flex flex-wrap gap-3">
         <Button label="Cancel" onClick={handleCancel} />
         <Button label="Save" onClick={handleSave} />
         <Button label="Delete" onClick={handleDelete} />
@@ -265,6 +325,7 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
           campaignId={campaignId}
           state={state}
           dimensions={group.layout?.dimensions ?? { w: 3, h: 3 }}
+          backgroundImage={group.layout?.backgroundImage}
           onReorder={(updatedCharacters) =>
             onChange({ ...group, characters: updatedCharacters })
           }
@@ -497,6 +558,7 @@ const CharacterGrid: FC<{
   campaignId: string;
   state: 'admin' | 'player' | 'view';
   dimensions: { w: number; h: number };
+  backgroundImage?: string;
   onReorder: (
     characters: {
       sheet: CharacterSheetT;
@@ -509,11 +571,20 @@ const CharacterGrid: FC<{
   campaignId,
   state,
   dimensions = { w: 3, h: 3 },
+  backgroundImage,
   onReorder,
 }) => {
   const { setBigSheet } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
+  const backgroundStyle = backgroundImage
+    ? {
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }
+    : undefined;
   const grid = Array.from({ length: dimensions.h }, () =>
     Array(dimensions.w).fill(null),
   );
@@ -579,42 +650,53 @@ const CharacterGrid: FC<{
     event.preventDefault();
   };
 
+  const cells = grid.flatMap((row, y) =>
+    row.map((character, x) => ({ character, x, y })),
+  );
+
   return (
-    <div className="flex flex-col">
-      {grid.map((row, y) => (
-        <div key={y} className="flex">
-          {row.map((character, x) => (
+    <div
+      className="grid w-full overflow-hidden rounded-md"
+      style={{
+        ...backgroundStyle,
+        gridTemplateColumns: `repeat(${dimensions.w}, minmax(0, 1fr))`,
+      }}
+    >
+      {cells.map(({ character, x, y }) => (
+        <div
+          key={`${x}-${y}`}
+          className="aspect-square"
+          onDragOver={handleDragOver}
+          onDrop={(event) => handleDrop(event, x, y)}
+        >
+          {character ? (
             <div
-              key={x}
-              className="flex-1"
-              onDragOver={handleDragOver}
-              onDrop={(event) => handleDrop(event, x, y)}
+              className="h-full w-full overflow-hidden"
+              draggable={isAdmin}
+              onDragStart={(event) =>
+                handleDragStart(event, character.sheet.id)
+              }
             >
-              {character ? (
-                <div
-                  draggable={isAdmin}
-                  onDragStart={(event) =>
-                    handleDragStart(event, character.sheet.id)
-                  }
-                >
-                  <CharacterButton
-                    compact
-                    character={character.sheet}
-                    onClick={() => {
-                      setBigSheet({
-                        sheet: character.sheet,
-                        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-                        campaignId,
-                      });
-                    }}
-                    campaignId={isAdmin || isPlayer ? undefined : campaignId}
-                  />
-                </div>
-              ) : (
-                <div className="h-16 w-16 rounded-lg border-2 border-dashed bg-gray-600" />
-              )}
+              <CharacterButton
+                compact
+                character={character.sheet}
+                onClick={() => {
+                  setBigSheet({
+                    sheet: character.sheet,
+                    state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+                    campaignId,
+                  });
+                }}
+                campaignId={isAdmin || isPlayer ? undefined : campaignId}
+              />
             </div>
-          ))}
+          ) : (
+            <div
+              className={`h-full w-full rounded-lg border-2 border-dashed ${
+                backgroundImage ? 'bg-gray-600/40' : 'bg-gray-600'
+              }`}
+            />
+          )}
         </div>
       ))}
     </div>

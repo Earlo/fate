@@ -47,6 +47,10 @@ export const resolveStorageProvider = (): StorageProvider => {
     return 'cloudinary';
   }
 
+  if (process.env.NODE_ENV !== 'production' && hasGarageConfig()) {
+    return 'garage';
+  }
+
   if (hasGarageConfig()) return 'garage';
   if (hasCloudinaryConfig()) return 'cloudinary';
 
