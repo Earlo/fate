@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: fate
       POSTGRES_DB: fate
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data-dev:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     ports:
       - '5432:5432'
@@ -23,13 +23,33 @@ services:
       DATABASE_URL: postgresql://fate:fate@db:5432/fate
       NEXTAUTH_URL: http://localhost:3000
       NEXTAUTH_SECRET: devsecret
+      GARAGE_ENDPOINT: ${GARAGE_ENDPOINT:-http://garage:3900}
+      GARAGE_REGION: ${GARAGE_REGION:-garage}
+      GARAGE_BUCKET: ${GARAGE_BUCKET:-fate-images}
+      GARAGE_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID:-}
+      GARAGE_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY:-}
     ports:
       - '3000:3000'
     depends_on:
       - db
+      - garage
     volumes:
       - .:/app:cached
     command: ['npm', 'run', 'dev', '--', '-H', '0.0.0.0', '-p', '3000']
 
+  garage:
+    image: dxflrs/garage:v2.1.0
+    restart: unless-stopped
+    command: ['/garage', '-c', '/garage.toml', 'server']
+    volumes:
+      - garage-data:/var/lib/garage
+      - ./garage/garage.toml:/garage.toml:ro
+    ports:
+      - '3900:3900' # S3-compatible API
+      - '3901:3901' # RPC
+      - '3902:3902' # K2V API (optional, kept for tooling)
+      - '3903:3903' # Admin API
+
 volumes:
-  postgres-data:
+  postgres-data-dev:
+  garage-data:

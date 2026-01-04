@@ -1,8 +1,8 @@
-import { handleUploadFromUrl } from '@/lib/cloudinary';
+import { uploadFromUrl } from '@/lib/storage/server';
 import { removeKey } from '@/lib/utils';
 import { NextResponse, type NextRequest } from 'next/server';
 import OpenAIClient from 'openai';
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const openai = new OpenAIClient({
   organization: process.env.OPENAI_ORGANIZATION || '',
@@ -56,9 +56,9 @@ export async function POST(req: NextRequest) {
   }
 
   const imageUrl = response.data[0].url;
-  const cloudinaryUrl = await handleUploadFromUrl(imageUrl, 'characters');
-  console.log('cloudinary', cloudinaryUrl);
-  return NextResponse.json(cloudinaryUrl, {
+  const uploadResult = await uploadFromUrl(imageUrl, 'characters');
+  console.log('storage upload', uploadResult.url);
+  return NextResponse.json(uploadResult.url, {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   });

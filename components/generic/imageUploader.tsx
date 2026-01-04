@@ -1,6 +1,6 @@
 'use client';
-import { handleUpload } from '@/lib/cloudinary';
 import { cn } from '@/lib/utils';
+import { uploadImage } from '@/lib/storage/client';
 import Image from 'next/image';
 import { ChangeEvent, FC, ReactNode, useRef, useState } from 'react';
 import Icon from './icon/icon';
@@ -30,12 +30,17 @@ const ImageUploader: FC<ImageUploaderProps> = ({
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setIsLoading(true);
-    const file = e.target.files ? e.target.files[0] : null;
-    if (file) {
-      const url = await handleUpload(file, path);
-      setIcon(url);
+    try {
+      const file = e.target.files ? e.target.files[0] : null;
+      if (file) {
+        const url = await uploadImage(file, path);
+        setIcon(url);
+      }
+    } catch (error) {
+      console.error('Image upload failed', error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const onGenerateImage = async () => {

@@ -68,13 +68,19 @@ export async function handleGetById<T>(
 export async function handleUpdateById<T>(
   req: NextRequest,
   params: IdParams,
-  updater: (id: string, updates: Partial<T>) => Promise<T>,
+  updater: (id: string, updates: Partial<T>) => Promise<T | null>,
   errorMessage: string,
 ) {
   const { id } = await params;
   try {
     const updates: Partial<T> = await req.json();
     const updated = await updater(id, updates);
+    if (!updated) {
+      return NextResponse.json(
+        { error: errorMessage },
+        { status: 404, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
     return NextResponse.json(updated, {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
