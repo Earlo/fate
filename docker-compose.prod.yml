@@ -10,6 +10,11 @@ services:
       - postgres-data-prod:/var/lib/postgresql/data
     ports:
       - '5433:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U fate -d fate']
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build:
@@ -26,13 +31,26 @@ services:
       GARAGE_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID:-}
       GARAGE_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY:-}
     env_file:
-      - .env.local
+      - .env
     ports:
       - '3000:3000'
     depends_on:
-      - db
-      - garage
+      db:
+        condition: service_healthy
+      garage:
+        condition: service_healthy
     command: ['sh', '-c', 'npm run build && npm run start']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3000').then(() => process.exit(0)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   garage:
     image: dxflrs/garage:v2.1.0
@@ -46,6 +64,11 @@ services:
       - '3901:3901'
       - '3902:3902'
       - '3903:3903'
+    healthcheck:
+      test: ['CMD', '/garage', '-c', '/garage.toml', 'status']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres-data-prod:

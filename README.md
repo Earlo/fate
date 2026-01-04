@@ -36,6 +36,15 @@ This software isn't meant to be a virtual table top simulator or an online RPG p
 - Demo is running at https://fatecore.opensauce.fi
 - For running your own instance, check INSTALL.md (thanks to [John Helmuth](https://github.com/johnhelmuth) for writing the instructions)
 
+## Production Docker Compose
+
+`docker-compose.prod.yml` builds the app and runs Prisma migrations on startup. Set `NEXTAUTH_URL`, `NEXTAUTH_SECRET`,
+`DATABASE_URL`, and storage-related variables in `.env`, then run:
+
+```bash
+docker compose -f docker-compose.prod.yml up --build -d
+```
+
 ## Contact
 
 if you want to contact me, you can do so by writing email to: fatecore@opensauce.fi

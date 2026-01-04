@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    name: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Tests
+        run: npm run test
+      - name: Build
+        env:
+          DATABASE_URL: postgresql://fate:fate@localhost:5432/fate
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: ci-secret
+          GARAGE_ENDPOINT: http://localhost:3900
+          GARAGE_REGION: garage
+          GARAGE_BUCKET: fate-images
+          GARAGE_ACCESS_KEY_ID: fake
+          GARAGE_SECRET_ACCESS_KEY: fake
+        run: npm run build:ci
+      - name: Secret scan
+        run: |
+          matches=$(rg -n --hidden --glob '!.git/**' --glob '!node_modules/**' --glob '!.next/**' \
+            -e 'OPENAI_API_KEY=.+$' \
+            -e 'CLOUDINARY_SECRET=.+$' \
+            -e 'GARAGE_SECRET_ACCESS_KEY=.+$' \
+            -e 'NEXTAUTH_SECRET=.+$' \
+            -e 'sk-[A-Za-z0-9]{20,}' \
+            . || true)
+          if [ -n "$matches" ]; then
+            echo "$matches"
+            exit 1
+          fi

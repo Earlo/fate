@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "prisma migrate deploy --config prisma.config.ts && next build",
+    "build:ci": "next build",
     "db:deploy": "prisma migrate deploy --config prisma.config.ts",
     "db:push": "prisma db push --config prisma.config.ts",
     "db:studio": "prisma studio --config prisma.config.ts",
@@ -12,7 +13,10 @@
     "lint": "eslint .",
     "prettier": "prettier --write .",
     "prisma:generate": "prisma generate --config prisma.config.ts",
-    "start": "next start"
+    "start": "next start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/openai": "3.0.2",
@@ -55,7 +59,8 @@
     "prisma": "7.2.0",
     "tailwind-merge": "3.4.0",
     "tailwindcss": "4.1.18",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "4.0.16"
   },
   "engines": {
     "node": "24.x || 25.x"

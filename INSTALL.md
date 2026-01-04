@@ -3,19 +3,19 @@
 These instructions will get the Fate Character Sheet Manager software running on your local machine so that you can
 help with development.
 
-1. Install External Dependencies.
-2. Install Internal Dependencies.
+1. Install external dependencies.
+2. Install internal dependencies.
 3. Configure the software.
 4. Run the code and visit the site in your browser.
 
-## Install External Dependencies.
+## Install external dependencies
 
 The Fate Character Sheet Manager requires the following pieces of software be run locally.
 
-- Nodejs - Any version greater than or equal to 18.
-- PostgreSQL 14+.
+- Node.js - Any version greater than or equal to 18.
+- Docker Desktop (or Docker Engine + Docker Compose).
 
-### Installation for Mac OS X Ventura on an M1 processor.
+### Installation notes for macOS (M1+)
 
 #### Nodejs
 
@@ -40,23 +40,11 @@ nvm install 24
 nvm use 24
 ```
 
-#### PostgreSQL
-
-Use [Homebrew](https://docs.brew.sh) to install PostgreSQL on your workstation. Follow [Homebrew's
-installation instructions](https://docs.brew.sh/Installation) to install it, then use these commands to install and start PostgreSQL:
-
-```bash
-brew install postgresql@16
-brew services start postgresql@16
-createdb fate
-psql -d fate -f db/schema.sql
-```
-
 ### Installation for other operating system environments.
 
 TODO: Somebody with access to other operating system environments needs to write this section.
 
-## Install Internal Dependencies
+## Install internal dependencies
 
 Open a terminal or command line utility and navigate to the directory where the Fate Character Sheet Manager has been placed.
 
@@ -66,7 +54,7 @@ Run the following command to install the internal dependencies.
 npm install
 ```
 
-## Configure the software.
+## Configure the software
 
 In the same directory, make a copy of the file `.env.example` named `.env`
 
@@ -74,15 +62,10 @@ In the same directory, make a copy of the file `.env.example` named `.env`
 cp .env.example .env
 ```
 
-Edit the `.env` file so the line for the `DATABASE_URL` variable looks like this:
+For local development with Docker Compose, the database and Garage services are provided by containers, so you can leave
+`DATABASE_URL` empty in `.env`. If you want image uploads, follow the Garage setup below or configure Cloudinary.
 
-```bash
-DATABASE_URL=postgresql://localhost:5432/fate
-```
-
-All other variables can be left empty at this time.
-
-## Run the code and visit the site in your browser.
+## Run the code and visit the site in your browser
 
 Run this command to get the Fate Character Sheet Manager software running in a local development environment.
 
@@ -97,3 +80,19 @@ Open the URL `http://localhost:3000` in a browser on your workstation!
 The dev stack now ships a Garage v2.1.0 object storage service for hosting uploaded images. Follow the one-time setup in `garage/README.md` to initialize the Garage node, create an access key/secret, and add the bucket that the app expects. Then set the `GARAGE_*` variables in your `.env` before running `docker compose -f docker-compose.dev.yml up`.
 
 If you prefer Cloudinary, set `STORAGE_PROVIDER=cloudinary` and provide your `NEXT_PUBLIC_CLOUDINARY_*` values instead.
+
+## Production Docker Compose
+
+The production compose file builds the app and runs `npm run build` (including Prisma migrations) before starting the server.
+
+1. Copy `.env.example` to `.env` and fill in the production values:
+   - `NEXTAUTH_URL` and `NEXTAUTH_SECRET`
+   - `DATABASE_URL` (must point to the `db` container or an external Postgres instance)
+   - `GARAGE_*` or `STORAGE_PROVIDER=cloudinary` with Cloudinary variables
+2. Start the stack:
+
+```bash
+docker compose -f docker-compose.prod.yml up --build -d
+```
+
+The app listens on `http://localhost:3000`.
