@@ -20,14 +20,14 @@ let bucketReady: Promise<void> | null = null;
 const hasGarageConfig = () =>
   Boolean(
     process.env.GARAGE_ENDPOINT &&
-      process.env.GARAGE_ACCESS_KEY_ID &&
-      process.env.GARAGE_SECRET_ACCESS_KEY,
+    process.env.GARAGE_ACCESS_KEY_ID &&
+    process.env.GARAGE_SECRET_ACCESS_KEY,
   );
 
 const hasCloudinaryConfig = () =>
   Boolean(
     process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS,
+    process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS,
   );
 
 export const resolveStorageProvider = (): StorageProvider => {
@@ -50,7 +50,9 @@ export const resolveStorageProvider = (): StorageProvider => {
   if (hasGarageConfig()) return 'garage';
   if (hasCloudinaryConfig()) return 'cloudinary';
 
-  throw new Error('No storage provider configured. Set Garage or Cloudinary env.');
+  throw new Error(
+    'No storage provider configured. Set Garage or Cloudinary env.',
+  );
 };
 
 const getClient = () => {
@@ -172,7 +174,9 @@ const uploadFileToCloudinary = async (
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS;
 
   if (!cloudName || !uploadPreset) {
-    throw new Error('Cloudinary not configured. Set NEXT_PUBLIC_CLOUDINARY_* env vars.');
+    throw new Error(
+      'Cloudinary not configured. Set NEXT_PUBLIC_CLOUDINARY_* env vars.',
+    );
   }
 
   const formData = new FormData();
@@ -215,7 +219,9 @@ const uploadFromUrlToCloudinary = async (
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS;
 
   if (!cloudName || !uploadPreset) {
-    throw new Error('Cloudinary not configured. Set NEXT_PUBLIC_CLOUDINARY_* env vars.');
+    throw new Error(
+      'Cloudinary not configured. Set NEXT_PUBLIC_CLOUDINARY_* env vars.',
+    );
   }
 
   const formData = new FormData();
@@ -285,7 +291,9 @@ export const getObjectFromGarage = async (key: string) => {
 
   const stream: globalThis.ReadableStream<Uint8Array> =
     body instanceof Readable
-      ? (Readable.toWeb(body) as unknown as globalThis.ReadableStream<Uint8Array>)
+      ? (Readable.toWeb(
+          body,
+        ) as unknown as globalThis.ReadableStream<Uint8Array>)
       : (body as unknown as globalThis.ReadableStream<Uint8Array>);
 
   return {
