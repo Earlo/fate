@@ -8,9 +8,10 @@ export const runtime = 'nodejs';
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { key: string[] } },
+  { params }: { params: Promise<{ key: string[] }> },
 ) {
-  const key = params.key.join('/');
+  const { key: keyParts } = await params;
+  const key = keyParts.join('/');
 
   try {
     if (resolveStorageProvider() !== 'garage') {
