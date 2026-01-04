@@ -87,35 +87,7 @@ All other variables can be left empty at this time.
 Run this command to get the Fate Character Sheet Manager software running in a local development environment.
 
 ```bash
-npm run dev
-```
-
-If it looks similar to this, then you are ready for the next step.
-
-```bash
-% npm run dev
-
-> fate@0.1.0 dev
-> next dev
-
-- info Loaded env from /Users/johnhelmuth/src/fate/.env
-- ready started server on [::]:3000, url: http://localhost:3000
-- event compiled client and server successfully in 97 ms (18 modules)
-- wait compiling...
-- event compiled client and server successfully in 91 ms (18 modules)
-- info Loaded env from /Users/johnhelmuth/src/fate/.env
-- info Loaded env from /Users/johnhelmuth/src/fate/.env
-- wait compiling...
-- event compiled successfully in 243 ms (205 modules)
-- warn Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-- wait compiling / (client and server)...
-- event compiled client and server successfully in 65 ms (351 modules)
-- wait compiling /api/auth/[...nextauth] (client and server)...
-- event compiled successfully in 19 ms (131 modules)
-[next-auth][warn][NEXTAUTH_URL]
-https://next-auth.js.org/warnings#nextauth_url
-[next-auth][warn][NO_SECRET]
-https://next-auth.js.org/warnings#no_secret
+docker compose -f docker-compose.dev.yml up --build
 ```
 
 Open the URL `http://localhost:3000` in a browser on your workstation!
