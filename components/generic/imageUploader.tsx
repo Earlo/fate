@@ -1,7 +1,7 @@
 'use client';
+import { LLM_FEATURES_ENABLED } from '@/lib/features';
 import { uploadImage } from '@/lib/storage/client';
 import { cn } from '@/lib/utils';
-import { LLM_FEATURES_ENABLED } from '@/lib/features';
 import Image from 'next/image';
 import { ChangeEvent, FC, ReactNode, useRef, useState } from 'react';
 import Icon from './icon/icon';
@@ -106,7 +106,8 @@ const ImageUploader: FC<ImageUploaderProps> = ({
                 <div
                   className={cn(
                     'bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-r-full bg-neutral-900 transition-opacity',
-                    llmDisabled && 'cursor-not-allowed opacity-40 hover:bg-opacity-40',
+                    llmDisabled &&
+                      'hover:bg-opacity-40 cursor-not-allowed opacity-40',
                   )}
                   onClick={() => {
                     if (llmDisabled || disabled) return;
@@ -120,9 +121,7 @@ const ImageUploader: FC<ImageUploaderProps> = ({
                 >
                   <Icon
                     icon="sparkles"
-                    className={cn(
-                      llmDisabled && 'text-stone-400',
-                    )}
+                    className={cn(llmDisabled && 'text-stone-400')}
                   />
                 </div>
               </div>

@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
 import { LLM_FEATURES_ENABLED } from '@/lib/features';
+import { cn } from '@/lib/utils';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { useCompletion } from '@ai-sdk/react';
 import Icon from './generic/icon/icon';
@@ -178,7 +178,9 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
               <button
                 type="button"
                 onClick={
-                  llmDisabled ? undefined : async () => callOpenAi('description')
+                  llmDisabled
+                    ? undefined
+                    : async () => callOpenAi('description')
                 }
                 disabled={llmDisabled}
                 title={
@@ -188,7 +190,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
                 }
                 className={cn(
                   'text-stone-100 duration-200 hover:text-gray-400',
-                  llmDisabled && 'cursor-not-allowed opacity-40 hover:text-stone-100',
+                  llmDisabled &&
+                    'cursor-not-allowed opacity-40 hover:text-stone-100',
                 )}
               >
                 <Icon icon="sparkles" />

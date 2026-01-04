@@ -19,7 +19,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
         className,
       )}
     >
-      <span className="font-archivo-black text-xs uppercase tracking-[0.08em] text-neutral-900">
+      <span className="font-archivo-black text-xs tracking-[0.08em] text-neutral-900 uppercase">
         {label}
       </span>
       <div className="relative">
