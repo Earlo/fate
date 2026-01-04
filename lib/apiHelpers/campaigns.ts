@@ -13,7 +13,7 @@ export const getCampaignById = async (
   const response = await fetchJson<PopulatedCampaignT | { error: string }>(
     `/api/campaigns/${id}`,
   );
-  if (response.error) {
+  if ('error' in response) {
     throw new Error(response.error);
   }
   return response;

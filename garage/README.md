@@ -5,7 +5,7 @@ This repository ships a single-node Garage 2.1.0 service for storing images duri
 ## One-time initialization
 
 1) Start the service: `docker compose -f docker-compose.dev.yml up garage -d`
-2) Enter the container to initialize layout, create an access key, and create/allow the bucket (commands may vary slightly per Garage release; run them with `-c /etc/garage/garage.toml`):
+2) Enter the container to initialize layout, create an access key, and create/allow the bucket (commands may vary slightly per Garage release; run them with `-c /garage.toml`):
    - `garage status` (ensures the server is reachable)
    - `garage layout init --replication 1`
    - `garage layout assign --node $(garage node id) --zone dev --capacity 1`

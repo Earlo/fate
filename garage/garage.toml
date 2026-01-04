@@ -1,11 +1,12 @@
 metadata_dir = "/var/lib/garage/meta"
 data_dir = "/var/lib/garage/data"
 db_engine = "lmdb"
+replication_factor = 1
 
 # Single-node dev setup. Keep the RPC secret stable so the layout commands work after restarts.
 rpc_bind_addr = "0.0.0.0:3901"
 rpc_public_addr = "garage:3901"
-rpc_secret = "dev-super-secret-change-me"
+rpc_secret = "3b7c5a9f2d4e6c1a8f0b9d7c5e3a2f1b4c6d8e0f2a5b7c9d1e3f5a7b9c0d2e4f"
 
 [s3_api]
 api_bind_addr = "0.0.0.0:3900"

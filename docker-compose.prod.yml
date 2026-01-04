@@ -7,9 +7,9 @@ services:
       POSTGRES_PASSWORD: fate
       POSTGRES_DB: fate
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data-prod:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
+      - '5433:5432'
 
   app:
     build:
@@ -20,13 +20,33 @@ services:
       DATABASE_URL: postgresql://fate:fate@db:5432/fate
       NEXTAUTH_URL: http://localhost:3000
       NEXTAUTH_SECRET: devsecret
+      GARAGE_ENDPOINT: ${GARAGE_ENDPOINT:-http://garage:3900}
+      GARAGE_REGION: ${GARAGE_REGION:-garage}
+      GARAGE_BUCKET: ${GARAGE_BUCKET:-fate-images}
+      GARAGE_ACCESS_KEY_ID: ${GARAGE_ACCESS_KEY_ID:-}
+      GARAGE_SECRET_ACCESS_KEY: ${GARAGE_SECRET_ACCESS_KEY:-}
     env_file:
       - .env.local
     ports:
       - '3000:3000'
     depends_on:
       - db
+      - garage
     command: ['sh', '-c', 'npm run build && npm run start']
 
+  garage:
+    image: dxflrs/garage:v2.1.0
+    restart: unless-stopped
+    command: ['/garage', '-c', '/garage.toml', 'server']
+    volumes:
+      - garage-data-prod:/var/lib/garage
+      - ./garage/garage.toml:/garage.toml:ro
+    ports:
+      - '3900:3900'
+      - '3901:3901'
+      - '3902:3902'
+      - '3903:3903'
+
 volumes:
-  postgres-data:
+  postgres-data-prod:
+  garage-data-prod:
