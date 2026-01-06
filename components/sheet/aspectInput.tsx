@@ -38,6 +38,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
     ]);
   };
   const showVisibility = state === 'toggle' && campaignId;
+  const shouldHide = state === 'play' || state === 'view';
   return (
     <EditableList
       title={title}
@@ -65,7 +66,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
                 index < hints.length ? hints[index] : 'Additional Aspect'
               }
               value={
-                state === 'play' && !aspect.visibleIn.includes(campaignId || '')
+                shouldHide && !aspect.visibleIn.includes(campaignId || '')
                   ? '???'
                   : aspect.name
               }

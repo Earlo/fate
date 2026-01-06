@@ -2,6 +2,7 @@
 import { userContext } from '@/app/userProvider';
 import {
   createCharacterSheet,
+  getCharacterSheetById,
   updateCharacterSheet,
 } from '@/lib/apiHelpers/sheets';
 import { upsertById } from '@/lib/utils';
@@ -14,6 +15,7 @@ import {
   FC,
   FormEvent,
   useContext,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -48,6 +50,7 @@ const CharacterForm: FC<CharacterFormProps> = ({
   const creating = state === 'create' && !initialSheet;
   const canSave = editing || creating;
   const { setSheets } = useContext(userContext);
+  const enableRealtime = Boolean(initialSheet?.id && !canSave);
 
   const stripSheetMeta = (sheet: Partial<CharacterSheetT>) => {
     const { id, owner, created, updated, ...rest } = sheet;
@@ -176,6 +179,40 @@ const CharacterForm: FC<CharacterFormProps> = ({
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (!enableRealtime || !initialSheet?.id) return;
+    let isMounted = true;
+    let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
+    const refreshSheet = async () => {
+      try {
+        const updated = await getCharacterSheetById(initialSheet.id);
+        if (isMounted && updated) {
+          setFormState(updated);
+        }
+      } catch (error) {
+        console.error('Could not fetch character sheet:', error);
+      }
+    };
+    const source = new EventSource(`/api/sheets/${initialSheet.id}/stream`);
+    const handleUpdate = () => {
+      if (refreshTimeout) {
+        clearTimeout(refreshTimeout);
+      }
+      refreshTimeout = setTimeout(() => {
+        refreshSheet();
+      }, 200);
+    };
+    source.addEventListener('sheet-updated', handleUpdate);
+    return () => {
+      isMounted = false;
+      source.removeEventListener('sheet-updated', handleUpdate);
+      if (refreshTimeout) {
+        clearTimeout(refreshTimeout);
+      }
+      source.close();
+    };
+  }, [enableRealtime, initialSheet?.id]);
   const handleDelete = async () => {
     setIsSubmitting(true);
     const deletedId = initialSheet?.id;

@@ -36,6 +36,7 @@ const Stunt: React.FC<StuntProps> = ({
     toggle ||
     state === 'create' ||
     state === 'edit';
+  const shouldHide = state === 'play' || state === 'view';
   const anyWidgets = toggle || !disabled;
   return (
     <div
@@ -66,7 +67,7 @@ const Stunt: React.FC<StuntProps> = ({
         )}
         <Input
           name={`${title}-${index}-name`}
-          value={state === 'play' && visible! ? '???' : stunt.name}
+          value={shouldHide && !visible ? '???' : stunt.name}
           placeholder={`${title} Name`}
           required
           disabled={disabled}
@@ -89,7 +90,7 @@ const Stunt: React.FC<StuntProps> = ({
       </div>
       <Input
         name={`${title}-${index}-description`}
-        value={state === 'play' && visible! ? '???' : stunt.description}
+        value={shouldHide && !visible ? '???' : stunt.description}
         placeholder={
           stunt.name ? `Description for ${stunt.name}` : `${title} description`
         }

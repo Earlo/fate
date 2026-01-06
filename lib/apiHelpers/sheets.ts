@@ -7,6 +7,12 @@ export const getCharacterSheetsByUserId = async (
   return fetchJson<CharacterSheetT[]>(`/api/sheets?id=${id}`);
 };
 
+export const getCharacterSheetById = async (
+  id: string,
+): Promise<CharacterSheetT> => {
+  return fetchJson<CharacterSheetT>(`/api/sheets/${id}`);
+};
+
 export const updateCharacterSheet = async (
   id: string,
   sheet: Partial<CharacterSheetT>,

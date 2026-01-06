@@ -280,13 +280,14 @@ const SkillRow = ({
     const nextName = skills[index + 1]?.name || '';
     const visibleIn = skill?.visibleIn || [];
     const isVisible = visibleIn.includes(campaignId);
+    const shouldHide = state === 'play' || state === 'view';
     const firstSlot = index === 0;
     const lastSlot = index === 4;
     return (
       <SkillInput
         skillOptions={skillsList}
         key={index}
-        value={state === 'play' && !isVisible ? '' : name}
+        value={shouldHide && !isVisible ? '' : name}
         disabled={disabled || (!firstSlot && !skills[index - 1] && !skill)}
         onChange={(name) => handleChange(index, name, visibleIn)}
         selectedSkills={selectedSkills}

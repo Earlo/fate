@@ -11,6 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getCharacterSheetById } from '@/lib/apiHelpers/sheets';
 import { uploadImage } from '@/lib/storage/client';
 import { PopulatedGroup } from '@/schemas/campaign';
 import { CharacterSheetT } from '@/schemas/sheet';
@@ -401,6 +402,24 @@ const CharacterList: FC<{
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
 
+  const openCharacterSheet = async (sheet: CharacterSheetT) => {
+    try {
+      const updated = await getCharacterSheetById(sheet.id);
+      setBigSheet({
+        sheet: updated ?? sheet,
+        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+        campaignId,
+      });
+    } catch (error) {
+      console.error('Failed to refresh character sheet', error);
+      setBigSheet({
+        sheet,
+        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+        campaignId,
+      });
+    }
+  };
+
   const handleDragStart = (
     event: DragEvent<HTMLButtonElement>,
     characterId: string,
@@ -510,13 +529,7 @@ const CharacterList: FC<{
             <div className="flex-1">
               <CharacterButton
                 character={character.sheet}
-                onClick={() => {
-                  setBigSheet({
-                    sheet: character.sheet,
-                    state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-                    campaignId,
-                  });
-                }}
+                onClick={() => void openCharacterSheet(character.sheet)}
                 campaignId={isAdmin || isPlayer ? undefined : campaignId}
                 dragHandle={
                   isAdmin ? (
@@ -596,6 +609,24 @@ const CharacterGrid: FC<{
       grid[character.position.y][character.position.x] = character;
     }
   });
+
+  const openCharacterSheet = async (sheet: CharacterSheetT) => {
+    try {
+      const updated = await getCharacterSheetById(sheet.id);
+      setBigSheet({
+        sheet: updated ?? sheet,
+        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+        campaignId,
+      });
+    } catch (error) {
+      console.error('Failed to refresh character sheet', error);
+      setBigSheet({
+        sheet,
+        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
+        campaignId,
+      });
+    }
+  };
 
   const handleDragStart = (
     event: DragEvent<HTMLDivElement>,
@@ -680,13 +711,7 @@ const CharacterGrid: FC<{
               <CharacterButton
                 compact
                 character={character.sheet}
-                onClick={() => {
-                  setBigSheet({
-                    sheet: character.sheet,
-                    state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-                    campaignId,
-                  });
-                }}
+                onClick={() => void openCharacterSheet(character.sheet)}
                 campaignId={isAdmin || isPlayer ? undefined : campaignId}
               />
             </div>

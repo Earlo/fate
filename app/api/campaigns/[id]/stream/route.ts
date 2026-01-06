@@ -1,0 +1,24 @@
+import { subscribeCampaign } from '@/lib/realtime/campaigns';
+import { type NextRequest } from 'next/server';
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      const unsubscribe = subscribeCampaign(id, controller);
+      req.signal.addEventListener('abort', () => unsubscribe(), { once: true });
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Cache-Control': 'no-cache, no-transform',
+      Connection: 'keep-alive',
+      'Content-Type': 'text/event-stream',
+    },
+  });
+}

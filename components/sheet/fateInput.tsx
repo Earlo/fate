@@ -31,6 +31,10 @@ const FateInput: React.FC<FateInputProps> = ({
     setFate(value);
   };
   const showVisibility = state === 'toggle' && campaignId;
+  const shouldHide =
+    (state === 'play' || state === 'view') &&
+    !!campaignId &&
+    !fate.visibleIn.includes(campaignId);
   return (
     <div
       className={cn('flex h-full flex-col items-stretch self-start', className)}
@@ -60,7 +64,7 @@ const FateInput: React.FC<FateInputProps> = ({
           </div>
           <Input
             name="fate-points"
-            value={fate.points.toString()}
+            value={shouldHide ? '???' : fate.points.toString()}
             onChange={(e) =>
               handleAspectChange({
                 points: parseInt(e.target.value),
@@ -79,7 +83,7 @@ const FateInput: React.FC<FateInputProps> = ({
           </div>
           <Input
             name="fate-refresh"
-            value={fate.refresh.toString()}
+            value={shouldHide ? '???' : fate.refresh.toString()}
             onChange={(e) =>
               handleAspectChange({
                 points: fate.points,

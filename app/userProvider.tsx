@@ -12,6 +12,7 @@ import {
   SetStateAction,
   createContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 
@@ -37,6 +38,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
   const [sheets, setSheets] = useState<CharacterSheetT[]>([]);
   const [bigSheet, setBigSheet] = useState<sheetWithContext>();
   const [smallSheets, setSmallSheets] = useState<sheetWithContext[]>([]);
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +49,30 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     };
     fetchData();
   }, [session, setSheets]);
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    const source = new EventSource(
+      `/api/sheets/stream?userId=${session.user.id}`,
+    );
+    const handleUpdate = () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+      refreshTimeoutRef.current = setTimeout(async () => {
+        const data = await getCharacterSheetsByUserId(session.user.id);
+        setSheets(data);
+      }, 200);
+    };
+    source.addEventListener('sheet-list-updated', handleUpdate);
+    return () => {
+      source.removeEventListener('sheet-list-updated', handleUpdate);
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+      source.close();
+    };
+  }, [session?.user?.id]);
 
   const handleDragEnd = ({ delta, active }: DragEndEvent) => {
     setSmallSheets((prev) =>
