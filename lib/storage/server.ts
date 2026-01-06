@@ -30,6 +30,18 @@ const hasCloudinaryConfig = () =>
     process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS,
   );
 
+const resolveCloudinaryUploadPreset = (path?: string) => {
+  const defaultPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS;
+  const groupsPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS_GROUPS;
+  const cleanPath = path?.replace(/^\/+|\/+$/g, '');
+
+  if (cleanPath?.startsWith('groups') && groupsPreset) {
+    return groupsPreset;
+  }
+
+  return defaultPreset;
+};
+
 export const resolveStorageProvider = (): StorageProvider => {
   const forced = process.env.STORAGE_PROVIDER?.toLowerCase();
 
@@ -175,7 +187,7 @@ const uploadFileToCloudinary = async (
   path?: string,
 ): Promise<UploadResult> => {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS;
+  const uploadPreset = resolveCloudinaryUploadPreset(path);
 
   if (!cloudName || !uploadPreset) {
     throw new Error(
@@ -220,7 +232,7 @@ const uploadFromUrlToCloudinary = async (
   path?: string,
 ): Promise<UploadResult> => {
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS;
+  const uploadPreset = resolveCloudinaryUploadPreset(path);
 
   if (!cloudName || !uploadPreset) {
     throw new Error(

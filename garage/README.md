@@ -28,4 +28,4 @@ After initialization, start the full stack with `docker compose -f docker-compos
 
 ### Using Cloudinary instead
 
-Cloudinary uploads remain supported. Set `STORAGE_PROVIDER=cloudinary` and provide `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` and `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS` (plus any needed `CLOUDINARY_*` secrets). If `STORAGE_PROVIDER` is unset, the app will prefer Garage when its env vars are present, otherwise it falls back to Cloudinary.
+Cloudinary uploads remain supported. Set `STORAGE_PROVIDER=cloudinary` and provide `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` and `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS` (plus any needed `CLOUDINARY_*` secrets). To avoid compressing group battle maps, set `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESETS_GROUPS` to an untransformed preset. If `STORAGE_PROVIDER` is unset, the app will prefer Garage when its env vars are present, otherwise it falls back to Cloudinary.
