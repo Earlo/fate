@@ -96,7 +96,10 @@ const getViewerLabel = (viewer: {
   id?: string;
 }) => {
   if (viewer.username) return viewer.username;
-  if (viewer.guest) return 'Guest';
+  if (viewer.guest) {
+    const suffix = viewer.id ? viewer.id.slice(-4) : '0000';
+    return `Guest#${suffix}`;
+  }
   return viewer.userId || viewer.id || 'Unknown';
 };
 
@@ -149,15 +152,19 @@ export const updatePresenceName = (
   const previousLabel = getViewerLabel(existing);
   const nextLabel = getViewerLabel({ ...existing, username });
   if (previousLabel === nextLabel) return;
+  const isInitialNameForUser =
+    !existing.username && existing.userId && previousLabel === existing.userId;
   campaignPresence.set(viewerId, { ...existing, username });
   store.set(campaignId, campaignPresence);
   publishPresence(campaignId);
-  publishEventLog(campaignId, {
-    campaignId,
-    kind: 'system',
-    message: `${previousLabel} changed name to ${nextLabel}`,
-    createdAt: new Date().toISOString(),
-  });
+  if (!isInitialNameForUser) {
+    publishEventLog(campaignId, {
+      campaignId,
+      kind: 'system',
+      message: `${previousLabel} changed name to ${nextLabel}`,
+      createdAt: new Date().toISOString(),
+    });
+  }
 };
 
 const addPresence = (

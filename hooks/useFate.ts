@@ -36,6 +36,7 @@ export const useCampaign = (
   const [viewerId, setViewerId] = useState<string | undefined>(viewer?.id);
   const [viewerIsGuest, setViewerIsGuest] = useState(false);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const initialUsernameRef = useRef<string | undefined>(viewer?.username);
   const maxLogEntries = 100;
   const fetchCampaign = useCallback(
     async (showLoading = true) => {
@@ -82,6 +83,12 @@ export const useCampaign = (
   }, [campaignId, viewer?.id]);
 
   useEffect(() => {
+    if (viewer?.username && !initialUsernameRef.current) {
+      initialUsernameRef.current = viewer.username;
+    }
+  }, [viewer?.username]);
+
+  useEffect(() => {
     if (!campaignId) return;
     if (!viewerId) return;
     const params = new URLSearchParams();
@@ -90,6 +97,9 @@ export const useCampaign = (
         params.set('guestId', viewerId);
       } else {
         params.set('userId', viewerId);
+      }
+      if (initialUsernameRef.current) {
+        params.set('username', initialUsernameRef.current);
       }
     }
     const streamUrl = params.toString()
