@@ -1,6 +1,8 @@
 // icon.tsx
 import { cn } from '@/lib/utils';
 import {
+  ChevronDown,
+  Crown,
   Ellipsis,
   EllipsisVertical,
   Eye,
@@ -10,6 +12,8 @@ import {
   Plus,
   Sparkles,
   Upload,
+  User,
+  UserX,
   X,
 } from 'lucide-react';
 import { forwardRef, MouseEventHandler, SVGAttributes } from 'react';
@@ -25,6 +29,10 @@ const iconMap = {
   plus: Plus,
   eye: Eye,
   noEye: EyeOff,
+  user: User,
+  userX: UserX,
+  crown: Crown,
+  chevronDown: ChevronDown,
 } as const;
 
 export type IconNameT = keyof typeof iconMap;

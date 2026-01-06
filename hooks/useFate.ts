@@ -6,10 +6,37 @@ import { blankGroup } from '@/schemas/consts/blankCampaignSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export const useCampaign = (campaignId: string) => {
+type CampaignChatMessage = {
+  campaignId: string;
+  message: string;
+  createdAt: string;
+  sender?: { id?: string; name?: string; guest?: boolean };
+  kind: 'chat' | 'roll';
+  roll?: { dice: number[]; total: number };
+};
+
+type CampaignLogEntry = {
+  campaignId: string;
+  message: string;
+  createdAt: string;
+  kind: 'join' | 'leave' | 'roll' | 'system';
+};
+
+export const useCampaign = (
+  campaignId: string,
+  viewer?: { id?: string; username?: string },
+) => {
   const [campaign, setCampaign] = useState<PopulatedCampaignT>();
   const [isLoading, setIsLoading] = useState(true);
+  const [presence, setPresence] = useState<
+    { id: string; userId?: string; username?: string; guest?: boolean }[]
+  >([]);
+  const [chatMessages, setChatMessages] = useState<CampaignChatMessage[]>([]);
+  const [eventLog, setEventLog] = useState<CampaignLogEntry[]>([]);
+  const [viewerId, setViewerId] = useState<string | undefined>(viewer?.id);
+  const [viewerIsGuest, setViewerIsGuest] = useState(false);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const maxLogEntries = 100;
   const fetchCampaign = useCallback(
     async (showLoading = true) => {
       if (!campaignId) return;
@@ -32,7 +59,43 @@ export const useCampaign = (campaignId: string) => {
 
   useEffect(() => {
     if (!campaignId) return;
-    const source = new EventSource(`/api/campaigns/${campaignId}/stream`);
+    if (viewer?.id) {
+      setViewerId(viewer.id);
+      setViewerIsGuest(false);
+      return;
+    }
+    if (typeof window === 'undefined') return;
+    const storageKey = `campaign-guest-id-${campaignId}`;
+    const existing = window.sessionStorage.getItem(storageKey);
+    if (existing) {
+      setViewerId(existing);
+      setViewerIsGuest(true);
+      return;
+    }
+    const guestId =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? `guest_${crypto.randomUUID()}`
+        : `guest_${Math.random().toString(36).slice(2)}`;
+    window.sessionStorage.setItem(storageKey, guestId);
+    setViewerId(guestId);
+    setViewerIsGuest(true);
+  }, [campaignId, viewer?.id]);
+
+  useEffect(() => {
+    if (!campaignId) return;
+    if (!viewerId) return;
+    const params = new URLSearchParams();
+    if (viewerId) {
+      if (viewerIsGuest) {
+        params.set('guestId', viewerId);
+      } else {
+        params.set('userId', viewerId);
+      }
+    }
+    const streamUrl = params.toString()
+      ? `/api/campaigns/${campaignId}/stream?${params.toString()}`
+      : `/api/campaigns/${campaignId}/stream`;
+    const source = new EventSource(streamUrl);
     const handleUpdate = () => {
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
@@ -41,15 +104,70 @@ export const useCampaign = (campaignId: string) => {
         fetchCampaign(false);
       }, 200);
     };
+    const handlePresence = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data) as {
+          presence?: {
+            id: string;
+            userId?: string;
+            username?: string;
+            guest?: boolean;
+          }[];
+        };
+        setPresence(data.presence ?? []);
+      } catch (error) {
+        console.error('Failed to parse presence update', error);
+      }
+    };
+    const handleChatMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data) as CampaignChatMessage;
+        setChatMessages((prev) => [...prev.slice(-maxLogEntries + 1), data]);
+      } catch (error) {
+        console.error('Failed to parse chat message', error);
+      }
+    };
+    const handleEventLog = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data) as CampaignLogEntry;
+        setEventLog((prev) => [...prev.slice(-maxLogEntries + 1), data]);
+      } catch (error) {
+        console.error('Failed to parse event log', error);
+      }
+    };
     source.addEventListener('campaign-updated', handleUpdate);
+    source.addEventListener('presence-updated', handlePresence);
+    source.addEventListener('chat-message', handleChatMessage);
+    source.addEventListener('event-log', handleEventLog);
     return () => {
       source.removeEventListener('campaign-updated', handleUpdate);
+      source.removeEventListener('presence-updated', handlePresence);
+      source.removeEventListener('chat-message', handleChatMessage);
+      source.removeEventListener('event-log', handleEventLog);
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
       }
       source.close();
     };
-  }, [campaignId, fetchCampaign]);
+  }, [campaignId, fetchCampaign, viewerId, viewerIsGuest]);
+
+  useEffect(() => {
+    if (!campaignId) return;
+    if (!viewerId) return;
+    if (!viewer?.username) return;
+    const updateName = async () => {
+      try {
+        await fetch(`/api/campaigns/${campaignId}/presence`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ viewerId, username: viewer.username }),
+        });
+      } catch (error) {
+        console.error('Failed to update presence name', error);
+      }
+    };
+    updateName();
+  }, [campaignId, viewerId, viewer?.username]);
 
   const updateCampaign = useCallback(
     async (updatedCampaign: PopulatedCampaignT) => {
@@ -142,6 +260,11 @@ export const useCampaign = (campaignId: string) => {
   return {
     campaign,
     isLoading,
+    presence,
+    chatMessages,
+    eventLog,
+    viewerId,
+    viewerIsGuest,
     updateCampaign,
     toggleCampaign,
     addGroup,
