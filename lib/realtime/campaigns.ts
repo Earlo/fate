@@ -1,4 +1,9 @@
-import type { PresenceMessage, RealtimeChannel, RealtimePresence } from 'ably';
+import type {
+  InboundMessage,
+  PresenceMessage,
+  RealtimeChannel,
+  RealtimePresence,
+} from 'ably';
 import { getAblyRealtime, getAblyRest, isAblyEnabled } from './ably';
 
 type CampaignEventPayload = {
@@ -308,10 +313,11 @@ export const subscribeCampaign = (
     const keepAlive = setInterval(() => sendKeepAlive(controller), 25000);
     const unsubscribeHandlers = new Set<() => void>();
     const forwardEvent = (event: string) => {
-      const handler = (message: { data: CampaignStreamPayload }) => {
-        sendEvent(controller, event, message.data);
+      const handler = (message: InboundMessage) => {
+        if (!message.data) return;
+        sendEvent(controller, event, message.data as CampaignStreamPayload);
       };
-      channel.subscribe(event, handler);
+      void channel.subscribe(event, handler);
       unsubscribeHandlers.add(() => channel.unsubscribe(event, handler));
     };
     sendEvent(controller, 'connected', { campaignId });

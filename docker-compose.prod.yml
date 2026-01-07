@@ -33,8 +33,6 @@ services:
       P2P_CONNECTION_TYPE: ${P2P_CONNECTION_TYPE:-SOCKET}
       NEXT_PUBLIC_P2P_CONNECTION_TYPE: ${NEXT_PUBLIC_P2P_CONNECTION_TYPE:-}
       ABLY_API_KEY: ${ABLY_API_KEY:-}
-    env_file:
-      - .env
     ports:
       - '3000:3000'
     depends_on:
