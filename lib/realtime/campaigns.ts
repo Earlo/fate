@@ -116,15 +116,21 @@ const getViewerLabel = (viewer: {
   return viewer.userId || viewer.id || 'Unknown';
 };
 
-const mapPresenceMembers = (members: PresenceMessage[]) =>
-  members
-    .map((member) => ({
-      id: member.clientId ?? '',
-      userId: (member.data as PresenceData | undefined)?.userId,
-      username: (member.data as PresenceData | undefined)?.username,
-      guest: (member.data as PresenceData | undefined)?.guest,
-    }))
-    .filter((member) => member.id);
+const mapPresenceMembers = (members: PresenceMessage[]) => {
+  const byClientId = new Map<string, PresenceData & { id: string }>();
+  members.forEach((member) => {
+    const id = member.clientId ?? '';
+    if (!id) return;
+    const data = (member.data as PresenceData | undefined) ?? {};
+    byClientId.set(id, {
+      id,
+      userId: data.userId,
+      username: data.username,
+      guest: data.guest,
+    });
+  });
+  return Array.from(byClientId.values());
+};
 
 const getPresenceList = (campaignId: string) => {
   const store = getPresenceStore();
