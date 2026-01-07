@@ -1,3 +1,4 @@
+import type { InboundMessage } from 'ably';
 import { getAblyRealtime, getAblyRest, isAblyEnabled } from './ably';
 
 type SheetEventPayload = {
@@ -112,11 +113,12 @@ export const subscribeSheet = (
   if (isAblyEnabled()) {
     const channel = getAblyRealtime().channels.get(ablySheetChannel(sheetId));
     const keepAlive = setInterval(() => sendKeepAlive(controller), 25000);
-    const handler = (message: { data: SheetEventPayload }) => {
-      sendEvent(controller, 'sheet-updated', message.data);
+    const handler = (message: InboundMessage) => {
+      if (!message.data) return;
+      sendEvent(controller, 'sheet-updated', message.data as SheetEventPayload);
     };
     sendEvent(controller, 'connected', { sheetId });
-    channel.subscribe('sheet-updated', handler);
+    void channel.subscribe('sheet-updated', handler);
     return () => {
       channel.unsubscribe('sheet-updated', handler);
       clearInterval(keepAlive);
@@ -141,11 +143,16 @@ export const subscribeSheetList = (
       ablySheetListChannel(ownerId),
     );
     const keepAlive = setInterval(() => sendKeepAlive(controller), 25000);
-    const handler = (message: { data: SheetEventPayload }) => {
-      sendEvent(controller, 'sheet-list-updated', message.data);
+    const handler = (message: InboundMessage) => {
+      if (!message.data) return;
+      sendEvent(
+        controller,
+        'sheet-list-updated',
+        message.data as SheetEventPayload,
+      );
     };
     sendEvent(controller, 'connected', { sheetId: ownerId });
-    channel.subscribe('sheet-list-updated', handler);
+    void channel.subscribe('sheet-list-updated', handler);
     return () => {
       channel.unsubscribe('sheet-list-updated', handler);
       clearInterval(keepAlive);
