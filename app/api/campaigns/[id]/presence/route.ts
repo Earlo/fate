@@ -17,7 +17,7 @@ export async function POST(
         { status: 400 },
       );
     }
-    updatePresenceName(id, viewerId, username);
+    await updatePresenceName(id, viewerId, username);
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

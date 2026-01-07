@@ -1,3 +1,6 @@
+import type { PresenceMessage, RealtimeChannel, RealtimePresence } from 'ably';
+import { getAblyRealtime, getAblyRest, isAblyEnabled } from './ably';
+
 type CampaignEventPayload = {
   campaignId: string;
   updatedAt?: string;
@@ -53,6 +56,11 @@ type CampaignPresenceStore = Map<
 >;
 
 const encoder = new TextEncoder();
+const ablyCampaignChannel = (campaignId: string) => `campaign:${campaignId}`;
+
+type PresenceData = { userId?: string; username?: string; guest?: boolean };
+
+const getPresenceMembers = (channel: RealtimeChannel) => channel.presence.get();
 
 const getStreamStore = () => {
   const globalStore = globalThis as typeof globalThis & {
@@ -103,6 +111,16 @@ const getViewerLabel = (viewer: {
   return viewer.userId || viewer.id || 'Unknown';
 };
 
+const mapPresenceMembers = (members: PresenceMessage[]) =>
+  members
+    .map((member) => ({
+      id: member.clientId ?? '',
+      userId: (member.data as PresenceData | undefined)?.userId,
+      username: (member.data as PresenceData | undefined)?.username,
+      guest: (member.data as PresenceData | undefined)?.guest,
+    }))
+    .filter((member) => member.id);
+
 const getPresenceList = (campaignId: string) => {
   const store = getPresenceStore();
   const campaignPresence = store.get(campaignId);
@@ -131,6 +149,11 @@ const publishPresence = (campaignId: string) => {
 };
 
 const publishEventLog = (campaignId: string, payload: CampaignLogPayload) => {
+  if (isAblyEnabled()) {
+    const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));
+    void channel.publish('event-log', payload);
+    return;
+  }
   const store = getStreamStore();
   const subscriptions = store.get(campaignId);
   if (!subscriptions) return;
@@ -139,11 +162,48 @@ const publishEventLog = (campaignId: string, payload: CampaignLogPayload) => {
   });
 };
 
-export const updatePresenceName = (
+export const updatePresenceName = async (
   campaignId: string,
   viewerId: string,
   username?: string,
 ) => {
+  if (isAblyEnabled()) {
+    const channel = getAblyRealtime().channels.get(
+      ablyCampaignChannel(campaignId),
+    );
+    const members = await getPresenceMembers(channel);
+    const existing = members.find((member) => member.clientId === viewerId);
+    if (!existing) return;
+    const existingData = (existing.data ?? {}) as PresenceData;
+    const previousLabel = getViewerLabel({
+      id: viewerId,
+      userId: existingData.userId,
+      username: existingData.username,
+      guest: existingData.guest,
+    });
+    const nextLabel = getViewerLabel({
+      id: viewerId,
+      userId: existingData.userId,
+      username,
+      guest: existingData.guest,
+    });
+    const presence: RealtimePresence = channel.presence;
+    try {
+      await presence.updateClient(viewerId, { ...existingData, username });
+    } catch (error) {
+      console.error('Failed to update presence name:', error);
+      return;
+    }
+    if (previousLabel !== nextLabel) {
+      publishEventLog(campaignId, {
+        campaignId,
+        kind: 'system',
+        message: `${previousLabel} changed name to ${nextLabel}`,
+        createdAt: new Date().toISOString(),
+      });
+    }
+    return;
+  }
   const store = getPresenceStore();
   const campaignPresence = store.get(campaignId);
   if (!campaignPresence) return;
@@ -240,6 +300,110 @@ export const subscribeCampaign = (
   controller: StreamController,
   viewer?: { id: string; userId?: string; username?: string; guest?: boolean },
 ) => {
+  if (isAblyEnabled()) {
+    const channel = getAblyRealtime().channels.get(
+      ablyCampaignChannel(campaignId),
+    );
+    const presence: RealtimePresence = channel.presence;
+    const keepAlive = setInterval(() => sendKeepAlive(controller), 25000);
+    const unsubscribeHandlers = new Set<() => void>();
+    const forwardEvent = (event: string) => {
+      const handler = (message: { data: CampaignStreamPayload }) => {
+        sendEvent(controller, event, message.data);
+      };
+      channel.subscribe(event, handler);
+      unsubscribeHandlers.add(() => channel.unsubscribe(event, handler));
+    };
+    sendEvent(controller, 'connected', { campaignId });
+    forwardEvent('campaign-updated');
+    forwardEvent('chat-message');
+    forwardEvent('event-log');
+    forwardEvent('presence-updated');
+
+    const sendPresenceSnapshot = async () => {
+      try {
+        const members = await getPresenceMembers(channel);
+        sendEvent(controller, 'presence-updated', {
+          campaignId,
+          presence: mapPresenceMembers(members),
+        });
+      } catch (error) {
+        console.error('Failed to load presence list:', error);
+      }
+    };
+
+    const presenceHandler = () => {
+      void sendPresenceSnapshot();
+    };
+    void presence.subscribe(presenceHandler);
+    unsubscribeHandlers.add(() => presence.unsubscribe(presenceHandler));
+
+    if (viewer?.id) {
+      void (async () => {
+        let hadViewer = false;
+        try {
+          const members = await getPresenceMembers(channel);
+          hadViewer = members.some((member) => member.clientId === viewer.id);
+        } catch (error) {
+          console.error('Failed to read presence list:', error);
+        }
+        try {
+          await presence.enterClient(viewer.id, {
+            userId: viewer.userId,
+            username: viewer.username,
+            guest: viewer.guest,
+          });
+        } catch (error) {
+          console.error('Failed to enter presence:', error);
+          return;
+        }
+        void sendPresenceSnapshot();
+        if (!hadViewer) {
+          publishEventLog(campaignId, {
+            campaignId,
+            kind: 'join',
+            message: `${getViewerLabel(viewer)} joined`,
+            createdAt: new Date().toISOString(),
+          });
+        }
+      })();
+    } else {
+      void sendPresenceSnapshot();
+    }
+
+    return () => {
+      unsubscribeHandlers.forEach((handler) => handler());
+      clearInterval(keepAlive);
+      if (viewer?.id) {
+        void (async () => {
+          let remainingCount = 0;
+          try {
+            const members = await getPresenceMembers(channel);
+            remainingCount = members.filter(
+              (member) => member.clientId === viewer.id,
+            ).length;
+          } catch (error) {
+            console.error('Failed to read presence list:', error);
+          }
+          try {
+            await presence.leaveClient(viewer.id);
+          } catch (error) {
+            console.error('Failed to leave presence:', error);
+            return;
+          }
+          void sendPresenceSnapshot();
+          if (remainingCount <= 1) {
+            publishEventLog(campaignId, {
+              campaignId,
+              kind: 'leave',
+              message: `${getViewerLabel(viewer)} left`,
+              createdAt: new Date().toISOString(),
+            });
+          }
+        })();
+      }
+    };
+  }
   const store = getStreamStore();
   const subscriptions =
     store.get(campaignId) ?? new Set<CampaignStreamSubscription>();
@@ -284,6 +448,11 @@ export const publishCampaignUpdate = (
   campaignId: string,
   payload: CampaignEventPayload,
 ) => {
+  if (isAblyEnabled()) {
+    const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));
+    void channel.publish('campaign-updated', payload);
+    return;
+  }
   const store = getStreamStore();
   const subscriptions = store.get(campaignId);
   if (!subscriptions) return;
@@ -304,6 +473,20 @@ export const publishChatMessage = (
   campaignId: string,
   payload: CampaignChatPayload,
 ) => {
+  if (isAblyEnabled()) {
+    const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));
+    void channel.publish('chat-message', payload);
+    if (payload.kind === 'roll') {
+      const label = payload.sender?.name || 'Someone';
+      publishEventLog(campaignId, {
+        campaignId,
+        kind: 'roll',
+        message: `${label} rolled ${payload.roll?.total ?? 0}`,
+        createdAt: payload.createdAt,
+      });
+    }
+    return;
+  }
   const store = getStreamStore();
   const subscriptions = store.get(campaignId);
   if (!subscriptions) return;

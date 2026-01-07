@@ -1,3 +1,5 @@
+import { getAblyRealtime, getAblyRest, isAblyEnabled } from './ably';
+
 type SheetEventPayload = {
   sheetId: string;
   ownerId?: string;
@@ -15,6 +17,8 @@ type SheetStreamSubscription = {
 type SheetStreamStore = Map<string, Set<SheetStreamSubscription>>;
 
 const encoder = new TextEncoder();
+const ablySheetChannel = (sheetId: string) => `sheet:${sheetId}`;
+const ablySheetListChannel = (ownerId: string) => `sheet-list:${ownerId}`;
 
 const getSheetStore = () => {
   const globalStore = globalThis as typeof globalThis & {
@@ -105,6 +109,19 @@ export const subscribeSheet = (
   sheetId: string,
   controller: StreamController,
 ) => {
+  if (isAblyEnabled()) {
+    const channel = getAblyRealtime().channels.get(ablySheetChannel(sheetId));
+    const keepAlive = setInterval(() => sendKeepAlive(controller), 25000);
+    const handler = (message: { data: SheetEventPayload }) => {
+      sendEvent(controller, 'sheet-updated', message.data);
+    };
+    sendEvent(controller, 'connected', { sheetId });
+    channel.subscribe('sheet-updated', handler);
+    return () => {
+      channel.unsubscribe('sheet-updated', handler);
+      clearInterval(keepAlive);
+    };
+  }
   const store = getSheetStore();
   const subscription = subscribeToStore(
     store,
@@ -119,6 +136,21 @@ export const subscribeSheetList = (
   ownerId: string,
   controller: StreamController,
 ) => {
+  if (isAblyEnabled()) {
+    const channel = getAblyRealtime().channels.get(
+      ablySheetListChannel(ownerId),
+    );
+    const keepAlive = setInterval(() => sendKeepAlive(controller), 25000);
+    const handler = (message: { data: SheetEventPayload }) => {
+      sendEvent(controller, 'sheet-list-updated', message.data);
+    };
+    sendEvent(controller, 'connected', { sheetId: ownerId });
+    channel.subscribe('sheet-list-updated', handler);
+    return () => {
+      channel.unsubscribe('sheet-list-updated', handler);
+      clearInterval(keepAlive);
+    };
+  }
   const store = getOwnerStore();
   const subscription = subscribeToStore(
     store,
@@ -133,6 +165,11 @@ export const publishSheetUpdate = (
   sheetId: string,
   payload: SheetEventPayload,
 ) => {
+  if (isAblyEnabled()) {
+    const channel = getAblyRest().channels.get(ablySheetChannel(sheetId));
+    void channel.publish('sheet-updated', payload);
+    return;
+  }
   const store = getSheetStore();
   publishToStore(store, sheetId, 'sheet-updated', payload);
 };
@@ -141,6 +178,11 @@ export const publishSheetListUpdate = (
   ownerId: string,
   payload: SheetEventPayload,
 ) => {
+  if (isAblyEnabled()) {
+    const channel = getAblyRest().channels.get(ablySheetListChannel(ownerId));
+    void channel.publish('sheet-list-updated', payload);
+    return;
+  }
   const store = getOwnerStore();
   publishToStore(store, ownerId, 'sheet-list-updated', payload);
 };
