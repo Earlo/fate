@@ -65,6 +65,18 @@ cp .env.example .env
 For local development with Docker Compose, the database and Garage services are provided by containers, so you can leave
 `DATABASE_URL` empty in `.env`. If you want image uploads, follow the Garage setup below or configure Cloudinary.
 
+### Realtime configuration (SSE vs Ably)
+
+By default, realtime updates use server-sent events and in-memory state (`P2P_CONNECTION_TYPE=SOCKET`). This works for
+local dev and traditional servers.
+
+For Vercel/serverless deployments where shared in-memory state is not available, set:
+
+- `P2P_CONNECTION_TYPE=ABLY`
+- `ABLY_API_KEY=...`
+
+Optionally, set `NEXT_PUBLIC_P2P_CONNECTION_TYPE=ABLY` if you want a public mirror of the setting for client-side use.
+
 ## Run the code and visit the site in your browser
 
 Run this command to get the Fate Character Sheet Manager software running in a local development environment.

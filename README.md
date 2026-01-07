@@ -20,6 +20,7 @@ This software isn't meant to be a virtual table top simulator or an online RPG p
   - Makesift battlemap system by setting a group to be grid
   - Reveal partial character sheets to players as GM
   - Live campaign updates via server-sent events so players see changes in real time
+  - Optional Ably pub/sub backend for realtime updates on serverless hosts
 
 ## Database setup (Prisma)
 
