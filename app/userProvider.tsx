@@ -2,9 +2,11 @@
 import CharacterForm from '@/components/characterForm';
 import DraggableCard from '@/components/dashboard/draggableCard';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
+import { getAblyClient, isAblyClientEnabled } from '@/lib/realtime/ablyClient';
 import { CharacterSheetT, sheetWithContext } from '@/schemas/sheet';
 import { DndContext } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core/dist/types';
+import type { InboundMessage } from 'ably';
 import { useSession } from 'next-auth/react';
 import {
   Dispatch,
@@ -52,9 +54,6 @@ export default function UserProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!session?.user?.id) return;
-    const source = new EventSource(
-      `/api/sheets/stream?userId=${session.user.id}`,
-    );
     const handleUpdate = () => {
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
@@ -64,6 +63,24 @@ export default function UserProvider({ children }: { children: ReactNode }) {
         setSheets(data);
       }, 200);
     };
+    if (isAblyClientEnabled()) {
+      const client = getAblyClient(session.user.id);
+      const channel = client.channels.get(`sheet-list:${session.user.id}`);
+      const handler = (message: InboundMessage) => {
+        if (!message.data) return;
+        handleUpdate();
+      };
+      void channel.subscribe('sheet-list-updated', handler);
+      return () => {
+        channel.unsubscribe('sheet-list-updated', handler);
+        if (refreshTimeoutRef.current) {
+          clearTimeout(refreshTimeoutRef.current);
+        }
+      };
+    }
+    const source = new EventSource(
+      `/api/sheets/stream?userId=${session.user.id}`,
+    );
     source.addEventListener('sheet-list-updated', handleUpdate);
     return () => {
       source.removeEventListener('sheet-list-updated', handleUpdate);

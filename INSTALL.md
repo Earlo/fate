@@ -73,9 +73,10 @@ local dev and traditional servers.
 For Vercel/serverless deployments where shared in-memory state is not available, set:
 
 - `P2P_CONNECTION_TYPE=ABLY`
+- `NEXT_PUBLIC_P2P_CONNECTION_TYPE=ABLY`
 - `ABLY_API_KEY=...`
 
-Optionally, set `NEXT_PUBLIC_P2P_CONNECTION_TYPE=ABLY` if you want a public mirror of the setting for client-side use.
+The `NEXT_PUBLIC_P2P_CONNECTION_TYPE` setting ensures clients connect directly to Ably instead of SSE.
 
 ## Run the code and visit the site in your browser
 

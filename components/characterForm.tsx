@@ -5,10 +5,12 @@ import {
   getCharacterSheetById,
   updateCharacterSheet,
 } from '@/lib/apiHelpers/sheets';
+import { getAblyClient, isAblyClientEnabled } from '@/lib/realtime/ablyClient';
 import { upsertById } from '@/lib/utils';
 import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
 import { blankSheet } from '@/schemas/consts/blankCharacterSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
+import type { InboundMessage } from 'ably';
 import { useSession } from 'next-auth/react';
 import {
   ChangeEvent,
@@ -194,7 +196,6 @@ const CharacterForm: FC<CharacterFormProps> = ({
         console.error('Could not fetch character sheet:', error);
       }
     };
-    const source = new EventSource(`/api/sheets/${initialSheet.id}/stream`);
     const handleUpdate = () => {
       if (refreshTimeout) {
         clearTimeout(refreshTimeout);
@@ -203,6 +204,23 @@ const CharacterForm: FC<CharacterFormProps> = ({
         refreshSheet();
       }, 200);
     };
+    if (isAblyClientEnabled()) {
+      const client = getAblyClient(session?.user?.id);
+      const channel = client.channels.get(`sheet:${initialSheet.id}`);
+      const handler = (message: InboundMessage) => {
+        if (!message.data) return;
+        handleUpdate();
+      };
+      void channel.subscribe('sheet-updated', handler);
+      return () => {
+        isMounted = false;
+        channel.unsubscribe('sheet-updated', handler);
+        if (refreshTimeout) {
+          clearTimeout(refreshTimeout);
+        }
+      };
+    }
+    const source = new EventSource(`/api/sheets/${initialSheet.id}/stream`);
     source.addEventListener('sheet-updated', handleUpdate);
     return () => {
       isMounted = false;
@@ -212,7 +230,7 @@ const CharacterForm: FC<CharacterFormProps> = ({
       }
       source.close();
     };
-  }, [enableRealtime, initialSheet?.id]);
+  }, [enableRealtime, initialSheet?.id, session?.user?.id]);
   const handleDelete = async () => {
     setIsSubmitting(true);
     const deletedId = initialSheet?.id;

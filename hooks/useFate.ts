@@ -1,9 +1,11 @@
 'use client';
 import { getCampaignById, updateCampaignAPI } from '@/lib/apiHelpers/campaigns';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
+import { getAblyClient, isAblyClientEnabled } from '@/lib/realtime/ablyClient';
 import { PopulatedCampaignT, PopulatedGroup } from '@/schemas/campaign';
 import { blankGroup } from '@/schemas/consts/blankCampaignSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
+import type { InboundMessage, PresenceMessage } from 'ably';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type CampaignChatMessage = {
@@ -22,6 +24,8 @@ type CampaignLogEntry = {
   kind: 'join' | 'leave' | 'roll' | 'system';
 };
 
+type PresenceData = { userId?: string; username?: string; guest?: boolean };
+
 export const useCampaign = (
   campaignId: string,
   viewer?: { id?: string; username?: string },
@@ -38,6 +42,7 @@ export const useCampaign = (
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initialUsernameRef = useRef<string | undefined>(viewer?.username);
   const maxLogEntries = 100;
+  const ablyEnabled = isAblyClientEnabled();
   const fetchCampaign = useCallback(
     async (showLoading = true) => {
       if (!campaignId) return;
@@ -91,21 +96,6 @@ export const useCampaign = (
   useEffect(() => {
     if (!campaignId) return;
     if (!viewerId) return;
-    const params = new URLSearchParams();
-    if (viewerId) {
-      if (viewerIsGuest) {
-        params.set('guestId', viewerId);
-      } else {
-        params.set('userId', viewerId);
-      }
-      if (initialUsernameRef.current) {
-        params.set('username', initialUsernameRef.current);
-      }
-    }
-    const streamUrl = params.toString()
-      ? `/api/campaigns/${campaignId}/stream?${params.toString()}`
-      : `/api/campaigns/${campaignId}/stream`;
-    const source = new EventSource(streamUrl);
     const handleUpdate = () => {
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
@@ -114,6 +104,105 @@ export const useCampaign = (
         fetchCampaign(false);
       }, 200);
     };
+    if (ablyEnabled) {
+      const client = getAblyClient(viewerId);
+      const channel = client.channels.get(`campaign:${campaignId}`);
+      const mapPresenceMembers = (members: PresenceMessage[]) => {
+        const byClientId = new Map<string, PresenceData & { id: string }>();
+        members.forEach((member) => {
+          const id = member.clientId ?? '';
+          if (!id) return;
+          const data = (member.data as PresenceData | undefined) ?? {};
+          byClientId.set(id, {
+            id,
+            userId: data.userId,
+            username: data.username,
+            guest: data.guest,
+          });
+        });
+        return Array.from(byClientId.values());
+      };
+      const refreshPresence = async () => {
+        try {
+          const members = await channel.presence.get();
+          setPresence(mapPresenceMembers(members));
+        } catch (error) {
+          console.error('Failed to load presence list', error);
+        }
+      };
+      const handlePresenceMessage = (message: PresenceMessage) => {
+        void refreshPresence();
+        if (message.action === 'enter' || message.action === 'leave') {
+          const data = (message.data as PresenceData | undefined) ?? {};
+          const label =
+            data.username ||
+            (data.guest
+              ? `Guest#${(message.clientId ?? '0000').slice(-4)}`
+              : data.userId || message.clientId || 'Unknown');
+          const kind = message.action === 'enter' ? 'join' : 'leave';
+          setEventLog((prev) => [
+            ...prev.slice(-maxLogEntries + 1),
+            {
+              campaignId,
+              kind,
+              message: `${label} ${kind === 'join' ? 'joined' : 'left'}`,
+              createdAt: new Date().toISOString(),
+            },
+          ]);
+        }
+      };
+      const handleChatMessage = (message: InboundMessage) => {
+        if (!message.data) return;
+        setChatMessages((prev) => [
+          ...prev.slice(-maxLogEntries + 1),
+          message.data as CampaignChatMessage,
+        ]);
+      };
+      const handleEventLog = (message: InboundMessage) => {
+        if (!message.data) return;
+        setEventLog((prev) => [
+          ...prev.slice(-maxLogEntries + 1),
+          message.data as CampaignLogEntry,
+        ]);
+      };
+      const handleCampaignUpdate = (message: InboundMessage) => {
+        if (!message.data) return;
+        handleUpdate();
+      };
+      void channel.subscribe('campaign-updated', handleCampaignUpdate);
+      void channel.subscribe('chat-message', handleChatMessage);
+      void channel.subscribe('event-log', handleEventLog);
+      void channel.presence.subscribe(handlePresenceMessage);
+      void channel.presence.enter({
+        userId: viewerIsGuest ? undefined : viewerId,
+        username: initialUsernameRef.current,
+        guest: viewerIsGuest,
+      });
+      void refreshPresence();
+      return () => {
+        channel.unsubscribe('campaign-updated', handleCampaignUpdate);
+        channel.unsubscribe('chat-message', handleChatMessage);
+        channel.unsubscribe('event-log', handleEventLog);
+        channel.presence.unsubscribe(handlePresenceMessage);
+        void channel.presence.leave();
+        if (refreshTimeoutRef.current) {
+          clearTimeout(refreshTimeoutRef.current);
+        }
+      };
+    }
+    const params = new URLSearchParams();
+    if (viewerIsGuest) {
+      params.set('guestId', viewerId);
+    } else {
+      params.set('userId', viewerId);
+    }
+    if (initialUsernameRef.current) {
+      params.set('username', initialUsernameRef.current);
+    }
+    const streamUrl = params.toString()
+      ? `/api/campaigns/${campaignId}/stream?${params.toString()}`
+      : `/api/campaigns/${campaignId}/stream`;
+    const source = new EventSource(streamUrl);
     const handlePresence = (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data) as {
@@ -159,12 +248,22 @@ export const useCampaign = (
       }
       source.close();
     };
-  }, [campaignId, fetchCampaign, viewerId, viewerIsGuest]);
+  }, [ablyEnabled, campaignId, fetchCampaign, viewerId, viewerIsGuest]);
 
   useEffect(() => {
     if (!campaignId) return;
     if (!viewerId) return;
     if (!viewer?.username) return;
+    if (ablyEnabled) {
+      const client = getAblyClient(viewerId);
+      const channel = client.channels.get(`campaign:${campaignId}`);
+      void channel.presence.update({
+        userId: viewerIsGuest ? undefined : viewerId,
+        username: viewer.username,
+        guest: viewerIsGuest,
+      });
+      return;
+    }
     const updateName = async () => {
       try {
         await fetch(`/api/campaigns/${campaignId}/presence`, {
@@ -177,7 +276,7 @@ export const useCampaign = (
       }
     };
     updateName();
-  }, [campaignId, viewerId, viewer?.username]);
+  }, [ablyEnabled, campaignId, viewerId, viewer?.username, viewerIsGuest]);
 
   const updateCampaign = useCallback(
     async (updatedCampaign: PopulatedCampaignT) => {
@@ -288,6 +387,7 @@ export const useCampaign = (
 export const useCharacterSheets = (userId: string) => {
   const [allCharacters, setAllCharacters] = useState<CharacterSheetT[]>([]);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const ablyEnabled = isAblyClientEnabled();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -299,7 +399,6 @@ export const useCharacterSheets = (userId: string) => {
 
   useEffect(() => {
     if (!userId) return;
-    const source = new EventSource(`/api/sheets/stream?userId=${userId}`);
     const handleUpdate = () => {
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
@@ -309,6 +408,22 @@ export const useCharacterSheets = (userId: string) => {
         setAllCharacters(data);
       }, 200);
     };
+    if (ablyEnabled) {
+      const client = getAblyClient(userId);
+      const channel = client.channels.get(`sheet-list:${userId}`);
+      const handler = (message: InboundMessage) => {
+        if (!message.data) return;
+        handleUpdate();
+      };
+      void channel.subscribe('sheet-list-updated', handler);
+      return () => {
+        channel.unsubscribe('sheet-list-updated', handler);
+        if (refreshTimeoutRef.current) {
+          clearTimeout(refreshTimeoutRef.current);
+        }
+      };
+    }
+    const source = new EventSource(`/api/sheets/stream?userId=${userId}`);
     source.addEventListener('sheet-list-updated', handleUpdate);
     return () => {
       source.removeEventListener('sheet-list-updated', handleUpdate);
@@ -317,7 +432,7 @@ export const useCharacterSheets = (userId: string) => {
       }
       source.close();
     };
-  }, [userId]);
+  }, [ablyEnabled, userId]);
 
   return { allCharacters };
 };
