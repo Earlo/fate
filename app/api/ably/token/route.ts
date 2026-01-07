@@ -9,5 +9,7 @@ export async function GET(req: NextRequest) {
   const tokenRequest = await getAblyRest().auth.createTokenRequest({
     clientId,
   });
-  return NextResponse.json(tokenRequest);
+  return NextResponse.json(tokenRequest, {
+    headers: { 'Cache-Control': 'no-store' },
+  });
 }

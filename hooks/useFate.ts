@@ -1,7 +1,8 @@
 'use client';
 import { getCampaignById, updateCampaignAPI } from '@/lib/apiHelpers/campaigns';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
-import { getAblyClient, isAblyClientEnabled } from '@/lib/realtime/ablyClient';
+import { getAblyClient } from '@/lib/realtime/ablyClient';
+import { useRealtimeMode } from '@/lib/realtime/useRealtimeMode';
 import { PopulatedCampaignT, PopulatedGroup } from '@/schemas/campaign';
 import { blankGroup } from '@/schemas/consts/blankCampaignSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
@@ -24,7 +25,12 @@ type CampaignLogEntry = {
   kind: 'join' | 'leave' | 'roll' | 'system';
 };
 
-type PresenceData = { userId?: string; username?: string; guest?: boolean };
+type PresenceData = {
+  viewerId?: string;
+  userId?: string;
+  username?: string;
+  guest?: boolean;
+};
 
 export const useCampaign = (
   campaignId: string,
@@ -40,9 +46,12 @@ export const useCampaign = (
   const [viewerId, setViewerId] = useState<string | undefined>(viewer?.id);
   const [viewerIsGuest, setViewerIsGuest] = useState(false);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const presenceIdsRef = useRef<Set<string>>(new Set());
+  const presenceInitializedRef = useRef(false);
   const initialUsernameRef = useRef<string | undefined>(viewer?.username);
   const maxLogEntries = 100;
-  const ablyEnabled = isAblyClientEnabled();
+  const realtimeMode = useRealtimeMode();
+  const ablyEnabled = realtimeMode === 'ABLY';
   const fetchCampaign = useCallback(
     async (showLoading = true) => {
       if (!campaignId) return;
@@ -108,48 +117,81 @@ export const useCampaign = (
       const client = getAblyClient(viewerId);
       const channel = client.channels.get(`campaign:${campaignId}`);
       const mapPresenceMembers = (members: PresenceMessage[]) => {
-        const byClientId = new Map<string, PresenceData & { id: string }>();
+        const byViewerId = new Map<string, PresenceData & { id: string }>();
         members.forEach((member) => {
-          const id = member.clientId ?? '';
-          if (!id) return;
           const data = (member.data as PresenceData | undefined) ?? {};
-          byClientId.set(id, {
-            id,
+          const viewerKey =
+            data.viewerId || data.userId || member.clientId || '';
+          if (!viewerKey) return;
+          byViewerId.set(viewerKey, {
+            id: viewerKey,
             userId: data.userId,
             username: data.username,
             guest: data.guest,
           });
         });
-        return Array.from(byClientId.values());
+        return Array.from(byViewerId.values());
+      };
+      const getViewerLabel = (viewer: {
+        id?: string;
+        userId?: string;
+        username?: string;
+        guest?: boolean;
+      }) => {
+        if (viewer.username) return viewer.username;
+        if (viewer.guest) {
+          const suffix = viewer.id ? viewer.id.slice(-4) : '0000';
+          return `Guest#${suffix}`;
+        }
+        return viewer.userId || viewer.id || 'Unknown';
       };
       const refreshPresence = async () => {
         try {
           const members = await channel.presence.get();
-          setPresence(mapPresenceMembers(members));
+          const mapped = mapPresenceMembers(members);
+          setPresence(mapped);
+          if (!presenceInitializedRef.current) {
+            presenceInitializedRef.current = true;
+            presenceIdsRef.current = new Set(mapped.map((entry) => entry.id));
+            return;
+          }
+          const prev = presenceIdsRef.current;
+          const next = new Set(mapped.map((entry) => entry.id));
+          const byId = new Map(mapped.map((entry) => [entry.id, entry]));
+          const added = Array.from(next).filter((id) => !prev.has(id));
+          const removed = Array.from(prev).filter((id) => !next.has(id));
+          if (added.length || removed.length) {
+            const now = new Date().toISOString();
+            if (added.length) {
+              setEventLog((prevLog) => [
+                ...prevLog.slice(-maxLogEntries + 1),
+                ...added.map((id) => ({
+                  campaignId,
+                  kind: 'join' as const,
+                  message: `${getViewerLabel(byId.get(id) ?? { id })} joined`,
+                  createdAt: now,
+                })),
+              ]);
+            }
+            if (removed.length) {
+              setEventLog((prevLog) => [
+                ...prevLog.slice(-maxLogEntries + 1),
+                ...removed.map((id) => ({
+                  campaignId,
+                  kind: 'leave' as const,
+                  message: `${getViewerLabel({ id })} left`,
+                  createdAt: now,
+                })),
+              ]);
+            }
+          }
+          presenceIdsRef.current = next;
         } catch (error) {
           console.error('Failed to load presence list', error);
         }
       };
       const handlePresenceMessage = (message: PresenceMessage) => {
         void refreshPresence();
-        if (message.action === 'enter' || message.action === 'leave') {
-          const data = (message.data as PresenceData | undefined) ?? {};
-          const label =
-            data.username ||
-            (data.guest
-              ? `Guest#${(message.clientId ?? '0000').slice(-4)}`
-              : data.userId || message.clientId || 'Unknown');
-          const kind = message.action === 'enter' ? 'join' : 'leave';
-          setEventLog((prev) => [
-            ...prev.slice(-maxLogEntries + 1),
-            {
-              campaignId,
-              kind,
-              message: `${label} ${kind === 'join' ? 'joined' : 'left'}`,
-              createdAt: new Date().toISOString(),
-            },
-          ]);
-        }
       };
       const handleChatMessage = (message: InboundMessage) => {
         if (!message.data) return;
@@ -169,22 +211,33 @@ export const useCampaign = (
         if (!message.data) return;
         handleUpdate();
       };
+      void (async () => {
+        try {
+          await channel.attach();
+          await channel.presence.enter({
+            viewerId,
+            userId: viewerIsGuest ? undefined : viewerId,
+            username: initialUsernameRef.current,
+            guest: viewerIsGuest,
+          });
+        } catch (error) {
+          console.error('Failed to attach to campaign channel:', error);
+        }
+        void refreshPresence();
+      })();
       void channel.subscribe('campaign-updated', handleCampaignUpdate);
       void channel.subscribe('chat-message', handleChatMessage);
       void channel.subscribe('event-log', handleEventLog);
       void channel.presence.subscribe(handlePresenceMessage);
-      void channel.presence.enter({
-        userId: viewerIsGuest ? undefined : viewerId,
-        username: initialUsernameRef.current,
-        guest: viewerIsGuest,
-      });
-      void refreshPresence();
       return () => {
         channel.unsubscribe('campaign-updated', handleCampaignUpdate);
         channel.unsubscribe('chat-message', handleChatMessage);
         channel.unsubscribe('event-log', handleEventLog);
         channel.presence.unsubscribe(handlePresenceMessage);
+        presenceInitializedRef.current = false;
+        presenceIdsRef.current = new Set();
         void channel.presence.leave();
+        channel.detach();
         if (refreshTimeoutRef.current) {
           clearTimeout(refreshTimeoutRef.current);
         }
@@ -258,6 +311,7 @@ export const useCampaign = (
       const client = getAblyClient(viewerId);
       const channel = client.channels.get(`campaign:${campaignId}`);
       void channel.presence.update({
+        viewerId,
         userId: viewerIsGuest ? undefined : viewerId,
         username: viewer.username,
         guest: viewerIsGuest,
@@ -387,7 +441,8 @@ export const useCampaign = (
 export const useCharacterSheets = (userId: string) => {
   const [allCharacters, setAllCharacters] = useState<CharacterSheetT[]>([]);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const ablyEnabled = isAblyClientEnabled();
+  const realtimeMode = useRealtimeMode();
+  const ablyEnabled = realtimeMode === 'ABLY';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -415,9 +470,17 @@ export const useCharacterSheets = (userId: string) => {
         if (!message.data) return;
         handleUpdate();
       };
+      void (async () => {
+        try {
+          await channel.attach();
+        } catch (error) {
+          console.error('Failed to attach to sheet list channel:', error);
+        }
+      })();
       void channel.subscribe('sheet-list-updated', handler);
       return () => {
         channel.unsubscribe('sheet-list-updated', handler);
+        channel.detach();
         if (refreshTimeoutRef.current) {
           clearTimeout(refreshTimeoutRef.current);
         }

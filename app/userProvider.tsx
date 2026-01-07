@@ -2,7 +2,8 @@
 import CharacterForm from '@/components/characterForm';
 import DraggableCard from '@/components/dashboard/draggableCard';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
-import { getAblyClient, isAblyClientEnabled } from '@/lib/realtime/ablyClient';
+import { getAblyClient } from '@/lib/realtime/ablyClient';
+import { useRealtimeMode } from '@/lib/realtime/useRealtimeMode';
 import { CharacterSheetT, sheetWithContext } from '@/schemas/sheet';
 import { DndContext } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core/dist/types';
@@ -41,6 +42,8 @@ export default function UserProvider({ children }: { children: ReactNode }) {
   const [bigSheet, setBigSheet] = useState<sheetWithContext>();
   const [smallSheets, setSmallSheets] = useState<sheetWithContext[]>([]);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const realtimeMode = useRealtimeMode();
+  const ablyEnabled = realtimeMode === 'ABLY';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,16 +66,24 @@ export default function UserProvider({ children }: { children: ReactNode }) {
         setSheets(data);
       }, 200);
     };
-    if (isAblyClientEnabled()) {
+    if (ablyEnabled) {
       const client = getAblyClient(session.user.id);
       const channel = client.channels.get(`sheet-list:${session.user.id}`);
       const handler = (message: InboundMessage) => {
         if (!message.data) return;
         handleUpdate();
       };
+      void (async () => {
+        try {
+          await channel.attach();
+        } catch (error) {
+          console.error('Failed to attach to sheet list channel:', error);
+        }
+      })();
       void channel.subscribe('sheet-list-updated', handler);
       return () => {
         channel.unsubscribe('sheet-list-updated', handler);
+        channel.detach();
         if (refreshTimeoutRef.current) {
           clearTimeout(refreshTimeoutRef.current);
         }
@@ -89,7 +100,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
       }
       source.close();
     };
-  }, [session?.user?.id]);
+  }, [ablyEnabled, session?.user?.id]);
 
   const handleDragEnd = ({ delta, active }: DragEndEvent) => {
     setSmallSheets((prev) =>

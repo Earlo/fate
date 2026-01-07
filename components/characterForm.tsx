@@ -5,7 +5,8 @@ import {
   getCharacterSheetById,
   updateCharacterSheet,
 } from '@/lib/apiHelpers/sheets';
-import { getAblyClient, isAblyClientEnabled } from '@/lib/realtime/ablyClient';
+import { getAblyClient } from '@/lib/realtime/ablyClient';
+import { useRealtimeMode } from '@/lib/realtime/useRealtimeMode';
 import { upsertById } from '@/lib/utils';
 import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
 import { blankSheet } from '@/schemas/consts/blankCharacterSheet';
@@ -53,6 +54,8 @@ const CharacterForm: FC<CharacterFormProps> = ({
   const canSave = editing || creating;
   const { setSheets } = useContext(userContext);
   const enableRealtime = Boolean(initialSheet?.id && !canSave);
+  const realtimeMode = useRealtimeMode();
+  const ablyEnabled = realtimeMode === 'ABLY';
 
   const stripSheetMeta = (sheet: Partial<CharacterSheetT>) => {
     const { id, owner, created, updated, ...rest } = sheet;
@@ -204,17 +207,25 @@ const CharacterForm: FC<CharacterFormProps> = ({
         refreshSheet();
       }, 200);
     };
-    if (isAblyClientEnabled()) {
+    if (ablyEnabled) {
       const client = getAblyClient(session?.user?.id);
       const channel = client.channels.get(`sheet:${initialSheet.id}`);
       const handler = (message: InboundMessage) => {
         if (!message.data) return;
         handleUpdate();
       };
+      void (async () => {
+        try {
+          await channel.attach();
+        } catch (error) {
+          console.error('Failed to attach to sheet channel:', error);
+        }
+      })();
       void channel.subscribe('sheet-updated', handler);
       return () => {
         isMounted = false;
         channel.unsubscribe('sheet-updated', handler);
+        channel.detach();
         if (refreshTimeout) {
           clearTimeout(refreshTimeout);
         }
@@ -230,7 +241,7 @@ const CharacterForm: FC<CharacterFormProps> = ({
       }
       source.close();
     };
-  }, [enableRealtime, initialSheet?.id, session?.user?.id]);
+  }, [ablyEnabled, enableRealtime, initialSheet?.id, session?.user?.id]);
   const handleDelete = async () => {
     setIsSubmitting(true);
     const deletedId = initialSheet?.id;

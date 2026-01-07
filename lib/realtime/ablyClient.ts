@@ -1,32 +1,43 @@
 import Ably from 'ably';
 
-const getClientMode = () =>
-  (process.env.NEXT_PUBLIC_P2P_CONNECTION_TYPE ?? 'SOCKET').toUpperCase();
-
-export const isAblyClientEnabled = () => getClientMode() === 'ABLY';
-
 const clients = new Map<string, Ably.Realtime>();
 
-export const getAblyClient = (clientId?: string) => {
-  const key = clientId ?? 'default';
-  const existing = clients.get(key);
+const getTabId = () => {
+  if (typeof window === 'undefined') return 'server';
+  const key = 'ably-tab-id';
+  const existing = window.sessionStorage.getItem(key);
   if (existing) return existing;
-  const authUrl = clientId
-    ? `/api/ably/token?clientId=${encodeURIComponent(clientId)}`
-    : '/api/ably/token';
+  const id =
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2);
+  window.sessionStorage.setItem(key, id);
+  return id;
+};
+
+const buildClientId = (viewerId?: string) => {
+  const base = viewerId ?? 'anon';
+  return `${base}:${getTabId()}`;
+};
+
+export const getAblyClient = (viewerId?: string) => {
+  const clientId = buildClientId(viewerId);
+  const existing = clients.get(clientId);
+  if (existing) return existing;
+  const authUrl = `/api/ably/token?clientId=${encodeURIComponent(clientId)}`;
   const client = new Ably.Realtime({
     authUrl,
     authMethod: 'GET',
     autoConnect: true,
   });
-  clients.set(key, client);
+  clients.set(clientId, client);
   return client;
 };
 
-export const releaseAblyClient = (clientId?: string) => {
-  const key = clientId ?? 'default';
-  const client = clients.get(key);
+export const releaseAblyClient = (viewerId?: string) => {
+  const clientId = buildClientId(viewerId);
+  const client = clients.get(clientId);
   if (!client) return;
   client.close();
-  clients.delete(key);
+  clients.delete(clientId);
 };

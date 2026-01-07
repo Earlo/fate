@@ -63,7 +63,12 @@ type CampaignPresenceStore = Map<
 const encoder = new TextEncoder();
 const ablyCampaignChannel = (campaignId: string) => `campaign:${campaignId}`;
 
-type PresenceData = { userId?: string; username?: string; guest?: boolean };
+type PresenceData = {
+  viewerId?: string;
+  userId?: string;
+  username?: string;
+  guest?: boolean;
+};
 
 const getPresenceMembers = (channel: RealtimeChannel) => channel.presence.get();
 
@@ -117,19 +122,19 @@ const getViewerLabel = (viewer: {
 };
 
 const mapPresenceMembers = (members: PresenceMessage[]) => {
-  const byClientId = new Map<string, PresenceData & { id: string }>();
+  const byViewerId = new Map<string, PresenceData & { id: string }>();
   members.forEach((member) => {
-    const id = member.clientId ?? '';
-    if (!id) return;
     const data = (member.data as PresenceData | undefined) ?? {};
-    byClientId.set(id, {
-      id,
+    const viewerKey = data.viewerId || data.userId || member.clientId || '';
+    if (!viewerKey) return;
+    byViewerId.set(viewerKey, {
+      id: viewerKey,
       userId: data.userId,
       username: data.username,
       guest: data.guest,
     });
   });
-  return Array.from(byClientId.values());
+  return Array.from(byViewerId.values());
 };
 
 const getPresenceList = (campaignId: string) => {
@@ -361,6 +366,7 @@ export const subscribeCampaign = (
         }
         try {
           await presence.enterClient(viewer.id, {
+            viewerId: viewer.id,
             userId: viewer.userId,
             username: viewer.username,
             guest: viewer.guest,
