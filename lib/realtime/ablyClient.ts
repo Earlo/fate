@@ -5,31 +5,28 @@ const getClientMode = () =>
 
 export const isAblyClientEnabled = () => getClientMode() === 'ABLY';
 
-let sharedClient: Ably.Realtime | null = null;
-let sharedClientId: string | undefined;
+const clients = new Map<string, Ably.Realtime>();
 
 export const getAblyClient = (clientId?: string) => {
-  if (!sharedClient || sharedClientId !== clientId) {
-    if (sharedClient) {
-      sharedClient.close();
-    }
-    const authUrl = clientId
-      ? `/api/ably/token?clientId=${encodeURIComponent(clientId)}`
-      : '/api/ably/token';
-    sharedClient = new Ably.Realtime({
-      authUrl,
-      authMethod: 'GET',
-      autoConnect: true,
-    });
-    sharedClientId = clientId;
-  }
-  return sharedClient;
+  const key = clientId ?? 'default';
+  const existing = clients.get(key);
+  if (existing) return existing;
+  const authUrl = clientId
+    ? `/api/ably/token?clientId=${encodeURIComponent(clientId)}`
+    : '/api/ably/token';
+  const client = new Ably.Realtime({
+    authUrl,
+    authMethod: 'GET',
+    autoConnect: true,
+  });
+  clients.set(key, client);
+  return client;
 };
 
 export const releaseAblyClient = (clientId?: string) => {
-  if (!sharedClient) return;
-  if (sharedClientId && clientId && sharedClientId !== clientId) return;
-  sharedClient.close();
-  sharedClient = null;
-  sharedClientId = undefined;
+  const key = clientId ?? 'default';
+  const client = clients.get(key);
+  if (!client) return;
+  client.close();
+  clients.delete(key);
 };
