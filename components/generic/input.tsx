@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { ChangeEvent, FC, HTMLInputTypeAttribute } from 'react';
+import { ChangeEvent, FC, HTMLInputTypeAttribute, KeyboardEvent } from 'react';
 interface InputProps {
   name: string;
   type?: HTMLInputTypeAttribute;
@@ -7,6 +7,9 @@ interface InputProps {
   required?: boolean;
   placeholder?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onKeyDown?: (
+    e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
   multiline?: boolean;
   disabled?: boolean;
   className?: string;
@@ -19,6 +22,7 @@ const Input: FC<InputProps> = ({
   required,
   placeholder,
   onChange,
+  onKeyDown,
   multiline = false,
   disabled = false,
   className = '',
@@ -35,6 +39,7 @@ const Input: FC<InputProps> = ({
       )}
       required={required}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       disabled={disabled}
     />
   ) : (
@@ -50,6 +55,7 @@ const Input: FC<InputProps> = ({
       )}
       required={required}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       disabled={disabled}
     />
   );

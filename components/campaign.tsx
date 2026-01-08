@@ -10,14 +10,27 @@ import AspectInput from '@/components/sheet/aspectInput';
 import NoteInput from '@/components/sheet/noteInput';
 import useDebounce from '@/hooks/debounce';
 import { useCampaign } from '@/hooks/useFate';
+import { CampaignChatMessage } from '@/lib/realtime/campaignTypes';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useMemo, useRef, useState } from 'react';
 
 interface CampaignProps {
   id: string;
 }
+
+type PrivateRollMessage = {
+  campaignId?: string;
+  message: string;
+  createdAt: string;
+  sender?: { id?: string; name?: string; guest?: boolean };
+  kind: 'private-roll';
+  roll: { dice: number[]; total: number };
+  private: true;
+};
+
+type ChatMessageView = CampaignChatMessage | PrivateRollMessage;
 
 const Campaign: FC<CampaignProps> = ({ id }) => {
   const router = useRouter();
@@ -52,6 +65,9 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
   const playerIds = campaign?.visibleTo ?? [];
   let guestCounter = 0;
   const [chatInput, setChatInput] = useState('');
+  const [privateChatMessages, setPrivateChatMessages] = useState<
+    PrivateRollMessage[]
+  >([]);
   const chatRef = useRef<HTMLDivElement | null>(null);
   const eventLogRef = useRef<HTMLDivElement | null>(null);
   const [chatAtBottom, setChatAtBottom] = useState(true);
@@ -114,14 +130,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     }
   };
 
-  const handleChatSubmit = async () => {
-    const trimmed = chatInput.trim();
-    if (!trimmed) return;
-    setChatInput('');
-    await sendChatMessage(trimmed, 'chat');
-  };
-
-  const rollFudgeDice = async () => {
+  const buildFudgeRoll = () => {
     const dice = Array.from({ length: 4 }, () => {
       const roll = Math.floor(Math.random() * 3) - 1;
       return roll;
@@ -132,7 +141,40 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     );
     const totalLabel = total >= 0 ? `+${total}` : `${total}`;
     const message = `Rolled 4dF: ${faces.join(' ')} = ${totalLabel}`;
+    return { dice, total, message };
+  };
+
+  const handleChatSubmit = async () => {
+    const trimmed = chatInput.trim();
+    if (!trimmed) return;
+    setChatInput('');
+    await sendChatMessage(trimmed, 'chat');
+  };
+
+  const rollFudgeDice = async () => {
+    const { dice, total, message } = buildFudgeRoll();
     await sendChatMessage(message, 'roll', { dice, total });
+  };
+
+  const rollPrivateFudgeDice = () => {
+    const { dice, total, message } = buildFudgeRoll();
+    const createdAt = new Date().toISOString();
+    setPrivateChatMessages((prev) => [
+      ...prev,
+      {
+        campaignId: id,
+        message,
+        createdAt,
+        sender: {
+          id: viewerId,
+          name: displayName || session?.user?.username,
+          guest: viewerIsGuest,
+        },
+        kind: 'private-roll',
+        roll: { dice, total },
+        private: true,
+      },
+    ]);
   };
 
   const isAtBottom = (element: HTMLDivElement | null) => {
@@ -153,13 +195,21 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     if (chatAtBottom) {
       scrollToBottom(chatRef.current);
     }
-  }, [chatMessages, chatAtBottom]);
+  }, [chatMessages, privateChatMessages, chatAtBottom]);
 
   useEffect(() => {
     if (eventLogAtBottom) {
       scrollToBottom(eventLogRef.current);
     }
   }, [eventLog, eventLogAtBottom]);
+
+  const chatTimeline: ChatMessageView[] = useMemo(() => {
+    const combined = [...chatMessages, ...privateChatMessages];
+    return combined.sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+  }, [chatMessages, privateChatMessages]);
 
   if (isLoading) {
     return (
@@ -222,7 +272,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
             />
           </div>
         </div>
-        <div className="sm:border-l sm:border-gray-700 sm:pl-6">
+        <div className="sm:w-[30rem] sm:shrink-0 sm:border-l sm:border-gray-700 sm:pl-6">
           <div className="pb-4">
             <LabeledInput
               name="Display name"
@@ -285,11 +335,11 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
             <div className="relative">
               <div
                 ref={chatRef}
-                className="max-h-40 overflow-y-auto rounded border border-gray-700 bg-gray-900/40 p-2 pb-8 text-xs text-gray-200"
+                className="h-40 max-h-[60vh] min-h-32 resize-y overflow-y-auto rounded border border-gray-700 bg-gray-900/40 p-2 pb-8 text-xs text-gray-200"
                 onScroll={() => setChatAtBottom(isAtBottom(chatRef.current))}
               >
-                {chatMessages.length > 0 ? (
-                  chatMessages.map((message, index) => {
+                {chatTimeline.length > 0 ? (
+                  chatTimeline.map((message, index) => {
                     const time = new Date(message.createdAt).toLocaleTimeString(
                       [],
                       {
@@ -300,14 +350,20 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
                     const sender =
                       message.sender?.name ||
                       (message.sender?.guest ? 'Guest' : 'Someone');
-                    const isRoll = message.kind === 'roll' && message.roll;
+                    const isRoll =
+                      message.kind !== 'chat' && Boolean(message.roll);
+                    const isPrivate = message.kind === 'private-roll';
                     return (
                       <div
                         key={`${message.createdAt}-${index}`}
-                        className="grid grid-cols-[auto,8rem,1fr] items-start gap-2 pb-1"
+                        className="flex flex-col gap-1 rounded px-1 pb-1"
                       >
-                        <span className="text-gray-400">{time}</span>
-                        <span className="truncate font-semibold">{sender}</span>
+                        <div className="flex flex-wrap items-baseline gap-1">
+                          <span className="truncate font-semibold">
+                            {sender}
+                          </span>
+                          <span className="text-gray-400">- {time}</span>
+                        </div>
                         {isRoll ? (
                           <div className="flex flex-wrap items-center gap-2 font-mono">
                             <span className="text-gray-400">4dF</span>
@@ -349,9 +405,21 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
                                 ? `+${message.roll?.total ?? 0}`
                                 : (message.roll?.total ?? 0)}
                             </span>
+                            {isPrivate && (
+                              <span className="rounded bg-slate-500/40 px-1.5 py-0.5 text-[10px] tracking-wide text-slate-100 uppercase">
+                                [Private]
+                              </span>
+                            )}
                           </div>
                         ) : (
-                          <span>{message.message}</span>
+                          <span className="break-words">
+                            {message.message}
+                            {isPrivate && (
+                              <span className="ml-2 rounded bg-slate-500/40 px-1.5 py-0.5 text-[10px] tracking-wide text-slate-100 uppercase">
+                                [Private]
+                              </span>
+                            )}
+                          </span>
                         )}
                       </div>
                     );
@@ -377,6 +445,12 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
                 value={chatInput}
                 placeholder="Say something..."
                 onChange={(event) => setChatInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    handleChatSubmit();
+                  }
+                }}
                 className="h-9 flex-1"
               />
               <Button
@@ -391,6 +465,12 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
                 onClick={rollFudgeDice}
                 className="h-9 px-3 text-xs"
               />
+              <Button
+                label="Private Roll"
+                type="button"
+                onClick={rollPrivateFudgeDice}
+                className="h-9 px-3 text-xs"
+              />
             </div>
           </div>
           <div className="mt-5">
@@ -400,7 +480,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
             <div className="relative">
               <div
                 ref={eventLogRef}
-                className="max-h-40 overflow-y-auto rounded border border-gray-700 bg-gray-900/40 p-2 pb-8 text-xs text-gray-200"
+                className="h-40 max-h-[60vh] min-h-32 resize-y overflow-y-auto rounded border border-gray-700 bg-gray-900/40 p-2 pb-8 text-xs text-gray-200"
                 onScroll={() =>
                   setEventLogAtBottom(isAtBottom(eventLogRef.current))
                 }
@@ -417,7 +497,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
                     return (
                       <div key={`${entry.createdAt}-${index}`} className="pb-1">
                         <span className="text-gray-400">{time}</span>{' '}
-                        <span>{entry.message}</span>
+                        <span className="break-words">{entry.message}</span>
                       </div>
                     );
                   })
