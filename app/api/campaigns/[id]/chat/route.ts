@@ -18,7 +18,7 @@ export async function POST(
       );
     }
     const createdAt = new Date().toISOString();
-    publishChatMessage(id, {
+    await publishChatMessage(id, {
       campaignId: id,
       message: message || 'Rolled the dice',
       createdAt,

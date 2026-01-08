@@ -37,9 +37,9 @@ export async function PUT(
       ownerId: updated.owner,
       updatedAt: updated.updated?.toISOString(),
     };
-    publishSheetUpdate(id, payload);
+    await publishSheetUpdate(id, payload);
     if (updated.owner) {
-      publishSheetListUpdate(updated.owner, payload);
+      await publishSheetListUpdate(updated.owner, payload);
     }
     return NextResponse.json(updated, {
       status: 200,
@@ -77,9 +77,9 @@ export async function DELETE(
       deleted: true,
       updatedAt: existing.updated?.toISOString(),
     };
-    publishSheetUpdate(id, payload);
+    await publishSheetUpdate(id, payload);
     if (existing.owner) {
-      publishSheetListUpdate(existing.owner, payload);
+      await publishSheetListUpdate(existing.owner, payload);
     }
     return new Response(null, { status: 204 });
   } catch (error) {

@@ -169,10 +169,13 @@ const publishPresence = (campaignId: string) => {
   });
 };
 
-const publishEventLog = (campaignId: string, payload: CampaignLogPayload) => {
+const publishEventLog = async (
+  campaignId: string,
+  payload: CampaignLogPayload,
+) => {
   if (isAblyEnabled()) {
     const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));
-    void channel.publish('event-log', payload);
+    await channel.publish('event-log', payload);
     return;
   }
   const store = getStreamStore();
@@ -218,7 +221,7 @@ export const updatePresenceName = async (
       return;
     }
     if (previousLabel !== nextLabel) {
-      publishEventLog(campaignId, {
+      await publishEventLog(campaignId, {
         campaignId,
         kind: 'system',
         message: `${previousLabel} changed name to ${nextLabel}`,
@@ -241,7 +244,7 @@ export const updatePresenceName = async (
   store.set(campaignId, campaignPresence);
   publishPresence(campaignId);
   if (!isInitialNameForUser) {
-    publishEventLog(campaignId, {
+    void publishEventLog(campaignId, {
       campaignId,
       kind: 'system',
       message: `${previousLabel} changed name to ${nextLabel}`,
@@ -264,7 +267,7 @@ const addPresence = (
       username: viewer.username ?? existing.username,
     });
     if (previousLabel !== nextLabel) {
-      publishEventLog(campaignId, {
+      void publishEventLog(campaignId, {
         campaignId,
         kind: 'system',
         message: `${previousLabel} changed name to ${nextLabel}`,
@@ -287,7 +290,7 @@ const addPresence = (
     campaignPresence.set(viewer.id, { ...viewer, count: 1 });
   }
   store.set(campaignId, campaignPresence);
-  publishEventLog(campaignId, {
+  void publishEventLog(campaignId, {
     campaignId,
     kind: 'join',
     message: `${getViewerLabel(viewer)} joined`,
@@ -310,7 +313,7 @@ const removePresence = (campaignId: string, viewerId: string) => {
   if (campaignPresence.size === 0) {
     store.delete(campaignId);
   }
-  publishEventLog(campaignId, {
+  void publishEventLog(campaignId, {
     campaignId,
     kind: 'leave',
     message: `${getViewerLabel(existing)} left`,
@@ -386,7 +389,7 @@ export const subscribeCampaign = (
         }
         void sendPresenceSnapshot();
         if (!hadViewer) {
-          publishEventLog(campaignId, {
+          await publishEventLog(campaignId, {
             campaignId,
             kind: 'join',
             message: `${getViewerLabel(viewer)} joined`,
@@ -420,7 +423,7 @@ export const subscribeCampaign = (
           }
           void sendPresenceSnapshot();
           if (remainingCount <= 1) {
-            publishEventLog(campaignId, {
+            await publishEventLog(campaignId, {
               campaignId,
               kind: 'leave',
               message: `${getViewerLabel(viewer)} left`,
@@ -471,13 +474,13 @@ export const unsubscribeCampaign = (
   }
 };
 
-export const publishCampaignUpdate = (
+export const publishCampaignUpdate = async (
   campaignId: string,
   payload: CampaignEventPayload,
 ) => {
   if (isAblyEnabled()) {
     const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));
-    void channel.publish('campaign-updated', payload);
+    await channel.publish('campaign-updated', payload);
     return;
   }
   const store = getStreamStore();
@@ -496,16 +499,16 @@ export const publishCampaignUpdate = (
   );
 };
 
-export const publishChatMessage = (
+export const publishChatMessage = async (
   campaignId: string,
   payload: CampaignChatPayload,
 ) => {
   if (isAblyEnabled()) {
     const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));
-    void channel.publish('chat-message', payload);
+    await channel.publish('chat-message', payload);
     if (payload.kind === 'roll') {
       const label = payload.sender?.name || 'Someone';
-      publishEventLog(campaignId, {
+      await publishEventLog(campaignId, {
         campaignId,
         kind: 'roll',
         message: `${label} rolled ${payload.roll?.total ?? 0}`,
@@ -522,7 +525,7 @@ export const publishChatMessage = (
   });
   if (payload.kind === 'roll') {
     const label = payload.sender?.name || 'Someone';
-    publishEventLog(campaignId, {
+    void publishEventLog(campaignId, {
       campaignId,
       kind: 'roll',
       message: `${label} rolled ${payload.roll?.total ?? 0}`,

@@ -24,7 +24,7 @@ export async function PUT(
         { status: 404, headers: { 'Content-Type': 'application/json' } },
       );
     }
-    publishCampaignUpdate(id, {
+    await publishCampaignUpdate(id, {
       campaignId: id,
       updatedAt: updated.updated?.toISOString(),
     });

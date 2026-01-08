@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
     if (created.owner) {
-      publishSheetListUpdate(created.owner, {
+      await publishSheetListUpdate(created.owner, {
         ownerId: created.owner,
         sheetId: created.id,
         updatedAt: created.updated?.toISOString(),

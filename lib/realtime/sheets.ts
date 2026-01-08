@@ -168,26 +168,26 @@ export const subscribeSheetList = (
   return () => unsubscribeFromStore(store, ownerId, subscription);
 };
 
-export const publishSheetUpdate = (
+export const publishSheetUpdate = async (
   sheetId: string,
   payload: SheetEventPayload,
 ) => {
   if (isAblyEnabled()) {
     const channel = getAblyRest().channels.get(ablySheetChannel(sheetId));
-    void channel.publish('sheet-updated', payload);
+    await channel.publish('sheet-updated', payload);
     return;
   }
   const store = getSheetStore();
   publishToStore(store, sheetId, 'sheet-updated', payload);
 };
 
-export const publishSheetListUpdate = (
+export const publishSheetListUpdate = async (
   ownerId: string,
   payload: SheetEventPayload,
 ) => {
   if (isAblyEnabled()) {
     const channel = getAblyRest().channels.get(ablySheetListChannel(ownerId));
-    void channel.publish('sheet-list-updated', payload);
+    await channel.publish('sheet-list-updated', payload);
     return;
   }
   const store = getOwnerStore();
