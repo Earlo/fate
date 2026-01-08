@@ -1,18 +1,16 @@
 import Ably from 'ably';
 
 const getConnectionType = () =>
-  (
-    process.env.P2P_CONNECTION_TYPE ??
-    process.env.NEXT_PUBLIC_P2P_CONNECTION_TYPE ??
-    'SOCKET'
-  ).toUpperCase();
+  (process.env.NEXT_PUBLIC_P2P_CONNECTION_TYPE ?? 'SOCKET').toUpperCase();
 
 export const isAblyEnabled = () => getConnectionType() === 'ABLY';
 
 const requireAblyKey = () => {
   const key = process.env.ABLY_API_KEY;
   if (!key) {
-    throw new Error('ABLY_API_KEY is required when P2P_CONNECTION_TYPE=ABLY');
+    throw new Error(
+      'ABLY_API_KEY is required when NEXT_PUBLIC_P2P_CONNECTION_TYPE=ABLY',
+    );
   }
   return key;
 };

@@ -67,12 +67,11 @@ For local development with Docker Compose, the database and Garage services are 
 
 ### Realtime configuration (SSE vs Ably)
 
-By default, realtime updates use server-sent events and in-memory state (`P2P_CONNECTION_TYPE=SOCKET`). This works for
+By default, realtime updates use server-sent events and in-memory state (`NEXT_PUBLIC_P2P_CONNECTION_TYPE=SOCKET`). This works for
 local dev and traditional servers.
 
 For Vercel/serverless deployments where shared in-memory state is not available, set:
 
-- `P2P_CONNECTION_TYPE=ABLY`
 - `NEXT_PUBLIC_P2P_CONNECTION_TYPE=ABLY`
 - `ABLY_API_KEY=...`
 

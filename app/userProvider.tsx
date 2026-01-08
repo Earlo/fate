@@ -2,19 +2,19 @@
 import CharacterForm from '@/components/characterForm';
 import DraggableCard from '@/components/dashboard/draggableCard';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
-import { getAblyClient } from '@/lib/realtime/ablyClient';
-import { useRealtimeMode } from '@/lib/realtime/useRealtimeMode';
+import { useRealtimeChannel } from '@/lib/realtime/useRealtimeChannel';
 import { CharacterSheetT, sheetWithContext } from '@/schemas/sheet';
 import { DndContext } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core/dist/types';
-import type { InboundMessage } from 'ably';
 import { useSession } from 'next-auth/react';
 import {
   Dispatch,
   ReactNode,
   SetStateAction,
   createContext,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -42,8 +42,7 @@ export default function UserProvider({ children }: { children: ReactNode }) {
   const [bigSheet, setBigSheet] = useState<sheetWithContext>();
   const [smallSheets, setSmallSheets] = useState<sheetWithContext[]>([]);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const realtimeMode = useRealtimeMode();
-  const ablyEnabled = realtimeMode === 'ABLY';
+  const userId = session?.user?.id;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,52 +54,41 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     fetchData();
   }, [session, setSheets]);
 
-  useEffect(() => {
-    if (!session?.user?.id) return;
-    const handleUpdate = () => {
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current);
-      }
-      refreshTimeoutRef.current = setTimeout(async () => {
-        const data = await getCharacterSheetsByUserId(session.user.id);
-        setSheets(data);
-      }, 200);
-    };
-    if (ablyEnabled) {
-      const client = getAblyClient(session.user.id);
-      const channel = client.channels.get(`sheet-list:${session.user.id}`);
-      const handler = (message: InboundMessage) => {
-        if (!message.data) return;
-        handleUpdate();
-      };
-      void (async () => {
-        try {
-          await channel.attach();
-        } catch (error) {
-          console.error('Failed to attach to sheet list channel:', error);
-        }
-      })();
-      void channel.subscribe('sheet-list-updated', handler);
-      return () => {
-        channel.unsubscribe('sheet-list-updated', handler);
-        channel.detach();
-        if (refreshTimeoutRef.current) {
-          clearTimeout(refreshTimeoutRef.current);
-        }
-      };
+  const refreshSheets = useCallback(async () => {
+    if (!userId) return;
+    const data = await getCharacterSheetsByUserId(userId);
+    setSheets(data);
+  }, [userId]);
+
+  const handleUpdate = useCallback(() => {
+    if (refreshTimeoutRef.current) {
+      clearTimeout(refreshTimeoutRef.current);
     }
-    const source = new EventSource(
-      `/api/sheets/stream?userId=${session.user.id}`,
-    );
-    source.addEventListener('sheet-list-updated', handleUpdate);
+    refreshTimeoutRef.current = setTimeout(() => {
+      void refreshSheets();
+    }, 200);
+  }, [refreshSheets]);
+
+  const realtimeEvents = useMemo(
+    () => ({ 'sheet-list-updated': handleUpdate }),
+    [handleUpdate],
+  );
+
+  useEffect(() => {
     return () => {
-      source.removeEventListener('sheet-list-updated', handleUpdate);
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
       }
-      source.close();
     };
-  }, [ablyEnabled, session?.user?.id]);
+  }, []);
+
+  useRealtimeChannel({
+    enabled: Boolean(userId),
+    clientId: userId,
+    channel: userId ? `sheet-list:${userId}` : '',
+    streamUrl: userId ? `/api/sheets/stream?userId=${userId}` : '',
+    events: realtimeEvents,
+  });
 
   const handleDragEnd = ({ delta, active }: DragEndEvent) => {
     setSmallSheets((prev) =>

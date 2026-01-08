@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type RealtimeMode = 'ABLY' | 'SOCKET';
 
@@ -12,32 +12,7 @@ const resolveEnvMode = (): RealtimeMode | null => {
 
 export const useRealtimeMode = (): RealtimeMode => {
   const envMode = resolveEnvMode();
-  const [mode, setMode] = useState<RealtimeMode>(envMode ?? 'SOCKET');
-
-  useEffect(() => {
-    if (envMode) return;
-    let active = true;
-    const fetchMode = async () => {
-      try {
-        const res = await fetch('/api/realtime/mode');
-        if (!res.ok) return;
-        const data = (await res.json()) as { mode?: string };
-        const nextMode =
-          data.mode === 'ABLY' || data.mode === 'SOCKET'
-            ? (data.mode as RealtimeMode)
-            : null;
-        if (active && nextMode) {
-          setMode(nextMode);
-        }
-      } catch (error) {
-        console.error('Failed to resolve realtime mode:', error);
-      }
-    };
-    void fetchMode();
-    return () => {
-      active = false;
-    };
-  }, [envMode]);
+  const [mode] = useState<RealtimeMode>(envMode ?? 'SOCKET');
 
   return mode;
 };

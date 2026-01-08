@@ -5,20 +5,20 @@ import {
   getCharacterSheetById,
   updateCharacterSheet,
 } from '@/lib/apiHelpers/sheets';
-import { getAblyClient } from '@/lib/realtime/ablyClient';
-import { useRealtimeMode } from '@/lib/realtime/useRealtimeMode';
+import { useRealtimeChannel } from '@/lib/realtime/useRealtimeChannel';
 import { upsertById } from '@/lib/utils';
 import { defaultSkills } from '@/schemas/consts/blankCampaignSheet';
 import { blankSheet } from '@/schemas/consts/blankCharacterSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
-import type { InboundMessage } from 'ably';
 import { useSession } from 'next-auth/react';
 import {
   ChangeEvent,
   FC,
   FormEvent,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -54,8 +54,9 @@ const CharacterForm: FC<CharacterFormProps> = ({
   const canSave = editing || creating;
   const { setSheets } = useContext(userContext);
   const enableRealtime = Boolean(initialSheet?.id && !canSave);
-  const realtimeMode = useRealtimeMode();
-  const ablyEnabled = realtimeMode === 'ABLY';
+  const sheetId = initialSheet?.id;
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mountedRef = useRef(true);
 
   const stripSheetMeta = (sheet: Partial<CharacterSheetT>) => {
     const { id, owner, created, updated, ...rest } = sheet;
@@ -186,62 +187,48 @@ const CharacterForm: FC<CharacterFormProps> = ({
   };
 
   useEffect(() => {
-    if (!enableRealtime || !initialSheet?.id) return;
-    let isMounted = true;
-    let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
-    const refreshSheet = async () => {
-      try {
-        const updated = await getCharacterSheetById(initialSheet.id);
-        if (isMounted && updated) {
-          setFormState(updated);
-        }
-      } catch (error) {
-        console.error('Could not fetch character sheet:', error);
-      }
-    };
-    const handleUpdate = () => {
-      if (refreshTimeout) {
-        clearTimeout(refreshTimeout);
-      }
-      refreshTimeout = setTimeout(() => {
-        refreshSheet();
-      }, 200);
-    };
-    if (ablyEnabled) {
-      const client = getAblyClient(session?.user?.id);
-      const channel = client.channels.get(`sheet:${initialSheet.id}`);
-      const handler = (message: InboundMessage) => {
-        if (!message.data) return;
-        handleUpdate();
-      };
-      void (async () => {
-        try {
-          await channel.attach();
-        } catch (error) {
-          console.error('Failed to attach to sheet channel:', error);
-        }
-      })();
-      void channel.subscribe('sheet-updated', handler);
-      return () => {
-        isMounted = false;
-        channel.unsubscribe('sheet-updated', handler);
-        channel.detach();
-        if (refreshTimeout) {
-          clearTimeout(refreshTimeout);
-        }
-      };
-    }
-    const source = new EventSource(`/api/sheets/${initialSheet.id}/stream`);
-    source.addEventListener('sheet-updated', handleUpdate);
+    mountedRef.current = true;
     return () => {
-      isMounted = false;
-      source.removeEventListener('sheet-updated', handleUpdate);
-      if (refreshTimeout) {
-        clearTimeout(refreshTimeout);
+      mountedRef.current = false;
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
       }
-      source.close();
     };
-  }, [ablyEnabled, enableRealtime, initialSheet?.id, session?.user?.id]);
+  }, []);
+
+  const refreshSheet = useCallback(async () => {
+    if (!sheetId) return;
+    try {
+      const updated = await getCharacterSheetById(sheetId);
+      if (mountedRef.current && updated) {
+        setFormState(updated);
+      }
+    } catch (error) {
+      console.error('Could not fetch character sheet:', error);
+    }
+  }, [sheetId]);
+
+  const handleUpdate = useCallback(() => {
+    if (refreshTimeoutRef.current) {
+      clearTimeout(refreshTimeoutRef.current);
+    }
+    refreshTimeoutRef.current = setTimeout(() => {
+      void refreshSheet();
+    }, 200);
+  }, [refreshSheet]);
+
+  const realtimeEvents = useMemo(
+    () => ({ 'sheet-updated': handleUpdate }),
+    [handleUpdate],
+  );
+
+  useRealtimeChannel({
+    enabled: enableRealtime && Boolean(sheetId),
+    clientId: session?.user?.id,
+    channel: sheetId ? `sheet:${sheetId}` : '',
+    streamUrl: sheetId ? `/api/sheets/${sheetId}/stream` : '',
+    events: realtimeEvents,
+  });
   const handleDelete = async () => {
     setIsSubmitting(true);
     const deletedId = initialSheet?.id;

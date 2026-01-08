@@ -121,11 +121,16 @@ const getViewerLabel = (viewer: {
   return viewer.userId || viewer.id || 'Unknown';
 };
 
+const getPresenceKey = (member: PresenceMessage) => {
+  const data = (member.data as PresenceData | undefined) ?? {};
+  return data.viewerId || data.userId || member.clientId || '';
+};
+
 const mapPresenceMembers = (members: PresenceMessage[]) => {
   const byViewerId = new Map<string, PresenceData & { id: string }>();
   members.forEach((member) => {
     const data = (member.data as PresenceData | undefined) ?? {};
-    const viewerKey = data.viewerId || data.userId || member.clientId || '';
+    const viewerKey = getPresenceKey(member);
     if (!viewerKey) return;
     byViewerId.set(viewerKey, {
       id: viewerKey,
@@ -188,7 +193,9 @@ export const updatePresenceName = async (
       ablyCampaignChannel(campaignId),
     );
     const members = await getPresenceMembers(channel);
-    const existing = members.find((member) => member.clientId === viewerId);
+    const existing = members.find(
+      (member) => getPresenceKey(member) === viewerId,
+    );
     if (!existing) return;
     const existingData = (existing.data ?? {}) as PresenceData;
     const previousLabel = getViewerLabel({
@@ -360,7 +367,9 @@ export const subscribeCampaign = (
         let hadViewer = false;
         try {
           const members = await getPresenceMembers(channel);
-          hadViewer = members.some((member) => member.clientId === viewer.id);
+          hadViewer = members.some(
+            (member) => getPresenceKey(member) === viewer.id,
+          );
         } catch (error) {
           console.error('Failed to read presence list:', error);
         }
@@ -398,7 +407,7 @@ export const subscribeCampaign = (
           try {
             const members = await getPresenceMembers(channel);
             remainingCount = members.filter(
-              (member) => member.clientId === viewer.id,
+              (member) => getPresenceKey(member) === viewer.id,
             ).length;
           } catch (error) {
             console.error('Failed to read presence list:', error);
