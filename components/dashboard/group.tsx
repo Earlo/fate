@@ -598,6 +598,15 @@ const CharacterGrid: FC<{
         backgroundRepeat: 'no-repeat',
       }
     : undefined;
+  const maxDimension = Math.max(dimensions.w, dimensions.h);
+  const cellRadiusClass =
+    maxDimension >= 12
+      ? 'rounded-none'
+      : maxDimension >= 8
+        ? 'rounded-sm'
+        : maxDimension >= 6
+          ? 'rounded-md'
+          : 'rounded-lg';
   const grid = Array.from({ length: dimensions.h }, () =>
     Array(dimensions.w).fill(null),
   );
@@ -717,8 +726,10 @@ const CharacterGrid: FC<{
             </div>
           ) : (
             <div
-              className={`h-full w-full rounded-lg border-2 border-dashed ${
-                backgroundImage ? 'bg-gray-600/40' : 'bg-gray-600'
+              className={`h-full w-full ${cellRadiusClass} border border-dashed border-white/20 sm:border-2 sm:border-white/30 ${
+                backgroundImage
+                  ? 'bg-gray-600/20 sm:bg-gray-600/40'
+                  : 'bg-gray-600/60 sm:bg-gray-600'
               }`}
             />
           )}
