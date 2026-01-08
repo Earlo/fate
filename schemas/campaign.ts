@@ -302,3 +302,35 @@ export const getCampaigns = async (
       }) as PopulatedCampaignT,
   );
 };
+
+const containsSheetId = (groups: GroupT[], sheetId: string): boolean => {
+  for (const group of groups) {
+    const characters = Array.isArray(group.characters) ? group.characters : [];
+    for (const character of characters) {
+      const sheet =
+        typeof character.sheet === 'string'
+          ? character.sheet
+          : character.sheet?.id;
+      if (sheet === sheetId) return true;
+    }
+    if (group.children?.length && containsSheetId(group.children, sheetId)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const normalizeGroupList = (groups: unknown): GroupT[] =>
+  Array.isArray(groups) ? (groups as GroupT[]) : [];
+
+export const getCampaignIdsBySheetId = async (
+  sheetId: string,
+): Promise<string[]> => {
+  const rows = await prisma.campaign.findMany({
+    select: { id: true, groups: true },
+  });
+
+  return rows
+    .filter((row) => containsSheetId(normalizeGroupList(row.groups), sheetId))
+    .map((row) => row.id);
+};

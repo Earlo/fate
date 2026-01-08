@@ -1,8 +1,10 @@
 import { handleGetById } from '@/app/api/helpers/handlers';
+import { publishCampaignUpdate } from '@/lib/realtime/campaigns';
 import {
   publishSheetListUpdate,
   publishSheetUpdate,
 } from '@/lib/realtime/sheets';
+import { getCampaignIdsBySheetId } from '@/schemas/campaign';
 import {
   CharacterSheetT,
   deleteCharacterSheet,
@@ -41,6 +43,15 @@ export async function PUT(
     if (updated.owner) {
       await publishSheetListUpdate(updated.owner, payload);
     }
+    const campaignIds = await getCampaignIdsBySheetId(id);
+    await Promise.all(
+      campaignIds.map((campaignId) =>
+        publishCampaignUpdate(campaignId, {
+          campaignId,
+          updatedAt: payload.updatedAt,
+        }),
+      ),
+    );
     return NextResponse.json(updated, {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -81,6 +92,15 @@ export async function DELETE(
     if (existing.owner) {
       await publishSheetListUpdate(existing.owner, payload);
     }
+    const campaignIds = await getCampaignIdsBySheetId(id);
+    await Promise.all(
+      campaignIds.map((campaignId) =>
+        publishCampaignUpdate(campaignId, {
+          campaignId,
+          updatedAt: payload.updatedAt,
+        }),
+      ),
+    );
     return new Response(null, { status: 204 });
   } catch (error) {
     return NextResponse.json(
