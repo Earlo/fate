@@ -50,11 +50,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
       })}
       rightContent={dragHandle}
       disabled={disabled}
-      badge={
-        isOwner ? (
-          <span className="block size-2 rounded-full bg-emerald-500 shadow ring-2 ring-white/80" />
-        ) : undefined
-      }
+      badge={undefined}
     />
   ) : (
     <div
@@ -80,9 +76,6 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
             : 'hover:scale-105 hover:cursor-pointer',
         )}
       />
-      {isOwner && (
-        <span className="absolute top-2 left-2 block size-2 rounded-full bg-emerald-500 shadow ring-2 ring-white/80" />
-      )}
     </div>
   );
 
