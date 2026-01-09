@@ -133,11 +133,13 @@ export default function DraggableCard({
     }),
     touchAction: 'none',
   };
+  const cardState = sheet.state === 'view' ? 'view' : 'play';
+
   return (
     <div ref={setRefs} style={style} id={`small-sheet-${id}`}>
       <CharacterCard
         character={sheet.sheet as CharacterSheetT}
-        state={sheet.state}
+        state={cardState}
         campaignId={sheet.campaignId}
         onClose={onClose}
         onMaximize={onMaximize}
