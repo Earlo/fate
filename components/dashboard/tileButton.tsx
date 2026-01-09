@@ -10,6 +10,7 @@ interface TileButtonProps {
   className?: string;
   imageClassName?: string;
   rightContent?: ReactNode;
+  disabled?: boolean;
 }
 
 const TileButton: React.FC<TileButtonProps> = ({
@@ -20,12 +21,17 @@ const TileButton: React.FC<TileButtonProps> = ({
   className,
   imageClassName,
   rightContent,
+  disabled = false,
 }) => {
   const Container = (
     <div
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      aria-disabled={disabled}
       className={cn(
-        'group relative flex h-20 min-h-0 w-full cursor-pointer items-center justify-around rounded-lg border border-gray-300 transition-colors duration-200 hover:bg-gray-200 hover:text-gray-800 focus:ring-2 focus:ring-gray-400 focus:outline-none active:bg-gray-300',
+        'group relative flex h-20 min-h-0 w-full items-center justify-around rounded-lg border border-gray-300 transition-colors duration-200 focus:ring-2 focus:ring-gray-400 focus:outline-none',
+        disabled
+          ? 'cursor-not-allowed border-2 border-amber-400/80 bg-amber-50/30'
+          : 'cursor-pointer hover:bg-gray-200 hover:text-gray-800 active:bg-gray-300',
         className,
       )}
     >

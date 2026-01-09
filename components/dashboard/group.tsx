@@ -396,7 +396,7 @@ const CharacterList: FC<{
     }[],
   ) => void;
 }> = ({ characters, campaignId, state, onReorder }) => {
-  const { setBigSheet } = useContext(userContext);
+  const { setBigSheet, bigSheet, smallSheets } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
   const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -527,24 +527,38 @@ const CharacterList: FC<{
             onDrop={(event) => handleDrop(event, index)}
           >
             <div className="flex-1">
-              <CharacterButton
-                character={character.sheet}
-                onClick={() => void openCharacterSheet(character.sheet)}
-                campaignId={isAdmin || isPlayer ? undefined : campaignId}
-                dragHandle={
-                  isAdmin ? (
-                    <IconButton
-                      icon="drag"
-                      draggable
-                      onDragStart={(event) =>
-                        handleDragStart(event, character.sheet.id)
-                      }
-                      onDragEnd={handleDragEnd}
-                      className="cursor-grab bg-transparent text-gray-400 hover:bg-transparent focus:ring-0 focus:outline-none active:cursor-grabbing"
-                    />
-                  ) : undefined
-                }
-              />
+              {(() => {
+                const isOpen =
+                  bigSheet?.sheet?.id === character.sheet.id ||
+                  smallSheets.some(
+                    (entry) => entry.sheet?.id === character.sheet.id,
+                  );
+                return (
+                  <CharacterButton
+                    character={character.sheet}
+                    disabled={isOpen}
+                    onClick={
+                      isOpen
+                        ? undefined
+                        : () => void openCharacterSheet(character.sheet)
+                    }
+                    campaignId={isAdmin || isPlayer ? undefined : campaignId}
+                    dragHandle={
+                      isAdmin ? (
+                        <IconButton
+                          icon="drag"
+                          draggable
+                          onDragStart={(event) =>
+                            handleDragStart(event, character.sheet.id)
+                          }
+                          onDragEnd={handleDragEnd}
+                          className="cursor-grab bg-transparent text-gray-400 hover:bg-transparent focus:ring-0 focus:outline-none active:cursor-grabbing"
+                        />
+                      ) : undefined
+                    }
+                  />
+                );
+              })()}
             </div>
           </div>
         </Fragment>
@@ -587,7 +601,7 @@ const CharacterGrid: FC<{
   backgroundImage,
   onReorder,
 }) => {
-  const { setBigSheet } = useContext(userContext);
+  const { setBigSheet, bigSheet, smallSheets } = useContext(userContext);
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
   const backgroundStyle = backgroundImage
@@ -717,12 +731,26 @@ const CharacterGrid: FC<{
                 handleDragStart(event, character.sheet.id)
               }
             >
-              <CharacterButton
-                compact
-                character={character.sheet}
-                onClick={() => void openCharacterSheet(character.sheet)}
-                campaignId={isAdmin || isPlayer ? undefined : campaignId}
-              />
+              {(() => {
+                const isOpen =
+                  bigSheet?.sheet?.id === character.sheet.id ||
+                  smallSheets.some(
+                    (entry) => entry.sheet?.id === character.sheet.id,
+                  );
+                return (
+                  <CharacterButton
+                    compact
+                    character={character.sheet}
+                    disabled={isOpen}
+                    onClick={
+                      isOpen
+                        ? undefined
+                        : () => void openCharacterSheet(character.sheet)
+                    }
+                    campaignId={isAdmin || isPlayer ? undefined : campaignId}
+                  />
+                );
+              })()}
             </div>
           ) : (
             <div

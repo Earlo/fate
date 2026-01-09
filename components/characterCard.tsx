@@ -29,7 +29,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   dragListeners,
 }) => {
   return (
-    <div className="relative z-10 h-fit max-h-dvh max-w-fit overflow-y-auto rounded bg-stone-100 p-1 pt-6 shadow-md">
+    <div className="relative z-10 h-fit max-h-dvh max-w-fit overflow-y-auto rounded border border-stone-300 bg-stone-100 p-1 pt-6 shadow-lg ring-1 ring-stone-200/60">
       <ControlBar
         onClose={onClose}
         onMaximize={onMaximize}
@@ -44,15 +44,15 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             setIcon={() => null}
             className={cn('mr-1 size-28', {
               blur:
-                state === 'play' &&
+                state === 'view' &&
                 !character.icon?.visibleIn.includes(campaignId),
             })}
           />
           <div className="flex flex-col pr-2">
             <LabeledInput
-              name="ID"
+              name="Name"
               value={
-                state === 'play' &&
+                state === 'view' &&
                 !character.name.visibleIn.includes(campaignId)
                   ? '???'
                   : character.name?.text

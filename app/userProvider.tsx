@@ -90,19 +90,55 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     events: realtimeEvents,
   });
 
+  const sheetMap = useMemo(
+    () => new Map(sheets.map((sheet) => [sheet.id, sheet] as const)),
+    [sheets],
+  );
+
+  const handleSmallSheetUpdate = useCallback(
+    (updated: CharacterSheetT) => {
+      setSmallSheets((prev) =>
+        prev.map((entry) =>
+          entry.sheet?.id === updated.id ? { ...entry, sheet: updated } : entry,
+        ),
+      );
+    },
+    [setSmallSheets],
+  );
+
+  const clamp = (value: number, min: number, max: number) =>
+    Math.min(max, Math.max(min, value));
+
   const handleDragEnd = ({ delta, active }: DragEndEvent) => {
+    const node = document.getElementById(`small-sheet-${active.id}`);
+    const rect = node?.getBoundingClientRect();
+    const maxX = rect
+      ? Math.max(
+          0,
+          Math.max(document.documentElement.scrollWidth, window.innerWidth) -
+            rect.width,
+        )
+      : 0;
+    const maxY = rect
+      ? Math.max(
+          0,
+          Math.max(document.documentElement.scrollHeight, window.innerHeight) -
+            rect.height,
+        )
+      : 0;
     setSmallSheets((prev) =>
-      prev.map((s) =>
-        s.sheet?.id === active.id
-          ? {
-              ...s,
-              position: {
-                x: (s.position?.x ?? 0) + delta.x,
-                y: (s.position?.y ?? 0) + delta.y,
-              },
-            }
-          : s,
-      ),
+      prev.map((s) => {
+        if (s.sheet?.id !== active.id) return s;
+        const nextX = (s.position?.x ?? 0) + delta.x;
+        const nextY = (s.position?.y ?? 0) + delta.y;
+        return {
+          ...s,
+          position: {
+            x: clamp(nextX, 0, maxX),
+            y: clamp(nextY, 0, maxY),
+          },
+        };
+      }),
     );
   };
   return (
@@ -127,10 +163,16 @@ export default function UserProvider({ children }: { children: ReactNode }) {
               skills={bigSheet.skills}
               onMinimize={() => {
                 if (bigSheet.sheet) {
-                  setSmallSheets((prev) => [
-                    ...prev,
-                    { ...bigSheet, position: { x: 0, y: 0 } },
-                  ]);
+                  setSmallSheets((prev) => {
+                    const filtered = prev.filter(
+                      (entry) => entry.sheet?.id !== bigSheet.sheet?.id,
+                    );
+                    const offset = filtered.length * 24;
+                    return [
+                      ...filtered,
+                      { ...bigSheet, position: { x: offset, y: offset } },
+                    ];
+                  });
                 }
                 setBigSheet(undefined);
               }}
@@ -139,22 +181,27 @@ export default function UserProvider({ children }: { children: ReactNode }) {
           {smallSheets.map((sheet) => {
             const sheetId = sheet.sheet?.id;
             if (!sheetId) return null;
+            const resolvedSheet = sheetMap.get(sheetId) ?? sheet.sheet;
+            const resolvedContext = resolvedSheet
+              ? { ...sheet, sheet: resolvedSheet }
+              : sheet;
             return (
               <DraggableCard
                 key={sheetId}
                 id={sheetId}
-                sheet={sheet}
+                sheet={resolvedContext}
                 onClose={() =>
                   setSmallSheets((prev) =>
                     prev.filter((s) => s.sheet?.id !== sheetId),
                   )
                 }
                 onMaximize={() => {
-                  setBigSheet(sheet);
+                  setBigSheet(resolvedContext);
                   setSmallSheets((prev) =>
                     prev.filter((s) => s.sheet?.id !== sheetId),
                   );
                 }}
+                onSheetUpdate={handleSmallSheetUpdate}
               />
             );
           })}

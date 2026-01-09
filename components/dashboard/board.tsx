@@ -14,7 +14,8 @@ import { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 
 export default function Dashboard() {
   const { data: session } = useSession();
-  const { sheets, setBigSheet, setSheets } = useContext(userContext);
+  const { sheets, setBigSheet, setSheets, bigSheet, smallSheets } =
+    useContext(userContext);
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [campaigns, setCampaigns] = useState<CampaignT[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState<CampaignT | null>(
@@ -159,15 +160,24 @@ export default function Dashboard() {
       <div className="col-span-1">
         <h2 className="mb-2 text-xl font-bold">Your Character Sheets:</h2>
         <div className="grid grid-cols-1 gap-4 pb-4 md:grid-cols-2">
-          {sheets.map((sheet, index) => (
-            <CharacterButton
-              key={sheet.id || `${sheet.name?.text || 'sheet'}-${index}`}
-              character={sheet}
-              onClick={() =>
-                setBigSheet({ sheet, state: 'edit', skills: allSkills })
-              }
-            />
-          ))}
+          {sheets.map((sheet, index) => {
+            const isOpen =
+              bigSheet?.sheet?.id === sheet.id ||
+              smallSheets.some((entry) => entry.sheet?.id === sheet.id);
+            return (
+              <CharacterButton
+                key={sheet.id || `${sheet.name?.text || 'sheet'}-${index}`}
+                character={sheet}
+                disabled={isOpen}
+                onClick={
+                  isOpen
+                    ? undefined
+                    : () =>
+                        setBigSheet({ sheet, state: 'edit', skills: allSkills })
+                }
+              />
+            );
+          })}
         </div>
         <div className="mb-3 flex flex-wrap gap-2">
           <Button label="Export All" type="button" onClick={handleExportAll} />

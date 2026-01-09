@@ -9,6 +9,7 @@ interface CharacterButtonProps {
   onClick?: () => void;
   compact?: boolean;
   dragHandle?: ReactNode;
+  disabled?: boolean;
 }
 
 const CharacterButton: React.FC<CharacterButtonProps> = ({
@@ -17,6 +18,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
   onClick,
   compact = false,
   dragHandle,
+  disabled = false,
 }) =>
   !compact ? (
     <TileButton
@@ -43,22 +45,30 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
       onClick={onClick}
       className="character-card pr-10 pl-2"
       rightContent={dragHandle}
+      disabled={disabled}
     />
   ) : (
     <div
-      className={cn('relative h-full w-full', {
+      className={cn('relative h-full w-full overflow-hidden rounded-lg', {
+        'cursor-not-allowed border-2 border-amber-400/80 bg-amber-50/10':
+          disabled,
         'blur filter': campaignId
           ? !character.icon?.visibleIn?.includes(campaignId)
           : false,
       })}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
     >
       <Image
         src={character.icon?.url || '/blank_user.png'}
         alt={character.name?.text || 'Character'}
         fill
         sizes="100vw"
-        className="rounded-lg object-cover transition-transform duration-200 hover:scale-105 hover:cursor-pointer"
+        className={cn(
+          'rounded-lg object-cover transition-transform duration-200',
+          disabled
+            ? 'cursor-not-allowed'
+            : 'hover:scale-105 hover:cursor-pointer',
+        )}
       />
     </div>
   );
