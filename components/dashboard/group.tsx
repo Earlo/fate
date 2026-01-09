@@ -15,6 +15,7 @@ import { getCharacterSheetById } from '@/lib/apiHelpers/sheets';
 import { uploadImage } from '@/lib/storage/client';
 import { PopulatedGroup } from '@/schemas/campaign';
 import { CharacterSheetT } from '@/schemas/sheet';
+import { useSession } from 'next-auth/react';
 import {
   ChangeEvent,
   DragEvent,
@@ -397,25 +398,40 @@ const CharacterList: FC<{
   ) => void;
 }> = ({ characters, campaignId, state, onReorder }) => {
   const { setBigSheet, bigSheet, smallSheets } = useContext(userContext);
+  const { data: session } = useSession();
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
 
   const openCharacterSheet = async (sheet: CharacterSheetT) => {
+    const isOwner = sheet.owner === session?.user?.id;
+    const canSeeAll = isAdmin || isOwner;
+    const visibilityCampaignId = isAdmin
+      ? campaignId
+      : canSeeAll
+        ? undefined
+        : campaignId;
+    const nextState = isAdmin
+      ? 'toggle'
+      : isOwner
+        ? 'edit'
+        : isPlayer
+          ? 'play'
+          : 'view';
     try {
       const updated = await getCharacterSheetById(sheet.id);
       setBigSheet({
         sheet: updated ?? sheet,
-        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-        campaignId,
+        state: nextState,
+        campaignId: visibilityCampaignId,
       });
     } catch (error) {
       console.error('Failed to refresh character sheet', error);
       setBigSheet({
         sheet,
-        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-        campaignId,
+        state: nextState,
+        campaignId: visibilityCampaignId,
       });
     }
   };
@@ -533,16 +549,19 @@ const CharacterList: FC<{
                   smallSheets.some(
                     (entry) => entry.sheet?.id === character.sheet.id,
                   );
+                const canSeeAll =
+                  isAdmin || character.sheet.owner === session?.user?.id;
                 return (
                   <CharacterButton
                     character={character.sheet}
+                    isOwner={character.sheet.owner === session?.user?.id}
                     disabled={isOpen}
                     onClick={
                       isOpen
                         ? undefined
                         : () => void openCharacterSheet(character.sheet)
                     }
-                    campaignId={isAdmin || isPlayer ? undefined : campaignId}
+                    campaignId={canSeeAll ? undefined : campaignId}
                     dragHandle={
                       isAdmin ? (
                         <IconButton
@@ -602,6 +621,7 @@ const CharacterGrid: FC<{
   onReorder,
 }) => {
   const { setBigSheet, bigSheet, smallSheets } = useContext(userContext);
+  const { data: session } = useSession();
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
   const backgroundStyle = backgroundImage
@@ -634,19 +654,33 @@ const CharacterGrid: FC<{
   });
 
   const openCharacterSheet = async (sheet: CharacterSheetT) => {
+    const isOwner = sheet.owner === session?.user?.id;
+    const canSeeAll = isAdmin || isOwner;
+    const visibilityCampaignId = isAdmin
+      ? campaignId
+      : canSeeAll
+        ? undefined
+        : campaignId;
+    const nextState = isAdmin
+      ? 'toggle'
+      : isOwner
+        ? 'edit'
+        : isPlayer
+          ? 'play'
+          : 'view';
     try {
       const updated = await getCharacterSheetById(sheet.id);
       setBigSheet({
         sheet: updated ?? sheet,
-        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-        campaignId,
+        state: nextState,
+        campaignId: visibilityCampaignId,
       });
     } catch (error) {
       console.error('Failed to refresh character sheet', error);
       setBigSheet({
         sheet,
-        state: isAdmin ? 'toggle' : isPlayer ? 'play' : 'view',
-        campaignId,
+        state: nextState,
+        campaignId: visibilityCampaignId,
       });
     }
   };
@@ -737,17 +771,20 @@ const CharacterGrid: FC<{
                   smallSheets.some(
                     (entry) => entry.sheet?.id === character.sheet.id,
                   );
+                const canSeeAll =
+                  isAdmin || character.sheet.owner === session?.user?.id;
                 return (
                   <CharacterButton
                     compact
                     character={character.sheet}
+                    isOwner={character.sheet.owner === session?.user?.id}
                     disabled={isOpen}
                     onClick={
                       isOpen
                         ? undefined
                         : () => void openCharacterSheet(character.sheet)
                     }
-                    campaignId={isAdmin || isPlayer ? undefined : campaignId}
+                    campaignId={canSeeAll ? undefined : campaignId}
                   />
                 );
               })()}

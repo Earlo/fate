@@ -10,6 +10,7 @@ interface TileButtonProps {
   className?: string;
   imageClassName?: string;
   rightContent?: ReactNode;
+  badge?: ReactNode;
   disabled?: boolean;
 }
 
@@ -21,6 +22,7 @@ const TileButton: React.FC<TileButtonProps> = ({
   className,
   imageClassName,
   rightContent,
+  badge,
   disabled = false,
 }) => {
   const Container = (
@@ -57,6 +59,7 @@ const TileButton: React.FC<TileButtonProps> = ({
           {rightContent}
         </div>
       )}
+      {badge && <div className="absolute top-2 left-2">{badge}</div>}
     </div>
   );
 

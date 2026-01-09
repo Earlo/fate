@@ -135,7 +135,7 @@ export default function DraggableCard({
     <div ref={setRefs} style={style} id={`small-sheet-${id}`}>
       <CharacterCard
         character={sheet.sheet as CharacterSheetT}
-        state={sheet.state === 'view' ? 'view' : 'play'}
+        state={sheet.state}
         campaignId={sheet.campaignId}
         onClose={onClose}
         onMaximize={onMaximize}

@@ -44,16 +44,16 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             setIcon={() => null}
             className={cn('mr-1 size-28', {
               blur:
-                state === 'view' &&
-                !character.icon?.visibleIn.includes(campaignId),
+                (state === 'view' || state === 'play') &&
+                !character.icon?.visibleIn?.includes(campaignId),
             })}
           />
           <div className="flex flex-col pr-2">
             <LabeledInput
               name="Name"
               value={
-                state === 'view' &&
-                !character.name.visibleIn.includes(campaignId)
+                (state === 'view' || state === 'play') &&
+                !character.name.visibleIn?.includes(campaignId)
                   ? '???'
                   : character.name?.text
               }

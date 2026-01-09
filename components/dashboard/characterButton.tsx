@@ -10,6 +10,7 @@ interface CharacterButtonProps {
   compact?: boolean;
   dragHandle?: ReactNode;
   disabled?: boolean;
+  isOwner?: boolean;
 }
 
 const CharacterButton: React.FC<CharacterButtonProps> = ({
@@ -19,6 +20,7 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
   compact = false,
   dragHandle,
   disabled = false,
+  isOwner = false,
 }) =>
   !compact ? (
     <TileButton
@@ -43,15 +45,23 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
           : false,
       })}
       onClick={onClick}
-      className="character-card pr-10 pl-2"
+      className={cn('character-card pr-10 pl-2', {
+        'border-emerald-400/80': isOwner && !disabled,
+      })}
       rightContent={dragHandle}
       disabled={disabled}
+      badge={
+        isOwner ? (
+          <span className="block size-2 rounded-full bg-emerald-500 shadow ring-2 ring-white/80" />
+        ) : undefined
+      }
     />
   ) : (
     <div
       className={cn('relative h-full w-full overflow-hidden rounded-lg', {
         'cursor-not-allowed border-2 border-amber-400/80 bg-amber-50/10':
           disabled,
+        'border-2 border-emerald-400/80': isOwner && !disabled,
         'blur filter': campaignId
           ? !character.icon?.visibleIn?.includes(campaignId)
           : false,
@@ -70,6 +80,9 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
             : 'hover:scale-105 hover:cursor-pointer',
         )}
       />
+      {isOwner && (
+        <span className="absolute top-2 left-2 block size-2 rounded-full bg-emerald-500 shadow ring-2 ring-white/80" />
+      )}
     </div>
   );
 

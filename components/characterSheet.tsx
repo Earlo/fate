@@ -90,7 +90,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             disabled={!setCharacter}
             className={cn('pb-1', {
               blur:
-                state === 'view' &&
+                (state === 'view' || state === 'play') &&
                 !character?.icon?.visibleIn?.includes(campaignId),
             })}
             context={character}
@@ -130,7 +130,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
               })
             }
             value={
-              state === 'view' &&
+              (state === 'view' || state === 'play') &&
               !character?.name?.visibleIn?.includes(campaignId)
                 ? '???'
                 : character?.name?.text
@@ -164,7 +164,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
               })
             }
             value={
-              state === 'view' &&
+              (state === 'view' || state === 'play') &&
               !character?.description?.visibleIn?.includes(campaignId)
                 ? '???'
                 : isLoading
