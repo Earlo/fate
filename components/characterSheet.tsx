@@ -240,6 +240,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           disabled={!setCharacter}
           campaignId={campaignId}
           state={state}
+          ownerId={character.owner}
+          characterName={character.name?.text}
           setStress={(stress) => updateField('stress', stress)}
           stress={character.stress}
           setConsequences={(consequences) =>

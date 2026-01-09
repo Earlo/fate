@@ -23,7 +23,7 @@ type CampaignChatPayload = {
   createdAt: string;
   sender?: { id?: string; name?: string; guest?: boolean };
   kind: 'chat' | 'roll';
-  roll?: { dice: number[]; total: number };
+  roll?: { dice: number[]; total: number; bonus?: number };
 };
 
 type CampaignLogPayload = {

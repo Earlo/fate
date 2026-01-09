@@ -17,6 +17,7 @@ interface CharacterSheetProps {
   onClose?: () => void;
   onMaximize?: () => void;
   dragListeners?: React.HTMLAttributes<HTMLElement>;
+  isOwner?: boolean;
 }
 
 const CharacterSheet: React.FC<CharacterSheetProps> = ({
@@ -27,9 +28,15 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   onClose,
   onMaximize,
   dragListeners,
+  isOwner = false,
 }) => {
   return (
-    <div className="relative z-10 h-fit max-h-dvh max-w-fit overflow-y-auto rounded border border-stone-300 bg-stone-100 p-1 pt-6 shadow-lg ring-1 ring-stone-200/60">
+    <div
+      className={cn(
+        'relative z-10 h-fit max-h-dvh max-w-fit overflow-y-auto rounded border border-stone-300 bg-stone-100 p-1 pt-6 shadow-lg ring-1 ring-stone-200/60',
+        isOwner && 'border-emerald-400/80 shadow-emerald-200/40',
+      )}
+    >
       <ControlBar
         onClose={onClose}
         onMaximize={onMaximize}
@@ -100,6 +107,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
           setStress={(stress) => null}
           setConsequences={(consequences) => null}
           skillsList={[]}
+          ownerId={character.owner}
+          characterName={character.name?.text}
           tight
         />
       </div>

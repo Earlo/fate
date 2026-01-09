@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import {
   ChevronDown,
   Crown,
+  Dices,
   Ellipsis,
   EllipsisVertical,
   Eye,
@@ -33,6 +34,7 @@ const iconMap = {
   userX: UserX,
   crown: Crown,
   chevronDown: ChevronDown,
+  dice: Dices,
 } as const;
 
 export type IconNameT = keyof typeof iconMap;

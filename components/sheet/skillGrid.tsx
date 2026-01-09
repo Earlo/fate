@@ -1,9 +1,17 @@
 'use client';
 import Icon from '@/components/generic/icon/icon';
+import { buildFudgeRoll } from '@/lib/fateDice';
 import { cn, updateVisibilityList } from '@/lib/utils';
 import { CharacterSheetT } from '@/schemas/sheet';
+import { useSession } from 'next-auth/react';
 import { FC, useMemo, useState } from 'react';
 import Label from '../generic/label';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import SkillInput from './skillInput';
 import VisibilityToggle from './visibilityToggle';
 
@@ -52,6 +60,8 @@ interface SkillGridProps {
   setConsequences: (value: CharacterSheetT['consequences']) => void;
   consequences?: CharacterSheetT['consequences'];
   skillsList: string[];
+  ownerId?: string;
+  characterName?: string;
   tight?: boolean;
 }
 
@@ -66,14 +76,79 @@ const SkillGrid: FC<SkillGridProps> = ({
   setConsequences,
   consequences,
   skillsList,
+  ownerId,
+  characterName,
   tight = false,
 }) => {
+  const { data: session } = useSession();
   const [maxDisplayedTier, setMaxDisplayedTier] = useState(5);
   const [minDisplayedTier, setMinDisplayerTier] = useState(0);
   const currentStress = stress ?? {
     physical: { boxes: [], visibleIn: [] },
     mental: { boxes: [], visibleIn: [] },
   };
+  const canControlSheet =
+    Boolean(session?.user?.admin) || ownerId === session?.user?.id;
+  const canRollDice =
+    (state === 'play' || state === 'toggle') &&
+    Boolean(campaignId) &&
+    canControlSheet;
+
+  const tierLabelForScore = (score: number) => {
+    let closest = tiers[0];
+    for (const tier of tiers) {
+      if (Math.abs(tier.level - score) < Math.abs(closest.level - score)) {
+        closest = tier;
+      }
+    }
+    return closest.label;
+  };
+
+  const rollFudgeDice = async (skillName: string, skillBonus: number) => {
+    if (!campaignId) return;
+    const { dice, total } = buildFudgeRoll();
+    const combinedTotal = total + skillBonus;
+    const finalLabel = tierLabelForScore(combinedTotal);
+    const sender = session?.user?.id
+      ? {
+          id: session.user.id,
+          name: session.user.username,
+          guest: false,
+        }
+      : undefined;
+    try {
+      await fetch(`/api/campaigns/${campaignId}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kind: 'roll',
+          message: `${
+            characterName || 'Someone'
+          } uses ${skillName} (${finalLabel})`,
+          roll: { dice, total: combinedTotal, bonus: skillBonus },
+          sender,
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to send roll message', error);
+    }
+  };
+
+  const rollableSkills = useMemo(() => {
+    const collected: Array<{ name: string; level: number }> = [];
+    Object.entries(skills).forEach(([levelKey, entries]) => {
+      const level = Number(levelKey);
+      entries?.forEach((entry) => {
+        if (entry?.name) {
+          collected.push({ name: entry.name, level });
+        }
+      });
+    });
+    return collected.sort((a, b) => {
+      if (b.level !== a.level) return b.level - a.level;
+      return a.name.localeCompare(b.name);
+    });
+  }, [skills]);
 
   const selectedSkills = useMemo(() => {
     const selected: string[] = [];
@@ -182,16 +257,45 @@ const SkillGrid: FC<SkillGridProps> = ({
   return (
     <div className="w-full min-w-[66.666667%] pb-2 md:w-fit lg:w-8/12 lg:pb-0">
       <Label name="Skills" className="-mb-px">
-        {!disabled && (
-          <Icon
-            icon="plus"
-            onClick={() =>
-              maxDisplayedTier < 18
-                ? setMaxDisplayedTier(maxDisplayedTier + 1)
-                : setMinDisplayerTier(minDisplayedTier - 1)
-            }
-          />
-        )}
+        <div className="flex items-center gap-2">
+          {canRollDice && rollableSkills.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Roll 4dF"
+                  className="inline-flex items-center"
+                >
+                  <Icon icon="dice" className="h-5 w-5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="min-w-48 bg-white text-neutral-900"
+              >
+                {rollableSkills.map((skill) => (
+                  <DropdownMenuItem
+                    key={`${skill.level}-${skill.name}`}
+                    onSelect={() => rollFudgeDice(skill.name, skill.level)}
+                  >
+                    {skill.name} ({skill.level >= 0 ? '+' : ''}
+                    {skill.level})
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          {!disabled && (
+            <Icon
+              icon="plus"
+              onClick={() =>
+                maxDisplayedTier < 18
+                  ? setMaxDisplayedTier(maxDisplayedTier + 1)
+                  : setMinDisplayerTier(minDisplayedTier - 1)
+              }
+            />
+          )}
+        </div>
       </Label>
       {tiers
         .filter(

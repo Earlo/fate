@@ -4,6 +4,7 @@ import { useRealtimeChannel } from '@/lib/realtime/useRealtimeChannel';
 import { CharacterSheetT, sheetWithContext } from '@/schemas/sheet';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 interface Props {
@@ -22,6 +23,7 @@ export default function DraggableCard({
   onSheetUpdate,
 }: Props) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
+  const { data: session } = useSession();
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
   const setRefs = useCallback(
@@ -140,6 +142,10 @@ export default function DraggableCard({
         onClose={onClose}
         onMaximize={onMaximize}
         dragListeners={{ ...listeners, ...attributes }}
+        isOwner={
+          Boolean(session?.user?.admin) ||
+          sheet.sheet?.owner === session?.user?.id
+        }
       />
     </div>
   );

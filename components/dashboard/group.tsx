@@ -406,16 +406,10 @@ const CharacterList: FC<{
 
   const openCharacterSheet = async (sheet: CharacterSheetT) => {
     const isOwner = sheet.owner === session?.user?.id;
-    const canSeeAll = isAdmin || isOwner;
-    const visibilityCampaignId = isAdmin
-      ? campaignId
-      : canSeeAll
-        ? undefined
-        : campaignId;
     const nextState = isAdmin
       ? 'toggle'
       : isOwner
-        ? 'edit'
+        ? 'toggle'
         : isPlayer
           ? 'play'
           : 'view';
@@ -424,14 +418,14 @@ const CharacterList: FC<{
       setBigSheet({
         sheet: updated ?? sheet,
         state: nextState,
-        campaignId: visibilityCampaignId,
+        campaignId,
       });
     } catch (error) {
       console.error('Failed to refresh character sheet', error);
       setBigSheet({
         sheet,
         state: nextState,
-        campaignId: visibilityCampaignId,
+        campaignId,
       });
     }
   };
@@ -655,16 +649,10 @@ const CharacterGrid: FC<{
 
   const openCharacterSheet = async (sheet: CharacterSheetT) => {
     const isOwner = sheet.owner === session?.user?.id;
-    const canSeeAll = isAdmin || isOwner;
-    const visibilityCampaignId = isAdmin
-      ? campaignId
-      : canSeeAll
-        ? undefined
-        : campaignId;
     const nextState = isAdmin
       ? 'toggle'
       : isOwner
-        ? 'edit'
+        ? 'toggle'
         : isPlayer
           ? 'play'
           : 'view';
@@ -673,14 +661,14 @@ const CharacterGrid: FC<{
       setBigSheet({
         sheet: updated ?? sheet,
         state: nextState,
-        campaignId: visibilityCampaignId,
+        campaignId,
       });
     } catch (error) {
       console.error('Failed to refresh character sheet', error);
       setBigSheet({
         sheet,
         state: nextState,
-        campaignId: visibilityCampaignId,
+        campaignId,
       });
     }
   };

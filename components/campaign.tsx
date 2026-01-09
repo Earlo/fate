@@ -10,6 +10,7 @@ import AspectInput from '@/components/sheet/aspectInput';
 import NoteInput from '@/components/sheet/noteInput';
 import useDebounce from '@/hooks/debounce';
 import { useCampaign } from '@/hooks/useFate';
+import { buildFudgeRoll } from '@/lib/fateDice';
 import { CampaignChatMessage } from '@/lib/realtime/campaignTypes';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -26,7 +27,7 @@ type PrivateRollMessage = {
   createdAt: string;
   sender?: { id?: string; name?: string; guest?: boolean };
   kind: 'private-roll';
-  roll: { dice: number[]; total: number };
+  roll: { dice: number[]; total: number; bonus?: number };
   private: true;
 };
 
@@ -107,7 +108,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
   const sendChatMessage = async (
     message: string,
     kind: 'chat' | 'roll',
-    roll?: { dice: number[]; total: number },
+    roll?: { dice: number[]; total: number; bonus?: number },
   ) => {
     if (!message.trim()) return;
     try {
@@ -128,20 +129,6 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     } catch (error) {
       console.error('Failed to send chat message', error);
     }
-  };
-
-  const buildFudgeRoll = () => {
-    const dice = Array.from({ length: 4 }, () => {
-      const roll = Math.floor(Math.random() * 3) - 1;
-      return roll;
-    });
-    const total = dice.reduce((sum, value) => sum + value, 0);
-    const faces = dice.map((value) =>
-      value === 1 ? '+' : value === -1 ? '-' : '0',
-    );
-    const totalLabel = total >= 0 ? `+${total}` : `${total}`;
-    const message = `Rolled 4dF: ${faces.join(' ')} = ${totalLabel}`;
-    return { dice, total, message };
   };
 
   const handleChatSubmit = async () => {
@@ -175,6 +162,55 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
         private: true,
       },
     ]);
+  };
+
+  const blend = (a: number, b: number, t: number) => a + (b - a) * t;
+  const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
+  const toHex = (value: number) => {
+    const hex = Math.round(value).toString(16).padStart(2, '0');
+    return hex;
+  };
+  const mixColor = (
+    from: [number, number, number],
+    to: [number, number, number],
+    t: number,
+  ) => {
+    const tt = clamp01(t);
+    return `#${toHex(blend(from[0], to[0], tt))}${toHex(
+      blend(from[1], to[1], tt),
+    )}${toHex(blend(from[2], to[2], tt))}`;
+  };
+
+  const rollBadgeStyle = (value: number) => {
+    const stops = [
+      { value: -6, color: [127, 29, 29] as [number, number, number] }, // red-900
+      { value: -1, color: [185, 64, 64] as [number, number, number] }, // red-400-ish
+      { value: 0, color: [107, 114, 128] as [number, number, number] }, // gray-500
+      { value: 3, color: [5, 150, 105] as [number, number, number] }, // green-600
+      { value: 8, color: [217, 149, 21] as [number, number, number] }, // regal gold
+      { value: 15, color: [126, 34, 206] as [number, number, number] }, // purple-700
+    ];
+    if (value <= stops[0].value) {
+      const color = `#${toHex(stops[0].color[0])}${toHex(
+        stops[0].color[1],
+      )}${toHex(stops[0].color[2])}`;
+      return { backgroundColor: color, glow: color };
+    }
+    if (value >= stops[stops.length - 1].value) {
+      const last = stops[stops.length - 1].color;
+      const color = `#${toHex(last[0])}${toHex(last[1])}${toHex(last[2])}`;
+      return { backgroundColor: color, glow: color };
+    }
+    for (let i = 0; i < stops.length - 1; i += 1) {
+      const current = stops[i];
+      const next = stops[i + 1];
+      if (value >= current.value && value <= next.value) {
+        const t = (value - current.value) / (next.value - current.value || 1);
+        const color = mixColor(current.color, next.color, t);
+        return { backgroundColor: color, glow: color };
+      }
+    }
+    return { backgroundColor: '#1f2937', glow: '#1f2937' };
   };
 
   const isAtBottom = (element: HTMLDivElement | null) => {
@@ -365,49 +401,81 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
                           <span className="text-gray-400">- {time}</span>
                         </div>
                         {isRoll ? (
-                          <div className="flex flex-wrap items-center gap-2 font-mono">
-                            <span className="text-gray-400">4dF</span>
-                            <div className="flex gap-1">
-                              {message.roll?.dice.map((die, dieIndex) => {
-                                const face =
-                                  die === 1 ? '+' : die === -1 ? '-' : '0';
-                                const glow =
-                                  die === 1
-                                    ? 'text-emerald-300 drop-shadow-[0_0_6px_rgba(16,185,129,0.7)]'
-                                    : die === -1
-                                      ? 'text-rose-300 drop-shadow-[0_0_6px_rgba(244,63,94,0.7)]'
-                                      : 'text-gray-300';
+                          <div className="flex flex-col gap-1 font-mono">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="text-gray-400">4dF</span>
+                              {typeof message.roll?.bonus === 'number' && (
+                                <>
+                                  {(() => {
+                                    const style = rollBadgeStyle(
+                                      message.roll.bonus,
+                                    );
+                                    return (
+                                      <span
+                                        className="rounded px-2 py-0.5 text-sm font-semibold text-white"
+                                        style={{
+                                          backgroundColor:
+                                            style.backgroundColor,
+                                          boxShadow: `0 0 10px rgba(0,0,0,0.35), 0 0 12px ${style.glow}, 0 0 22px ${style.glow}`,
+                                        }}
+                                      >
+                                        {message.roll.bonus >= 0
+                                          ? `+${message.roll.bonus}`
+                                          : message.roll.bonus}
+                                      </span>
+                                    );
+                                  })()}
+                                  <span className="text-gray-400">+</span>
+                                </>
+                              )}
+                              <div className="flex gap-1">
+                                {message.roll?.dice.map((die, dieIndex) => {
+                                  const face =
+                                    die === 1 ? '+' : die === -1 ? '-' : '0';
+                                  const glow =
+                                    die === 1
+                                      ? 'text-emerald-300 drop-shadow-[0_0_6px_rgba(16,185,129,0.7)]'
+                                      : die === -1
+                                        ? 'text-rose-300 drop-shadow-[0_0_6px_rgba(244,63,94,0.7)]'
+                                        : 'text-gray-300';
+                                  return (
+                                    <span
+                                      key={`${message.createdAt}-${dieIndex}`}
+                                      className={`inline-flex h-6 w-6 items-center justify-center rounded border border-gray-600 bg-gray-900 ${glow}`}
+                                    >
+                                      {face}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                              <span className="text-gray-400">=</span>
+                              {(() => {
+                                const style = rollBadgeStyle(
+                                  message.roll?.total ?? 0,
+                                );
                                 return (
                                   <span
-                                    key={`${message.createdAt}-${dieIndex}`}
-                                    className={`inline-flex h-6 w-6 items-center justify-center rounded border border-gray-600 bg-gray-900 ${glow}`}
+                                    className="rounded px-2 py-0.5 text-sm font-semibold text-white"
+                                    style={{
+                                      backgroundColor: style.backgroundColor,
+                                      boxShadow: `0 0 12px rgba(0,0,0,0.4), 0 0 16px ${style.glow}, 0 0 28px ${style.glow}`,
+                                    }}
                                   >
-                                    {face}
+                                    {(message.roll?.total ?? 0) >= 0
+                                      ? `+${message.roll?.total ?? 0}`
+                                      : (message.roll?.total ?? 0)}
                                   </span>
                                 );
-                              })}
+                              })()}
+                              {isPrivate && (
+                                <span className="rounded bg-slate-500/40 px-1.5 py-0.5 text-[10px] tracking-wide text-slate-100 uppercase">
+                                  [Private]
+                                </span>
+                              )}
                             </div>
-                            <span className="text-gray-400">=</span>
-                            <span
-                              className={`rounded px-2 py-0.5 text-sm drop-shadow-[0_0_8px_rgba(56,189,248,0.4)] ${
-                                (message.roll?.total ?? 0) >= 3
-                                  ? 'bg-emerald-700/50 text-emerald-100 drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]'
-                                  : (message.roll?.total ?? 0) >= 1
-                                    ? 'bg-emerald-900/50 text-emerald-200 drop-shadow-[0_0_8px_rgba(16,185,129,0.6)]'
-                                    : (message.roll?.total ?? 0) === 0
-                                      ? 'bg-gray-800 text-gray-200 drop-shadow-[0_0_6px_rgba(148,163,184,0.6)]'
-                                      : (message.roll?.total ?? 0) <= -3
-                                        ? 'bg-rose-700/50 text-rose-100 drop-shadow-[0_0_10px_rgba(244,63,94,0.8)]'
-                                        : 'bg-rose-900/50 text-rose-200 drop-shadow-[0_0_8px_rgba(244,63,94,0.6)]'
-                              }`}
-                            >
-                              {(message.roll?.total ?? 0) >= 0
-                                ? `+${message.roll?.total ?? 0}`
-                                : (message.roll?.total ?? 0)}
-                            </span>
-                            {isPrivate && (
-                              <span className="rounded bg-slate-500/40 px-1.5 py-0.5 text-[10px] tracking-wide text-slate-100 uppercase">
-                                [Private]
+                            {message.message && (
+                              <span className="text-gray-300">
+                                {message.message}
                               </span>
                             )}
                           </div>
