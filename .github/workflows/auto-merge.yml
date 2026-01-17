@@ -29,14 +29,13 @@ jobs:
               per_page: 100,
             });
 
-            // GitHub renders your CI check as: "ci / ci (pull_request)"
-            // because workflow name is "ci" and job name is "ci".
-            const ciCheckName = 'ci / ci (pull_request)';
-            const ciRuns = data.check_runs.filter(run => run.name === ciCheckName);
+            // Some repos show the check as "ci", others as "ci / ci (pull_request)".
+            const ciCheckNames = ['ci', 'ci / ci (pull_request)'];
+            const ciRuns = data.check_runs.filter(run => ciCheckNames.includes(run.name));
 
             if (!ciRuns.length) {
               const available = data.check_runs.map(r => r.name).sort().join(', ');
-              core.setFailed(`Expected check "${ciCheckName}" not found. Available: ${available}`);
+              core.setFailed(`Expected check "${ciCheckNames.join('" or "')}" not found. Available: ${available}`);
               return;
             }
 
