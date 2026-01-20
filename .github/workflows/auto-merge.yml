@@ -1,8 +1,9 @@
 name: auto-merge
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_run:
+    workflows: ['ci']
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -11,6 +12,7 @@ permissions:
 
 jobs:
   automerge:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Ensure CI checks passed
@@ -20,7 +22,15 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const sha = context.payload.pull_request.head.sha;
+            const sha =
+              context.eventName === 'workflow_run'
+                ? context.payload.workflow_run.head_sha
+                : context.payload.pull_request?.head?.sha;
+
+            if (!sha) {
+              core.info('No pull request context; skipping CI check.');
+              return;
+            }
 
             const { data } = await github.rest.checks.listForRef({
               owner,
