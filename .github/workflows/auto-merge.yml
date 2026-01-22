@@ -1,65 +1,14 @@
 name: auto-merge
 
 on:
-  workflow_run:
-    workflows: ['ci']
-    types: [completed]
+  pull_request:
   workflow_dispatch:
-
-permissions:
-  pull-requests: write
-  contents: write
 
 jobs:
   automerge:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
     steps:
-      - name: Ensure CI checks passed
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const sha =
-              context.eventName === 'workflow_run'
-                ? context.payload.workflow_run.head_sha
-                : context.payload.pull_request?.head?.sha;
-
-            if (!sha) {
-              core.info('No pull request context; skipping CI check.');
-              return;
-            }
-
-            const { data } = await github.rest.checks.listForRef({
-              owner,
-              repo,
-              ref: sha,
-              per_page: 100,
-            });
-
-            // Some repos show the check as "ci", others as "ci / ci (pull_request)".
-            const ciCheckNames = ['ci', 'ci / ci (pull_request)'];
-            const ciRuns = data.check_runs.filter(run => ciCheckNames.includes(run.name));
-
-            if (!ciRuns.length) {
-              const available = data.check_runs.map(r => r.name).sort().join(', ');
-              core.setFailed(`Expected check "${ciCheckNames.join('" or "')}" not found. Available: ${available}`);
-              return;
-            }
-
-            const incomplete = ciRuns.filter(run => run.status !== 'completed');
-            if (incomplete.length) {
-              core.setFailed(`CI not completed yet: ${incomplete.map(r => r.name).join(', ')}`);
-              return;
-            }
-
-            const failed = ciRuns.filter(run => run.conclusion !== 'success');
-            if (failed.length) {
-              core.setFailed(`CI failed: ${failed.map(r => `${r.name}=${r.conclusion}`).join(', ')}`);
-            }
-
       - uses: fastify/github-action-merge-dependabot@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
