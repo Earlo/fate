@@ -1,5 +1,5 @@
 'use client';
-import useDebounce from '@/hooks/debounce';
+import useDebounce from '@/hooks/useDebounce';
 import { LLM_FEATURES_ENABLED } from '@/lib/features';
 import { cn, updateVisibilityList } from '@/lib/utils';
 import { useCompletion } from '@ai-sdk/react';

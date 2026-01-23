@@ -11,7 +11,8 @@ import { useRealtimeChannel } from '@/lib/realtime/useRealtimeChannel';
 import { PopulatedCampaignT, PopulatedGroup } from '@/schemas/campaign';
 import { blankGroup } from '@/schemas/consts/blankCampaignSheet';
 import { CharacterSheetT } from '@/schemas/sheet';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDebouncedRefresh } from './useDebouncedRefresh';
 
 export const useCampaign = (
   campaignId: string,
@@ -24,7 +25,6 @@ export const useCampaign = (
   const [eventLog, setEventLog] = useState<CampaignLogEntry[]>([]);
   const [viewerId, setViewerId] = useState<string | undefined>(viewer?.id);
   const [viewerIsGuest, setViewerIsGuest] = useState(false);
-  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const maxLogEntries = 100;
   const fetchCampaign = useCallback(
     async (showLoading = true) => {
@@ -70,14 +70,9 @@ export const useCampaign = (
     setViewerIsGuest(true);
   }, [campaignId, viewer?.id]);
 
-  const handleUpdate = useCallback(() => {
-    if (refreshTimeoutRef.current) {
-      clearTimeout(refreshTimeoutRef.current);
-    }
-    refreshTimeoutRef.current = setTimeout(() => {
-      fetchCampaign(false);
-    }, 200);
-  }, [fetchCampaign]);
+  const handleUpdate = useDebouncedRefresh(() => {
+    fetchCampaign(false);
+  }, 200);
 
   const handleChatMessage = useCallback(
     (message: CampaignChatMessage) => {
@@ -107,14 +102,6 @@ export const useCampaign = (
     onEventLog: handleEventLog,
     onPresenceUpdated: handlePresence,
   });
-
-  useEffect(() => {
-    return () => {
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current);
-      }
-    };
-  }, []);
 
   const updateCampaign = useCallback(
     async (updatedCampaign: PopulatedCampaignT) => {
@@ -224,7 +211,6 @@ export const useCampaign = (
 
 export const useCharacterSheets = (userId: string) => {
   const [allCharacters, setAllCharacters] = useState<CharacterSheetT[]>([]);
-  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -239,22 +225,9 @@ export const useCharacterSheets = (userId: string) => {
     setAllCharacters(data);
   }, [userId]);
 
-  const handleUpdate = useCallback(() => {
-    if (refreshTimeoutRef.current) {
-      clearTimeout(refreshTimeoutRef.current);
-    }
-    refreshTimeoutRef.current = setTimeout(() => {
-      void refreshSheets();
-    }, 200);
-  }, [refreshSheets]);
-
-  useEffect(() => {
-    return () => {
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current);
-      }
-    };
-  }, []);
+  const handleUpdate = useDebouncedRefresh(() => {
+    void refreshSheets();
+  }, 200);
 
   const realtimeEvents = useMemo(
     () => ({ 'sheet-list-updated': handleUpdate }),

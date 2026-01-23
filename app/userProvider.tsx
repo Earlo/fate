@@ -1,6 +1,7 @@
 'use client';
 import CharacterForm from '@/components/characterForm';
 import DraggableCard from '@/components/dashboard/draggableCard';
+import { useDebouncedRefresh } from '@/hooks/useDebouncedRefresh';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import { useRealtimeChannel } from '@/lib/realtime/useRealtimeChannel';
 import { CharacterSheetT, sheetWithContext } from '@/schemas/sheet';
@@ -15,7 +16,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
@@ -41,7 +41,6 @@ export default function UserProvider({ children }: { children: ReactNode }) {
   const [sheets, setSheets] = useState<CharacterSheetT[]>([]);
   const [bigSheet, setBigSheet] = useState<sheetWithContext>();
   const [smallSheets, setSmallSheets] = useState<sheetWithContext[]>([]);
-  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const userId = session?.user?.id;
 
   useEffect(() => {
@@ -60,27 +59,14 @@ export default function UserProvider({ children }: { children: ReactNode }) {
     setSheets(data);
   }, [userId]);
 
-  const handleUpdate = useCallback(() => {
-    if (refreshTimeoutRef.current) {
-      clearTimeout(refreshTimeoutRef.current);
-    }
-    refreshTimeoutRef.current = setTimeout(() => {
-      void refreshSheets();
-    }, 200);
-  }, [refreshSheets]);
+  const handleUpdate = useDebouncedRefresh(() => {
+    void refreshSheets();
+  }, 200);
 
   const realtimeEvents = useMemo(
     () => ({ 'sheet-list-updated': handleUpdate }),
     [handleUpdate],
   );
-
-  useEffect(() => {
-    return () => {
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current);
-      }
-    };
-  }, []);
 
   useRealtimeChannel({
     enabled: Boolean(userId),

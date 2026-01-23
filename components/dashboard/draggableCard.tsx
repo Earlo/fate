@@ -1,4 +1,5 @@
 import CharacterCard from '@/components/characterCard';
+import { useDebouncedRefresh } from '@/hooks/useDebouncedRefresh';
 import { getCharacterSheetById } from '@/lib/apiHelpers/sheets';
 import { useRealtimeChannel } from '@/lib/realtime/useRealtimeChannel';
 import { CharacterSheetT, sheetWithContext } from '@/schemas/sheet';
@@ -35,7 +36,6 @@ export default function DraggableCard({
   );
 
   const persist = sheet.position ?? { x: 0, y: 0 };
-  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sheetId = sheet.sheet?.id;
   const enableRealtime = sheet.state === 'play' || sheet.state === 'view';
 
@@ -71,27 +71,14 @@ export default function DraggableCard({
     }
   }, [sheetId, onSheetUpdate]);
 
-  const handleUpdate = useCallback(() => {
-    if (refreshTimeoutRef.current) {
-      clearTimeout(refreshTimeoutRef.current);
-    }
-    refreshTimeoutRef.current = setTimeout(() => {
-      void refreshSheet();
-    }, 200);
-  }, [refreshSheet]);
+  const handleUpdate = useDebouncedRefresh(() => {
+    void refreshSheet();
+  }, 200);
 
   const realtimeEvents = useMemo(
     () => ({ 'sheet-updated': handleUpdate }),
     [handleUpdate],
   );
-
-  useEffect(() => {
-    return () => {
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current);
-      }
-    };
-  }, []);
 
   useRealtimeChannel({
     enabled: Boolean(sheetId && onSheetUpdate && enableRealtime),

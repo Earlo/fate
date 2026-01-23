@@ -1,5 +1,6 @@
 'use client';
 import { userContext } from '@/app/userProvider';
+import { useDebouncedRefresh } from '@/hooks/useDebouncedRefresh';
 import {
   createCharacterSheet,
   getCharacterSheetById,
@@ -55,7 +56,6 @@ const CharacterForm: FC<CharacterFormProps> = ({
   const { setSheets } = useContext(userContext);
   const enableRealtime = Boolean(initialSheet?.id && !canSave);
   const sheetId = initialSheet?.id;
-  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
 
   const stripSheetMeta = (sheet: Partial<CharacterSheetT>) => {
@@ -190,9 +190,6 @@ const CharacterForm: FC<CharacterFormProps> = ({
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
-      if (refreshTimeoutRef.current) {
-        clearTimeout(refreshTimeoutRef.current);
-      }
     };
   }, []);
 
@@ -208,14 +205,9 @@ const CharacterForm: FC<CharacterFormProps> = ({
     }
   }, [sheetId]);
 
-  const handleUpdate = useCallback(() => {
-    if (refreshTimeoutRef.current) {
-      clearTimeout(refreshTimeoutRef.current);
-    }
-    refreshTimeoutRef.current = setTimeout(() => {
-      void refreshSheet();
-    }, 200);
-  }, [refreshSheet]);
+  const handleUpdate = useDebouncedRefresh(() => {
+    void refreshSheet();
+  }, 200);
 
   const realtimeEvents = useMemo(
     () => ({ 'sheet-updated': handleUpdate }),

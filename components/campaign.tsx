@@ -8,7 +8,7 @@ import LoadingSpinner from '@/components/generic/loadingSpinner';
 import BaseLayout from '@/components/layout/baseLayout';
 import AspectInput from '@/components/sheet/aspectInput';
 import NoteInput from '@/components/sheet/noteInput';
-import useDebounce from '@/hooks/debounce';
+import useDebounce from '@/hooks/useDebounce';
 import { useCampaign } from '@/hooks/useFate';
 import { buildFudgeRoll } from '@/lib/fateDice';
 import { CampaignChatMessage } from '@/lib/realtime/campaignTypes';
