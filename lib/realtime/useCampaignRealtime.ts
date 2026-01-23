@@ -6,6 +6,7 @@ import type {
   CampaignLogEntry,
   PresenceEntry,
 } from './campaignTypes';
+import { joinEvent, leaveEvent, nameChangedEvent } from './eventLogMessages';
 import { useRealtimeChannel } from './useRealtimeChannel';
 import { useRealtimeMode } from './useRealtimeMode';
 
@@ -199,12 +200,10 @@ export const useCampaignRealtime = ({
       const viewerInfo = buildViewerInfo(initialUsernameRef.current);
       presenceLabelRef.current = getViewerLabel(viewerInfo);
       if (!hadViewer) {
-        await publishEventLog(channel, {
-          campaignId: campaignId ?? '',
-          kind: 'join',
-          message: `${getViewerLabel(viewerInfo)} joined`,
-          createdAt: new Date().toISOString(),
-        });
+        await publishEventLog(
+          channel,
+          joinEvent(campaignId ?? '', getViewerLabel(viewerInfo)),
+        );
       }
       await refreshPresence(channel);
     },
@@ -243,12 +242,10 @@ export const useCampaignRealtime = ({
       }
       if (remainingCount <= 1) {
         const viewerInfo = buildViewerInfo(initialUsernameRef.current);
-        await publishEventLog(channel, {
-          campaignId: campaignId ?? '',
-          kind: 'leave',
-          message: `${getViewerLabel(viewerInfo)} left`,
-          createdAt: new Date().toISOString(),
-        });
+        await publishEventLog(
+          channel,
+          leaveEvent(campaignId ?? '', getViewerLabel(viewerInfo)),
+        );
       }
       presenceLabelRef.current = null;
     },
@@ -286,12 +283,10 @@ export const useCampaignRealtime = ({
             guest: viewerIsGuest,
           });
           if (previousLabel !== nextLabel && !isInitialNameForUser) {
-            await channel.publish('event-log', {
-              campaignId,
-              kind: 'system',
-              message: `${previousLabel} changed name to ${nextLabel}`,
-              createdAt: new Date().toISOString(),
-            });
+            await channel.publish(
+              'event-log',
+              nameChangedEvent(campaignId, previousLabel, nextLabel),
+            );
           }
         } catch (error) {
           console.error('Failed to update presence name', error);

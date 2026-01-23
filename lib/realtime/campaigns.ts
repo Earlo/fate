@@ -5,6 +5,12 @@ import type {
   RealtimePresence,
 } from 'ably';
 import { getAblyRealtime, getAblyRest, isAblyEnabled } from './ably';
+import {
+  joinEvent,
+  leaveEvent,
+  nameChangedEvent,
+  rollEvent,
+} from './eventLogMessages';
 
 type CampaignEventPayload = {
   campaignId: string;
@@ -221,12 +227,10 @@ export const updatePresenceName = async (
       return;
     }
     if (previousLabel !== nextLabel) {
-      await publishEventLog(campaignId, {
+      await publishEventLog(
         campaignId,
-        kind: 'system',
-        message: `${previousLabel} changed name to ${nextLabel}`,
-        createdAt: new Date().toISOString(),
-      });
+        nameChangedEvent(campaignId, previousLabel, nextLabel),
+      );
     }
     return;
   }
@@ -244,12 +248,10 @@ export const updatePresenceName = async (
   store.set(campaignId, campaignPresence);
   publishPresence(campaignId);
   if (!isInitialNameForUser) {
-    void publishEventLog(campaignId, {
+    void publishEventLog(
       campaignId,
-      kind: 'system',
-      message: `${previousLabel} changed name to ${nextLabel}`,
-      createdAt: new Date().toISOString(),
-    });
+      nameChangedEvent(campaignId, previousLabel, nextLabel),
+    );
   }
 };
 
@@ -267,12 +269,10 @@ const addPresence = (
       username: viewer.username ?? existing.username,
     });
     if (previousLabel !== nextLabel) {
-      void publishEventLog(campaignId, {
+      void publishEventLog(
         campaignId,
-        kind: 'system',
-        message: `${previousLabel} changed name to ${nextLabel}`,
-        createdAt: new Date().toISOString(),
-      });
+        nameChangedEvent(campaignId, previousLabel, nextLabel),
+      );
       campaignPresence.set(viewer.id, {
         ...existing,
         username: viewer.username ?? existing.username,
@@ -290,12 +290,10 @@ const addPresence = (
     campaignPresence.set(viewer.id, { ...viewer, count: 1 });
   }
   store.set(campaignId, campaignPresence);
-  void publishEventLog(campaignId, {
+  void publishEventLog(
     campaignId,
-    kind: 'join',
-    message: `${getViewerLabel(viewer)} joined`,
-    createdAt: new Date().toISOString(),
-  });
+    joinEvent(campaignId, getViewerLabel(viewer)),
+  );
 };
 
 const removePresence = (campaignId: string, viewerId: string) => {
@@ -313,12 +311,10 @@ const removePresence = (campaignId: string, viewerId: string) => {
   if (campaignPresence.size === 0) {
     store.delete(campaignId);
   }
-  void publishEventLog(campaignId, {
+  void publishEventLog(
     campaignId,
-    kind: 'leave',
-    message: `${getViewerLabel(existing)} left`,
-    createdAt: new Date().toISOString(),
-  });
+    leaveEvent(campaignId, getViewerLabel(existing)),
+  );
 };
 
 export const subscribeCampaign = (
@@ -389,12 +385,10 @@ export const subscribeCampaign = (
         }
         void sendPresenceSnapshot();
         if (!hadViewer) {
-          await publishEventLog(campaignId, {
+          await publishEventLog(
             campaignId,
-            kind: 'join',
-            message: `${getViewerLabel(viewer)} joined`,
-            createdAt: new Date().toISOString(),
-          });
+            joinEvent(campaignId, getViewerLabel(viewer)),
+          );
         }
       })();
     } else {
@@ -423,12 +417,10 @@ export const subscribeCampaign = (
           }
           void sendPresenceSnapshot();
           if (remainingCount <= 1) {
-            await publishEventLog(campaignId, {
+            await publishEventLog(
               campaignId,
-              kind: 'leave',
-              message: `${getViewerLabel(viewer)} left`,
-              createdAt: new Date().toISOString(),
-            });
+              leaveEvent(campaignId, getViewerLabel(viewer)),
+            );
           }
         })();
       }
@@ -508,12 +500,15 @@ export const publishChatMessage = async (
     await channel.publish('chat-message', payload);
     if (payload.kind === 'roll') {
       const label = payload.sender?.name || 'Someone';
-      await publishEventLog(campaignId, {
+      await publishEventLog(
         campaignId,
-        kind: 'roll',
-        message: `${label} rolled ${payload.roll?.total ?? 0}`,
-        createdAt: payload.createdAt,
-      });
+        rollEvent(
+          campaignId,
+          label,
+          payload.createdAt,
+          payload.roll?.total ?? 0,
+        ),
+      );
     }
     return;
   }
@@ -525,11 +520,9 @@ export const publishChatMessage = async (
   });
   if (payload.kind === 'roll') {
     const label = payload.sender?.name || 'Someone';
-    void publishEventLog(campaignId, {
+    void publishEventLog(
       campaignId,
-      kind: 'roll',
-      message: `${label} rolled ${payload.roll?.total ?? 0}`,
-      createdAt: payload.createdAt,
-    });
+      rollEvent(campaignId, label, payload.createdAt, payload.roll?.total ?? 0),
+    );
   }
 };
