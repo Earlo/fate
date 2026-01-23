@@ -11,7 +11,7 @@ import NoteInput from '@/components/sheet/noteInput';
 import useDebounce from '@/hooks/useDebounce';
 import { useCampaign } from '@/hooks/useFate';
 import { buildFudgeRoll } from '@/lib/fateDice';
-import { CampaignChatMessage } from '@/lib/realtime/campaignTypes';
+import { ChatMessage } from '@/lib/realtime/campaignTypes';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -31,7 +31,7 @@ type PrivateRollMessage = {
   private: true;
 };
 
-type ChatMessageView = CampaignChatMessage | PrivateRollMessage;
+type ChatMessageView = ChatMessage | PrivateRollMessage;
 
 const Campaign: FC<CampaignProps> = ({ id }) => {
   const router = useRouter();

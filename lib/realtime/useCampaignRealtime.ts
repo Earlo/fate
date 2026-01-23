@@ -1,11 +1,7 @@
 import type { RealtimeChannel } from 'ably';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { getAblyClient } from './ablyClient';
-import type {
-  CampaignChatMessage,
-  CampaignLogEntry,
-  PresenceEntry,
-} from './campaignTypes';
+import type { ChatMessage, LogEntry, PresenceEntry } from './campaignTypes';
 import { joinEvent, leaveEvent, nameChangedEvent } from './eventLogMessages';
 import { getPresenceKey, getViewerLabel, mapPresenceMembers } from './presence';
 import { useRealtimeChannel } from './useRealtimeChannel';
@@ -17,8 +13,8 @@ type CampaignRealtimeOptions = {
   viewerIsGuest?: boolean;
   username?: string;
   onCampaignUpdated?: () => void;
-  onChatMessage?: (message: CampaignChatMessage) => void;
-  onEventLog?: (entry: CampaignLogEntry) => void;
+  onChatMessage?: (message: ChatMessage) => void;
+  onEventLog?: (entry: LogEntry) => void;
   onPresenceUpdated?: (presence: PresenceEntry[]) => void;
 };
 
@@ -54,7 +50,7 @@ export const useCampaignRealtime = ({
   );
 
   const publishEventLog = useCallback(
-    async (channel: RealtimeChannel, payload: CampaignLogEntry) => {
+    async (channel: RealtimeChannel, payload: LogEntry) => {
       try {
         await channel.publish('event-log', payload);
       } catch (error) {
@@ -94,10 +90,10 @@ export const useCampaignRealtime = ({
         onCampaignUpdated?.();
       },
       'chat-message': (payload: unknown) => {
-        if (payload) onChatMessage?.(payload as CampaignChatMessage);
+        if (payload) onChatMessage?.(payload as ChatMessage);
       },
       'event-log': (payload: unknown) => {
-        if (payload) onEventLog?.(payload as CampaignLogEntry);
+        if (payload) onEventLog?.(payload as LogEntry);
       },
       'presence-updated': handlePresenceEvent,
     }),

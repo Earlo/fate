@@ -1,10 +1,10 @@
 import type { InboundMessage, RealtimeChannel, RealtimePresence } from 'ably';
 import { getAblyRealtime, getAblyRest, isAblyEnabled } from './ably';
 import type {
-  CampaignChatPayload,
-  CampaignEventPayload,
-  CampaignLogPayload,
+  CampaignEvent,
   CampaignStreamPayload,
+  ChatMessage,
+  LogEntry,
 } from './campaignTypes';
 import {
   joinEvent,
@@ -106,10 +106,7 @@ const publishPresence = (campaignId: string) => {
   });
 };
 
-const publishEventLog = async (
-  campaignId: string,
-  payload: CampaignLogPayload,
-) => {
+const publishEventLog = async (campaignId: string, payload: LogEntry) => {
   if (isAblyEnabled()) {
     const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));
     await channel.publish('event-log', payload);
@@ -392,7 +389,7 @@ export const unsubscribeCampaign = (
 
 export const publishCampaignUpdate = async (
   campaignId: string,
-  payload: CampaignEventPayload,
+  payload: CampaignEvent,
 ) => {
   if (isAblyEnabled()) {
     const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));
@@ -405,7 +402,7 @@ export const publishCampaignUpdate = async (
 
 export const publishChatMessage = async (
   campaignId: string,
-  payload: CampaignChatPayload,
+  payload: ChatMessage,
 ) => {
   if (isAblyEnabled()) {
     const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));

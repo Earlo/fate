@@ -1,4 +1,4 @@
-export type CampaignChatMessage = {
+export type ChatMessage = {
   campaignId: string;
   message: string;
   createdAt: string;
@@ -7,7 +7,7 @@ export type CampaignChatMessage = {
   roll?: { dice: number[]; total: number; bonus?: number };
 };
 
-export type CampaignLogEntry = {
+export type LogEntry = {
   campaignId: string;
   message: string;
   createdAt: string;
@@ -21,16 +21,10 @@ export type PresenceEntry = {
   guest?: boolean;
 };
 
-export type CampaignEventPayload = {
+export type CampaignEvent = {
   campaignId: string;
   updatedAt?: string;
   presence?: PresenceEntry[];
 };
 
-export type CampaignChatPayload = CampaignChatMessage;
-export type CampaignLogPayload = CampaignLogEntry;
-
-export type CampaignStreamPayload =
-  | CampaignEventPayload
-  | CampaignChatPayload
-  | CampaignLogPayload;
+export type CampaignStreamPayload = CampaignEvent | ChatMessage | LogEntry;

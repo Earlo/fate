@@ -2,8 +2,8 @@
 import { getCampaignById, updateCampaignAPI } from '@/lib/apiHelpers/campaigns';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import type {
-  CampaignChatMessage,
-  CampaignLogEntry,
+  ChatMessage,
+  LogEntry,
   PresenceEntry,
 } from '@/lib/realtime/campaignTypes';
 import { useCampaignRealtime } from '@/lib/realtime/useCampaignRealtime';
@@ -21,8 +21,8 @@ export const useCampaign = (
   const [campaign, setCampaign] = useState<PopulatedCampaignT>();
   const [isLoading, setIsLoading] = useState(true);
   const [presence, setPresence] = useState<PresenceEntry[]>([]);
-  const [chatMessages, setChatMessages] = useState<CampaignChatMessage[]>([]);
-  const [eventLog, setEventLog] = useState<CampaignLogEntry[]>([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [eventLog, setEventLog] = useState<LogEntry[]>([]);
   const [viewerId, setViewerId] = useState<string | undefined>(viewer?.id);
   const [viewerIsGuest, setViewerIsGuest] = useState(false);
   const maxLogEntries = 100;
@@ -75,14 +75,14 @@ export const useCampaign = (
   }, 200);
 
   const handleChatMessage = useCallback(
-    (message: CampaignChatMessage) => {
+    (message: ChatMessage) => {
       setChatMessages((prev) => [...prev.slice(-maxLogEntries + 1), message]);
     },
     [maxLogEntries],
   );
 
   const handleEventLog = useCallback(
-    (message: CampaignLogEntry) => {
+    (message: LogEntry) => {
       setEventLog((prev) => [...prev.slice(-maxLogEntries + 1), message]);
     },
     [maxLogEntries],
