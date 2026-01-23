@@ -308,7 +308,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
             />
           </div>
         </div>
-        <div className="sm:w-[30rem] sm:shrink-0 sm:border-l sm:border-gray-700 sm:pl-6">
+        <div className="sm:w-120 sm:shrink-0 sm:border-l sm:border-gray-700 sm:pl-6">
           <div className="pb-4">
             <LabeledInput
               name="Display name"
@@ -480,7 +480,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
                             )}
                           </div>
                         ) : (
-                          <span className="break-words">
+                          <span className="wrap-break-word">
                             {message.message}
                             {isPrivate && (
                               <span className="ml-2 rounded bg-slate-500/40 px-1.5 py-0.5 text-[10px] tracking-wide text-slate-100 uppercase">
@@ -565,7 +565,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
                     return (
                       <div key={`${entry.createdAt}-${index}`} className="pb-1">
                         <span className="text-gray-400">{time}</span>{' '}
-                        <span className="break-words">{entry.message}</span>
+                        <span className="wrap-break-word">{entry.message}</span>
                       </div>
                     );
                   })

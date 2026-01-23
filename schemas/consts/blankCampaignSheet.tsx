@@ -1,4 +1,5 @@
 import { CampaignT, PopulatedCampaignT } from '@/schemas/campaign';
+import { createBlankAspects, createDefaultColorPalette } from './blankDefaults';
 
 export const defaultSkills: CampaignT['skills'] = [
   {
@@ -78,33 +79,8 @@ export const defaultSkills: CampaignT['skills'] = [
 export const blankSheet: Omit<CampaignT, 'id'> = {
   name: '',
   description: '',
-  colorPalette: {
-    primary: '209 213 219',
-    secondary: '156 163 175',
-    tertiary: '107 114 128',
-  },
-  aspects: [
-    {
-      name: '',
-      visibleIn: [],
-    },
-    {
-      name: '',
-      visibleIn: [],
-    },
-    {
-      name: '',
-      visibleIn: [],
-    },
-    {
-      name: '',
-      visibleIn: [],
-    },
-    {
-      name: '',
-      visibleIn: [],
-    },
-  ],
+  colorPalette: createDefaultColorPalette(),
+  aspects: createBlankAspects(),
   skills: defaultSkills,
   groups: [],
   notes: [],
@@ -120,11 +96,7 @@ export const blankGroup: Omit<PopulatedCampaignT['groups'][0], 'id'> = {
     url: '',
     note: '',
   },
-  colorPalette: {
-    primary: '209 213 219',
-    secondary: '156 163 175',
-    tertiary: '107 114 128',
-  },
+  colorPalette: createDefaultColorPalette(),
   public: false,
   visible: true,
   layout: {

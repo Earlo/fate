@@ -30,14 +30,14 @@ const Stunt: React.FC<StuntProps> = ({
   title = 'Stunt',
   tight = false,
 }) => {
-  const toggle = state === 'toggle' && campaignId;
+  const showVisibility = state === 'toggle' && campaignId;
   const visible =
     stunt.visibleIn.includes(campaignId || '') ||
-    toggle ||
+    showVisibility ||
     state === 'create' ||
     state === 'edit';
   const shouldHide = state === 'play' || state === 'view';
-  const anyWidgets = toggle || !disabled;
+  const anyWidgets = showVisibility || !disabled;
   return (
     <div
       className={cn('flex grow flex-col pb-2 sm:flex-row', {
@@ -50,7 +50,7 @@ const Stunt: React.FC<StuntProps> = ({
         )}
       >
         {!disabled && <IconButton icon="close" onClick={() => deleteStunt()} />}
-        {toggle && (
+        {showVisibility && (
           <VisibilityToggle
             visible={stunt.visibleIn.includes(campaignId)}
             onChange={(visible) =>

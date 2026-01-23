@@ -1,11 +1,8 @@
 import { CharacterSheetT } from '@/schemas/sheet';
+import { createBlankAspects, createDefaultColorPalette } from './blankDefaults';
 
 export const blankSheet: CharacterSheetT = {
-  colorPalette: {
-    primary: '209 213 219',
-    secondary: '156 163 175',
-    tertiary: '107 114 128',
-  },
+  colorPalette: createDefaultColorPalette(),
   name: {
     text: '',
     visibleIn: [],
@@ -19,28 +16,7 @@ export const blankSheet: CharacterSheetT = {
     refresh: 3,
     visibleIn: [],
   },
-  aspects: [
-    {
-      name: '',
-      visibleIn: [],
-    },
-    {
-      name: '',
-      visibleIn: [],
-    },
-    {
-      name: '',
-      visibleIn: [],
-    },
-    {
-      name: '',
-      visibleIn: [],
-    },
-    {
-      name: '',
-      visibleIn: [],
-    },
-  ],
+  aspects: createBlankAspects(),
   skills: {},
   stunts: [],
   extras: [],
