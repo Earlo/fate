@@ -53,3 +53,21 @@ export function upsertById<T extends { id?: string }>(items: T[], item: T) {
   }
   return [...items.slice(0, index), item, ...items.slice(index + 1)];
 }
+
+export function replaceAtIndex<T>(items: T[], index: number, value: T) {
+  if (index < 0 || index >= items.length) {
+    return items;
+  }
+  return [...items.slice(0, index), value, ...items.slice(index + 1)];
+}
+
+export function removeAtIndex<T>(items: T[], index: number) {
+  if (index < 0 || index >= items.length) {
+    return items;
+  }
+  return [...items.slice(0, index), ...items.slice(index + 1)];
+}
+
+export function appendItem<T>(items: T[], item: T) {
+  return [...items, item];
+}

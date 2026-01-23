@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { appendItem, cn, removeAtIndex, replaceAtIndex } from '@/lib/utils';
 import EditableList from './editableList';
 import Stunt from './stunt';
 
@@ -36,26 +36,21 @@ const StuntInput: React.FC<StuntInputProps> = ({
         disabled
           ? undefined
           : () =>
-              setStunts([
-                ...stunts,
-                { name: '', description: '', visibleIn: [] },
-              ])
+              setStunts(
+                appendItem(stunts, {
+                  name: '',
+                  description: '',
+                  visibleIn: [],
+                }),
+              )
       }
       renderItem={(stunt, index) => (
         <Stunt
           key={index}
           index={index}
           stunt={stunt}
-          deleteStunt={() =>
-            setStunts([...stunts.slice(0, index), ...stunts.slice(index + 1)])
-          }
-          setStunt={(stunt) =>
-            setStunts([
-              ...stunts.slice(0, index),
-              stunt,
-              ...stunts.slice(index + 1),
-            ])
-          }
+          deleteStunt={() => setStunts(removeAtIndex(stunts, index))}
+          setStunt={(stunt) => setStunts(replaceAtIndex(stunts, index, stunt))}
           disabled={disabled}
           campaignId={campaignId}
           state={state}

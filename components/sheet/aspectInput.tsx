@@ -1,4 +1,9 @@
-import { cn, updateVisibilityList } from '@/lib/utils';
+import {
+  cn,
+  removeAtIndex,
+  replaceAtIndex,
+  updateVisibilityList,
+} from '@/lib/utils';
 import IconButton from '../generic/icon/iconButton';
 import Input from '../generic/input';
 import EditableList from './editableList';
@@ -31,11 +36,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
     index: number,
     value: { name: string; visibleIn: string[] },
   ) => {
-    setAspects([
-      ...aspects.slice(0, index),
-      value,
-      ...aspects.slice(index + 1),
-    ]);
+    setAspects(replaceAtIndex(aspects, index, value));
   };
   const showVisibility = state === 'toggle' && campaignId;
   const shouldHide = state === 'play' || state === 'view';
@@ -102,9 +103,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
             {!disabled && (
               <IconButton
                 icon="close"
-                onClick={() =>
-                  setAspects(aspects.filter((_, i) => i !== index))
-                }
+                onClick={() => setAspects(removeAtIndex(aspects, index))}
               />
             )}
           </div>
