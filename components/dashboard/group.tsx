@@ -14,6 +14,7 @@ import {
 import { getCharacterSheetById } from '@/lib/apiHelpers/sheets';
 import { uploadImage } from '@/lib/storage/client';
 import { PopulatedGroup } from '@/schemas/campaign';
+import { defaultGroupDimensions } from '@/schemas/consts/blankDefaults';
 import { CharacterSheetT } from '@/schemas/sheet';
 import { useSession } from 'next-auth/react';
 import {
@@ -31,13 +32,51 @@ import ToggleSwitch from '../generic/toggleSwitch';
 import VisibilityToggle from '../sheet/visibilityToggle';
 import CharacterButton from './characterButton';
 
+type OpenCharacterSheetDeps = {
+  sessionUserId?: string;
+  isAdmin: boolean;
+  isPlayer: boolean;
+  campaignId: string;
+  setBigSheet: (context: {
+    sheet: CharacterSheetT;
+    state: 'toggle' | 'play' | 'view';
+    campaignId: string;
+  }) => void;
+};
+
+const buildOpenCharacterSheet =
+  ({
+    sessionUserId,
+    isAdmin,
+    isPlayer,
+    campaignId,
+    setBigSheet,
+  }: OpenCharacterSheetDeps) =>
+  async (sheet: CharacterSheetT) => {
+    const isOwner = sheet.owner === sessionUserId;
+    const nextState = isAdmin
+      ? 'toggle'
+      : isOwner
+        ? 'toggle'
+        : isPlayer
+          ? 'play'
+          : 'view';
+    try {
+      const updated = await getCharacterSheetById(sheet.id);
+      setBigSheet({ sheet: updated ?? sheet, state: nextState, campaignId });
+    } catch (error) {
+      console.error('Failed to refresh character sheet', error);
+      setBigSheet({ sheet, state: nextState, campaignId });
+    }
+  };
+
 const GroupSettings: FC<{
   group: PopulatedGroup;
   onChange: (updatedGroup?: PopulatedGroup) => void;
   setEditing: (editing: boolean) => void;
 }> = ({ group, onChange, setEditing }) => {
   const [newName, setNewName] = useState(group.name);
-  const layoutDimensions = group.layout?.dimensions ?? { w: 3, h: 3 };
+  const layoutDimensions = group.layout?.dimensions ?? defaultGroupDimensions();
   const [isBackgroundUploading, setIsBackgroundUploading] = useState(false);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
 
@@ -124,7 +163,7 @@ const GroupSettings: FC<{
               nextMode === 'grid'
                 ? {
                     mode: 'grid' as const,
-                    dimensions: group.layout?.dimensions ?? { w: 3, h: 3 },
+                    dimensions: layoutDimensions,
                     backgroundImage,
                   }
                 : group.layout?.dimensions
@@ -223,7 +262,7 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
   const isAdmin = state === 'admin';
   const isPlayer = state === 'player';
   const layout = group.layout?.mode || 'list';
-  const layoutDimensions = group.layout?.dimensions ?? { w: 3, h: 3 };
+  const layoutDimensions = group.layout?.dimensions ?? defaultGroupDimensions();
 
   const findNextAvailablePosition = () => {
     const occupied = new Set(
@@ -326,7 +365,7 @@ const Group: FC<GroupProps> = ({ group, state, onChange, campaignId }) => {
           characters={group.characters}
           campaignId={campaignId}
           state={state}
-          dimensions={group.layout?.dimensions ?? { w: 3, h: 3 }}
+          dimensions={layoutDimensions}
           backgroundImage={group.layout?.backgroundImage}
           onReorder={(updatedCharacters) =>
             onChange({ ...group, characters: updatedCharacters })
@@ -403,32 +442,13 @@ const CharacterList: FC<{
   const isPlayer = state === 'player';
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
-
-  const openCharacterSheet = async (sheet: CharacterSheetT) => {
-    const isOwner = sheet.owner === session?.user?.id;
-    const nextState = isAdmin
-      ? 'toggle'
-      : isOwner
-        ? 'toggle'
-        : isPlayer
-          ? 'play'
-          : 'view';
-    try {
-      const updated = await getCharacterSheetById(sheet.id);
-      setBigSheet({
-        sheet: updated ?? sheet,
-        state: nextState,
-        campaignId,
-      });
-    } catch (error) {
-      console.error('Failed to refresh character sheet', error);
-      setBigSheet({
-        sheet,
-        state: nextState,
-        campaignId,
-      });
-    }
-  };
+  const openCharacterSheet = buildOpenCharacterSheet({
+    sessionUserId: session?.user?.id,
+    isAdmin,
+    isPlayer,
+    campaignId,
+    setBigSheet,
+  });
 
   const handleDragStart = (
     event: DragEvent<HTMLButtonElement>,
@@ -476,7 +496,6 @@ const CharacterList: FC<{
       ...character,
       position: { x: 0, y: index },
     }));
-    console.log('nor', normalized);
     onReorder(normalized);
     setDropIndex(null);
     setDraggedId(null);
@@ -610,7 +629,7 @@ const CharacterGrid: FC<{
   characters,
   campaignId,
   state,
-  dimensions = { w: 3, h: 3 },
+  dimensions = defaultGroupDimensions(),
   backgroundImage,
   onReorder,
 }) => {
@@ -646,32 +665,13 @@ const CharacterGrid: FC<{
       grid[character.position.y][character.position.x] = character;
     }
   });
-
-  const openCharacterSheet = async (sheet: CharacterSheetT) => {
-    const isOwner = sheet.owner === session?.user?.id;
-    const nextState = isAdmin
-      ? 'toggle'
-      : isOwner
-        ? 'toggle'
-        : isPlayer
-          ? 'play'
-          : 'view';
-    try {
-      const updated = await getCharacterSheetById(sheet.id);
-      setBigSheet({
-        sheet: updated ?? sheet,
-        state: nextState,
-        campaignId,
-      });
-    } catch (error) {
-      console.error('Failed to refresh character sheet', error);
-      setBigSheet({
-        sheet,
-        state: nextState,
-        campaignId,
-      });
-    }
-  };
+  const openCharacterSheet = buildOpenCharacterSheet({
+    sessionUserId: session?.user?.id,
+    isAdmin,
+    isPlayer,
+    campaignId,
+    setBigSheet,
+  });
 
   const handleDragStart = (
     event: DragEvent<HTMLDivElement>,

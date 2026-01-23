@@ -1,8 +1,13 @@
 import { CharacterSheetT } from '@/schemas/sheet';
-import { createBlankAspects, createDefaultColorPalette } from './blankDefaults';
+import {
+  blankAspects,
+  defaultConsequences,
+  defaultPalette,
+  defaultStress,
+} from './blankDefaults';
 
-export const blankSheet: CharacterSheetT = {
-  colorPalette: createDefaultColorPalette(),
+export const blankCharacterSheet = (): CharacterSheetT => ({
+  colorPalette: defaultPalette(),
   name: {
     text: '',
     visibleIn: [],
@@ -16,37 +21,15 @@ export const blankSheet: CharacterSheetT = {
     refresh: 3,
     visibleIn: [],
   },
-  aspects: createBlankAspects(),
+  aspects: blankAspects(),
   skills: {},
   stunts: [],
   extras: [],
-  stress: {
-    physical: {
-      boxes: [false, false],
-      visibleIn: [],
-    },
-    mental: {
-      boxes: [false, false],
-      visibleIn: [],
-    },
-  },
-  consequences: {
-    mild: {
-      name: '',
-      visibleIn: [],
-    },
-    moderate: {
-      name: '',
-      visibleIn: [],
-    },
-    severe: {
-      name: '',
-      visibleIn: [],
-    },
-  },
+  stress: defaultStress(),
+  consequences: defaultConsequences(),
   notes: [],
   public: false,
   visibleTo: [],
   owner: '',
   id: '',
-};
+});

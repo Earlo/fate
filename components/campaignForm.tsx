@@ -5,7 +5,7 @@ import {
 } from '@/lib/apiHelpers/campaigns';
 import { upsertById } from '@/lib/utils';
 import { CampaignT } from '@/schemas/campaign';
-import { blankSheet } from '@/schemas/consts/blankCampaignSheet';
+import { blankCampaignSheet } from '@/schemas/consts/blankCampaignSheet';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Dispatch, FC, FormEvent, SetStateAction, useState } from 'react';
@@ -31,7 +31,7 @@ const CampaignForm: FC<CampaignFormProps> = ({
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState<Partial<CampaignT>>(
-    initialCampaign || { ...blankSheet },
+    initialCampaign || blankCampaignSheet(),
   );
   const editing = state === 'edit' && initialCampaign;
   const viewing = state === 'view' && initialCampaign;

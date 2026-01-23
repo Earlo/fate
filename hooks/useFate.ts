@@ -129,7 +129,7 @@ export const useCampaign = (
 
   const addGroup = async () => {
     if (campaign) {
-      const newGroup = { ...blankGroup };
+      const newGroup = blankGroup();
       const updatedCampaign = { ...campaign };
       updatedCampaign.groups.push(newGroup);
       await updateCampaign(updatedCampaign);

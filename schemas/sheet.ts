@@ -1,4 +1,9 @@
 import { prisma } from '@/lib/prisma';
+import {
+  defaultConsequences,
+  defaultPalette,
+  defaultStress,
+} from '@/schemas/consts/blankDefaults';
 import { Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
@@ -61,23 +66,6 @@ type CharacterSheetRow = {
   updated: Date;
 };
 
-const defaultColorPalette = () => ({
-  primary: '209 213 219',
-  secondary: '156 163 175',
-  tertiary: '107 114 128',
-});
-
-const defaultStress = () => ({
-  physical: { boxes: [false, false], visibleIn: [] as string[] },
-  mental: { boxes: [false, false], visibleIn: [] as string[] },
-});
-
-const defaultConsequences = () => ({
-  mild: { name: '', visibleIn: [] as string[] },
-  moderate: { name: '', visibleIn: [] as string[] },
-  severe: { name: '', visibleIn: [] as string[] },
-});
-
 const normalizeVisibleIn = (value: unknown): string[] =>
   Array.isArray(value)
     ? value.filter((v): v is string => typeof v === 'string')
@@ -128,7 +116,7 @@ const mapCharacterSheet = (
         icon: (row.icon as CharacterSheetT['icon']) ?? undefined,
         colorPalette:
           (row.colorPalette as CharacterSheetT['colorPalette']) ??
-          defaultColorPalette(),
+          defaultPalette(),
         name: (row.name as CharacterSheetT['name']) ?? defaultName(),
         description:
           (row.description as CharacterSheetT['description']) ?? undefined,
@@ -161,7 +149,7 @@ export async function createCharacterSheet(sheet: Partial<CharacterSheetT>) {
       id,
       icon: (sheet.icon as Prisma.InputJsonValue) ?? null,
       colorPalette:
-        (sheet.colorPalette as Prisma.InputJsonValue) ?? defaultColorPalette(),
+        (sheet.colorPalette as Prisma.InputJsonValue) ?? defaultPalette(),
       name: (sheet.name as Prisma.InputJsonValue) ?? defaultName(),
       description: (sheet.description as Prisma.InputJsonValue) ?? null,
       fate: (sheet.fate as Prisma.InputJsonValue) ?? defaultFate(),

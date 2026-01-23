@@ -17,11 +17,3 @@ export const getAblyClient = (viewerId?: string) => {
   clients.set(clientId, client);
   return client;
 };
-
-export const releaseAblyClient = (viewerId?: string) => {
-  const clientId = buildClientId(viewerId);
-  const client = clients.get(clientId);
-  if (!client) return;
-  client.close();
-  clients.delete(clientId);
-};

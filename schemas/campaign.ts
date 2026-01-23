@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { defaultPalette } from '@/schemas/consts/blankDefaults';
 import { getCharacterSheetsByIds, type CharacterSheetT } from '@/schemas/sheet';
 import { getUserById } from '@/schemas/user';
 import { Prisma } from '@prisma/client';
@@ -83,12 +84,6 @@ type CampaignRow = {
   updated: Date;
 };
 
-const defaultColorPalette = {
-  primary: '209 213 219',
-  secondary: '156 163 175',
-  tertiary: '107 114 128',
-};
-
 const mapCampaign = (row?: CampaignRow | null): CampaignT | null =>
   row
     ? {
@@ -97,8 +92,7 @@ const mapCampaign = (row?: CampaignRow | null): CampaignT | null =>
         icon: (row.icon as CampaignT['icon']) ?? undefined,
         description: row.description ?? undefined,
         colorPalette:
-          (row.colorPalette as CampaignT['colorPalette']) ??
-          defaultColorPalette,
+          (row.colorPalette as CampaignT['colorPalette']) ?? defaultPalette(),
         aspects: (row.aspects as CampaignT['aspects']) ?? [],
         skills: (row.skills as CampaignT['skills']) ?? [],
         groups: (row.groups as CampaignT['groups']) ?? [],
@@ -216,7 +210,7 @@ export async function createCampaign(
       icon: (campaign.icon as Prisma.InputJsonValue) ?? null,
       description: campaign.description ?? null,
       colorPalette:
-        (campaign.colorPalette as Prisma.InputJsonValue) ?? defaultColorPalette,
+        (campaign.colorPalette as Prisma.InputJsonValue) ?? defaultPalette(),
       aspects: (campaign.aspects as Prisma.InputJsonValue) ?? [],
       skills: (campaign.skills as Prisma.InputJsonValue) ?? [],
       groups: (groups as Prisma.InputJsonValue) ?? [],

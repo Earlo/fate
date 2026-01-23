@@ -1,7 +1,11 @@
 import { CampaignT, PopulatedCampaignT } from '@/schemas/campaign';
-import { createBlankAspects, createDefaultColorPalette } from './blankDefaults';
+import {
+  blankAspects,
+  defaultGroupDimensions,
+  defaultPalette,
+} from './blankDefaults';
 
-export const defaultSkills: CampaignT['skills'] = [
+export const defaultSkills = (): CampaignT['skills'] => [
   {
     name: 'Athletics',
     actions: ['overcome', 'advantage', 'defend'],
@@ -76,37 +80,34 @@ export const defaultSkills: CampaignT['skills'] = [
   },
 ];
 
-export const blankSheet: Omit<CampaignT, 'id'> = {
+export const blankCampaignSheet = (): Omit<CampaignT, 'id'> => ({
   name: '',
   description: '',
-  colorPalette: createDefaultColorPalette(),
-  aspects: createBlankAspects(),
-  skills: defaultSkills,
+  colorPalette: defaultPalette(),
+  aspects: blankAspects(),
+  skills: defaultSkills(),
   groups: [],
   notes: [],
   public: false,
   visibleTo: [],
   owner: '',
-};
+});
 
-export const blankGroup: Omit<PopulatedCampaignT['groups'][0], 'id'> = {
+export const blankGroup = (): Omit<PopulatedCampaignT['groups'][0], 'id'> => ({
   name: 'New Group',
   description: '',
   icon: {
     url: '',
     note: '',
   },
-  colorPalette: createDefaultColorPalette(),
+  colorPalette: defaultPalette(),
   public: false,
   visible: true,
   layout: {
     mode: 'list',
-    dimensions: {
-      w: 3,
-      h: 3,
-    },
+    dimensions: defaultGroupDimensions(),
     backgroundImage: '',
   },
   characters: [],
   children: [],
-};
+});

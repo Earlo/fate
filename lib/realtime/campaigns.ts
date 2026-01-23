@@ -18,15 +18,19 @@ import {
   mapPresenceMembers,
   type PresenceData,
 } from './presence';
+import {
+  publishToStore,
+  sendEvent,
+  sendKeepAlive,
+  subscribeToStore,
+  unsubscribeFromStore,
+  type StreamController,
+  type StreamStore,
+  type StreamSubscription,
+} from './streamUtils';
 
-type StreamController = ReadableStreamDefaultController<Uint8Array>;
-
-type CampaignStreamSubscription = {
-  controller: StreamController;
-  keepAlive: ReturnType<typeof setInterval>;
-};
-
-type CampaignStreamStore = Map<string, Set<CampaignStreamSubscription>>;
+type CampaignStreamSubscription = StreamSubscription;
+type CampaignStreamStore = StreamStore;
 type CampaignPresenceStore = Map<
   string,
   Map<
@@ -41,7 +45,6 @@ type CampaignPresenceStore = Map<
   >
 >;
 
-const encoder = new TextEncoder();
 const ablyCampaignChannel = (campaignId: string) => `campaign:${campaignId}`;
 
 const getPresenceMembers = (channel: RealtimeChannel) => channel.presence.get();
@@ -66,20 +69,15 @@ const getPresenceStore = () => {
   return globalStore.__campaignPresenceStore;
 };
 
-const formatEvent = (event: string, data: CampaignStreamPayload) =>
-  `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
-
-const sendEvent = (
+const subscribeCampaignStore = (
+  store: CampaignStreamStore,
+  key: string,
   controller: StreamController,
   event: string,
-  data: CampaignStreamPayload,
-) => {
-  controller.enqueue(encoder.encode(formatEvent(event, data)));
-};
-
-const sendKeepAlive = (controller: StreamController) => {
-  controller.enqueue(encoder.encode(': keep-alive\n\n'));
-};
+) =>
+  subscribeToStore(store, key, controller, event, {
+    campaignId: key,
+  });
 
 const getPresenceList = (campaignId: string) => {
   const store = getPresenceStore();
@@ -360,13 +358,12 @@ export const subscribeCampaign = (
     };
   }
   const store = getStreamStore();
-  const subscriptions =
-    store.get(campaignId) ?? new Set<CampaignStreamSubscription>();
-  const keepAlive = setInterval(() => sendKeepAlive(controller), 25000);
-  const subscription = { controller, keepAlive };
-  subscriptions.add(subscription);
-  store.set(campaignId, subscriptions);
-  sendEvent(controller, 'connected', { campaignId });
+  const subscription = subscribeCampaignStore(
+    store,
+    campaignId,
+    controller,
+    'connected',
+  );
   if (viewer?.id) {
     addPresence(campaignId, viewer);
     publishPresence(campaignId);
@@ -390,13 +387,7 @@ export const unsubscribeCampaign = (
   subscription: CampaignStreamSubscription,
 ) => {
   const store = getStreamStore();
-  const subscriptions = store.get(campaignId);
-  if (!subscriptions) return;
-  subscriptions.delete(subscription);
-  clearInterval(subscription.keepAlive);
-  if (subscriptions.size === 0) {
-    store.delete(campaignId);
-  }
+  unsubscribeFromStore(store, campaignId, subscription);
 };
 
 export const publishCampaignUpdate = async (
@@ -409,19 +400,7 @@ export const publishCampaignUpdate = async (
     return;
   }
   const store = getStreamStore();
-  const subscriptions = store.get(campaignId);
-  if (!subscriptions) return;
-  const stale: CampaignStreamSubscription[] = [];
-  subscriptions.forEach((subscription) => {
-    try {
-      sendEvent(subscription.controller, 'campaign-updated', payload);
-    } catch {
-      stale.push(subscription);
-    }
-  });
-  stale.forEach((subscription) =>
-    unsubscribeCampaign(campaignId, subscription),
-  );
+  publishToStore(store, campaignId, 'campaign-updated', payload);
 };
 
 export const publishChatMessage = async (
@@ -446,11 +425,7 @@ export const publishChatMessage = async (
     return;
   }
   const store = getStreamStore();
-  const subscriptions = store.get(campaignId);
-  if (!subscriptions) return;
-  subscriptions.forEach((subscription) => {
-    sendEvent(subscription.controller, 'chat-message', payload);
-  });
+  publishToStore(store, campaignId, 'chat-message', payload);
   if (payload.kind === 'roll') {
     const label = payload.sender?.name || 'Someone';
     void publishEventLog(
