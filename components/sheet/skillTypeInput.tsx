@@ -1,11 +1,10 @@
+import { appendItem, cn, removeAtIndex, replaceAtIndex } from '@/lib/utils';
+import { type SkillAction } from '@/schemas/campaign';
 import Icon from '../generic/icon/icon';
 import IconButton from '../generic/icon/iconButton';
 import Input from '../generic/input';
 import Label from '../generic/label';
 import ActionToggle from './actionToggle';
-
-import { cn } from '@/lib/utils';
-import { type SkillAction } from '@/schemas/campaign';
 interface SkillTypeInputProps {
   skills: {
     name: string;
@@ -30,14 +29,12 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
     field: string,
     value: string | SkillAction[],
   ) => {
-    setSkills([
-      ...skills.slice(0, index),
-      {
+    setSkills(
+      replaceAtIndex(skills, index, {
         ...skills[index],
         [field]: value,
-      },
-      ...skills.slice(index + 1),
-    ]);
+      }),
+    );
   };
 
   return (
@@ -46,7 +43,9 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
         {!disabled && (
           <Icon
             icon="plus"
-            onClick={() => setSkills([...skills, { name: '', actions: [] }])}
+            onClick={() =>
+              setSkills(appendItem(skills, { name: '', actions: [] }))
+            }
           />
         )}
       </Label>
@@ -67,7 +66,7 @@ const SkillTypeInput: React.FC<SkillTypeInputProps> = ({
           {!disabled && (
             <IconButton
               icon="close"
-              onClick={() => setSkills(skills.filter((_, i) => i !== index))}
+              onClick={() => setSkills(removeAtIndex(skills, index))}
             />
           )}
         </div>
