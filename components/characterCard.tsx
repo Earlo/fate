@@ -9,7 +9,7 @@ import FateInput from './sheet/fateInput';
 import SkillGrid from './sheet/skillGrid';
 import Stress from './sheet/stress';
 import StuntInput from './sheet/stuntInput';
-interface CharacterSheetProps {
+interface CharacterCardProps {
   character: CharacterSheetT;
   setCharacter?: React.Dispatch<React.SetStateAction<CharacterSheetT>>;
   campaignId?: string;
@@ -20,7 +20,7 @@ interface CharacterSheetProps {
   isOwner?: boolean;
 }
 
-const CharacterSheet: React.FC<CharacterSheetProps> = ({
+const CharacterCard: React.FC<CharacterCardProps> = ({
   character,
   setCharacter,
   campaignId = '',
@@ -133,4 +133,4 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   );
 };
 
-export default CharacterSheet;
+export default CharacterCard;

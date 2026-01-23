@@ -1,4 +1,3 @@
-'use client';
 import { cn } from '@/lib/utils';
 import EditableList from './editableList';
 import Note from './note';
