@@ -20,3 +20,17 @@ export type PresenceEntry = {
   username?: string;
   guest?: boolean;
 };
+
+export type CampaignEventPayload = {
+  campaignId: string;
+  updatedAt?: string;
+  presence?: PresenceEntry[];
+};
+
+export type CampaignChatPayload = CampaignChatMessage;
+export type CampaignLogPayload = CampaignLogEntry;
+
+export type CampaignStreamPayload =
+  | CampaignEventPayload
+  | CampaignChatPayload
+  | CampaignLogPayload;
