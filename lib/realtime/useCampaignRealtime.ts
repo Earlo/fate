@@ -4,8 +4,8 @@ import { getAblyClient } from './ablyClient';
 import type { ChatMessage, LogEntry, PresenceEntry } from './campaignTypes';
 import { joinEvent, leaveEvent, nameChangedEvent } from './eventLogMessages';
 import { getPresenceKey, getViewerLabel, mapPresenceMembers } from './presence';
+import { getRealtimeMode } from './realtimeMode';
 import { useRealtimeChannel } from './useRealtimeChannel';
-import { useRealtimeMode } from './useRealtimeMode';
 
 type CampaignRealtimeOptions = {
   campaignId?: string;
@@ -28,7 +28,7 @@ export const useCampaignRealtime = ({
   onEventLog,
   onPresenceUpdated,
 }: CampaignRealtimeOptions) => {
-  const realtimeMode = useRealtimeMode();
+  const realtimeMode = getRealtimeMode();
   const presenceLabelRef = useRef<string | null>(null);
   const presenceUnsubRef = useRef<(() => void) | null>(null);
   const initialUsernameRef = useRef<string | undefined>(username);

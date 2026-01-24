@@ -1,7 +1,7 @@
 import type { InboundMessage, RealtimeChannel } from 'ably';
 import { useEffect } from 'react';
 import { getAblyClient } from './ablyClient';
-import { useRealtimeMode } from './useRealtimeMode';
+import { getRealtimeMode } from './realtimeMode';
 
 type EventHandler = (payload: unknown) => void;
 
@@ -33,7 +33,7 @@ export const useRealtimeChannel = ({
   onAblyAttach,
   onAblyDetach,
 }: UseRealtimeChannelOptions) => {
-  const realtimeMode = useRealtimeMode();
+  const realtimeMode = getRealtimeMode();
 
   useEffect(() => {
     if (!enabled) return;

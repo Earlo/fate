@@ -1,9 +1,7 @@
 import Ably from 'ably';
+import { getRealtimeMode } from './realtimeMode';
 
-const getConnectionType = () =>
-  (process.env.NEXT_PUBLIC_P2P_CONNECTION_TYPE ?? 'SOCKET').toUpperCase();
-
-export const isAblyEnabled = () => getConnectionType() === 'ABLY';
+export const isAblyEnabled = () => getRealtimeMode() === 'ABLY';
 
 const requireAblyKey = () => {
   const key = process.env.ABLY_API_KEY;
