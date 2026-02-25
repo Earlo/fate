@@ -19,7 +19,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/openai": "3.0.31",
+    "@ai-sdk/openai": "3.0.33",
     "@ai-sdk/react": "3.0.101",
     "@aws-sdk/client-s3": "3.997.0",
     "@dnd-kit/core": "6.3.1",
