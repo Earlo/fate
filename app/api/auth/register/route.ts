@@ -8,7 +8,23 @@ interface RegistrationInput {
 }
 
 export async function POST(req: NextRequest) {
-  const { username, password }: RegistrationInput = await req.json();
+  const { username, password } = await req.json();
+
+  // Validate password before hashing
+  if (!password || typeof password !== 'string' || password.trim().length === 0) {
+    return NextResponse.json(
+      { error: 'Password is required and must not be empty' },
+      { status: 400 },
+    );
+  }
+
+  if (password.length < 8) {
+    return NextResponse.json(
+      { error: 'Password must be at least 8 characters long' },
+      { status: 400 },
+    );
+  }
+
   const hashedPassword = await hash(password, 10);
   const existingUser = await getUserByUsername(username);
   if (existingUser) {
