@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "3.0.48",
-    "@ai-sdk/react": "3.0.140",
+    "@ai-sdk/react": "3.0.142",
     "@aws-sdk/client-s3": "3.1017.0",
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/utilities": "3.2.2",
