@@ -40,7 +40,7 @@
     "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "4.2.3",
+    "@tailwindcss/postcss": "4.2.4",
     "@types/bcrypt": "6.0.0",
     "@types/node": "25.6.0",
     "@types/react": "19.2.14",
