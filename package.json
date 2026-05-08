@@ -42,7 +42,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "4.2.4",
     "@types/bcrypt": "6.0.0",
-    "@types/node": "25.6.0",
+    "@types/node": "25.6.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@typescript-eslint/eslint-plugin": "8.59.2",
