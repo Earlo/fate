@@ -33,12 +33,24 @@ type PrivateRollMessage = {
 
 type ChatMessageView = ChatMessage | PrivateRollMessage;
 
+function getDisplayName(storageKey: string) {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+  const existingDisplayName = window.sessionStorage.getItem(storageKey);
+  if (existingDisplayName) {
+    return existingDisplayName;
+  }
+
+  return '';
+}
+
 const Campaign: FC<CampaignProps> = ({ id }) => {
   const router = useRouter();
   const { data: session } = useSession();
   const storageKey = `campaign-display-name-${id}`;
   const [displayName, setDisplayName] = useState(
-    window.sessionStorage.getItem(storageKey) || session?.user.username || '',
+    getDisplayName(storageKey) || session?.user.username || '',
   );
   const debouncedDisplayName = useDebounce(displayName, 600);
   const {
@@ -48,7 +60,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     chatMessages,
     eventLog,
     viewerId,
-    viewerIsGuest,
+    isGuest,
     toggleCampaign,
     addGroup,
     updateGroup,
@@ -111,7 +123,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
           sender: {
             id: viewerId,
             name: displayName || session?.user?.username,
-            guest: viewerIsGuest,
+            guest: isGuest,
           },
         }),
       });
@@ -144,7 +156,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
         sender: {
           id: viewerId,
           name: displayName || session?.user?.username,
-          guest: viewerIsGuest,
+          guest: isGuest,
         },
         kind: 'private-roll',
         roll: { dice, total },

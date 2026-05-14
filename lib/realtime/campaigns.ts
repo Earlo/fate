@@ -125,6 +125,7 @@ export const updatePresenceName = async (
   viewerId: string,
   username?: string,
 ) => {
+  console.log('updating pres', campaignId, viewerId, username);
   if (isAblyEnabled()) {
     const channel = getAblyRealtime().channels.get(
       ablyCampaignChannel(campaignId),
@@ -166,15 +167,18 @@ export const updatePresenceName = async (
   const campaignPresence = store.get(campaignId);
   if (!campaignPresence) return;
   const existing = campaignPresence.get(viewerId);
+  console.log('esd', existing);
   if (!existing) return;
   const previousLabel = getViewerLabel(existing);
   const nextLabel = getViewerLabel({ ...existing, username });
+  console.log('no up?', previousLabel === nextLabel, previousLabel, nextLabel);
   if (previousLabel === nextLabel) return;
   const isInitialNameForUser =
     !existing.username && existing.userId && previousLabel === existing.userId;
   campaignPresence.set(viewerId, { ...existing, username });
   store.set(campaignId, campaignPresence);
   publishPresence(campaignId);
+  console.log('==', isInitialNameForUser, existing.username);
   if (!isInitialNameForUser) {
     void publishEventLog(
       campaignId,
