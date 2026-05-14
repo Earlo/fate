@@ -5,28 +5,40 @@ export function cn(...input: ClassValue[]) {
   return twMerge(clsxModule(...input));
 }
 
-export function removeKey(obj: object, keyToRemove: string[]) {
-  const newObj = JSON.parse(
-    JSON.stringify(obj, (key, val) =>
-      typeof val === 'undefined' || val === null
-        ? undefined
-        : keyToRemove.includes(key) ||
-            val === '' ||
-            (typeof val === 'object' && Object.keys(val).length === 0)
-          ? undefined
-          : Object.keys(val).length === 1
-            ? val[Object.keys(val)[0]]
-            : Array.isArray(val)
-              ? val.filter((x) => !(x === null || x === false))
-              : typeof val === 'string'
-                ? val.trim().replace('\n', '')
-                : val,
-    ),
-  );
-  if (JSON.stringify(newObj) === JSON.stringify(obj)) {
-    return newObj;
-  }
-  return removeKey(newObj, keyToRemove);
+export function removeKey<T>(value: T, keysToRemove: readonly string[]): T {
+  const blockedKeys = new Set(keysToRemove);
+  const seen = new WeakMap<object, unknown>();
+
+  const visit = (current: unknown): unknown => {
+    if (current === null || typeof current !== 'object') {
+      return current;
+    }
+    if (current instanceof Date) {
+      return current;
+    }
+    const cached = seen.get(current);
+    if (cached) {
+      return cached;
+    }
+    if (Array.isArray(current)) {
+      const next: unknown[] = [];
+      seen.set(current, next);
+      current.forEach((item) => {
+        next.push(visit(item));
+      });
+      return next;
+    }
+    const next: Record<string, unknown> = {};
+    seen.set(current, next);
+    Object.entries(current).forEach(([key, item]) => {
+      if (!blockedKeys.has(key)) {
+        next[key] = visit(item);
+      }
+    });
+    return next;
+  };
+
+  return visit(value) as T;
 }
 
 export function updateVisibilityList(
