@@ -190,10 +190,7 @@ export const useCampaignRealtime = ({
         const label =
           presenceLabelRef.current ??
           getViewerLabel(buildViewerInfo(latestUsernameRef.current));
-        await publishEventLog(
-          channel,
-          leaveEvent(campaignId ?? '', label),
-        );
+        await publishEventLog(channel, leaveEvent(campaignId ?? '', label));
       }
       presenceLabelRef.current = null;
     },
