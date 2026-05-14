@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
     ],
   });
   const text = description.choices[0].message.content;
-  console.log('description: ', text);
   if (!text) {
     return NextResponse.json(
       { error: 'No description generated' },

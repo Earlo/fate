@@ -33,10 +33,25 @@ type PrivateRollMessage = {
 
 type ChatMessageView = ChatMessage | PrivateRollMessage;
 
+function getDisplayName(storageKey: string) {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+  const existingDisplayName = window.sessionStorage.getItem(storageKey);
+  if (existingDisplayName) {
+    return existingDisplayName;
+  }
+
+  return '';
+}
+
 const Campaign: FC<CampaignProps> = ({ id }) => {
   const router = useRouter();
   const { data: session } = useSession();
-  const [displayName, setDisplayName] = useState('');
+  const storageKey = `campaign-display-name-${id}`;
+  const [displayName, setDisplayName] = useState(
+    getDisplayName(storageKey) || session?.user.username || '',
+  );
   const debouncedDisplayName = useDebounce(displayName, 600);
   const {
     campaign,
@@ -45,7 +60,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     chatMessages,
     eventLog,
     viewerId,
-    viewerIsGuest,
+    isGuest,
     toggleCampaign,
     addGroup,
     updateGroup,
@@ -56,7 +71,6 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     id: session?.user?.id,
     username: debouncedDisplayName || session?.user?.username,
   });
-
   const isAdmin = !!session?.user.admin || campaign?.owner === session?.user.id;
   const isPlayer =
     campaign &&
@@ -73,20 +87,6 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
   const eventLogRef = useRef<HTMLDivElement | null>(null);
   const [chatAtBottom, setChatAtBottom] = useState(true);
   const [eventLogAtBottom, setEventLogAtBottom] = useState(true);
-
-  useEffect(() => {
-    if (!id) return;
-    if (typeof window === 'undefined') return;
-    const storageKey = `campaign-display-name-${id}`;
-    const stored = window.sessionStorage.getItem(storageKey);
-    if (stored) {
-      setDisplayName(stored);
-      return;
-    }
-    if (session?.user?.username) {
-      setDisplayName(session.user.username);
-    }
-  }, [id, session?.user?.username]);
 
   useEffect(() => {
     if (!isLoading && !campaign) {
@@ -122,7 +122,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
           sender: {
             id: viewerId,
             name: displayName || session?.user?.username,
-            guest: viewerIsGuest,
+            guest: isGuest,
           },
         }),
       });
@@ -155,7 +155,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
         sender: {
           id: viewerId,
           name: displayName || session?.user?.username,
-          guest: viewerIsGuest,
+          guest: isGuest,
         },
         kind: 'private-roll',
         roll: { dice, total },
@@ -327,13 +327,12 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
             {presence.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {presence.map((viewer) => {
-                  const isOwner = viewer.userId && viewer.userId === ownerId;
-                  const isPlayer =
-                    viewer.userId && playerIds.includes(viewer.userId);
+                  const isOwner = viewer.id && viewer.id === ownerId;
+                  const isPlayer = viewer.id && playerIds.includes(viewer.id);
                   const isGuest = viewer.guest;
                   const label =
                     viewer.username ||
-                    (isGuest ? `Guest ${++guestCounter}` : viewer.userId);
+                    (isGuest ? `Guest ${++guestCounter}` : viewer.id);
                   const isSelf = viewer.id === viewerId;
                   const icon = isOwner ? 'crown' : isGuest ? 'userX' : 'user';
                   return (

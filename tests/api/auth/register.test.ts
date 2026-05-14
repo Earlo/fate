@@ -6,9 +6,9 @@
  * FIX: All empty password tests should return 400 error after fix
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { POST } from '@/app/api/auth/register/route';
 import { NextRequest } from 'next/server';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock dependencies
 vi.mock('@/schemas/user', () => ({
@@ -20,7 +20,7 @@ vi.mock('bcrypt', () => ({
   hash: vi.fn(),
 }));
 
-import { getUserByUsername, createUser } from '@/schemas/user';
+import { createUser, getUserByUsername } from '@/schemas/user';
 import { hash } from 'bcrypt';
 
 const mockGetUserByUsername = getUserByUsername as ReturnType<typeof vi.fn>;

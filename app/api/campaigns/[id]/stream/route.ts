@@ -1,5 +1,5 @@
 import { subscribeCampaign } from '@/lib/realtime/campaigns';
-import { type NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   req: NextRequest,
@@ -7,14 +7,16 @@ export async function GET(
 ) {
   const { id } = await params;
   const searchParams = new URL(req.url).searchParams;
-  const userId = searchParams.get('userId') ?? undefined;
-  const username = searchParams.get('username') ?? undefined;
-  const guestId = searchParams.get('guestId') ?? undefined;
-  const viewer = userId
-    ? { id: userId, userId, username: username ?? undefined }
-    : guestId
-      ? { id: guestId, username: username ?? 'Guest', guest: true }
-      : undefined;
+  const userId = searchParams.get('userId');
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Missing required query parameter: userId' },
+      { status: 400 },
+    );
+  }
+  const username = searchParams.get('username') ?? 'Guest';
+  const isGuest = userId.startsWith('guest_');
+  const viewer = { id: userId, username: username ?? 'Guest', guest: isGuest };
 
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {

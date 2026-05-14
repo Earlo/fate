@@ -14,18 +14,37 @@ import { CharacterSheetT } from '@/schemas/sheet';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDebouncedRefresh } from './useDebouncedRefresh';
 
+function getGuestId(storageKey: string) {
+  if (typeof window === 'undefined') {
+    return `guest_${Math.random().toString(36).slice(2)}`;
+  }
+  const existingGuestId = window.sessionStorage.getItem(storageKey);
+  if (existingGuestId) {
+    return existingGuestId;
+  }
+  const guestId =
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? `guest_${crypto.randomUUID()}`
+      : `guest_${Math.random().toString(36).slice(2)}`;
+
+  window.sessionStorage.setItem(storageKey, guestId);
+  return guestId;
+}
 export const useCampaign = (
   campaignId: string,
   viewer?: { id?: string; username?: string },
 ) => {
+  const storageKey = `campaign-guest-id-${campaignId}`;
   const [campaign, setCampaign] = useState<PopulatedCampaignT>();
   const [isLoading, setIsLoading] = useState(true);
   const [presence, setPresence] = useState<PresenceEntry[]>([]);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [eventLog, setEventLog] = useState<LogEntry[]>([]);
-  const [viewerId, setViewerId] = useState<string | undefined>(viewer?.id);
-  const [viewerIsGuest, setViewerIsGuest] = useState(false);
+  const [guestId] = useState(() => getGuestId(storageKey));
+  const viewerId = viewer?.id ?? guestId;
+  const isGuest = !viewer?.id;
   const maxLogEntries = 100;
+
   const fetchCampaign = useCallback(
     async (showLoading = true) => {
       if (!campaignId) return;
@@ -43,32 +62,13 @@ export const useCampaign = (
   );
 
   useEffect(() => {
-    fetchCampaign();
+    const timeoutId = window.setTimeout(() => {
+      void fetchCampaign();
+    }, 0);
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [fetchCampaign]);
-
-  useEffect(() => {
-    if (!campaignId) return;
-    if (viewer?.id) {
-      setViewerId(viewer.id);
-      setViewerIsGuest(false);
-      return;
-    }
-    if (typeof window === 'undefined') return;
-    const storageKey = `campaign-guest-id-${campaignId}`;
-    const existing = window.sessionStorage.getItem(storageKey);
-    if (existing) {
-      setViewerId(existing);
-      setViewerIsGuest(true);
-      return;
-    }
-    const guestId =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? `guest_${crypto.randomUUID()}`
-        : `guest_${Math.random().toString(36).slice(2)}`;
-    window.sessionStorage.setItem(storageKey, guestId);
-    setViewerId(guestId);
-    setViewerIsGuest(true);
-  }, [campaignId, viewer?.id]);
 
   const handleUpdate = useDebouncedRefresh(() => {
     fetchCampaign(false);
@@ -95,8 +95,7 @@ export const useCampaign = (
   useCampaignRealtime({
     campaignId,
     viewerId,
-    viewerIsGuest,
-    username: viewer?.username,
+    username: viewer?.username || 'Guest',
     onCampaignUpdated: handleUpdate,
     onChatMessage: handleChatMessage,
     onEventLog: handleEventLog,
@@ -198,7 +197,7 @@ export const useCampaign = (
     chatMessages,
     eventLog,
     viewerId,
-    viewerIsGuest,
+    isGuest,
     updateCampaign,
     toggleCampaign,
     addGroup,

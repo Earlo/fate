@@ -204,7 +204,7 @@ const addPresence = (
       campaignPresence.set(viewer.id, {
         ...existing,
         username: viewer.username ?? existing.username,
-        count: existing.count,
+        count: existing.count + 1,
       });
       store.set(campaignId, campaignPresence);
       return;
@@ -214,6 +214,8 @@ const addPresence = (
       username: viewer.username ?? existing.username,
       count: existing.count + 1,
     });
+    store.set(campaignId, campaignPresence);
+    return;
   } else {
     campaignPresence.set(viewer.id, { ...viewer, count: 1 });
   }
@@ -235,6 +237,7 @@ const removePresence = (campaignId: string, viewerId: string) => {
     campaignPresence.delete(viewerId);
   } else {
     campaignPresence.set(viewerId, { ...existing, count: nextCount });
+    return;
   }
   if (campaignPresence.size === 0) {
     store.delete(campaignId);

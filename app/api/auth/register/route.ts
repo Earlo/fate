@@ -8,10 +8,14 @@ interface RegistrationInput {
 }
 
 export async function POST(req: NextRequest) {
-  const { username, password } = await req.json();
+  const { username, password } = (await req.json()) as RegistrationInput;
 
   // Validate password before hashing
-  if (!password || typeof password !== 'string' || password.trim().length === 0) {
+  if (
+    !password ||
+    typeof password !== 'string' ||
+    password.trim().length === 0
+  ) {
     return NextResponse.json(
       { error: 'Password is required and must not be empty' },
       { status: 400 },
