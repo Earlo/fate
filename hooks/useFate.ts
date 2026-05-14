@@ -62,7 +62,12 @@ export const useCampaign = (
   );
 
   useEffect(() => {
-    fetchCampaign();
+    const timeoutId = window.setTimeout(() => {
+      void fetchCampaign();
+    }, 0);
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [fetchCampaign]);
 
   const handleUpdate = useDebouncedRefresh(() => {
