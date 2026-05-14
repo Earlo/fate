@@ -36,7 +36,10 @@ type ChatMessageView = ChatMessage | PrivateRollMessage;
 const Campaign: FC<CampaignProps> = ({ id }) => {
   const router = useRouter();
   const { data: session } = useSession();
-  const [displayName, setDisplayName] = useState('');
+  const storageKey = `campaign-display-name-${id}`;
+  const [displayName, setDisplayName] = useState(
+    window.sessionStorage.getItem(storageKey) || session?.user.username || '',
+  );
   const debouncedDisplayName = useDebounce(displayName, 600);
   const {
     campaign,
@@ -73,20 +76,6 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
   const eventLogRef = useRef<HTMLDivElement | null>(null);
   const [chatAtBottom, setChatAtBottom] = useState(true);
   const [eventLogAtBottom, setEventLogAtBottom] = useState(true);
-
-  useEffect(() => {
-    if (!id) return;
-    if (typeof window === 'undefined') return;
-    const storageKey = `campaign-display-name-${id}`;
-    const stored = window.sessionStorage.getItem(storageKey);
-    if (stored) {
-      setDisplayName(stored);
-      return;
-    }
-    if (session?.user?.username) {
-      setDisplayName(session.user.username);
-    }
-  }, [id, session?.user?.username]);
 
   useEffect(() => {
     if (!isLoading && !campaign) {
