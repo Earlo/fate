@@ -29,7 +29,16 @@ export const useCampaignRealtime = ({
   const realtimeMode = getRealtimeMode();
   const presenceLabelRef = useRef<string | null>(null);
   const presenceUnsubRef = useRef<(() => void) | null>(null);
+  const latestUsernameRef = useRef(username);
   const isGuest = viewerId.startsWith('guest_');
+  // The stream URL is the connection identity. Display name changes are sent
+  // through presence updates so they do not force a leave/join cycle.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const streamUsername = useMemo(() => username, [campaignId, viewerId]);
+
+  useEffect(() => {
+    latestUsernameRef.current = username;
+  }, [username]);
 
   const buildViewerInfo = useCallback(
     (name?: string) => ({
@@ -97,10 +106,10 @@ export const useCampaignRealtime = ({
     if (viewerId) {
       params.set('userId', viewerId);
     }
-    params.set('username', username);
+    params.set('username', streamUsername);
     const query = params.toString();
     return `/api/campaigns/${campaignId}/stream?${query}`;
-  }, [campaignId, username, viewerId]);
+  }, [campaignId, streamUsername, viewerId]);
 
   const handleAblyAttach = useCallback(
     async (channel: RealtimeChannel) => {
@@ -128,13 +137,13 @@ export const useCampaignRealtime = ({
         await channel.presence.enter({
           viewerId,
           userId: viewerId,
-          username: username,
+          username: streamUsername,
         });
       } catch (error) {
         console.error('Failed to enter presence:', error);
         return;
       }
-      const viewerInfo = buildViewerInfo(username);
+      const viewerInfo = buildViewerInfo(streamUsername);
       presenceLabelRef.current = getViewerLabel(viewerInfo);
       if (!hadViewer) {
         await publishEventLog(
@@ -150,7 +159,7 @@ export const useCampaignRealtime = ({
       onPresenceUpdated,
       publishEventLog,
       refreshPresence,
-      username,
+      streamUsername,
       viewerId,
     ],
   );
@@ -178,15 +187,17 @@ export const useCampaignRealtime = ({
         console.error('Failed to leave presence:', error);
       }
       if (remainingCount <= 1) {
-        const viewerInfo = buildViewerInfo(username);
+        const label =
+          presenceLabelRef.current ??
+          getViewerLabel(buildViewerInfo(latestUsernameRef.current));
         await publishEventLog(
           channel,
-          leaveEvent(campaignId ?? '', getViewerLabel(viewerInfo)),
+          leaveEvent(campaignId ?? '', label),
         );
       }
       presenceLabelRef.current = null;
     },
-    [buildViewerInfo, campaignId, publishEventLog, username, viewerId],
+    [buildViewerInfo, campaignId, publishEventLog, viewerId],
   );
 
   useRealtimeChannel({
@@ -201,7 +212,6 @@ export const useCampaignRealtime = ({
 
   useEffect(() => {
     if (!campaignId || !viewerId || !username) return;
-    console.log('realtimemode', realtimeMode);
     if (realtimeMode === 'ABLY') {
       const client = getAblyClient(viewerId);
       const channel = client.channels.get(`campaign:${campaignId}`);

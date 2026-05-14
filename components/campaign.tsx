@@ -71,7 +71,6 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     id: session?.user?.id,
     username: debouncedDisplayName || session?.user?.username,
   });
-
   const isAdmin = !!session?.user.admin || campaign?.owner === session?.user.id;
   const isPlayer =
     campaign &&
@@ -328,13 +327,12 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
             {presence.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {presence.map((viewer) => {
-                  const isOwner = viewer.userId && viewer.userId === ownerId;
-                  const isPlayer =
-                    viewer.userId && playerIds.includes(viewer.userId);
+                  const isOwner = viewer.id && viewer.id === ownerId;
+                  const isPlayer = viewer.id && playerIds.includes(viewer.id);
                   const isGuest = viewer.guest;
                   const label =
                     viewer.username ||
-                    (isGuest ? `Guest ${++guestCounter}` : viewer.userId);
+                    (isGuest ? `Guest ${++guestCounter}` : viewer.id);
                   const isSelf = viewer.id === viewerId;
                   const icon = isOwner ? 'crown' : isGuest ? 'userX' : 'user';
                   return (

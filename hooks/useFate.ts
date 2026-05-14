@@ -62,7 +62,6 @@ export const useCampaign = (
   );
 
   useEffect(() => {
-    console.log('fetch camp');
     fetchCampaign();
   }, [fetchCampaign]);
 

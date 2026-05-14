@@ -44,10 +44,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
         : value; // If not an object, just use the new value directly.
 
     if (setCharacter) {
-      console.log('setting value', newValue, 'for field', field);
       setCharacter((prev) => ({ ...prev, [field]: newValue }));
-    } else {
-      console.log('no setCharacter');
     }
   };
   const { completion, complete, isLoading } = useCompletion({
