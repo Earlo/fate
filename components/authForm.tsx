@@ -1,7 +1,7 @@
 'use client';
 import { checkUsernameExists, registerUser } from '@/lib/apiHelpers/auth';
 import { signIn } from 'next-auth/react';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import FormContainer from './formContainer';
 import Button from './generic/button';
 import LabeledInput from './generic/labeledInput';
@@ -10,48 +10,58 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({ onClose }: AuthFormProps) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [usernameExists, setUsernameExists] = useState(false);
 
   const handleUsernameChange = async (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const username = e.target.value;
-    const exists = await checkUsernameExists(username);
+    const nextUsername = e.target.value;
+    setUsername(nextUsername);
+    if (!nextUsername.trim()) {
+      setUsernameExists(false);
+      return;
+    }
+    const exists = await checkUsernameExists(nextUsername);
     setUsernameExists(exists);
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const username = (form.elements.namedItem('username') as HTMLInputElement)
-      .value;
-    const password = (form.elements.namedItem('password') as HTMLInputElement)
-      .value;
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername || !password) return;
     if (usernameExists) {
-      signIn('credentials', { username, password });
-    } else {
-      const ok = await registerUser(username, password);
-      if (ok) {
-        signIn('credentials', { username, password });
-      } else {
-        throw new Error('Failed to register user');
-      }
+      await signIn('credentials', { username: trimmedUsername, password });
+      return;
     }
+    const ok = await registerUser(trimmedUsername, password);
+    if (!ok) {
+      throw new Error('Failed to register user');
+    }
+    await signIn('credentials', { username: trimmedUsername, password });
   };
 
   return (
     <FormContainer onSubmit={handleSubmit} onClose={onClose}>
-      <LabeledInput name="username" required onChange={handleUsernameChange} />
-      <LabeledInput name="password" type="password" required />
+      <LabeledInput
+        name="username"
+        value={username}
+        required
+        onChange={handleUsernameChange}
+      />
+      <LabeledInput
+        name="password"
+        type="password"
+        value={password}
+        required
+        onChange={(event) => setPassword(event.target.value)}
+      />
       <div className="flex items-center justify-between pb-2">
         <Button label={usernameExists ? 'Login' : 'Register'} type="submit" />
       </div>
       <div className="flex items-center justify-between">
-        <Button
-          label={'Login with Google'}
-          type="button"
-          onClick={() => signIn('google')}
-        />
+        <Button label="Login with Google" onClick={() => signIn('google')} />
       </div>
     </FormContainer>
   );

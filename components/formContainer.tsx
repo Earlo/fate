@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import ControlBar from './sheet/controlBar';
 interface FormContainerProps {
-  onSubmit?: (e: React.ChangeEvent<HTMLFormElement>) => Promise<void>;
+  onSubmit?: React.SubmitEventHandler<HTMLFormElement>;
   onClose?: () => void;
   onMinimize?: () => void;
   onMaximize?: () => void;

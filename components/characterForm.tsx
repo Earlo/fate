@@ -206,7 +206,6 @@ const CharacterForm: FC<CharacterFormProps> = ({
               />
               <Button
                 label="Import JSON"
-                type="button"
                 disabled={isSubmitting}
                 onClick={() => importInputRef.current?.click()}
               />
@@ -215,7 +214,6 @@ const CharacterForm: FC<CharacterFormProps> = ({
           {editing && (
             <Button
               label="Export JSON"
-              type="button"
               disabled={isSubmitting}
               onClick={handleExport}
             />
@@ -224,7 +222,6 @@ const CharacterForm: FC<CharacterFormProps> = ({
             <Button
               label="Delete"
               disabled={isSubmitting}
-              type="button"
               onClick={handleDelete}
               className="bg-red-500 hover:bg-red-700"
             />

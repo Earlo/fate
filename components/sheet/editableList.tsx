@@ -1,6 +1,4 @@
-'use client';
 import { cn } from '@/lib/utils';
-import React from 'react';
 import Icon from '../generic/icon/icon';
 import Label from '../generic/label';
 

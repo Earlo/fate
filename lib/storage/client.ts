@@ -1,5 +1,4 @@
 'use client';
-
 export const uploadImage = async (file: File, path?: string) => {
   const formData = new FormData();
   formData.append('file', file);

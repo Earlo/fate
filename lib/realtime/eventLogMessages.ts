@@ -5,21 +5,21 @@ export const nameChangedEvent = (
 ) => ({
   campaignId,
   kind: 'system' as const,
-  message: `${previousLabel} changed name to ${nextLabel}`,
+  text: `${previousLabel} changed name to ${nextLabel}`,
   createdAt: new Date().toISOString(),
 });
 
 export const joinEvent = (campaignId: string, label: string) => ({
   campaignId,
   kind: 'join' as const,
-  message: `${label} joined`,
+  text: `${label} joined`,
   createdAt: new Date().toISOString(),
 });
 
 export const leaveEvent = (campaignId: string, label: string) => ({
   campaignId,
   kind: 'leave' as const,
-  message: `${label} left`,
+  text: `${label} left`,
   createdAt: new Date().toISOString(),
 });
 
@@ -31,6 +31,6 @@ export const rollEvent = (
 ) => ({
   campaignId,
   kind: 'roll' as const,
-  message: `${label} rolled ${total}`,
+  text: `${label} rolled ${total}`,
   createdAt,
 });

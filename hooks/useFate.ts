@@ -38,7 +38,7 @@ export const useCampaign = (
   const [campaign, setCampaign] = useState<PopulatedCampaignT>();
   const [isLoading, setIsLoading] = useState(true);
   const [presence, setPresence] = useState<PresenceEntry[]>([]);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [eventLog, setEventLog] = useState<LogEntry[]>([]);
   const [guestId] = useState(() => getGuestId(storageKey));
   const viewerId = viewer?.id ?? guestId;
@@ -76,7 +76,7 @@ export const useCampaign = (
 
   const handleChatMessage = useCallback(
     (message: ChatMessage) => {
-      setChatMessages((prev) => [...prev.slice(-maxLogEntries + 1), message]);
+      setMessages((prev) => [...prev.slice(-maxLogEntries + 1), message]);
     },
     [maxLogEntries],
   );
@@ -194,7 +194,7 @@ export const useCampaign = (
     campaign,
     isLoading,
     presence,
-    chatMessages,
+    messages,
     eventLog,
     viewerId,
     isGuest,
