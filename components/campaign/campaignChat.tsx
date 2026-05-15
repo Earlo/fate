@@ -32,7 +32,6 @@ const CampaignChat = ({
 }: CampaignChatProps) => {
   const [chatInput, setChatInput] = useState('');
   const [privateMessages, setPrivateMessages] = useState<ChatMessage[]>([]);
-
   const sender = useMemo(
     () => ({
       id: viewerId,

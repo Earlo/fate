@@ -34,9 +34,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
   const router = useRouter();
   const { data: session } = useSession();
   const storageKey = `campaign-display-name-${id}`;
-  const [displayName, setDisplayName] = useState(
-    getDisplayName(storageKey) || session?.user.username || '',
-  );
+  const [displayName, setDisplayName] = useState(getDisplayName(storageKey));
   const debouncedDisplayName = useDebounce(displayName, 600);
   const {
     campaign,
@@ -53,7 +51,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     deleteNote,
     updateNote,
   } = useCampaign(id, {
-    id: session?.user?.id,
+    id: session?.user.id,
     username: debouncedDisplayName || session?.user?.username,
   });
   const isAdmin = !!session?.user.admin || campaign?.owner === session?.user.id;
@@ -165,7 +163,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
             messages={messages}
             eventLog={eventLog}
             viewerId={viewerId}
-            displayName={displayName}
+            displayName={displayName || session?.user.username || '???'}
             isGuest={isGuest}
           />
         </div>
