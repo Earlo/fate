@@ -11,7 +11,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({
   label,
-  type,
+  type = 'button',
   disabled,
   onClick,
   className = '',

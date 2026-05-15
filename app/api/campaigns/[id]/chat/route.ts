@@ -9,9 +9,8 @@ export async function POST(
   try {
     const body = await req.json();
     const kind = body?.kind === 'roll' ? 'roll' : 'chat';
-    const message =
-      typeof body?.message === 'string' ? body.message.trim() : '';
-    if (!message && kind === 'chat') {
+    const text = typeof body?.text === 'string' ? body.text.trim() : '';
+    if (!text && kind === 'chat') {
       return NextResponse.json(
         { error: 'Message is required' },
         { status: 400 },
@@ -20,7 +19,7 @@ export async function POST(
     const createdAt = new Date().toISOString();
     await publishChatMessage(id, {
       campaignId: id,
-      message: message || 'Rolled the dice',
+      text: text || 'Rolled the dice',
       createdAt,
       kind,
       roll: body?.roll,

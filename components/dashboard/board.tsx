@@ -111,7 +111,7 @@ export default function Dashboard() {
           })}
         </div>
         <div className="mb-3 flex flex-wrap gap-2">
-          <Button label="Export All" type="button" onClick={handleExportAll} />
+          <Button label="Export All" onClick={handleExportAll} />
           <input
             ref={importAllRef}
             type="file"
@@ -122,7 +122,6 @@ export default function Dashboard() {
           />
           <Button
             label={isBulkImporting ? 'Importing...' : 'Import JSON'}
-            type="button"
             onClick={() => importAllRef.current?.click()}
             disabled={isBulkImporting}
           />

@@ -47,11 +47,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
         <Button label={usernameExists ? 'Login' : 'Register'} type="submit" />
       </div>
       <div className="flex items-center justify-between">
-        <Button
-          label={'Login with Google'}
-          type="button"
-          onClick={() => signIn('google')}
-        />
+        <Button label={'Login with Google'} onClick={() => signIn('google')} />
       </div>
     </FormContainer>
   );
