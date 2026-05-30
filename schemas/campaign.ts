@@ -1,6 +1,10 @@
 import { prisma } from '@/lib/prisma';
 import { defaultPalette } from '@/schemas/consts/blankDefaults';
-import { getCharacterSheetsByIds, type CharacterSheetT } from '@/schemas/sheet';
+import {
+  getCampaignVisibleCharacterSheet,
+  getCharacterSheetsByIds,
+  type CharacterSheetT,
+} from '@/schemas/sheet';
 import { getUserById } from '@/schemas/user';
 import { Prisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
@@ -228,14 +232,26 @@ export async function createCampaign(
   return getCampaign(mapped.id);
 }
 
-export async function getCampaign(id: string) {
+export async function getCampaign(
+  id: string,
+  viewer?: { id?: string; admin?: boolean },
+) {
   const row = await prisma.campaign.findUnique({ where: { id } });
   const baseCampaign = mapCampaign(row as CampaignRow | null);
   if (!baseCampaign) return null;
 
   const sheetIds = collectCharacterIds(baseCampaign.groups);
   const sheets = await getCharacterSheetsByIds(sheetIds);
-  const sheetMap = new Map(sheets.map((sheet) => [sheet.id, sheet] as const));
+  const canManageCampaign =
+    viewer?.admin || (viewer?.id && baseCampaign.owner === viewer.id);
+  const sheetMap = new Map(
+    sheets.map((sheet) => [
+      sheet.id,
+      canManageCampaign || sheet.owner === viewer?.id
+        ? sheet
+        : getCampaignVisibleCharacterSheet(sheet, id),
+    ]),
+  );
 
   return {
     ...baseCampaign,
@@ -286,15 +302,21 @@ export const getCampaigns = async (
   );
   const uniqueSheetIds = Array.from(new Set(allSheetIds));
   const sheets = await getCharacterSheetsByIds(uniqueSheetIds);
-  const sheetMap = new Map(sheets.map((sheet) => [sheet.id, sheet] as const));
-
-  return campaigns.map(
-    (campaign) =>
-      ({
-        ...campaign,
-        groups: populateGroups(campaign.groups ?? [], sheetMap),
-      }) as PopulatedCampaignT,
-  );
+  return campaigns.map((campaign) => {
+    const canManageCampaign = isAdmin || campaign.owner === userId;
+    const sheetMap = new Map(
+      sheets.map((sheet) => [
+        sheet.id,
+        canManageCampaign || sheet.owner === userId
+          ? sheet
+          : getCampaignVisibleCharacterSheet(sheet, campaign.id),
+      ]),
+    );
+    return {
+      ...campaign,
+      groups: populateGroups(campaign.groups ?? [], sheetMap),
+    } as PopulatedCampaignT;
+  });
 };
 
 const containsSheetId = (groups: GroupT[], sheetId: string): boolean => {
@@ -327,4 +349,20 @@ export const getCampaignIdsBySheetId = async (
   return rows
     .filter((row) => containsSheetId(normalizeGroupList(row.groups), sheetId))
     .map((row) => row.id);
+};
+
+export const campaignContainsSheet = async (
+  campaignId: string,
+  sheetId: string,
+) => {
+  const row = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    select: { ownerId: true, groups: true },
+  });
+  return row
+    ? {
+        ownerId: row.ownerId,
+        containsSheet: containsSheetId(normalizeGroupList(row.groups), sheetId),
+      }
+    : null;
 };

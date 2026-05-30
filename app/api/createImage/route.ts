@@ -1,3 +1,4 @@
+import { authErrorResponse, requireUser } from '@/lib/apiAuth';
 import { uploadFromUrl } from '@/lib/storage/server';
 import { removeKey } from '@/lib/utils';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -10,6 +11,11 @@ const openai = new OpenAIClient({
 });
 
 export async function POST(req: NextRequest) {
+  try {
+    await requireUser();
+  } catch (error) {
+    return authErrorResponse(error)!;
+  }
   const { sheet } = await req.json();
   const cleanSheet = removeKey(sheet, [
     'id',

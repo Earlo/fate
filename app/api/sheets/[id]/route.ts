@@ -1,4 +1,8 @@
-import { handleGetById } from '@/app/api/helpers/handlers';
+import {
+  authErrorResponse,
+  requireSheetRead,
+  requireSheetWrite,
+} from '@/lib/apiAuth';
 import { publishCampaignUpdate } from '@/lib/realtime/campaigns';
 import {
   publishSheetListUpdate,
@@ -8,6 +12,7 @@ import { getCampaignIdsBySheetId } from '@/schemas/campaign';
 import {
   CharacterSheetT,
   deleteCharacterSheet,
+  getCampaignVisibleCharacterSheet,
   getCharacterSheet,
   updateCharacterSheet,
 } from '@/schemas/sheet';
@@ -17,7 +22,22 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  return handleGetById(params, getCharacterSheet, 'Character sheet not found');
+  const { id } = await params;
+  try {
+    const campaignId = new URL(req.url).searchParams.get('campaignId');
+    const access = await requireSheetRead(id, campaignId);
+    const sheet = await getCharacterSheet(id);
+    return NextResponse.json(
+      sheet && access.campaignScoped && !access.canManageCampaign
+        ? getCampaignVisibleCharacterSheet(sheet, campaignId!)
+        : sheet,
+    );
+  } catch (error) {
+    return (
+      authErrorResponse(error) ??
+      NextResponse.json({ error: 'Character sheet not found' }, { status: 404 })
+    );
+  }
 }
 
 export async function PUT(
@@ -26,7 +46,9 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
+    await requireSheetWrite(id);
     const updates: Partial<CharacterSheetT> = await req.json();
+    delete updates.owner;
     const updated = await updateCharacterSheet(id, updates);
     if (!updated) {
       return NextResponse.json(
@@ -57,6 +79,8 @@ export async function PUT(
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
     return NextResponse.json(
       {
         error: `Failed to update character sheet ${
@@ -74,6 +98,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
+    await requireSheetWrite(id);
     const existing = await getCharacterSheet(id);
     if (!existing) {
       return NextResponse.json(
@@ -103,6 +128,8 @@ export async function DELETE(
     );
     return new Response(null, { status: 204 });
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
     return NextResponse.json(
       {
         error: `Failed to delete character sheet ${

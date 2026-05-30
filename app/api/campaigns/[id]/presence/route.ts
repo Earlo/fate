@@ -1,3 +1,8 @@
+import {
+  authErrorResponse,
+  getCurrentUser,
+  requireCampaignRead,
+} from '@/lib/apiAuth';
 import { updatePresenceName } from '@/lib/realtime/campaigns';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -7,8 +12,14 @@ export async function POST(
 ) {
   const { id } = await params;
   try {
+    const user = await getCurrentUser();
+    await requireCampaignRead(id);
     const body = await req.json();
-    const viewerId = typeof body?.viewerId === 'string' ? body.viewerId : null;
+    const requestedViewerId =
+      typeof body?.viewerId === 'string' ? body.viewerId : '';
+    const viewerId =
+      user?.id ??
+      (requestedViewerId.startsWith('guest_') ? requestedViewerId : '');
     const username =
       typeof body?.username === 'string' ? body.username.trim() : '';
     if (!viewerId || !username) {
@@ -20,6 +31,8 @@ export async function POST(
     await updatePresenceName(id, viewerId, username);
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
     return NextResponse.json(
       {
         error: `Failed to update presence ${

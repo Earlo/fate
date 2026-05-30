@@ -1,8 +1,9 @@
 import { sanitizeForPrompt, streamCompletion } from '@/app/api/helpers/ai';
+import { authErrorResponse, requireUser } from '@/lib/apiAuth';
 import { createOpenAI } from '@ai-sdk/openai';
 import { type NextRequest } from 'next/server';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const openai = createOpenAI({
   organization: process.env.OPENAI_ORGANIZATION || '',
@@ -10,6 +11,11 @@ const openai = createOpenAI({
 });
 
 export async function POST(req: NextRequest) {
+  try {
+    await requireUser();
+  } catch (error) {
+    return authErrorResponse(error)!;
+  }
   const body = await req.json();
   const { sheet, userContent } = body.prompt; // Adjusted to avoid double JSON parsing.
 

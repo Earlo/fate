@@ -20,7 +20,7 @@ const useOpenCharacterSheet = (campaignId: string, state: GroupState) => {
             ? 'play'
             : 'view';
       try {
-        const updated = await getCharacterSheetById(sheet.id);
+        const updated = await getCharacterSheetById(sheet.id, campaignId);
         setBigSheet({
           sheet: updated ?? sheet,
           state: nextState,

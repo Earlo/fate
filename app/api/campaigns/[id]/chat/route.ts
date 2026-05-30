@@ -1,3 +1,4 @@
+import { authErrorResponse, requireCampaignMember } from '@/lib/apiAuth';
 import { publishChatMessage } from '@/lib/realtime/campaigns';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -7,6 +8,7 @@ export async function POST(
 ) {
   const { id } = await params;
   try {
+    const { user } = await requireCampaignMember(id);
     const body = await req.json();
     const kind = body?.kind === 'roll' ? 'roll' : 'chat';
     const text = typeof body?.text === 'string' ? body.text.trim() : '';
@@ -23,10 +25,12 @@ export async function POST(
       createdAt,
       kind,
       roll: body?.roll,
-      sender: body?.sender,
+      sender: { id: user.id, name: user.username, guest: false },
     });
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
     return NextResponse.json(
       {
         error: `Failed to send chat message ${

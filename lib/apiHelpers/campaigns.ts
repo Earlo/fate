@@ -30,6 +30,13 @@ export const updateCampaignAPI = async (
   });
 };
 
+export const toggleCampaignMembershipAPI = async (
+  campaignId: string,
+): Promise<{ joined: boolean; visibleTo: string[] }> =>
+  fetchJson(`/api/campaigns/${campaignId}/membership`, {
+    method: 'POST',
+  });
+
 export const createCampaignAPI = async (
   campaign: Partial<CampaignT>,
 ): Promise<CampaignT> => {

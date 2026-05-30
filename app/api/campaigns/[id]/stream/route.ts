@@ -1,3 +1,4 @@
+import { authErrorResponse, requireCampaignRead } from '@/lib/apiAuth';
 import { subscribeCampaign } from '@/lib/realtime/campaigns';
 import { type NextRequest, NextResponse } from 'next/server';
 
@@ -6,15 +7,22 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
+  let authorizedUser;
+  try {
+    ({ user: authorizedUser } = await requireCampaignRead(id));
+  } catch (error) {
+    return authErrorResponse(error)!;
+  }
   const searchParams = new URL(req.url).searchParams;
-  const userId = searchParams.get('userId');
+  const userId = authorizedUser?.id ?? searchParams.get('userId');
   if (!userId) {
     return NextResponse.json(
       { error: 'Missing required query parameter: userId' },
       { status: 400 },
     );
   }
-  const username = searchParams.get('username') ?? 'Guest';
+  const username =
+    authorizedUser?.username ?? searchParams.get('username') ?? 'Guest';
   const isGuest = userId.startsWith('guest_');
   const viewer = { id: userId, username: username ?? 'Guest', guest: isGuest };
 

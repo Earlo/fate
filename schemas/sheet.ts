@@ -178,6 +178,66 @@ export async function getCharacterSheet(sheetId: string) {
   return mapCharacterSheet(sheet as CharacterSheetRow | null);
 }
 
+const visibleInCampaign = (
+  value: { visibleIn?: string[] } | undefined,
+  campaignId: string,
+) => value?.visibleIn?.includes(campaignId) ?? false;
+
+export const getCampaignVisibleCharacterSheet = (
+  sheet: CharacterSheetT,
+  campaignId: string,
+): CharacterSheetT => ({
+  ...sheet,
+  icon: visibleInCampaign(sheet.icon, campaignId) ? sheet.icon : undefined,
+  name: visibleInCampaign(sheet.name, campaignId)
+    ? sheet.name
+    : { text: '', visibleIn: [] },
+  description: visibleInCampaign(sheet.description, campaignId)
+    ? sheet.description
+    : undefined,
+  fate: visibleInCampaign(sheet.fate, campaignId)
+    ? sheet.fate
+    : { points: 0, refresh: 0, visibleIn: [] },
+  aspects: sheet.aspects.filter((aspect) =>
+    visibleInCampaign(aspect, campaignId),
+  ),
+  skills: Object.fromEntries(
+    Object.entries(sheet.skills).map(([level, skills]) => [
+      level,
+      skills.filter((skill) => visibleInCampaign(skill, campaignId)),
+    ]),
+  ),
+  stunts: sheet.stunts.filter((stunt) => visibleInCampaign(stunt, campaignId)),
+  extras: sheet.extras.filter((extra) => visibleInCampaign(extra, campaignId)),
+  stress: {
+    physical: visibleInCampaign(sheet.stress.physical, campaignId)
+      ? sheet.stress.physical
+      : { boxes: [], visibleIn: [] },
+    mental: visibleInCampaign(sheet.stress.mental, campaignId)
+      ? sheet.stress.mental
+      : { boxes: [], visibleIn: [] },
+  },
+  consequences: {
+    mild: visibleInCampaign(sheet.consequences.mild, campaignId)
+      ? sheet.consequences.mild
+      : { name: '', visibleIn: [] },
+    moderate: visibleInCampaign(sheet.consequences.moderate, campaignId)
+      ? sheet.consequences.moderate
+      : { name: '', visibleIn: [] },
+    severe: visibleInCampaign(sheet.consequences.severe, campaignId)
+      ? sheet.consequences.severe
+      : { name: '', visibleIn: [] },
+    mental: visibleInCampaign(sheet.consequences.mental, campaignId)
+      ? sheet.consequences.mental
+      : undefined,
+    physical: visibleInCampaign(sheet.consequences.physical, campaignId)
+      ? sheet.consequences.physical
+      : undefined,
+  },
+  notes: sheet.notes.filter((note) => visibleInCampaign(note, campaignId)),
+  visibleTo: [],
+});
+
 export async function getCharacterSheets(userId: string) {
   const rows = await prisma.characterSheet.findMany({
     where: { ownerId: userId },

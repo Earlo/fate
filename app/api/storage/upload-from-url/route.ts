@@ -1,9 +1,15 @@
+import { authErrorResponse, requireUser } from '@/lib/apiAuth';
 import { uploadFromUrl } from '@/lib/storage/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
+  try {
+    await requireUser();
+  } catch (error) {
+    return authErrorResponse(error)!;
+  }
   const { url, path } = await req.json();
 
   if (!url) {

@@ -9,8 +9,12 @@ export const getCharacterSheetsByUserId = async (
 
 export const getCharacterSheetById = async (
   id: string,
+  campaignId?: string,
 ): Promise<CharacterSheetT> => {
-  return fetchJson<CharacterSheetT>(`/api/sheets/${id}`);
+  const query = campaignId
+    ? `?campaignId=${encodeURIComponent(campaignId)}`
+    : '';
+  return fetchJson<CharacterSheetT>(`/api/sheets/${id}${query}`);
 };
 
 export const updateCharacterSheet = async (

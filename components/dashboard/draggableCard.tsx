@@ -62,14 +62,14 @@ export default function DraggableCard({
   const refreshSheet = useCallback(async () => {
     if (!sheetId) return;
     try {
-      const updated = await getCharacterSheetById(sheetId);
+      const updated = await getCharacterSheetById(sheetId, sheet.campaignId);
       if (updated && onSheetUpdate) {
         onSheetUpdate(updated);
       }
     } catch (error) {
       console.error('Could not fetch character sheet:', error);
     }
-  }, [sheetId, onSheetUpdate]);
+  }, [sheet.campaignId, sheetId, onSheetUpdate]);
 
   const handleUpdate = useDebouncedRefresh(() => {
     void refreshSheet();
@@ -83,8 +83,15 @@ export default function DraggableCard({
   useRealtimeChannel({
     enabled: Boolean(sheetId && onSheetUpdate && enableRealtime),
     channel: sheetId ? `sheet:${sheetId}` : '',
-    streamUrl: sheetId ? `/api/sheets/${sheetId}/stream` : '',
+    streamUrl: sheetId
+      ? `/api/sheets/${sheetId}/stream${
+          sheet.campaignId
+            ? `?campaignId=${encodeURIComponent(sheet.campaignId)}`
+            : ''
+        }`
+      : '',
     events: realtimeEvents,
+    useAbly: !sheet.campaignId,
   });
 
   const rawX = persist.x + (transform?.x ?? 0);

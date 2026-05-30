@@ -1,5 +1,9 @@
 'use client';
-import { getCampaignById, updateCampaignAPI } from '@/lib/apiHelpers/campaigns';
+import {
+  getCampaignById,
+  toggleCampaignMembershipAPI,
+  updateCampaignAPI,
+} from '@/lib/apiHelpers/campaigns';
 import { getCharacterSheetsByUserId } from '@/lib/apiHelpers/sheets';
 import type {
   ChatMessage,
@@ -52,18 +56,15 @@ export const useCampaign = (
     return () => window.clearTimeout(timeoutId);
   }, [storageKey]);
 
-  const fetchCampaign = useCallback(
-    async () => {
-      if (!campaignId) return;
-      try {
-        const data = await getCampaignById(campaignId);
-        setCampaign(data);
-      } catch (error) {
-        console.error('Could not fetch campaign:', error);
-      }
-    },
-    [campaignId],
-  );
+  const fetchCampaign = useCallback(async () => {
+    if (!campaignId) return;
+    try {
+      const data = await getCampaignById(campaignId);
+      setCampaign(data);
+    } catch (error) {
+      console.error('Could not fetch campaign:', error);
+    }
+  }, [campaignId]);
 
   const handleUpdate = useDebouncedRefresh(() => {
     fetchCampaign();
@@ -95,6 +96,14 @@ export const useCampaign = (
     onChatMessage: handleChatMessage,
     onEventLog: handleEventLog,
     onPresenceUpdated: handlePresence,
+    useAbly:
+      !isGuest &&
+      Boolean(
+        viewer?.id &&
+        (campaign.public ||
+          campaign.owner === viewer.id ||
+          campaign.visibleTo.includes(viewer.id)),
+      ),
   });
 
   const updateCampaign = useCallback(
@@ -106,17 +115,11 @@ export const useCampaign = (
     [campaignId],
   );
 
-  const toggleCampaign = async (userId: string) => {
+  const toggleCampaign = async () => {
     if (campaign) {
       const updatedCampaign = { ...campaign };
-      if (updatedCampaign.visibleTo.includes(userId)) {
-        updatedCampaign.visibleTo = updatedCampaign.visibleTo.filter(
-          (id) => id !== userId,
-        );
-      } else {
-        updatedCampaign.visibleTo.push(userId);
-      }
-      await updateCampaignAPI(campaignId, updatedCampaign);
+      const { visibleTo } = await toggleCampaignMembershipAPI(campaignId);
+      updatedCampaign.visibleTo = visibleTo;
       setCampaign(updatedCampaign);
     }
   };

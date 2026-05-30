@@ -13,6 +13,7 @@ type UseRealtimeChannelOptions = {
   events: Record<string, EventHandler>;
   onAblyAttach?: (channel: RealtimeChannel) => void | Promise<void>;
   onAblyDetach?: (channel: RealtimeChannel) => void | Promise<void>;
+  useAbly?: boolean;
 };
 
 const parseEventData = (data: unknown) => {
@@ -32,12 +33,13 @@ export const useRealtimeChannel = ({
   events,
   onAblyAttach,
   onAblyDetach,
+  useAbly = true,
 }: UseRealtimeChannelOptions) => {
   const realtimeMode = getRealtimeMode();
 
   useEffect(() => {
     if (!enabled) return;
-    if (realtimeMode === 'ABLY') {
+    if (realtimeMode === 'ABLY' && useAbly) {
       const client = getAblyClient(clientId);
       const channelInstance = client.channels.get(channel);
       let active = true;
@@ -66,8 +68,8 @@ export const useRealtimeChannel = ({
           if (onAblyDetach) {
             await onAblyDetach(channelInstance);
           }
+          await channelInstance.detach();
         })();
-        channelInstance.detach();
       };
     }
     const source = new EventSource(streamUrl);
@@ -93,5 +95,6 @@ export const useRealtimeChannel = ({
     events,
     onAblyAttach,
     onAblyDetach,
+    useAbly,
   ]);
 };

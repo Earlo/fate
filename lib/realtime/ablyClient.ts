@@ -8,9 +8,8 @@ export const getAblyClient = (viewerId?: string) => {
   const clientId = buildClientId(viewerId);
   const existing = clients.get(clientId);
   if (existing) return existing;
-  const authUrl = `/api/ably/token?clientId=${encodeURIComponent(clientId)}`;
   const client = new Ably.Realtime({
-    authUrl,
+    authUrl: '/api/ably/token',
     authMethod: 'GET',
     autoConnect: true,
   });

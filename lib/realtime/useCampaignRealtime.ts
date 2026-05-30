@@ -2,7 +2,6 @@ import type { RealtimeChannel } from 'ably';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { getAblyClient } from './ablyClient';
 import type { ChatMessage, LogEntry, PresenceEntry } from './campaignTypes';
-import { joinEvent, leaveEvent, nameChangedEvent } from './eventLogMessages';
 import { getPresenceKey, getViewerLabel, mapPresenceMembers } from './presence';
 import { getRealtimeMode } from './realtimeMode';
 import { useRealtimeChannel } from './useRealtimeChannel';
@@ -15,6 +14,7 @@ type CampaignRealtimeOptions = {
   onChatMessage?: (message: ChatMessage) => void;
   onEventLog?: (entry: LogEntry) => void;
   onPresenceUpdated?: (presence: PresenceEntry[]) => void;
+  useAbly?: boolean;
 };
 
 export const useCampaignRealtime = ({
@@ -25,6 +25,7 @@ export const useCampaignRealtime = ({
   onChatMessage,
   onEventLog,
   onPresenceUpdated,
+  useAbly = true,
 }: CampaignRealtimeOptions) => {
   const realtimeMode = getRealtimeMode();
   const presenceLabelRef = useRef<string | null>(null);
@@ -50,9 +51,22 @@ export const useCampaignRealtime = ({
   );
 
   const publishEventLog = useCallback(
-    async (channel: RealtimeChannel, payload: LogEntry) => {
+    async (
+      activeCampaignId: string,
+      payload:
+        | { kind: 'join' | 'leave'; label: string }
+        | {
+            kind: 'name-change';
+            previousLabel: string;
+            nextLabel: string;
+          },
+    ) => {
       try {
-        await channel.publish('event-log', payload);
+        await fetch(`/api/campaigns/${activeCampaignId}/event-log`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
       } catch (error) {
         console.error('Failed to publish event log', error);
       }
@@ -146,10 +160,10 @@ export const useCampaignRealtime = ({
       const viewerInfo = buildViewerInfo(streamUsername);
       presenceLabelRef.current = getViewerLabel(viewerInfo);
       if (!hadViewer) {
-        await publishEventLog(
-          channel,
-          joinEvent(campaignId ?? '', getViewerLabel(viewerInfo)),
-        );
+        await publishEventLog(campaignId ?? '', {
+          kind: 'join',
+          label: getViewerLabel(viewerInfo),
+        });
       }
       await refreshPresence(channel);
     },
@@ -190,7 +204,7 @@ export const useCampaignRealtime = ({
         const label =
           presenceLabelRef.current ??
           getViewerLabel(buildViewerInfo(latestUsernameRef.current));
-        await publishEventLog(channel, leaveEvent(campaignId ?? '', label));
+        await publishEventLog(campaignId ?? '', { kind: 'leave', label });
       }
       presenceLabelRef.current = null;
     },
@@ -205,11 +219,12 @@ export const useCampaignRealtime = ({
     events,
     onAblyAttach: handleAblyAttach,
     onAblyDetach: handleAblyDetach,
+    useAbly,
   });
 
   useEffect(() => {
     if (!campaignId || !viewerId || !username) return;
-    if (realtimeMode === 'ABLY') {
+    if (realtimeMode === 'ABLY' && useAbly) {
       const client = getAblyClient(viewerId);
       const channel = client.channels.get(`campaign:${campaignId}`);
       const viewerInfo = buildViewerInfo(username);
@@ -226,10 +241,11 @@ export const useCampaignRealtime = ({
             username,
           });
           if (previousLabel !== nextLabel && !isInitialNameForUser) {
-            await channel.publish(
-              'event-log',
-              nameChangedEvent(campaignId, previousLabel, nextLabel),
-            );
+            await publishEventLog(campaignId, {
+              kind: 'name-change',
+              previousLabel,
+              nextLabel,
+            });
           }
         } catch (error) {
           console.error('Failed to update presence name', error);
@@ -251,5 +267,14 @@ export const useCampaignRealtime = ({
       }
     };
     updateName();
-  }, [buildViewerInfo, campaignId, realtimeMode, username, viewerId, isGuest]);
+  }, [
+    buildViewerInfo,
+    campaignId,
+    realtimeMode,
+    username,
+    viewerId,
+    isGuest,
+    publishEventLog,
+    useAbly,
+  ]);
 };

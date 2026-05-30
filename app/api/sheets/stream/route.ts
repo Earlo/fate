@@ -1,10 +1,15 @@
+import { authErrorResponse, requireUser } from '@/lib/apiAuth';
 import { subscribeSheetList } from '@/lib/realtime/sheets';
-import { NextResponse, type NextRequest } from 'next/server';
+import { type NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  const ownerId = new URL(req.url).searchParams.get('userId');
-  if (!ownerId) {
-    return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
+  let ownerId: string;
+  try {
+    const user = await requireUser();
+    const requestedId = new URL(req.url).searchParams.get('userId');
+    ownerId = user.admin && requestedId ? requestedId : user.id;
+  } catch (error) {
+    return authErrorResponse(error)!;
   }
 
   const stream = new ReadableStream<Uint8Array>({

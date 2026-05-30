@@ -76,7 +76,7 @@ const Campaign: FC<CampaignProps> = ({ campaign: initialCampaign }) => {
         {activeSession && !isAdmin && (
           <Button
             label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
-            onClick={() => toggleCampaign(activeSession.user.id)}
+            onClick={() => toggleCampaign()}
             className="ml-4"
           />
         )}

@@ -106,7 +106,10 @@ const publishPresence = (campaignId: string) => {
   });
 };
 
-const publishEventLog = async (campaignId: string, payload: LogEntry) => {
+export const publishEventLog = async (
+  campaignId: string,
+  payload: LogEntry,
+) => {
   if (isAblyEnabled()) {
     const channel = getAblyRest().channels.get(ablyCampaignChannel(campaignId));
     await channel.publish('event-log', payload);

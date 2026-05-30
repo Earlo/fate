@@ -1,4 +1,5 @@
 import { sanitizeForPrompt, streamCompletion } from '@/app/api/helpers/ai';
+import { authErrorResponse, requireCampaignWrite } from '@/lib/apiAuth';
 import { getCampaign } from '@/schemas/campaign';
 import { openai } from '@ai-sdk/openai';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -6,7 +7,13 @@ import { NextResponse, type NextRequest } from 'next/server';
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { campaignId, prompt } = JSON.parse(body.prompt);
-  const campaign = await getCampaign(campaignId);
+  let user;
+  try {
+    ({ user } = await requireCampaignWrite(campaignId));
+  } catch (error) {
+    return authErrorResponse(error)!;
+  }
+  const campaign = await getCampaign(campaignId, user);
   if (!campaign) {
     return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
   }
