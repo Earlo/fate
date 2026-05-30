@@ -169,18 +169,7 @@ const SkillGrid: FC<SkillGridProps> = ({
     visibleIn: string[],
   ) => {
     const updatedSkills = { ...skills };
-    Object.values(updatedSkills).forEach((skillSlots, lvl) => {
-      updatedSkills[lvl] = updatedSkills[lvl]
-        ? updatedSkills[lvl].filter((skillSlot, i) => {
-            return !(
-              skillSlot.name === name &&
-              lvl !== level &&
-              i !== slotIndex
-            );
-          })
-        : [];
-    });
-    updatedSkills[level] = updatedSkills[level] || [];
+    updatedSkills[level] = [...(updatedSkills[level] || [])];
     const oldSkill = updatedSkills[level][slotIndex];
     if (name === '') {
       updatedSkills[level] = updatedSkills[level].filter(
@@ -188,6 +177,12 @@ const SkillGrid: FC<SkillGridProps> = ({
       );
     } else {
       updatedSkills[level][slotIndex] = { name, visibleIn };
+      Object.entries(updatedSkills).forEach(([levelKey, skillSlots]) => {
+        const lvl = Number(levelKey);
+        updatedSkills[lvl] = skillSlots.filter((skillSlot, i) => {
+          return skillSlot.name !== name || (lvl === level && i === slotIndex);
+        });
+      });
     }
     if (
       oldSkill &&
