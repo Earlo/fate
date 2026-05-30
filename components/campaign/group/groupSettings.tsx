@@ -18,19 +18,72 @@ const GroupSettings: FC<GroupSettingsProps> = ({
   onChange,
   setEditing,
 }) => {
-  const [newName, setNewName] = useState(group.name);
-  const layoutDimensions = group.layout?.dimensions ?? defaultGroupDimensions();
+  const initialDimensions =
+    group.layout?.dimensions ?? defaultGroupDimensions();
+  const [draftGroup, setDraftGroup] = useState(group);
+  const [dimensionInputs, setDimensionInputs] = useState({
+    w: String(initialDimensions.w),
+    h: String(initialDimensions.h),
+  });
   const [isBackgroundUploading, setIsBackgroundUploading] = useState(false);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
+  const parseDimension = (value: string) => {
+    if (!/^\d+$/.test(value)) return;
+    const dimension = Number(value);
+    if (!Number.isSafeInteger(dimension) || dimension < 1) return;
+    return dimension;
+  };
+  const parsedDimensions = {
+    w: parseDimension(dimensionInputs.w),
+    h: parseDimension(dimensionInputs.h),
+  };
+  const dimensionsAreValid =
+    parsedDimensions.w !== undefined && parsedDimensions.h !== undefined;
+  const gridDimensionsAreInvalid =
+    draftGroup.layout?.mode === 'grid' && !dimensionsAreValid;
+  const hasChanges = JSON.stringify(draftGroup) !== JSON.stringify(group);
+  const saveIsDisabled =
+    !hasChanges || gridDimensionsAreInvalid || isBackgroundUploading;
+  const layoutDimensions =
+    draftGroup.layout?.dimensions ?? defaultGroupDimensions();
 
   const updateLayout = (
     updates: Partial<NonNullable<PopulatedGroup['layout']>>,
   ) => {
-    const baseLayout =
-      group.layout?.mode === 'grid'
-        ? group.layout
-        : { mode: 'grid' as const, dimensions: layoutDimensions };
-    onChange({ ...group, layout: { ...baseLayout, ...updates } });
+    setDraftGroup((currentGroup) => {
+      const baseLayout =
+        currentGroup.layout?.mode === 'grid'
+          ? currentGroup.layout
+          : {
+              mode: 'grid' as const,
+              dimensions:
+                currentGroup.layout?.dimensions ?? defaultGroupDimensions(),
+            };
+      return {
+        ...currentGroup,
+        layout: { ...baseLayout, ...updates },
+      };
+    });
+  };
+
+  const updateDimension = (dimension: 'w' | 'h', value: string) => {
+    setDimensionInputs((currentInputs) => ({
+      ...currentInputs,
+      [dimension]: value,
+    }));
+    const parsedDimension = parseDimension(value);
+    if (parsedDimension === undefined) return;
+    setDraftGroup((currentGroup) => ({
+      ...currentGroup,
+      layout: {
+        ...currentGroup.layout,
+        mode: 'grid',
+        dimensions: {
+          ...(currentGroup.layout?.dimensions ?? defaultGroupDimensions()),
+          [dimension]: parsedDimension,
+        },
+      },
+    }));
   };
 
   const handleBackgroundFileChange = async (
@@ -51,91 +104,89 @@ const GroupSettings: FC<GroupSettingsProps> = ({
   };
 
   const toggleProperty = (property: 'public' | 'visible') => {
-    onChange({ ...group, [property]: !group[property] });
+    setDraftGroup((currentGroup) => ({
+      ...currentGroup,
+      [property]: !currentGroup[property],
+    }));
   };
 
   return (
     <Modal
       onClose={() => setEditing(false)}
       className="mx-auto max-w-md rounded-lg bg-stone-100 shadow"
-      title={`${newName || 'Untitled group'} settings`}
+      title={`${draftGroup.name || 'Untitled group'} settings`}
     >
       <LabeledInput
         type="text"
         name="name"
-        value={newName}
-        onChange={(event) => setNewName(event.target.value)}
+        value={draftGroup.name}
+        onChange={(event) =>
+          setDraftGroup((currentGroup) => ({
+            ...currentGroup,
+            name: event.target.value,
+          }))
+        }
       />
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <ToggleSwitch
-          checked={group.visible}
+          checked={draftGroup.visible}
           onChange={() => toggleProperty('visible')}
           label="Visible"
           className="px-1 py-1"
         />
         <ToggleSwitch
-          checked={group.public}
+          checked={draftGroup.public}
           onChange={() => toggleProperty('public')}
           label="Public"
           className="px-1 py-1"
         />
         <ToggleSwitch
-          checked={group.layout?.mode === 'grid'}
+          checked={draftGroup.layout?.mode === 'grid'}
           onChange={() => {
-            const nextMode = group.layout?.mode === 'grid' ? 'list' : 'grid';
-            const backgroundImage = group.layout?.backgroundImage;
-            const nextLayout =
-              nextMode === 'grid'
-                ? {
-                    mode: 'grid' as const,
-                    dimensions: layoutDimensions,
-                    backgroundImage,
-                  }
-                : group.layout?.dimensions
-                  ? {
-                      mode: 'list' as const,
-                      dimensions: group.layout.dimensions,
-                      backgroundImage,
-                    }
-                  : undefined;
-            onChange({ ...group, layout: nextLayout });
+            setDraftGroup((currentGroup) => {
+              const nextMode =
+                currentGroup.layout?.mode === 'grid' ? 'list' : 'grid';
+              const dimensions =
+                currentGroup.layout?.dimensions ?? defaultGroupDimensions();
+              const backgroundImage = currentGroup.layout?.backgroundImage;
+              return {
+                ...currentGroup,
+                layout:
+                  nextMode === 'grid'
+                    ? { mode: nextMode, dimensions, backgroundImage }
+                    : currentGroup.layout?.dimensions
+                      ? { mode: nextMode, dimensions, backgroundImage }
+                      : undefined,
+              };
+            });
           }}
           label="Grid Layout"
           className="px-1 py-1 sm:col-span-2"
         />
       </div>
-      {group.layout?.mode === 'grid' && (
+      {draftGroup.layout?.mode === 'grid' && (
         <div className="grid grid-cols-2 gap-2">
           <LabeledInput
             type="number"
             name="width"
-            value={layoutDimensions.w}
-            onChange={(event) =>
-              updateLayout({
-                dimensions: {
-                  ...layoutDimensions,
-                  w: parseInt(event.target.value),
-                },
-              })
-            }
+            value={dimensionInputs.w}
+            onChange={(event) => updateDimension('w', event.target.value)}
           />
           <LabeledInput
             type="number"
             name="height"
-            value={layoutDimensions.h}
-            onChange={(event) =>
-              updateLayout({
-                dimensions: {
-                  ...layoutDimensions,
-                  h: parseInt(event.target.value),
-                },
-              })
-            }
+            value={dimensionInputs.h}
+            onChange={(event) => updateDimension('h', event.target.value)}
           />
+          {!dimensionsAreValid && (
+            <p className="col-span-2 text-sm text-red-700">
+              Width and height must be positive whole numbers.
+            </p>
+          )}
           <div className="col-span-2">
             <LabeledInput
               name="Background Image URL"
-              value={group.layout?.backgroundImage ?? ''}
+              value={draftGroup.layout?.backgroundImage ?? ''}
               onChange={(event) =>
                 updateLayout({ backgroundImage: event.target.value })
               }
@@ -158,29 +209,37 @@ const GroupSettings: FC<GroupSettingsProps> = ({
               <Button
                 label="Clear"
                 onClick={() => updateLayout({ backgroundImage: '' })}
-                disabled={!group.layout?.backgroundImage}
+                disabled={!draftGroup.layout?.backgroundImage}
               />
             </div>
           </div>
         </div>
       )}
       <div className="mt-3 flex flex-wrap gap-3">
-        <Button
-          label="Cancel"
-          onClick={() => {
-            setEditing(false);
-            setNewName(group.name);
-          }}
-        />
+        <Button label="Cancel" onClick={() => setEditing(false)} />
         <Button
           label="Save"
           onClick={() => {
+            if (saveIsDisabled) return;
+            const dimensions =
+              parsedDimensions.w !== undefined &&
+              parsedDimensions.h !== undefined
+                ? { w: parsedDimensions.w, h: parsedDimensions.h }
+                : layoutDimensions;
             setEditing(false);
-            onChange({ ...group, name: newName });
+            onChange({
+              ...draftGroup,
+              layout: draftGroup.layout && {
+                ...draftGroup.layout,
+                dimensions,
+              },
+            });
           }}
+          disabled={saveIsDisabled}
         />
         <Button
           label="Delete"
+          className="bg-red-800 hover:bg-red-900"
           onClick={() => {
             setEditing(false);
             onChange();
