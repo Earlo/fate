@@ -71,7 +71,6 @@ const Note: FC<NoteProps> = ({
       });
     }
   }, [debouncedName, debouncedContent, note, updateNote]);
-
   return (
     <div className="flex grow flex-col pb-1">
       <div className="flex h-8 min-w-[50%] items-center align-middle">
@@ -80,7 +79,7 @@ const Note: FC<NoteProps> = ({
           value={toggle ? (visible ? name : '???') : name}
           placeholder={`${name} Name`}
           required
-          disabled={isDisabled}
+          disabled={!!isDisabled}
           onChange={(e) => setName(e.target.value)}
           className={cn(
             'grow rounded-b-none border-b-0 sm:rounded-b sm:border-b-2',
@@ -131,7 +130,7 @@ const Note: FC<NoteProps> = ({
         placeholder={`Description for ${name}`}
         multiline
         required
-        disabled={isDisabled}
+        disabled={!!isDisabled}
         onChange={(e) => setContent(e.target.value)}
         className={cn('grow rounded-tl-none sm:rounded-tl', {
           'rounded-tr-none sm:rounded-tr': anyWidgets,

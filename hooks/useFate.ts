@@ -16,7 +16,7 @@ import { useDebouncedRefresh } from './useDebouncedRefresh';
 
 function getGuestId(storageKey: string) {
   if (typeof window === 'undefined') {
-    return `guest_${Math.random().toString(36).slice(2)}`;
+    return '';
   }
   const existingGuestId = window.sessionStorage.getItem(storageKey);
   if (existingGuestId) {
@@ -31,47 +31,42 @@ function getGuestId(storageKey: string) {
   return guestId;
 }
 export const useCampaign = (
-  campaignId: string,
+  initialCampaign: PopulatedCampaignT,
   viewer?: { id?: string; username?: string },
 ) => {
+  const campaignId = initialCampaign.id;
   const storageKey = `campaign-guest-id-${campaignId}`;
-  const [campaign, setCampaign] = useState<PopulatedCampaignT>();
-  const [isLoading, setIsLoading] = useState(true);
+  const [campaign, setCampaign] = useState(initialCampaign);
   const [presence, setPresence] = useState<PresenceEntry[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [eventLog, setEventLog] = useState<LogEntry[]>([]);
-  const [guestId] = useState(() => getGuestId(storageKey));
+  const [guestId, setGuestId] = useState('');
   const viewerId = viewer?.id ?? guestId;
   const isGuest = !viewer?.id;
   const maxLogEntries = 100;
 
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setGuestId(getGuestId(storageKey));
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [storageKey]);
+
   const fetchCampaign = useCallback(
-    async (showLoading = true) => {
+    async () => {
       if (!campaignId) return;
-      if (showLoading) setIsLoading(true);
       try {
         const data = await getCampaignById(campaignId);
         setCampaign(data);
       } catch (error) {
         console.error('Could not fetch campaign:', error);
-      } finally {
-        if (showLoading) setIsLoading(false);
       }
     },
     [campaignId],
   );
 
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      void fetchCampaign();
-    }, 0);
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [fetchCampaign]);
-
   const handleUpdate = useDebouncedRefresh(() => {
-    fetchCampaign(false);
+    fetchCampaign();
   }, 200);
 
   const handleChatMessage = useCallback(
@@ -93,7 +88,7 @@ export const useCampaign = (
   }, []);
 
   useCampaignRealtime({
-    campaignId,
+    campaignId: viewerId ? campaignId : undefined,
     viewerId,
     username: viewer?.username || 'Guest',
     onCampaignUpdated: handleUpdate,
@@ -192,7 +187,6 @@ export const useCampaign = (
 
   return {
     campaign,
-    isLoading,
     presence,
     messages,
     eventLog,

@@ -15,7 +15,7 @@ interface EditableListProps<T> {
 const EditableList = <T,>({
   title,
   items,
-  disabled,
+  disabled = false,
   className,
   labelClassName,
   onAdd,

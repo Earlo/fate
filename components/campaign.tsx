@@ -4,41 +4,29 @@ import Group from '@/components/campaign/group';
 import PresenceList from '@/components/campaign/presenceList';
 import Button from '@/components/generic/button';
 import LabeledInput from '@/components/generic/labeledInput';
-import LoadingSpinner from '@/components/generic/loadingSpinner';
-import BaseLayout from '@/components/layout/baseLayout';
 import AspectInput from '@/components/sheet/aspectInput';
 import NoteInput from '@/components/sheet/noteInput';
 import useDebounce from '@/hooks/useDebounce';
 import { useCampaign } from '@/hooks/useFate';
+import { PopulatedCampaignT } from '@/schemas/campaign';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { ChangeEvent, FC, useEffect, useState } from 'react';
 
 interface CampaignProps {
-  id: string;
+  campaign: PopulatedCampaignT;
 }
 
-function getDisplayName(storageKey: string) {
-  if (typeof window === 'undefined') {
-    return '';
-  }
-  const existingDisplayName = window.sessionStorage.getItem(storageKey);
-  if (existingDisplayName) {
-    return existingDisplayName;
-  }
-  return '';
-}
-
-const Campaign: FC<CampaignProps> = ({ id }) => {
-  const router = useRouter();
+const Campaign: FC<CampaignProps> = ({ campaign: initialCampaign }) => {
+  const { id } = initialCampaign;
   const { data: session } = useSession();
   const storageKey = `campaign-display-name-${id}`;
-  const [displayName, setDisplayName] = useState(getDisplayName(storageKey));
+  const [isMounted, setIsMounted] = useState(false);
+  const [displayName, setDisplayName] = useState('');
+  const activeSession = isMounted ? session : null;
   const debouncedDisplayName = useDebounce(displayName, 600);
   const {
     campaign,
-    isLoading,
     presence,
     messages,
     eventLog,
@@ -50,23 +38,25 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     addNote,
     deleteNote,
     updateNote,
-  } = useCampaign(id, {
-    id: session?.user.id,
-    username: debouncedDisplayName || session?.user?.username,
+  } = useCampaign(initialCampaign, {
+    id: activeSession?.user.id,
+    username: debouncedDisplayName || activeSession?.user?.username,
   });
-  const isAdmin = !!session?.user.admin || campaign?.owner === session?.user.id;
+  const isAdmin =
+    !!activeSession?.user.admin || campaign.owner === activeSession?.user.id;
   const isPlayer =
-    campaign &&
-    session?.user.id &&
-    campaign.visibleTo.includes(session.user.id);
-  const ownerId = campaign?.owner;
-  const playerIds = campaign?.visibleTo ?? [];
+    activeSession?.user.id &&
+    campaign.visibleTo.includes(activeSession.user.id);
+  const ownerId = campaign.owner;
+  const playerIds = campaign.visibleTo;
 
   useEffect(() => {
-    if (!isLoading && !campaign) {
-      router.push('/');
-    }
-  }, [isLoading, campaign, router]);
+    const timeoutId = window.setTimeout(() => {
+      setDisplayName(window.sessionStorage.getItem(storageKey) ?? '');
+      setIsMounted(true);
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [storageKey]);
 
   const handleDisplayNameChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -79,29 +69,14 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <BaseLayout className="items-center justify-center">
-        <LoadingSpinner />
-      </BaseLayout>
-    );
-  }
-
-  if (!campaign) {
-    return (
-      <div className="flex h-screen items-center justify-center text-2xl">
-        Not Found
-      </div>
-    );
-  }
   return (
     <>
       <h1 className="pb-6 text-center text-4xl font-bold sm:text-5xl">
         {campaign.name}
-        {session && !isAdmin && (
+        {activeSession && !isAdmin && (
           <Button
             label={isPlayer ? 'Leave Campaign' : 'Join Campaign'}
-            onClick={() => toggleCampaign(session.user.id)}
+            onClick={() => toggleCampaign(activeSession.user.id)}
             className="ml-4"
           />
         )}
@@ -136,7 +111,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
               addNote={() => addNote()}
               deleteNote={(index) => deleteNote(index)}
               updateNote={(note, index) => updateNote(note, index)}
-              className="w-full sm:w-8/12"
+              className="w-full pl-4 sm:w-8/12"
             />
           </div>
         </div>
@@ -147,7 +122,9 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
               value={displayName}
               onChange={handleDisplayNameChange}
               placeholder={
-                session?.user?.username ? 'Optional nickname' : 'Guest name'
+                activeSession?.user?.username
+                  ? 'Optional nickname'
+                  : 'Guest name'
               }
               className="max-w-sm"
             />
@@ -163,7 +140,7 @@ const Campaign: FC<CampaignProps> = ({ id }) => {
             messages={messages}
             eventLog={eventLog}
             viewerId={viewerId}
-            displayName={displayName || session?.user.username || '???'}
+            displayName={displayName || activeSession?.user.username || '???'}
             isGuest={isGuest}
           />
         </div>

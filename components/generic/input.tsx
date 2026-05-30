@@ -31,6 +31,7 @@ const Input: FC<InputProps> = ({
     <textarea
       id={name}
       name={name}
+      autoComplete="off"
       value={value}
       placeholder={placeholder}
       className={cn(
@@ -47,6 +48,7 @@ const Input: FC<InputProps> = ({
       id={name}
       type={type}
       name={name}
+      autoComplete="off"
       value={value}
       placeholder={placeholder}
       className={cn(
