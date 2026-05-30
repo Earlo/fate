@@ -5,9 +5,15 @@ interface ModalProps {
   onClose?: () => void;
   className?: string;
   children: React.ReactNode;
+  title?: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, className, children }) => {
+const Modal: React.FC<ModalProps> = ({
+  onClose,
+  className,
+  children,
+  title,
+}) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
@@ -16,6 +22,11 @@ const Modal: React.FC<ModalProps> = ({ onClose, className, children }) => {
           className,
         )}
       >
+        {title && (
+          <h2 className="pt-1 pl-2 text-lg font-semibold text-gray-900">
+            {title}
+          </h2>
+        )}
         {onClose && (
           <IconButton
             onClick={onClose}
@@ -23,7 +34,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, className, children }) => {
             icon="close"
           />
         )}
-        <div className="p-4">{children}</div>
+        <div className="p-2">{children}</div>
       </div>
     </div>
   );

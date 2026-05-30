@@ -58,10 +58,8 @@ const GroupSettings: FC<GroupSettingsProps> = ({
     <Modal
       onClose={() => setEditing(false)}
       className="mx-auto max-w-md rounded-lg bg-stone-100 shadow"
+      title={`${newName || 'Untitled group'} settings`}
     >
-      <h2 className="text-lg font-semibold text-gray-900">
-        Edit Group Settings
-      </h2>
       <LabeledInput
         type="text"
         name="name"
