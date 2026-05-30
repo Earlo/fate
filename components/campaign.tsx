@@ -1,7 +1,7 @@
 'use client';
 import CampaignChat from '@/components/campaign/campaignChat';
+import Group from '@/components/campaign/group';
 import PresenceList from '@/components/campaign/presenceList';
-import Group from '@/components/dashboard/group';
 import Button from '@/components/generic/button';
 import LabeledInput from '@/components/generic/labeledInput';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
