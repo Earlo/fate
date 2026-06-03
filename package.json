@@ -61,7 +61,7 @@
     "tailwind-merge": "3.6.0",
     "tailwindcss": "4.3.0",
     "typescript": "6.0.3",
-    "vitest": "4.1.7"
+    "vitest": "4.1.8"
   },
   "engines": {
     "node": "24.x || 25.x || 26.x"
