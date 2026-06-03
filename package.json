@@ -35,7 +35,7 @@
     "next": "16.2.7",
     "next-auth": "4.24.14",
     "openai": "6.39.1",
-    "react": "19.2.6",
+    "react": "19.2.7",
     "react-dom": "19.2.7",
     "tailwindcss-animate": "1.0.7"
   },
@@ -43,7 +43,7 @@
     "@tailwindcss/postcss": "4.3.0",
     "@types/bcrypt": "6.0.0",
     "@types/node": "25.9.1",
-    "@types/react": "19.2.15",
+    "@types/react": "19.2.16",
     "@types/react-dom": "19.2.3",
     "@typescript-eslint/eslint-plugin": "8.60.1",
     "@typescript-eslint/parser": "8.60.1",
