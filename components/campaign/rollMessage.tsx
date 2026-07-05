@@ -27,7 +27,7 @@ const RollBadge = ({
 
   return (
     <span
-      className="rounded px-2 py-0.5 text-sm font-semibold text-white"
+      className="inline-flex shrink-0 rounded px-2 py-0.5 text-sm font-semibold text-white"
       style={{ backgroundColor: style.backgroundColor, boxShadow }}
     >
       {formatSignedRoll(value)}
@@ -43,20 +43,20 @@ const PrivateBadge = () => (
 
 const RollMessage = ({ text, roll, isPrivate = false }: RollMessageProps) => {
   return (
-    <div className="flex flex-col gap-1 font-mono">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-gray-400">4dF</span>
+    <div className="flex min-w-0 flex-col gap-1 font-mono">
+      <div className="flex max-w-full flex-wrap items-center gap-1 pb-1">
+        <span className="shrink-0 text-gray-400">4dF</span>
         {typeof roll.bonus === 'number' && (
           <>
             <RollBadge value={roll.bonus} glowSize="small" />
-            <span className="text-gray-400">+</span>
+            <span className="shrink-0 text-gray-400">+</span>
           </>
         )}
-        <div className="flex gap-1">
+        <div className="flex shrink-0 gap-1">
           {roll.dice.map((die, dieIndex) => (
             <span
               key={dieIndex}
-              className={`inline-flex h-6 w-6 items-center justify-center rounded border border-gray-600 bg-gray-900 ${getFudgeDieClassName(
+              className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded border border-gray-600 bg-gray-900 ${getFudgeDieClassName(
                 die,
               )}`}
             >
@@ -64,7 +64,7 @@ const RollMessage = ({ text, roll, isPrivate = false }: RollMessageProps) => {
             </span>
           ))}
         </div>
-        <span className="text-gray-400">=</span>
+        <span className="shrink-0 text-gray-400">=</span>
         <RollBadge value={roll.total} />
         {isPrivate && <PrivateBadge />}
       </div>

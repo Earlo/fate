@@ -18,6 +18,8 @@ interface CharacterSheetProps {
   campaignId?: string;
   skills: string[];
   state?: 'create' | 'edit' | 'toggle' | 'view' | 'play';
+  disableRemoteActions?: boolean;
+  onRollSkill?: (skillName: string, skillBonus: number) => void;
 }
 
 type editableFields = Omit<
@@ -30,6 +32,8 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   skills,
   campaignId = '',
   state = 'view',
+  disableRemoteActions = false,
+  onRollSkill,
 }) => {
   const updateField = (
     field: keyof editableFields,
@@ -50,7 +54,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   const { completion, complete, isLoading } = useCompletion({
     api: '/api/writeSheet',
   });
-  const llmDisabled = !LLM_FEATURES_ENABLED;
+  const llmDisabled = disableRemoteActions || !LLM_FEATURES_ENABLED;
   const callOpenAi = async (field: string) => {
     if (!field) {
       console.error('No field provided');
@@ -85,6 +89,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
               })
             }
             disabled={!setCharacter}
+            localOnly={disableRemoteActions}
             className={cn('pb-1', {
               blur:
                 (state === 'view' || state === 'play') &&
@@ -245,6 +250,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             updateField('consequences', consequences)
           }
           consequences={character.consequences}
+          onRollSkill={onRollSkill}
         />
       </div>
       <div

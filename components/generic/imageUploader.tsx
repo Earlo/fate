@@ -15,6 +15,7 @@ interface ImageUploaderProps {
   className?: string;
   children?: ReactNode;
   context?: object;
+  localOnly?: boolean;
 }
 
 const ImageUploader: FC<ImageUploaderProps> = ({
@@ -25,16 +26,33 @@ const ImageUploader: FC<ImageUploaderProps> = ({
   className,
   children,
   context = null,
+  localOnly = false,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const llmDisabled = !LLM_FEATURES_ENABLED;
+  const llmDisabled = localOnly || !LLM_FEATURES_ENABLED;
+
+  const readLocalImage = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () =>
+        typeof reader.result === 'string'
+          ? resolve(reader.result)
+          : reject(new Error('Could not read image file'));
+      reader.onerror = () => reject(reader.error ?? new Error('Read failed'));
+      reader.readAsDataURL(file);
+    });
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setIsLoading(true);
     try {
       const file = e.target.files ? e.target.files[0] : null;
       if (file) {
+        if (localOnly) {
+          const url = await readLocalImage(file);
+          setIcon(url);
+          return;
+        }
         const url = await uploadImage(file, path);
         setIcon(url);
       }
@@ -61,9 +79,10 @@ const ImageUploader: FC<ImageUploaderProps> = ({
   };
 
   return (
-    <div className="relative inline-block">
+    <div className={cn('relative inline-block', className)}>
       <input
         type="file"
+        accept="image/*"
         onChange={handleFileChange}
         ref={fileInputRef}
         className="hidden"
@@ -74,17 +93,14 @@ const ImageUploader: FC<ImageUploaderProps> = ({
           <LoadingSpinner />
         </div>
       ) : (
-        <div
-          className={`relative h-32 w-32 ${className}`}
-          onMouseEnter={() => {}}
-          onMouseLeave={() => {}}
-        >
+        <div className="relative h-32 w-32 overflow-hidden rounded-full">
           <Image
             src={icon || '/blank_user.png'}
             alt="Upload Image"
-            height={128}
-            width={128}
-            className={cn('rounded-full object-cover', {
+            fill
+            sizes="128px"
+            unoptimized={icon?.startsWith('blob:') || icon?.startsWith('data:')}
+            className={cn('h-full w-full object-cover', {
               'cursor-pointer': !disabled,
             })}
           />
@@ -98,32 +114,38 @@ const ImageUploader: FC<ImageUploaderProps> = ({
             !disabled && (
               <div className="absolute inset-0 flex items-center justify-between opacity-0 transition-opacity duration-200 hover:opacity-100">
                 <div
-                  className="bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-l-full bg-neutral-900 transition-opacity"
+                  className={cn(
+                    'bg-opacity-40 hover:bg-opacity-20 flex h-full items-center justify-center bg-neutral-900 transition-opacity',
+                    localOnly ? 'w-full rounded-full' : 'w-1/2 rounded-l-full',
+                  )}
                   onClick={() => !disabled && fileInputRef.current?.click()}
+                  title={localOnly ? 'Upload local portrait' : 'Upload image'}
                 >
                   <Icon icon="upload" />
                 </div>
-                <div
-                  className={cn(
-                    'bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-r-full bg-neutral-900 transition-opacity',
-                    llmDisabled &&
-                      'hover:bg-opacity-40 cursor-not-allowed opacity-40',
-                  )}
-                  onClick={() => {
-                    if (llmDisabled || disabled) return;
-                    void onGenerateImage();
-                  }}
-                  title={
-                    llmDisabled
-                      ? 'LLM features are temporarily disabled'
-                      : 'Generate portrait'
-                  }
-                >
-                  <Icon
-                    icon="sparkles"
-                    className={cn(llmDisabled && 'text-stone-400')}
-                  />
-                </div>
+                {!localOnly && (
+                  <div
+                    className={cn(
+                      'bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-r-full bg-neutral-900 transition-opacity',
+                      llmDisabled &&
+                        'hover:bg-opacity-40 cursor-not-allowed opacity-40',
+                    )}
+                    onClick={() => {
+                      if (llmDisabled || disabled) return;
+                      void onGenerateImage();
+                    }}
+                    title={
+                      llmDisabled
+                        ? 'LLM features are temporarily disabled'
+                        : 'Generate portrait'
+                    }
+                  >
+                    <Icon
+                      icon="sparkles"
+                      className={cn(llmDisabled && 'text-stone-400')}
+                    />
+                  </div>
+                )}
               </div>
             )
           )}

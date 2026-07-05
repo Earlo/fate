@@ -7,6 +7,7 @@ interface FormContainerProps {
   onMaximize?: () => void;
   children?: React.ReactNode;
   className?: string;
+  formClassName?: string;
 }
 
 const FormContainer: React.FC<FormContainerProps> = ({
@@ -16,22 +17,30 @@ const FormContainer: React.FC<FormContainerProps> = ({
   onMinimize,
   onMaximize,
   className,
-}) => (
-  <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-neutral-900">
-    <form
-      onSubmit={onSubmit}
-      className={cn(
-        'relative z-10 h-fit max-h-dvh max-w-full overflow-y-auto rounded bg-stone-100 p-1 shadow-md lg:max-w-6xl',
-      )}
-    >
-      <ControlBar
-        onClose={onClose}
-        onMinimize={onMinimize}
-        onMaximize={onMaximize}
-      />
-      <div className={cn('pt-6', className)}>{children}</div>
-    </form>
-  </div>
-);
+  formClassName,
+}) => {
+  const hasControls = Boolean(onClose || onMinimize || onMaximize);
+
+  return (
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-neutral-900">
+      <form
+        onSubmit={onSubmit}
+        className={cn(
+          'relative z-10 h-fit max-h-dvh max-w-full overflow-y-auto rounded bg-stone-100 p-1 shadow-md lg:max-w-6xl',
+          formClassName,
+        )}
+      >
+        {hasControls && (
+          <ControlBar
+            onClose={onClose}
+            onMinimize={onMinimize}
+            onMaximize={onMaximize}
+          />
+        )}
+        <div className={cn(hasControls && 'pt-6', className)}>{children}</div>
+      </form>
+    </div>
+  );
+};
 
 export default FormContainer;

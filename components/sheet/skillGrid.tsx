@@ -63,6 +63,7 @@ interface SkillGridProps {
   ownerId?: string;
   characterName?: string;
   tight?: boolean;
+  onRollSkill?: (skillName: string, skillBonus: number) => void;
 }
 
 const SkillGrid: FC<SkillGridProps> = ({
@@ -79,6 +80,7 @@ const SkillGrid: FC<SkillGridProps> = ({
   ownerId,
   characterName,
   tight = false,
+  onRollSkill,
 }) => {
   const { data: session } = useSession();
   const [maxDisplayedTier, setMaxDisplayedTier] = useState(5);
@@ -89,10 +91,11 @@ const SkillGrid: FC<SkillGridProps> = ({
   };
   const canControlSheet =
     Boolean(session?.user?.admin) || ownerId === session?.user?.id;
-  const canRollDice =
+  const canPostCampaignRoll =
     (state === 'play' || state === 'toggle') &&
     Boolean(campaignId) &&
     canControlSheet;
+  const canRollDice = canPostCampaignRoll || Boolean(onRollSkill);
 
   const tierLabelForScore = (score: number) => {
     let closest = tiers[0];
@@ -105,6 +108,10 @@ const SkillGrid: FC<SkillGridProps> = ({
   };
 
   const rollFudgeDice = async (skillName: string, skillBonus: number) => {
+    if (onRollSkill) {
+      onRollSkill(skillName, skillBonus);
+      return;
+    }
     if (!campaignId) return;
     const { dice, total } = buildFudgeRoll();
     const combinedTotal = total + skillBonus;
@@ -122,7 +129,7 @@ const SkillGrid: FC<SkillGridProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           kind: 'roll',
-          message: `${
+          text: `${
             characterName || 'Someone'
           } uses ${skillName} (${finalLabel})`,
           roll: { dice, total: combinedTotal, bonus: skillBonus },
@@ -261,7 +268,10 @@ const SkillGrid: FC<SkillGridProps> = ({
                   aria-label="Roll 4dF"
                   className="inline-flex items-center"
                 >
-                  <Icon icon="dice" className="h-5 w-5" />
+                  <Icon
+                    icon="dice"
+                    className="h-5 w-5 cursor-pointer text-stone-100 transition hover:text-gray-400"
+                  />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -341,6 +351,8 @@ const SkillGrid: FC<SkillGridProps> = ({
                 skillsList={skillsList}
                 topRow={index === 0}
                 tight={tight}
+                onRollSkill={canRollDice ? rollFudgeDice : undefined}
+                tierLevel={tier.level}
               />
             </div>
           </div>
@@ -359,6 +371,8 @@ interface SkillRowProps {
   skillsList: string[];
   topRow?: boolean;
   tight?: boolean;
+  onRollSkill?: (skillName: string, skillBonus: number) => void;
+  tierLevel: number;
 }
 
 const SkillRow = ({
@@ -371,6 +385,8 @@ const SkillRow = ({
   skillsList,
   topRow = false,
   tight = false,
+  onRollSkill,
+  tierLevel,
 }: SkillRowProps) => {
   //return [...skills, [{}, {}, {}, {}, {}]].map((skill, index) => {
   return Array.from({ length: 5 }).map((_, index) => {
@@ -380,13 +396,14 @@ const SkillRow = ({
     const visibleIn = skill?.visibleIn || [];
     const isVisible = visibleIn.includes(campaignId);
     const shouldHide = state === 'play' || state === 'view';
+    const visibleName = shouldHide && !isVisible ? '' : name;
     const firstSlot = index === 0;
     const lastSlot = index === 4;
     return (
       <SkillInput
         skillOptions={skillsList}
         key={index}
-        value={shouldHide && !isVisible ? '' : name}
+        value={visibleName}
         disabled={disabled || (!firstSlot && !skills[index - 1] && !skill)}
         onChange={(name) => handleChange(index, name, visibleIn)}
         selectedSkills={selectedSkills}

@@ -1,38 +1,60 @@
 'use client';
 import Dashboard from '@/components/dashboard/board';
+import DemoCharacterSheet from '@/components/demoCharacterSheet';
+import Icon from '@/components/generic/icon/icon';
 import LoadingSpinner from '@/components/generic/loadingSpinner';
 import BaseLayout from '@/components/layout/baseLayout';
 import DiceBackground from '@/components/layout/diceBackground';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useState } from 'react';
 
-const LandingPage = () => (
-  <DiceBackground>
-    <div className="container mx-auto pt-20 text-center">
-      <h1 className="mb-5 text-6xl font-extrabold">
-        {/* Thanks for the name suggestion github copilot */}
-        Sheetstorm
-      </h1>
-      <p className="mb-8 text-2xl">A Fate Core Character and Campaign Tool</p>
-      <div className="flex justify-center">
-        <div className="group relative inline-block">
-          <button
-            disabled
-            className="mr-4 cursor-not-allowed rounded-full bg-stone-100 px-4 py-2 text-blue-500 opacity-50 hover:bg-blue-500 hover:text-stone-100"
-          >
-            Get Started
-          </button>
-          <div className="absolute -bottom-16 left-0 hidden rounded bg-neutral-900 px-2 py-1 text-xs text-stone-100 group-hover:block">
-            Beginner instructions coming soon
+const LandingPage = () => {
+  const [showDemoSheet, setShowDemoSheet] = useState(false);
+
+  return (
+    <>
+      <DiceBackground>
+        <div className="container mx-auto pt-20 text-center">
+          <h1 className="mb-5 text-6xl font-extrabold">
+            {/* Thanks for the name suggestion github copilot */}
+            Sheetstorm
+          </h1>
+          <p className="mb-8 text-2xl">
+            A Fate Core Character and Campaign Tool
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowDemoSheet(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-stone-100 px-4 py-2 font-semibold text-blue-600 transition hover:bg-neutral-950 hover:text-stone-100"
+            >
+              <Icon icon="dice" className="h-5 w-5" />
+              Try Demo Sheet
+            </button>
+            <div className="group relative inline-block">
+              <button
+                disabled
+                className="cursor-not-allowed rounded-full bg-stone-100 px-4 py-2 text-blue-500 opacity-50 hover:bg-blue-500 hover:text-stone-100"
+              >
+                Get Started
+              </button>
+              <div className="absolute -bottom-16 left-0 hidden rounded bg-neutral-900 px-2 py-1 text-xs text-stone-100 group-hover:block">
+                Beginner instructions coming soon
+              </div>
+            </div>
+            <button className="rounded-full border border-stone-100 bg-transparent px-4 py-2">
+              <Link href="/about">Learn More</Link>
+            </button>
           </div>
         </div>
-        <button className="rounded-full border border-stone-100 bg-transparent px-4 py-2">
-          <Link href="/about">Learn More</Link>
-        </button>
-      </div>
-    </div>
-  </DiceBackground>
-);
+      </DiceBackground>
+      {showDemoSheet && (
+        <DemoCharacterSheet onClose={() => setShowDemoSheet(false)} />
+      )}
+    </>
+  );
+};
 
 export default function Home() {
   const { data: session, status } = useSession();
