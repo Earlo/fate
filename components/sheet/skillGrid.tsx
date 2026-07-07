@@ -256,6 +256,11 @@ const SkillGrid: FC<SkillGridProps> = ({
   if (state === 'toggle' && !campaignId) {
     return null;
   }
+  const filteredTiers = tiers.filter(
+    (tier) =>
+      (tier.level <= maxDisplayedTier && tier.level > minDisplayedTier) ||
+      !(!skills[tier.level] || skills[tier.level].length === 0), // could maybe filter based on displayed skills
+  );
   return (
     <div className="w-full min-w-[66.666667%] pb-2 md:w-fit lg:w-8/12 lg:pb-0">
       <Label name="Skills" className="-mb-px">
@@ -302,61 +307,56 @@ const SkillGrid: FC<SkillGridProps> = ({
           )}
         </div>
       </Label>
-      {tiers
-        .filter(
-          (tier) =>
-            (tier.level <= maxDisplayedTier && tier.level > minDisplayedTier) ||
-            !(!skills[tier.level] || skills[tier.level].length === 0), // could maybe filter based on displayed skills
-        )
-        .map((tier, index) => (
-          <div
-            key={index}
+      {filteredTiers.map((tier, index) => (
+        <div
+          key={index}
+          className={cn(
+            'relative flex w-full lg:flex-row',
+            {
+              'hidden sm:flex':
+                (!skills[tier.level] || skills[tier.level].length === 0) &&
+                state === 'view',
+            },
+            { 'flex-col lg:pb-2': !tight },
+          )}
+        >
+          <span
             className={cn(
-              'relative flex w-full lg:flex-row',
+              'font-archivo-black flex h-8 shrink-0 items-center whitespace-nowrap text-neutral-950 uppercase',
               {
-                'hidden sm:flex':
-                  (!skills[tier.level] || skills[tier.level].length === 0) &&
-                  state === 'view',
+                'lg:w-fit': tier.level > 5 || tier.level < -5,
               },
-              { 'flex-col lg:pb-2': !tight },
+              { 'w-full lg:w-28': !tight },
             )}
           >
-            <span
-              className={cn(
-                'font-archivo-black flex h-8 shrink-0 items-center whitespace-nowrap text-neutral-950 uppercase',
-                {
-                  'lg:w-fit': tier.level > 5 || tier.level < -5,
-                },
-                { 'w-full lg:w-28': !tight },
-              )}
-            >
-              {tight
-                ? `+${tier.level} `
-                : `${tier.label} ${tier.level > 0 ? '+' : ''}${tier.level}`}
-            </span>
-            <div
-              className={cn('flex grow flex-col sm:flex-row lg:pl-[1%]', {
-                'lg:max-w-[80%]': !tight,
-              })}
-            >
-              <SkillRow
-                skills={skills[tier.level]}
-                handleChange={(slotIndex, name, visibleIn) =>
-                  handleSkillChange(tier.level, slotIndex, name, visibleIn)
-                }
-                disabled={disabled}
-                state={state}
-                campaignId={campaignId}
-                selectedSkills={selectedSkills}
-                skillsList={skillsList}
-                topRow={index === 0}
-                tight={tight}
-                onRollSkill={canRollDice ? rollFudgeDice : undefined}
-                tierLevel={tier.level}
-              />
-            </div>
+            {tight
+              ? `+${tier.level} `
+              : `${tier.label} ${tier.level > 0 ? '+' : ''}${tier.level}`}
+          </span>
+          <div
+            className={cn('flex grow flex-col sm:flex-row lg:pl-[1%]', {
+              'lg:max-w-[80%]': !tight,
+            })}
+          >
+            <SkillRow
+              skills={skills[tier.level]}
+              handleChange={(slotIndex, name, visibleIn) =>
+                handleSkillChange(tier.level, slotIndex, name, visibleIn)
+              }
+              disabled={disabled}
+              state={state}
+              campaignId={campaignId}
+              selectedSkills={selectedSkills}
+              skillsList={skillsList}
+              topRow={index === 0}
+              bottomRow={index === filteredTiers.length - 1}
+              tight={tight}
+              onRollSkill={canRollDice ? rollFudgeDice : undefined}
+              tierLevel={tier.level}
+            />
           </div>
-        ))}
+        </div>
+      ))}
     </div>
   );
 };
@@ -370,6 +370,7 @@ interface SkillRowProps {
   selectedSkills: string[];
   skillsList: string[];
   topRow?: boolean;
+  bottomRow?: boolean;
   tight?: boolean;
   onRollSkill?: (skillName: string, skillBonus: number) => void;
   tierLevel: number;
@@ -384,6 +385,7 @@ const SkillRow = ({
   selectedSkills,
   skillsList,
   topRow = false,
+  bottomRow = false,
   tight = false,
   onRollSkill,
   tierLevel,
@@ -411,7 +413,9 @@ const SkillRow = ({
         position={firstSlot ? 'first' : lastSlot ? 'last' : 'middle'}
         lastShown={!nextName}
         className={cn({
-          'rounded-b-none sm:border-t-0': tight && !topRow,
+          'sm:border-t-0': tight && !topRow,
+          'rounded-t-none!': tight && !(topRow && lastSlot),
+          'rounded-b-none!': tight && !bottomRow,
         })}
       >
         {state === 'toggle' && (
