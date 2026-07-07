@@ -36,7 +36,7 @@ const Stunt: React.FC<StuntProps> = ({
     showVisibility ||
     state === 'create' ||
     state === 'edit';
-  const shouldHide = state === 'play' || state === 'view';
+  const shouldHide = (state === 'play' || state === 'view') && !!campaignId;
   const anyWidgets = showVisibility || !disabled;
   return (
     <div

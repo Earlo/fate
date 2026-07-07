@@ -128,7 +128,6 @@ export default function DraggableCard({
     touchAction: 'none',
   };
   const cardState = sheet.state === 'view' ? 'view' : 'play';
-
   return (
     <div ref={setRefs} style={style} id={`small-sheet-${id}`}>
       <CharacterCard

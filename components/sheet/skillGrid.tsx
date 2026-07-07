@@ -395,7 +395,7 @@ const SkillRow = ({
     const nextName = skills[index + 1]?.name || '';
     const visibleIn = skill?.visibleIn || [];
     const isVisible = visibleIn.includes(campaignId);
-    const shouldHide = state === 'play' || state === 'view';
+    const shouldHide = (state === 'play' || state === 'view') && !!campaignId;
     const visibleName = shouldHide && !isVisible ? '' : name;
     const firstSlot = index === 0;
     const lastSlot = index === 4;

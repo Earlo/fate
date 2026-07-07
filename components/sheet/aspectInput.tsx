@@ -39,7 +39,7 @@ const AspectInput: React.FC<AspectInputProps> = ({
     setAspects(replaceAtIndex(aspects, index, value));
   };
   const showVisibility = state === 'toggle' && campaignId;
-  const shouldHide = state === 'play' || state === 'view';
+  const shouldHide = (state === 'play' || state === 'view') && !!campaignId;
   return (
     <EditableList
       title={title}

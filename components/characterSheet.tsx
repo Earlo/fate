@@ -35,6 +35,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
   disableRemoteActions = false,
   onRollSkill,
 }) => {
+  const canBlur = state === 'view' || state === 'play';
   const updateField = (
     field: keyof editableFields,
     value: editableFields[keyof editableFields],
@@ -92,8 +93,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
             localOnly={disableRemoteActions}
             className={cn('pb-1', {
               blur:
-                (state === 'view' || state === 'play') &&
-                !character?.icon?.visibleIn?.includes(campaignId),
+                canBlur && !character?.icon?.visibleIn?.includes(campaignId),
             })}
             context={character}
           >
@@ -132,8 +132,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
               })
             }
             value={
-              (state === 'view' || state === 'play') &&
-              !character?.name?.visibleIn?.includes(campaignId)
+              canBlur && !character?.name?.visibleIn?.includes(campaignId)
                 ? '???'
                 : character?.name?.text
             }
@@ -166,7 +165,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({
               })
             }
             value={
-              (state === 'view' || state === 'play') &&
+              canBlur &&
               !character?.description?.visibleIn?.includes(campaignId)
                 ? '???'
                 : isLoading

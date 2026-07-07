@@ -30,6 +30,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
   dragListeners,
   isOwner = false,
 }) => {
+  const canBlur = (state === 'view' || state === 'play') && !isOwner;
   return (
     <div
       className={cn(
@@ -50,17 +51,14 @@ const CharacterCard: React.FC<CharacterCardProps> = ({
             disabled
             setIcon={() => null}
             className={cn('mr-1 size-28', {
-              blur:
-                (state === 'view' || state === 'play') &&
-                !character.icon?.visibleIn?.includes(campaignId),
+              blur: canBlur && !character.icon?.visibleIn?.includes(campaignId),
             })}
           />
           <div className="flex flex-col pr-2">
             <LabeledInput
               name="Name"
               value={
-                (state === 'view' || state === 'play') &&
-                !character.name.visibleIn?.includes(campaignId)
+                canBlur && !character.name.visibleIn?.includes(campaignId)
                   ? '???'
                   : character.name?.text
               }
