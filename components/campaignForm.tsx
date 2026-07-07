@@ -80,6 +80,7 @@ const CampaignForm: FC<CampaignFormProps> = ({
       <div className="flex">
         {!viewing && (
           <Button
+            className="mr-4"
             label={editing ? 'Save Changes' : 'Create'}
             type="submit"
             disabled={isSubmitting}
