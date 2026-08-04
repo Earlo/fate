@@ -3,11 +3,7 @@
   "useTabs": false,
   "singleQuote": true,
   "trailingComma": "all",
-  "plugins": [
-    "prettier-plugin-organize-imports",
-    "prettier-plugin-tailwindcss",
-    "prettier-plugin-packagejson"
-  ],
+  "plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-packagejson"],
   "tailwindAttributes": ["className"],
   "tailwindFunctions": ["cn", "twMerge", "clsx"],
   "tailwindPreserveWhitespace": false

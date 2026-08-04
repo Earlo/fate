@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { ChangeEvent, FC, useRef } from 'react';
+import { ChangeEvent, FC } from 'react';
 import Label from './label';
 interface CheckboxProps {
   id?: string;
@@ -17,14 +17,6 @@ const Checkbox: FC<CheckboxProps> = ({
   onChange,
   disabled,
 }) => {
-  const checkboxRef = useRef<HTMLInputElement>(null);
-
-  const handleClick = () => {
-    if (checkboxRef.current && !disabled) {
-      checkboxRef.current.click();
-    }
-  };
-
   return (
     <div
       className={cn('flex flex-col pb-4', {
@@ -34,7 +26,6 @@ const Checkbox: FC<CheckboxProps> = ({
       <Label label={name} name={id || name} className="w-fit pr-4" />
       <div className="relative">
         <input
-          ref={checkboxRef}
           type="checkbox"
           id={id || name}
           name={name}
@@ -43,10 +34,10 @@ const Checkbox: FC<CheckboxProps> = ({
           onChange={onChange}
           disabled={disabled}
         />
-        <div
-          onClick={handleClick}
+        <label
+          htmlFor={id || name}
           className={cn(
-            'size-8 cursor-pointer rounded border-2 bg-stone-50',
+            'block size-8 cursor-pointer rounded border-2 bg-stone-50',
             checked ? 'border-neutral-900' : 'border-gray-300',
             { 'cursor-not-allowed': disabled },
           )}
@@ -56,7 +47,7 @@ const Checkbox: FC<CheckboxProps> = ({
               ✓
             </div>
           )}
-        </div>
+        </label>
       </div>
     </div>
   );

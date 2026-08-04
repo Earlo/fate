@@ -8,7 +8,8 @@ interface OptionProps {
 
 const Option: React.FC<OptionProps> = ({ label, className, onClick }) => {
   return (
-    <div
+    <button
+      type="button"
       className={cn(
         'block w-full px-3 py-1 text-left text-gray-700 hover:bg-gray-100',
         className,
@@ -16,7 +17,7 @@ const Option: React.FC<OptionProps> = ({ label, className, onClick }) => {
       onClick={onClick}
     >
       {label}
-    </div>
+    </button>
   );
 };
 

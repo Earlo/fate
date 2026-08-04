@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "eslint",
+    "typescript",
+    "unicorn",
+    "oxc",
+    "import",
+    "react",
+    "jsx-a11y",
+    "nextjs"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "ignorePatterns": [".next/**", "node_modules/**"],
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "typescript/no-var-requires": "off",
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "no-unused-vars": ["error", { "args": "none" }],
+    "import/named": "error",
+    "import/namespace": "error",
+    "import/default": "error",
+    "import/export": "error"
+  }
+}

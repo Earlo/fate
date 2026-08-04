@@ -113,7 +113,8 @@ const ImageUploader: FC<ImageUploaderProps> = ({
           ) : (
             !disabled && (
               <div className="absolute inset-0 flex items-center justify-between opacity-0 transition-opacity duration-200 hover:opacity-100">
-                <div
+                <button
+                  type="button"
                   className={cn(
                     'bg-opacity-40 hover:bg-opacity-20 flex h-full items-center justify-center bg-neutral-900 transition-opacity',
                     localOnly ? 'w-full rounded-full' : 'w-1/2 rounded-l-full',
@@ -122,9 +123,11 @@ const ImageUploader: FC<ImageUploaderProps> = ({
                   title={localOnly ? 'Upload local portrait' : 'Upload image'}
                 >
                   <Icon icon="upload" />
-                </div>
+                </button>
                 {!localOnly && (
-                  <div
+                  <button
+                    type="button"
+                    disabled={llmDisabled || disabled}
                     className={cn(
                       'bg-opacity-40 hover:bg-opacity-20 flex h-full w-1/2 items-center justify-center rounded-r-full bg-neutral-900 transition-opacity',
                       llmDisabled &&
@@ -144,7 +147,7 @@ const ImageUploader: FC<ImageUploaderProps> = ({
                       icon="sparkles"
                       className={cn(llmDisabled && 'text-stone-400')}
                     />
-                  </div>
+                  </button>
                 )}
               </div>
             )

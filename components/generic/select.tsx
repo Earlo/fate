@@ -65,6 +65,17 @@ const Select: FC<SelectProps> = ({
         className,
       )}
       onClick={() => (!disabled ? setIsOpen(!isOpen) : null)}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          setIsOpen(!isOpen);
+        }
+      }}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-expanded={isOpen}
+      aria-disabled={disabled}
       ref={ref}
     >
       {children}

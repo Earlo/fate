@@ -63,6 +63,20 @@ const CharacterButton: React.FC<CharacterButtonProps> = ({
           : false,
       })}
       onClick={disabled ? undefined : onClick}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (
+          !disabled &&
+          onClick &&
+          (event.key === 'Enter' || event.key === ' ')
+        ) {
+          event.preventDefault();
+          onClick();
+        }
+      }}
+      role="button"
+      tabIndex={disabled || !onClick ? -1 : 0}
+      aria-disabled={disabled}
     >
       <Image
         src={character.icon?.url || '/blank_user.png'}

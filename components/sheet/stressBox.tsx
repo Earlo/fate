@@ -1,5 +1,5 @@
 'use client';
-import { ChangeEvent, FC, useRef } from 'react';
+import { ChangeEvent, FC } from 'react';
 
 interface StressBoxProps {
   id: string;
@@ -18,13 +18,6 @@ const StressBox: FC<StressBoxProps> = ({
   disabled,
   available,
 }) => {
-  const checkboxRef = useRef<HTMLInputElement>(null);
-  const handleClick = () => {
-    if (checkboxRef.current && !disabled) {
-      checkboxRef.current.click();
-    }
-  };
-
   return (
     <div
       className={`flex items-center justify-center pl-2 ${
@@ -41,7 +34,6 @@ const StressBox: FC<StressBoxProps> = ({
       </label>
       <div className="relative">
         <input
-          ref={checkboxRef}
           type="checkbox"
           id={id || name}
           name={name}
@@ -50,9 +42,9 @@ const StressBox: FC<StressBoxProps> = ({
           onChange={onChange}
           disabled={disabled}
         />
-        <div
-          onClick={handleClick}
-          className={`size-8 cursor-pointer rounded border-2 bg-stone-100 ${
+        <label
+          htmlFor={id || name}
+          className={`block size-8 cursor-pointer rounded border-2 bg-stone-100 ${
             available ? 'border-neutral-950' : 'border-gray-300'
           } ${disabled ? 'cursor-not-allowed' : ''}`}
         >
@@ -61,7 +53,7 @@ const StressBox: FC<StressBoxProps> = ({
               X
             </div>
           )}
-        </div>
+        </label>
       </div>
     </div>
   );

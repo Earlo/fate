@@ -28,6 +28,19 @@ const TileButton: React.FC<TileButtonProps> = ({
   const Container = (
     <div
       onClick={disabled ? undefined : onClick}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (
+          !disabled &&
+          onClick &&
+          (event.key === 'Enter' || event.key === ' ')
+        ) {
+          event.preventDefault();
+          onClick();
+        }
+      }}
+      role="button"
+      tabIndex={disabled || !onClick ? -1 : 0}
       aria-disabled={disabled}
       className={cn(
         'group relative flex h-20 min-h-0 w-full items-center justify-around rounded-lg border border-gray-300 transition-colors duration-200 focus:ring-2 focus:ring-gray-400 focus:outline-none',
