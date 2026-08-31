@@ -51,7 +51,7 @@
     "prettier": "3.9.6",
     "prettier-plugin-packagejson": "3.0.2",
     "prettier-plugin-tailwindcss": "0.8.1",
-    "prisma": "7.9.1",
+    "prisma": "7.10.0",
     "tailwind-merge": "3.6.0",
     "tailwindcss": "4.3.3",
     "typescript": "7.0.2",
