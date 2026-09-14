@@ -36,7 +36,7 @@
     "next-auth": "4.24.15",
     "openai": "7.10.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8",
+    "react-dom": "19.3.0",
     "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
@@ -44,7 +44,7 @@
     "@types/bcrypt": "6.0.0",
     "@types/node": "26.5.0",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.7",
+    "@types/react-dom": "19.3.0",
     "autoprefixer": "10.5.5",
     "oxlint": "1.82.0",
     "postcss": "8.5.28",
