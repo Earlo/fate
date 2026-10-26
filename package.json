@@ -27,7 +27,7 @@
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
     "@radix-ui/react-dropdown-menu": "2.2.1",
-    "ably": "2.29.0",
+    "ably": "2.30.0",
     "ai": "7.0.143",
     "bcrypt": "6.0.0",
     "clsx": "2.1.1",
