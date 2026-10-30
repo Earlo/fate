@@ -47,7 +47,7 @@
     "@types/react-dom": "19.3.0",
     "autoprefixer": "10.6.1",
     "oxlint": "1.89.0",
-    "postcss": "8.5.31",
+    "postcss": "8.5.32",
     "prettier": "3.9.10",
     "prettier-plugin-packagejson": "3.0.3",
     "prettier-plugin-tailwindcss": "0.8.1",
