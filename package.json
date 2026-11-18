@@ -31,7 +31,7 @@
     "ai": "7.0.173",
     "bcrypt": "6.0.0",
     "clsx": "2.1.1",
-    "lucide-react": "1.72.0",
+    "lucide-react": "1.73.0",
     "next": "16.4.6",
     "next-auth": "4.24.15",
     "openai": "7.57.0",
